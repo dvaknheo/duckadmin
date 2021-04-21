@@ -4,11 +4,11 @@
  * From this time, you never be alone~
  */
 
-namespace DuckAdmin\Business;
+namespace DuckAdmin\Service;
 
 use DuckAdmin\App\BaseException;
 
-class BusinessException extends BaseException
+class ServiceException extends BaseException
 {
     // 业务异常基类
 }

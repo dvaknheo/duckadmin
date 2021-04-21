@@ -6,7 +6,7 @@
 
 namespace DuckAdmin\App;
 
-trait SingletonEx
+trait SingletonExTrait
 {
     use \DuckPhp\SingletonEx\SingletonExTrait;
 }
