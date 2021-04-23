@@ -6,7 +6,7 @@
 
 namespace DuckAdmin\App;
 
-use DuckAdmin\Helper\ControllerHelper as C;
+use DuckAdmin\App\ControllerHelper as C;
 use DuckAdmin\App\App;
 
 class BaseController
@@ -19,7 +19,6 @@ class BaseController
     // 初始化
     protected function initialize()
     {
-        SessionService::G()->checkLogin();
         C::setViewHeadFoot('header','footer');
     }
     ///////////////////////////////////

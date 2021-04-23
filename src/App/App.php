@@ -13,7 +13,7 @@ class App extends DuckPhp
     //@override
     public $options = [
         'is_debug' => true,        
-        // 'use_setting_file' => true,
+        'use_setting_file' => true,
         'error_404' => '_sys/error_404',
         'error_500' => '_sys/error_500',
         
