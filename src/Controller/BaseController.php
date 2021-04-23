@@ -7,7 +7,7 @@
 namespace DuckAdmin\Controller;
 
 use DuckAdmin\App\BaseController as Base;
-use DuckAdmin\Helper\ControllerHelper as C;
+use DuckAdmin\App\ControllerHelper as C;
 
 
 
@@ -19,9 +19,5 @@ class BaseController extends Base
             C::Exit404();
         }
         parent::__construct();
-    }
-    protected function initialize()
-    {
-        //
     }
 }

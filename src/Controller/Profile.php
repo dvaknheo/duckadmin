@@ -11,14 +11,21 @@ use DuckAdmin\Service\SessionService;
 
 class Profile extends BaseController
 {
+    public function __construct()
+    {
+        parent::__construct();
+    }
     /**
      * 首页
      */ 
     public function index()
     {
-         C::Show(get_defined_vars(),'profile/home');
+        C::Show(get_defined_vars(),'profile/home');
     }
-
+    //修改密码
+    public function pass()
+    {
+    }
     //清除缓存
     public function cache()
     {
@@ -26,24 +33,17 @@ class Profile extends BaseController
     }
 
     //菜单
-    public function menu(){
+    public function menu()
+    {
 
     }
 
     //欢迎页
-    public function home(){
-    }
-
-    //修改密码
-    public function pass()
+    public function home()
     {
     }
 
-    /**
-    * 通用上传
-    */
-    public function upload()
-    {
-    }
+
+
 
 }

@@ -1,15 +1,18 @@
-<?php
-declare (strict_types = 1);
+<?php declare(strict_types=1);
+/**
+ * DuckPhp
+ * From this time, you never be alone~
+ */
 
 namespace DuckAdmin\Model;
-/**
- * @mixin \think\Model
- */
+
 class AdminLogModel extends BaseModel
 {
     // 管理员日志记录
     public function record()
     {
+    
+        return;
         if(!$desc = Request::except(['s','_pjax']))return;
         if(isset($desc['page'])&&isset($desc['limit']))return;
         foreach ($desc as $k => $v) {

@@ -16,10 +16,10 @@ class SessionService
     {
         App::session_start();
     }
-    public function getCurrentUser()
+    public function getCurrentAdmin()
     {
-        $ret = $_SESSION['user'] ?? [];
-        SessionServiceException::ThrowOn(empty($ret), '请重新登录');
+        $ret = $_SESSION['admin'] ?? [];
+        ServiceException::ThrowOn(empty($ret), '请重新登录');
         
         return $ret;
     }
@@ -30,19 +30,19 @@ class SessionService
         return $user['id'];
     }
     
-    public function setCurrentUser($user)
+    public function setCurrentAdmin($admin)
     {
-        $_SESSION['user'] = $user;
+        $_SESSION['admin'] = $admin;
     }
     public function logout()
     {
-        unset($_SESSION['user']);
+        unset($_SESSION['admin']);
         App::session_destroy();
     }
     public function checkCsrf($token)
     {
         $session_token = $_SESSION['_token'] ?? null;
-        SessionServiceException::ThrowOn($token !== $session_token, 'csrf_token 失败', 419);
+        ServiceException::ThrowOn($token !== $session_token, 'csrf_token 失败', 419);
     }
     ////////////////////////////////////////////////////////////////////////
     public function csrf_token()

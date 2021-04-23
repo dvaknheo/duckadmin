@@ -6,9 +6,9 @@
 
 namespace DuckAdmin\Model;
 
-use DuckAdmin\App\SingletonEx;
+use DuckAdmin\App\BaseModel as Base;
 
-class BaseModel
+class BaseModel extends Base
 {
-    use SingletonEx;
+
 }

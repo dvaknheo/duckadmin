@@ -1,14 +1,12 @@
-<?php
-declare (strict_types = 1);
-
-namespace app\admin\model;
-
-use think\Model;
-
+<?php declare(strict_types=1);
 /**
- * @mixin \think\Model
+ * DuckPhp
+ * From this time, you never be alone~
  */
-class AdminPermission extends Model
+
+namespace DuckAdmin\Model;
+
+class AdminPermission extends BaseModel
 {
 
 }

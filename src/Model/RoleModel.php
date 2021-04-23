@@ -1,12 +1,12 @@
-<?php
-declare (strict_types = 1);
-
-namespace app\admin\model;
-
+<?php declare(strict_types=1);
 /**
- * @mixin \think\Model
+ * DuckPhp
+ * From this time, you never be alone~
  */
-class AdminRole extends Model
+
+namespace DuckAdmin\Model;
+
+class AdminRole extends BaseModel
 {
 
 }
