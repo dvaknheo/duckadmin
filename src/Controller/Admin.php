@@ -1,26 +1,26 @@
-<?php
-declare (strict_types = 1);
+<?php declare(strict_types=1);
+/**
+ * DuckPhp
+ * From this time, you never be alone~
+ */
 
-namespace app\admin\controller\admin;
+namespace DuckAdmin\Controller;
+use DuckAdmin\App\ControllerHelper as C;
+use DuckAdmin\Service\AdminService;
 
-class Admin extends  \app\admin\controller\Base
+class Admin extends BaseController
 {
     protected function initialize()
     {
-        //
+        return parent::initialize();
     }
     /**
      * 管理员
      */
     public function index()
     {
-            if ($search = input('get.username')) {
-               $this->where[] = ['username', 'like', "%" . $search . "%"];
-            }
-            $list = $this->model->order('id','desc')->where('id','>','1')->withoutField('password,token,delete_time')->where($this->where)->paginate(Request::get('limit'));
-            $limit = Request::get('limit')
-            $this->jsonApi('', 0, $list->items(), ['count' => $list->total(), 'limit' => $limit]);
-        return $this->fetch();    
+        $data = AdminService::G()->getAdminList();
+        C::Show($data);
     }
 
 
@@ -31,7 +31,7 @@ class Admin extends  \app\admin\controller\Base
     {
         $post = C::Post();
         C::WrapException(AdminService::class);
-        $result = $data ? AdminService:G()->addAdmin($post) : [];
+        $result = $data ? AdminService::G()->addAdmin($post) : [];
         C::SetSuccessMsg('添加成功');
         C::Show([]);
     }
@@ -55,7 +55,7 @@ class Admin extends  \app\admin\controller\Base
      */
     public function status($id)
     {
-        $status = Request::post('status'),
+        $status = Request::post('status');
         
 
 

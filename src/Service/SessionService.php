@@ -24,9 +24,9 @@ class SessionService
         return $ret;
     }
     
-    public function getCurrentUid()
+    public function getCurrentAdminId()
     {
-        $user = $this->getCurrentUser();
+        $user = $this->getCurrentAdmin();
         return $user['id'];
     }
     

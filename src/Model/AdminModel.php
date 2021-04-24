@@ -5,16 +5,16 @@
  */
 
 namespace DuckAdmin\Model;
+use DuckAdmin\App\ModelHelper as M;
 
 class AdminModel extends BaseModel
 {
-    protected $table ='admin';
+    protected $table_name ='admin';
     public function login($username,$password)
     {
         $sql = "select * from TABLE where username = ?";
-        $data = __db()->fetch($this->prepare($sql), $username);
+        $data = M::Db()->fetch($this->prepare($sql), $username);
         if(empty($data)){
-
             return [];
         }
         if(!password_verify($password, $data['password'])){
@@ -24,9 +24,9 @@ class AdminModel extends BaseModel
 
         return $data;
     }
-    
-    public function add()
+    public function getList(int $page = 1, int $page_size = 10)
     {
-        //
+        return parent::getList($page, $page_size);
     }
+
 }

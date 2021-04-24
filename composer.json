@@ -26,14 +26,5 @@
         "topthink/think-captcha": "1.0.7",
         "topthink/think-orm": "^2.0",
         "topthink/think-validate": "*"
-	},
-    "bin": [
-        "bin/duckphp"
-    ],
-    "post-install-cmd": [
-        "echo 'Welcome to use DuckPHP ,run bin/duckphp form more.'"
-    ],
-    "require-dev": {
-        "friendsofphp/php-cs-fixer": "^2.18"
-    }
+	}
 }

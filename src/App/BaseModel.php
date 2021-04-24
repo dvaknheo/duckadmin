@@ -11,9 +11,4 @@ use DuckAdmin\App\SingletonExTrait;
 class BaseModel
 {
     use SingletonExTrait;
-    protected $table;
-    protected function prepare($sql)
-    {
-        return str_replace('TABLE',$this->table,$sql);
-    }
 }
