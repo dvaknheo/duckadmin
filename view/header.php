@@ -11,38 +11,25 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="format-detection" content="telephone=no">
   
-  <link rel="stylesheet" href="/layui/css/layui.css"  media="all">
+  <link href="/layui/css/layui.css" rel="stylesheet" media="all">
+  <script src="/layui/layui.js?t=1617720346170" charset="utf-8"></script>
 </head>
 <body>
 <div class="layui-layout layui-layout-admin">
   <div class="layui-header">
     <div class="layui-logo">DuckPhp管理后台</div>
     <!-- 头部区域（可配合layui 已有的水平导航） -->
-    <ul class="layui-nav layui-layout-left">
-      <li class="layui-nav-item"><a href="">nav 1</a></li>
-      <li class="layui-nav-item"><a href="">nav 2</a></li>
-      <li class="layui-nav-item"><a href="">nav 3</a></li>
-      <li class="layui-nav-item">
-        <a href="javascript:;">nav groups</a>
-        <dl class="layui-nav-child">
-          <dd><a href="">menu 11</a></dd>
-          <dd><a href="">menu 22</a></dd>
-          <dd><a href="">menu 33</a></dd>
-        </dl>
-      </li>
-    </ul>
     <ul class="layui-nav layui-layout-right">
       <li class="layui-nav-item">
         <a href="javascript:;">
-          <img src="http://tva1.sinaimg.cn/crop.0.0.118.118.180/5db11ff4gw1e77d3nqrv8j203b03cweg.jpg" class="layui-nav-img">
-          admin
+          <img src="" class="layui-nav-img">
+          <?= '【admin】'?>（<?= '【超级管理员】'?>）
         </a>
         <dl class="layui-nav-child">
-          <dd><a href="">set 1</a></dd>
-          <dd><a href="">set 2</a></dd>
+          <dd><a href="">修改密码</a></dd>
+          <dd><a href="<?=$url_logout?>">登出</a></dd>
         </dl>
       </li>
-      <li class="layui-nav-item"><a href="">登出</a></li>
     </ul>
   </div>
   

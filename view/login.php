@@ -123,6 +123,19 @@ body {
 				</button>
 			</div>
 		</form>
-
     </body>
+<script src="/layui/layui.js"></script>
+<script>
+var error=<?=json_encode($error)?>
+</script>
+<script>
+
+layui.use('layer', function(){
+  var layer = layui.layer;
+  if(error){
+  layer.msg(error,{icon:2});
+  }
+});     
+
+</script>
 </html>
