@@ -25,25 +25,17 @@ class BaseModel extends Base
     }
     public function get($id)
     {
-        $sql = "select * from {$this->table_name} where id =? and deleted_at is null";
+        $sql = "select * from {$this->table_name} where id =?";
         $ret = M::DB()->fetch($sql, $id);
         return $ret;
     }
     public function add($data)
     {
-        /*
-        $date = date('Y-m-d H:i:s');
-        $data['created_at'] = $date;
-        $data['updated_at'] = $date;
-         * */
         $ret = M::DB()->insertData($this->table_name, $data);
-        
         return $ret;
     }
     public function update($id, $data)
     {
-        //$date = date('Y-m-d H:i:s');
-        //$data['updated_at'] = $date;
         $ret = M::DB()->updateData($this->table_name, $id, $data);
         
         return $ret;
@@ -51,7 +43,7 @@ class BaseModel extends Base
     public function delete($id)
     {
         $date = date('Y-m-d H:i:s');
-        $sql = "update $this->table_name set deleted_at=? where id=? ";
+        $sql = "update {$this->table_name} set deleted_at=? where id=? ";
         $ret = M::DB()->execute($sql, $date, $id);
         return $ret;
     }

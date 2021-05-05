@@ -31,19 +31,19 @@ class Main extends BaseController
     
     public function login()
     {
-        $error = '';
-        $post = C::POST();
-        if($post){
-            try{
-                $admin = AdminService::G()->login($post);
-                SessionService::G()->setCurrentAdmin($admin,$post['remember']);
-                C::ExitRouteTo('profile/index');
-                return;
-            }catch(\Throwable $ex){
-                $error = $ex->getMessage();
-            }
-        }
         C::Show(get_defined_vars(), 'login');
+    }
+    public function do_login()
+    {
+        C::assignExceptionHandler(\Exception::class,function($ex){
+            $error = $ex->getMessage();
+            C::assignViewData(['error'=>$error]);
+            C::Show(get_defined_vars(), 'login');
+        });
+        $post = C::POST();
+        $admin = AdminService::G()->login($post);
+        SessionService::G()->setCurrentAdmin($admin,$post['remember']);
+        C::ExitRouteTo('profile/index');
     }
     public function logout()
     {

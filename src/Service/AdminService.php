@@ -25,14 +25,25 @@ class AdminService extends BaseService
     }
     public function checkPermission($admin, $path_info)
     {
-        $admin=is_array($admin)?$admin:AdminModel::G()->get($admin);
+        $admin=is_array($admin)? $admin: AdminModel::G()->get($admin);
         ServiceException::ThrowOn(!$admin, '请重新登录');
-        // 如果是超级用户，直接返回 true
-        // 然后我们查 role 表，看有吗
-        return true;
+        if($admin['id']==1){
+            return true;
+        }
+        $role=RoleModel::G()->find($admin['role']);
+        if(!$role){
+            return false;
+        }
+        if($path_info===$role['path']){
+            return true;
+        }
+        return false;
     }
-    public function getMenu($admin_id)
+    public function getMenu($admin,$path_info='')
     {
-        return [];
+        //$menus 
+        // 把所有菜单搞到手，然后 
+        $admin=is_array($admin)? $admin: AdminModel::G()->get($admin);
+        
     }
 }

@@ -7,9 +7,10 @@
 namespace DuckAdmin\App;
 
 use DuckPhp\DuckPhp;
-
+use DuckPhp\Component\AppPluginTrait;
 class App extends DuckPhp
 {
+    use AppPluginTrait;
     //@override
     public $options = [
         'is_debug' => true,        

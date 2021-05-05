@@ -12,7 +12,7 @@ class AdminModel extends BaseModel
     protected $table_name ='admin';
     public function login($username,$password)
     {
-        $sql = "select * from TABLE where username = ?";
+        $sql = "select * from {TABLE} where username = ?";
         $data = M::Db()->fetch($this->prepare($sql), $username);
         if(empty($data)){
             return [];
