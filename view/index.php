@@ -71,8 +71,9 @@ button {
 		<div class="content" style="top: 30%;">
 			<div class="content-r">
 				<h1>Pear Admin Think</h1>
+                <div></div>
 				<p>欢迎使用</p>
-				<button class="pear-btn pear-btn-primary" style=" "><a href ="/main">访问后台</a></button>
+				<button class="pear-btn pear-btn-primary" style=" "><a href ="<?=__url('login')?>">登录-</a></button>
 			</div>
 		</div>
 	</body>
