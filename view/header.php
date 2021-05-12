@@ -12,7 +12,6 @@
   <meta name="format-detection" content="telephone=no">
   
   <link href="/layui/css/layui.css" rel="stylesheet" media="all">
-  <script src="/layui/layui.js?t=1617720346170" charset="utf-8"></script>
 </head>
 <body>
 <div class="layui-layout layui-layout-admin">
