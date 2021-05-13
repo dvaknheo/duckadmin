@@ -6,9 +6,9 @@
 
 namespace DuckAdmin\Service;
 
-use DuckAdmin\App\BaseService as Base;
+use DuckAdmin\App\SingletonExTrait;
 
-class BaseService extends Base
+class BaseService
 {
-    //
+    use SingletonExTrait;
 }

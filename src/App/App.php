@@ -24,4 +24,9 @@ class App extends DuckPhp
     {
         //
     }
+    public function command_test()
+    {
+        // 测试自留地
+        // 我们测试一下
+    }
 }

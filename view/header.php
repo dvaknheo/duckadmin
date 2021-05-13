@@ -31,14 +31,67 @@
       </li>
     </ul>
   </div>
-  
+<?php
+$tree = [
+    'a1'=>[
+        'name'=>'a1',
+        'href'=>'javascript:;',
+
+    ],
+    'a2'=>[
+        'name'=>'a2',
+        'href'=>'javascript:;',
+    ],
+    'a3'=>[
+        'name'=>'a3',
+        'href'=>'javascript:;',
+    ],
+    'a4'=>[
+        'name'=>'a4',
+        'href' => 'abc',
+        'children'=>[
+            'a41'=>[
+                'name'=>'a4-1',
+                'href'=>'javascript:;',
+            ],
+            'a42'=>[
+                'name'=>'a4-2',
+                'href'=>'javascript:;',
+            ],
+            'a43'=>[
+                'name'=>'a4-3',
+                'href' => 'abc',
+                'children'=>[
+                    'a431'=>[
+                        'name'=>'a4-3-1',
+                        'href'=>'#4ab',
+                    ],
+                    'a432'=>[
+                        'name'=>'a4-3-2',
+                        'href'=>'#ddd',
+                    ],
+                    'a433'=>[
+                        'name'=>'a4-3-3',
+                        'href' => '#abc',
+                    ],
+                ],
+            ],
+        ],
+    ],
+];
+?>
   <div class="layui-side layui-bg-black">
     <div class="layui-side-scroll">
     
       <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
-      <ul class="layui-nav layui-nav-tree" lay-filter="test">
-
-        <li class="layui-nav-item layui-nav-itemed">
+      <ul class="layui-nav layui-nav-tree">
+        <li class="layui-nav-item">
+            <?=buildtree($tree);?>
+        </li>
+        <li class="layui-nav-item">
+          <a href="javascript:;">----分割线----</a>
+        </li>
+        <li class="layui-nav-item">
         <a href="javascript:;">超级管理员专属</a>
         <dl class="layui-nav-child">
             <dd><a href="javascript:;">管理员管理</a></dd>
@@ -47,37 +100,56 @@
             <dd><a href="javascript:;">操作日志</a></dd>
         <dl>
         </li>
+
       </ul>
     </div>
   </div>
-  
+
   <div class="layui-body" style="padding: 15px;">
 <!-- -->
 <?php
-/*
-        <li class="layui-nav-item">
-          <a class="" href="javascript:;">1</a>
-          <dl class="layui-nav-child">
-            <dd><a href="javascript:;">2</a></dd>
-            <dd><a href="javascript:;">3</a></dd>
-            <dd class="layui-nav-itemed">
-                <a href="javascript:;" class="layui-nav-child-itemed">4</a>
-                <dl >
-                  <dd><a href="javascript:;" >4-1</a></dd>
-                  <dd><a href="javascript:;">4-2</a></dd>
-                  <dd class="layui-nav-itemed">
-                      <a href="javascript:;">4-3</a>
-                      <dl class="layui-nav-child">
-                        <dd><a href="javascript:;" class="layui-this">4-3-1</a></dd>
-                        <dd><a href="javascript:;" >4-3-2</a></dd>
-                      </dl>
-                      
-                  
-                  </dd>
-                  <dd><a href="javascript:;">4-4</a></dd>
-                </dl>
-            </dd>
-          </dl>
-        </li>
+function buildtree($nodes)
+{
+    $ret ='';
+    foreach($nodes as $v)
+    {
+        $ret.='<li class="layui-nav-item">';
+        $ret.="\n";
+        $href= !isset($v['children'])?$v['href']:'javascript:;';
+        $name = $v['name'];
+        $ret.="<a href=\"$href\">$name</a>\n";
+        if(isset($v['children'])){
+        $ret.=<<<EOT
+    <dl class="layui-nav-child">
 
-//*/
+EOT;
+            foreach($v['children'] as $v){
+                $ret.="<dd>". buildnode($v) ."</dd>\n";
+            }
+            $ret.="</dl>\n";
+        }
+    }
+    return $ret;
+}
+function buildnode($node)
+{
+    $href= !isset($node['children'])?$node['href']:'javascript:;';
+    $name = $node['name'];
+    $ret ='';
+    $ret.=<<<EOT
+    <a href="$href">$name</a>
+
+EOT;
+
+    if(isset($node['children'])){
+        $ret.=<<<EOT
+    <dl class="layui-nav-child">
+
+EOT;
+        foreach($node['children'] as $v){
+            $ret.="<dd>". buildnode($v) ."</dd>\n";
+        }
+        $ret.="</dl>\n";
+    }
+    return $ret;
+}

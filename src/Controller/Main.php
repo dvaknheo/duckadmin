@@ -24,11 +24,6 @@ class Main extends BaseController
     {
         C::Show(get_defined_vars(), 'index');
     }
-    public function main()
-    {
-        C::Show(get_defined_vars(), 'main');
-    }
-    
     public function login()
     {
         C::Show(get_defined_vars(), 'login');
@@ -50,8 +45,13 @@ class Main extends BaseController
         SessionService::G()->logout();
         C::RedirectRouteTo('index');
     }
+    public function xx()
+    {
+        captcha();
+    }
     public function verify()
     {
+        captcha_check();
         //CaptchaService::G()->show();
     }
 }

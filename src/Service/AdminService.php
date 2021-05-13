@@ -41,9 +41,13 @@ class AdminService extends BaseService
     }
     public function getMenu($admin,$path_info='')
     {
-        //$menus 
         // 把所有菜单搞到手，然后 
         $admin=is_array($admin)? $admin: AdminModel::G()->get($admin);
         
+        // 我们还要判断现在是在哪个菜单里 ,让其高亮显示
+        
+        
+        
+        return [];
     }
 }

@@ -23,33 +23,17 @@
     </form>
   </div>
 </div>
+
+<div class="layui-card">
+<div class="layui-card-body"><div class="layui-table-tool-temp"> <button class="pear-btn pear-btn-primary pear-btn-md"> <i class="layui-icon layui-icon-add-1"></i> <a href="/admin/add">新增</a> </button> <button class="pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove"> <i class="layui-icon layui-icon-delete"></i> 删除 </button> <button class="pear-btn pear-btn-md" lay-event="recycle"> <i class="layui-icon layui-icon-delete"></i> 回收站 </button> </div><div class="layui-table-tool-self"><div class="layui-inline" title="刷新" lay-event="refresh"><i class="layui-icon layui-icon-refresh"></i></div><div class="layui-inline" title="筛选列" lay-event="LAYTABLE_COLS"><i class="layui-icon layui-icon-cols"></i></div><div class="layui-inline" title="打印" lay-event="LAYTABLE_PRINT"><i class="layui-icon layui-icon-print"></i></div><div class="layui-inline" title="导出" lay-event="LAYTABLE_EXPORT"><i class="layui-icon layui-icon-export"></i></div></div></div>
+</div>
+
 <div class="layui-card">
   <div class="layui-card-body">
     <table id="dataTable" lay-filter="dataTable"></table>
   </div>
 </div>
 
-<script type="text/html" id="toolbar">
-  <button class="pear-btn pear-btn-primary pear-btn-md">
-        <i class="layui-icon layui-icon-add-1"></i>
-        <a href="<?=__url('admin/add')?>">新增</a>
-  </button>
-    <button class="pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove">
-        <i class="layui-icon layui-icon-delete"></i>
-        删除
-  </button>
-  <button class="pear-btn pear-btn-md" lay-event="recycle">
-        <i class="layui-icon layui-icon-delete"></i>
-        回收站
-    </button>
-</script>
-
-<script type="text/html" id="options">
-        <button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i class="layui-icon layui-icon-edit"></i></button>
-        <button class="pear-btn pear-btn-warming pear-btn-sm" lay-event="role"><i class="layui-icon layui-icon-user"></i></button>
-        <button class="pear-btn pear-btn-warming pear-btn-sm" lay-event="permission"><i class="layui-icon layui-icon-vercode"></i></button>
-        <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
-</script>
 
 <script type="text/html" id="status">
   <input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="status" {{# if(d.status==1){ }} checked {{# } }}>
@@ -94,18 +78,6 @@ layui.use(['table', 'form', 'jquery'], function() {
               templet: '#status'
           },
           {
-              field: 'create_time',
-              title: '创建时间',
-              unresize: true,
-              align: 'center'
-          }, 
-          {
-              field: 'update_time',
-              title: '更新时间',
-              unresize: true,
-              align: 'center'
-          }, 
-          {
               title: '操作',
               toolbar: '#options',
               align: 'center',
@@ -121,13 +93,7 @@ layui.use(['table', 'form', 'jquery'], function() {
     page: true,
     cols: cols,
     cellMinWidth: 100,
-    skin: 'line',
-    toolbar: '#toolbar',
-    defaultToolbar: [{
-      title: '刷新',
-      layEvent: 'refresh',
-      icon: 'layui-icon-refresh',
-    }, 'filter', 'print', 'exports']
+    skin: 'line'
   });
 
   table.on('tool(dataTable)', function(obj) {

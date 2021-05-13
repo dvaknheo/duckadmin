@@ -7,36 +7,46 @@
 namespace DuckAdmin\Controller;
 
 use DuckAdmin\App\BaseController as Base;
+use DuckAdmin\App\SingletonExTrait;
 use DuckAdmin\App\ControllerHelper as C;
+
 use DuckAdmin\Service\AdminService;
 use DuckAdmin\Service\SessionService;
 use DuckAdmin\Service\ServciceException;
 
-class BaseController extends Base
+class BaseController
 {
+    use SingletonExTrait;
+
     public function __construct()
     {
         if (static::class === self::class) {
+            //禁止直接访问
             C::Exit404();
         }
-        parent::__construct();
+        $this->initialize();
     }
     protected function initialize()
     {
         C::assignExceptionHandler(ServciceException::class, function(){
-            C::ExitRouteTo('login?r='.C::Server('PATH_INFO'));
+            C::ExitRouteTo('login?r=' . C::getPathInfo());
         });
+        
+        $path_info = C::getPathInfo();
         $admin = SessionService::G()->getCurrentAdmin();
-        //App::getRouteCallingMethod();
-        $path_info = C::Server('PATH_INFO');
-        // 我们把路径拿过来
-        $flag = AdminService::G()->checkPermission($admin,$path_info); // 这里还要对改名后的处理呢，怎么办？
+        $flag = AdminService::G()->checkPermission($admin,$path_info);
+         
         if(!$flag){
             C::Exit404();
             return;
         }
-        $menu = AdminService::G()->getMenu($admin['id']);
+        ///////////////// 正常流程
+        $this->initViewData($admin, $path_info);
+    }
+    protected function initViewData($admin, $path_info)
+    {
+        $menu = AdminService::G()->getMenu($admin['id'],$path_info);
         C::assignViewData('menu', $menu);
-        parent::initialize();
+        C::setViewHeadFoot('header','footer');
     }
 }
