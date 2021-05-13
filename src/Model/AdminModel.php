@@ -10,6 +10,7 @@ use DuckAdmin\App\ModelHelper as M;
 class AdminModel extends BaseModel
 {
     protected $table_name ='admin';
+
     public function login($username,$password)
     {
         $sql = "select * from 'TABLE' where username = ?";

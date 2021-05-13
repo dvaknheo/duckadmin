@@ -12,18 +12,20 @@ use DuckAdmin\App\ModelHelper as M;
 class BaseModel
 {
     use SingletonExTrait;
+    //use ModelHelperTrait;
     
     protected $table_name;
     
     protected function table()
     {
         if(!isset($this->table_name)){
-            // 我们根据类名，获取表名 static::class
+            //TODO  我们根据类名，获取表名 static::class
         }
         return $this->table_name;
     }
     protected function prepare($sql)
     {
+        // 用 '' 是因为正常 状态下不会转码
         return str_replace("'TABLE'",$this->table(), $sql);
     }
     public function getList(int $page = 1, int $page_size = 10)
@@ -57,12 +59,12 @@ class BaseModel
     }
     public function add($data)
     {
-        $ret = M::DB()->insertData($this->table_name, $data);
+        $ret = M::DB()->insertData($this->table(), $data);
         return $ret;
     }
     public function update($id, $data)
     {
-        $ret = M::DB()->updateData($this->table_name, $id, $data);
+        $ret = M::DB()->updateData($this->table(), $id, $data);
         
         return $ret;
     }

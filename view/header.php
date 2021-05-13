@@ -86,7 +86,7 @@ $tree = [
       <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
       <ul class="layui-nav layui-nav-tree">
         <li class="layui-nav-item">
-            <?=buildtree($tree);?>
+            <?php __display('inc_side_menu',['nodes' => $tree]);?>
         </li>
         <li class="layui-nav-item">
           <a href="javascript:;">----分割线----</a>
@@ -107,49 +107,3 @@ $tree = [
 
   <div class="layui-body" style="padding: 15px;">
 <!-- -->
-<?php
-function buildtree($nodes)
-{
-    $ret ='';
-    foreach($nodes as $v)
-    {
-        $ret.='<li class="layui-nav-item">';
-        $ret.="\n";
-        $href= !isset($v['children'])?$v['href']:'javascript:;';
-        $name = $v['name'];
-        $ret.="<a href=\"$href\">$name</a>\n";
-        if(isset($v['children'])){
-        $ret.=<<<EOT
-    <dl class="layui-nav-child">
-
-EOT;
-            foreach($v['children'] as $v){
-                $ret.="<dd>". buildnode($v) ."</dd>\n";
-            }
-            $ret.="</dl>\n";
-        }
-    }
-    return $ret;
-}
-function buildnode($node)
-{
-    $href= !isset($node['children'])?$node['href']:'javascript:;';
-    $name = $node['name'];
-    $ret ='';
-    $ret.=<<<EOT
-    <a href="$href">$name</a>
-
-EOT;
-
-    if(isset($node['children'])){
-        $ret.=<<<EOT
-    <dl class="layui-nav-child">
-
-EOT;
-        foreach($node['children'] as $v){
-            $ret.="<dd>". buildnode($v) ."</dd>\n";
-        }
-        $ret.="</dl>\n";
-    }
-    return $ret;
-}
