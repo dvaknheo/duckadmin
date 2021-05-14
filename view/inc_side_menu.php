@@ -1,3 +1,4 @@
+<!-- side menu start -->
 <?php
 foreach($nodes as $v) {
     $href= !isset($v['children'])?$v['href']:'javascript:;';
@@ -20,3 +21,5 @@ foreach($nodes as $v) {
 <?php
     }
 }
+?>
+<!-- side menu end -->

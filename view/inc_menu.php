@@ -1,3 +1,4 @@
+<!-- menu start -->
 <?php
 $href = !isset($children)?$href:'javascript:;';
 $name = $name;
@@ -19,3 +20,4 @@ $name = $name;
 <?php
     }
 ?>
+<!-- menu end -->

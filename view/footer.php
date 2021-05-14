@@ -1,4 +1,6 @@
-  <script src="/layui/layui.js"></script>
+<!-- foot -->
+<script src="/layui/layui.js"></script>
+
 
 <script>
 
