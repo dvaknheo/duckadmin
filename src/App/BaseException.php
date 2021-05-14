@@ -12,9 +12,4 @@ use DuckAdmin\App\App;
 class BaseException extends \Exception
 {
     use ThrowOnTrait;
-    
-    public function display($ex)
-    {
-        App::OnDefaultException($ex);
-    }
 }

@@ -50,7 +50,7 @@ class BaseModel
         foreach($a as $k => $v){
             $f[]= $k . ' = ' . M::Db()->quote($v);
         }
-        $frag=implode(', ',$f);
+        $frag=implode('and ',$f);
         
         $sql = "select * from 'TABLE' where ".$frag;
         $sql = $this->prepare($sql);

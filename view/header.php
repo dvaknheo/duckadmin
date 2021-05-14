@@ -21,72 +21,25 @@
     <ul class="layui-nav layui-layout-right">
       <li class="layui-nav-item">
         <a href="javascript:;">
-          <img src="" class="layui-nav-img">
-          <?= '【admin】'?>（<?= '【超级管理员】'?>）
+          <i class="layui-icon layui-icon-friends" style="color: #1E9FFF;"></i>  
+          <?=__h($admin['nickname'])?>
+          （<i class="layui-icon layui-icon-group" style="color: #1E9FFF;"></i>
+            分组<?=__h($admin['role'])?>）
         </a>
         <dl class="layui-nav-child">
           <dd><a href="">修改密码</a></dd>
-          <dd><a href="<?=$url_logout?>">登出</a></dd>
+          <dd><a href="<?=__url('logout')?>">登出</a></dd>
         </dl>
       </li>
     </ul>
   </div>
-<?php
-$tree = [
-    'a1'=>[
-        'name'=>'a1',
-        'href'=>'javascript:;',
-
-    ],
-    'a2'=>[
-        'name'=>'a2',
-        'href'=>'javascript:;',
-    ],
-    'a3'=>[
-        'name'=>'a3',
-        'href'=>'javascript:;',
-    ],
-    'a4'=>[
-        'name'=>'a4',
-        'href' => 'abc',
-        'children'=>[
-            'a41'=>[
-                'name'=>'a4-1',
-                'href'=>'javascript:;',
-            ],
-            'a42'=>[
-                'name'=>'a4-2',
-                'href'=>'javascript:;',
-            ],
-            'a43'=>[
-                'name'=>'a4-3',
-                'href' => 'abc',
-                'children'=>[
-                    'a431'=>[
-                        'name'=>'a4-3-1',
-                        'href'=>'#4ab',
-                    ],
-                    'a432'=>[
-                        'name'=>'a4-3-2',
-                        'href'=>'#ddd',
-                    ],
-                    'a433'=>[
-                        'name'=>'a4-3-3',
-                        'href' => '#abc',
-                    ],
-                ],
-            ],
-        ],
-    ],
-];
-?>
   <div class="layui-side layui-bg-black">
     <div class="layui-side-scroll">
     
       <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
       <ul class="layui-nav layui-nav-tree">
         <li class="layui-nav-item">
-            <?php __display('inc_side_menu',['nodes' => $tree]);?>
+            <?php // __display('inc_side_menu',['nodes' => $tree]);?>
         </li>
         <li class="layui-nav-item">
           <a href="javascript:;">----分割线----</a>
@@ -94,10 +47,10 @@ $tree = [
         <li class="layui-nav-item">
         <a href="javascript:;">超级管理员专属</a>
         <dl class="layui-nav-child">
-            <dd><a href="javascript:;">管理员管理</a></dd>
-            <dd><a href="javascript:;">职务(角色)管理</a></dd>
-            <dd><a href="javascript:;">菜单和权限</a></dd>
-            <dd><a href="javascript:;">操作日志</a></dd>
+            <dd><a href="/admin/index">管理员管理</a></dd>
+            <dd><a href="/role/index">职务(角色)管理</a></dd>
+            <dd><a href="/menu/index;">菜单和权限</a></dd>
+            <dd><a href="/admin/log">操作日志</a></dd>
         <dl>
         </li>
 

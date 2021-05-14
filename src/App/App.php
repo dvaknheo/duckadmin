@@ -22,7 +22,7 @@ class App extends DuckPhp
     ];
     public function runAsPlugin()
     {
-        //
+        //这里是初始化基类，然后把自己当插件运行
     }
     public function command_test()
     {

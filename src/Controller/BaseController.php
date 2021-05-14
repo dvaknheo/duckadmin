@@ -35,7 +35,7 @@ class BaseController
         $path_info = C::getPathInfo();
         $admin = SessionService::G()->getCurrentAdmin();
         $flag = AdminService::G()->checkPermission($admin,$path_info);
-         
+        
         if(!$flag){
             C::Exit404();
             return;
@@ -47,6 +47,7 @@ class BaseController
     {
         $menu = AdminService::G()->getMenu($admin['id'],$path_info);
         C::assignViewData('menu', $menu);
+        C::assignViewData('admin', $admin);
         C::setViewHeadFoot('header','footer');
     }
 }

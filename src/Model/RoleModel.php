@@ -6,7 +6,7 @@
 
 namespace DuckAdmin\Model;
 
-class AdminRole extends BaseModel
+class RoleModel extends BaseModel
 {
-
+    
 }
