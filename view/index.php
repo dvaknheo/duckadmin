@@ -94,7 +94,7 @@ view\DuckAdimin\index.php
             </div>
             <div class="layui-form-item">
 				<input placeholder="验证码 : " type="text" maxlength="4" name="captcha" hover class="code layui-input layui-input-inline"/>
-				<img id="codeimg" class="codeImage" />
+				<img id="codeimg" class="codeImage" src="<?=__url('captcha')?>" />
             </div>
             <div class="layui-form-item">
 				<input type="checkbox" name="remember" title="30天内自动登录" lay-skin="primary" checked>
@@ -109,6 +109,21 @@ view\DuckAdimin\index.php
         </div>
     </div>
 <!-- -->
+
+
+<script src="/layui/layui.js"></script>
+<script>
+var error=<?=json_encode($error)?>
+</script>
+<script>
+layui.use('layer', function(){
+  var layer = layui.layer;
+  if(error){
+  layer.msg(error,{icon:2});
+  }
+});     
+
+</script>
   </div>
 	</body>
 </html>
