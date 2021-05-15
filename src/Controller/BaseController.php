@@ -6,10 +6,8 @@
 
 namespace DuckAdmin\Controller;
 
-use DuckAdmin\App\BaseController as Base;
 use DuckAdmin\App\SingletonExTrait;
 use DuckAdmin\App\ControllerHelper as C;
-
 use DuckAdmin\Service\AdminService;
 use DuckAdmin\Service\SessionService;
 use DuckAdmin\Service\ServciceException;
@@ -29,11 +27,12 @@ class BaseController
     protected function initialize()
     {
         C::assignExceptionHandler(ServciceException::class, function(){
+            // 这里应该调整成可调的
             C::ExitRouteTo('login?r=' . C::getPathInfo());
         });
         
-        $path_info = C::getPathInfo();
         $admin = SessionService::G()->getCurrentAdmin();
+        $path_info = C::getPathInfo();
         $flag = AdminService::G()->checkPermission($admin,$path_info);
         
         if(!$flag){
@@ -49,5 +48,20 @@ class BaseController
         C::assignViewData('menu', $menu);
         C::assignViewData('admin', $admin);
         C::setViewHeadFoot('header','footer');
+    }
+    public static function CheckPerMission()
+    {
+        $admin = SessionService::G()->getCurrentAdmin();
+        $flag = AdminService::G()->checkPermission($admin,$path_info);
+        
+        return $flag;
+    }
+    public static function X()
+    {
+        //
+    }
+    protected static function SetSuccessMsg($msg)
+    {
+        //TODO 这里设置 JsonView 的正常返回消息。
     }
 }

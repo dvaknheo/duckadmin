@@ -10,5 +10,5 @@ use DuckPhp\Helper\BusinessHelper as Helper;
 
 class BusinessHelper extends Helper
 {
-    // override or add your code here
+    // 作为库，我们提供一些方法给外界用
 }

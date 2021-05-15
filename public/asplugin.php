@@ -3,6 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+require_once(__DIR__.'/../../DNMVCS/autoload.php');    //@DUCKPHP_HEADFILE
 
 require_once(__DIR__.'/../vendor/autoload.php');    //@DUCKPHP_HEADFILE
 
@@ -11,7 +12,7 @@ $options = [
     'ext'=>[
         \DuckAdmin\App\App::class =>[
             //'xxxxxxxxxxxxxxx' => true,
-            'plugin_url_prefix'=>'/admin',
+            //'plugin_url_prefix'=>'/admin',
         ],
     ],
 ];
@@ -33,7 +34,7 @@ $options = [
             return true;
         });
 });
-function action_index()
+function action_indexx()
 {
     echo '正在使用插件模式';
 }

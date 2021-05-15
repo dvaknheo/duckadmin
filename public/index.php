@@ -11,5 +11,5 @@ $options = [
     'is_debug'=>true,
     'use_setting_file'=>true,
 ];
-//\DuckAdmin\App\App::RunAsPlugin($options);
-\DuckAdmin\App\App::RunQuickly($options);
+DuckAdmin\App\App::RunAsPlugin($options);
+//\DuckAdmin\App\App::RunQuickly($options);

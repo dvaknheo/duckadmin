@@ -25,7 +25,7 @@ class BaseModel
     }
     protected function prepare($sql)
     {
-        // 用 '' 是因为正常 状态下不会转码
+        // 用单引号 是因为正常 状态下不会转码
         return str_replace("'TABLE'",$this->table(), $sql);
     }
     public function getList(int $page = 1, int $page_size = 10)

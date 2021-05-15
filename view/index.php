@@ -24,6 +24,9 @@
 <!-- -->
 
 <pre>
+我们还应该添加是否安装的提示
+
+
 这里是更多说明
 目前系统运行方式为
 [V] 直接运行
@@ -36,11 +39,14 @@ DuckAdmin 是用来给 DuckPhp 项目做二次开发用的。
 
 你应该在调整选项
 ```php
-$options['ext'][\DuckAdmin\App\App::class] = true;
+$options['ext'][\DuckAdmin\App\App::class] = [];
 
 ```
 
 安装要点：
+
+
+
 
 数据库前缀。
 

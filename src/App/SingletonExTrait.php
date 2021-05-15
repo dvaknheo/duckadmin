@@ -5,8 +5,8 @@
  */
 
 namespace DuckAdmin\App;
-
 trait SingletonExTrait
 {
+// 用于给 Base 隔离 DuckPhp 命名空间
     use \DuckPhp\SingletonEx\SingletonExTrait;
 }
