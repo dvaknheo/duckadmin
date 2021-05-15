@@ -20,8 +20,10 @@ class App extends DuckPhp
         
         //'path_info_compact_enable' => false,        
     ];
-    public function runAsPlugin()
+    public static function RunAsPlugin($options, $plugin_options = [])
     {
+        $options['ext'][static::class] = $plugin_options;
+        DuckPhp::RunQuickly();
         //这里是初始化基类，然后把自己当插件运行
     }
     public function command_test()

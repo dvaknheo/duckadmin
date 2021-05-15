@@ -19,9 +19,10 @@
   <div class="layui-container">
 <!-- -->
 
-    <div class="layui-row " style="border:1px solid;">
+    <div class="layui-row " style="border-left:1px solid;border-right:1px solid;padding:1em;">
 		<div class="layui-col-md8" >
 <!-- -->
+
 <pre>
 这里是更多说明
 目前系统运行方式为
@@ -33,7 +34,7 @@
 
 DuckAdmin 是用来给 DuckPhp 项目做二次开发用的。
 
-你应该在这
+你应该在调整选项
 ```php
 $options['ext'][\DuckAdmin\App\App::class] = true;
 
@@ -47,12 +48,16 @@ $options['ext'][\DuckAdmin\App\App::class] = true;
 使用要点
 
 你后台的控制器类， 
+或者在你的控制器类构造函数里加
+
+\DuckAdmin\App\ControllerHelper::CheckPermission(); 检查权限
+
+或者
 extends \DuckAdmin\Controller\BaseController
 
 
-或者在你的控制器类构造函数里加
 
-DuckAdmin\App\ControllerHelper::checkPermission(); 检查权限
+\DuckAdmin\App\ControllerHelper::CheckPermission(); 检查权限
 
 
 魔改 DuckAdmin
@@ -72,7 +77,6 @@ view\DuckAdimin\index.php
 
 		</div>
 		<div class="layui-col-md4">
-        <div style="padding:1em;">
 		<form method="post" class="layui-form" style="border:1px solid; margin:1em;">
             <div class="title" style="font-size:big;background-color:#5FB878;"><h1>登录</h1></div>
             <div style="padding:1em;">
@@ -94,9 +98,8 @@ view\DuckAdimin\index.php
 					登 入
 				</button>
 			</div>
-            </div
+            </div>
 		</form>
-        </div>
         </div>
     </div>
 <!-- -->
