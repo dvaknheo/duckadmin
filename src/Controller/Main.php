@@ -28,7 +28,15 @@ class Main extends BaseController
     {
         C::Show(get_defined_vars(), 'login');
     }
+    public function do_index()
+    {
+        $this->doLogin();
+    }
     public function do_login()
+    {
+        $this->doLogin();
+    }
+    protected function doLogin()
     {
         C::assignExceptionHandler(\Exception::class,function($ex){
             $error = $ex->getMessage();
@@ -43,11 +51,15 @@ class Main extends BaseController
     public function logout()
     {
         SessionService::G()->logout();
-        C::RedirectRouteTo('index');
+        C::ExitRouteTo('');
+        
     }
-    public function xx()
+    public function captcha()
     {
-        captcha();
+        try{
+            echo captcha();
+            
+        }catch(\Throwable $ex){var_dump($ex);}
     }
     public function verify()
     {

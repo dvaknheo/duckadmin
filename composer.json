@@ -25,6 +25,7 @@
         "yzalis/identicon": "^2.0",
         "topthink/think-captcha": "1.0.7",
         "topthink/think-orm": "^2.0",
-        "topthink/think-validate": "*"
+        "topthink/think-validate": "*",
+        "gregwar/captcha": "^1.1"
 	}
 }
