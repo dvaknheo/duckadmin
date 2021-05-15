@@ -23,8 +23,10 @@
         <a href="javascript:;">
           <i class="layui-icon layui-icon-friends" style="color: #1E9FFF;"></i>  
           <?=__h($admin['nickname'])?>
-          （<i class="layui-icon layui-icon-group" style="color: #1E9FFF;"></i>
-            分组<?=__h($admin['role'])?>）
+          (
+          <i class="layui-icon layui-icon-group" style="color: #1E9FFF;"></i>
+            新人<?=__h($admin['role'])?>
+        )
         </a>
         <dl class="layui-nav-child">
           <dd><a href="">修改密码</a></dd>
@@ -47,10 +49,10 @@
         <li class="layui-nav-item">
         <a href="javascript:;">超级管理员专属</a>
         <dl class="layui-nav-child">
-            <dd><a href="/admin/index">管理员管理</a></dd>
-            <dd><a href="/role/index">职务(角色)管理</a></dd>
-            <dd><a href="/menu/index;">菜单和权限</a></dd>
-            <dd><a href="/admin/log">操作日志</a></dd>
+            <dd><a href="/Admin/index">管理员管理</a></dd>
+            <dd><a href="/Role/index">职务(角色)管理</a></dd>
+            <dd><a href="/Menu/index">菜单和权限</a></dd>
+            <dd><a href="/Admin/log">操作日志</a></dd>
         <dl>
         </li>
 

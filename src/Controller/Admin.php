@@ -20,6 +20,7 @@ class Admin extends BaseController
     public function index()
     {
         $data = AdminService::G()->getAdminList();
+        
         C::Show($data);
     }
 
@@ -30,7 +31,6 @@ class Admin extends BaseController
     public function add()
     {
         $post = C::Post();
-        C::WrapException(AdminService::class);
         $result = $data ? AdminService::G()->addAdmin($post) : [];
         C::SetSuccessMsg('添加成功');
         C::Show([]);
@@ -49,19 +49,9 @@ class Admin extends BaseController
             'model' => $model
         ]);
     }
-
-    /**
-     * 禁用，启用
-     */
-    public function status($id)
+    public function log()
     {
-        $status = Request::post('status');
-        
-
-
-        $this->jsonApi('更新成功');
     }
-
     /**
      * 删除
      */
@@ -205,59 +195,5 @@ class Admin extends BaseController
             'admin' => $admin,
             'permissions' => $permissions,
         ]);
-    }
-
-    /**
-     * 回收站
-     */
-    public function recycle()
-    {
-        if (Request::isAjax()){
-            if (Request::isPost()){
-                $ids = Request::param('ids');
-                if (!is_array($ids)) return ['msg'=>'参数错误','code'=>'201'];
-                try{
-                    if(Request::param('type')){
-                        $data = $this->model->onlyTrashed()->whereIn('id', $ids)->select();
-                        foreach($data as $k){
-                            $k->restore();
-                        }
-                    }else{
-                        $this->model->destroy($ids,true);
-                    }
-                }catch (\Exception $e){
-                    $this->jsonApi('操作失败',201,$e->getMessage());
-                }
-                $this->jsonApi('操作成功');
-            }
-            //按用户名
-            if ($search = input('get.username')) {
-                $this->where[] = ['username', 'like', "%" . $search . "%"];
-            }
-            $list = $this->model->onlyTrashed()->order('id','desc')->withoutField('password,token')->where($this->where)->paginate(Request::get('limit'));
-            $this->jsonApi('', 0, $list->items(), ['count' => $list->total(), 'limit' => Request::get('limit')]);
-        }
-        return $this->fetch();
-    }
-
-    public function log()
-    {
-        if (Request::isAjax()) {    
-            if ($search = input('get.uid')) {
-                $this->where[] = ['uid', '=',$search];
-            }
-            $list = (new \app\admin\model\AdminAdminLog)->with('log')->order('id','desc')->where($this->where)->paginate(Request::get('limit'));
-            $this->jsonApi('', 0, $list->items(), ['count' => $list->total(), 'limit' => Request::get('limit')]);
-        }
-        return $this->fetch();
-    }
-
-    /**
-     * 清空日志
-     */
-    public function removeLog()
-    {
-        Db::name('admin_admin_log')->delete(true);
-        $this->jsonApi('删除成功');
     }
 }

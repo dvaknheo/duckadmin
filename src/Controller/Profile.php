@@ -26,24 +26,5 @@ class Profile extends BaseController
     public function pass()
     {
     }
-    //清除缓存
-    public function cache()
-    {
-        //
-    }
-
-    //菜单
-    public function menu()
-    {
-
-    }
-
-    //欢迎页
-    public function home()
-    {
-    }
-
-
-
 
 }

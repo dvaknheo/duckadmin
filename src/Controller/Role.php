@@ -5,19 +5,16 @@
  */
 
 namespace DuckAdmin\Controller;
+use DuckAdmin\App\ControllerHelper as C;
 
 class Role extends BaseController
 {
-    
-    protected function initialize()
-    {
-
-    }
     /**
      * 角色
      */
     public function index()
     {
+        C::Show(get_defined_vars(),'role/index');
     }
 
     /**
@@ -25,6 +22,7 @@ class Role extends BaseController
      */
     public function add()
     {
+        C::Show(get_defined_vars());
     }
 
      /**
@@ -38,20 +36,6 @@ class Role extends BaseController
      * 删除
      */
     public function remove($id)
-    {
-    }
-
-    /**
-     * 分配权限
-     */
-    public function permission($id)
-    {
-    }
-
-    /**
-     * 回收站
-     */
-    public function recycle()
     {
     }
 }

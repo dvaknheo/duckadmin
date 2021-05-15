@@ -26,6 +26,7 @@ class App extends DuckPhp
     }
     public function command_test()
     {
+        // 我们还要一些特殊的方法，不在 web 下的操作的危险命令，如彻底抹杀某个员工等
         // 测试自留地
         // 我们测试一下
     }
