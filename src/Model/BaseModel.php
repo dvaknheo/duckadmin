@@ -8,18 +8,25 @@ namespace DuckAdmin\Model;
 
 use DuckAdmin\App\SingletonExTrait;
 use DuckAdmin\App\ModelHelper as M;
+use DuckAdmin\App\App;
 
 class BaseModel
 {
     use SingletonExTrait;
     //use ModelHelperTrait;
     
-    protected $table_name;
+    protected $table_name=null;
     
     protected function table()
     {
         if(!isset($this->table_name)){
-            //TODO  我们根据类名，获取表名 static::class
+            $t = explode('\\',static::class);
+            $class = array_pop($t);
+            
+            $table_name = 'admin_'.strtolower(substr($class,0,-5));
+            $table_name = ($table_name==='admin_admin')? 'admin' : $table_name;
+            $table_name = App::Setting('duckadmin_pre_prefix').$table_name;
+            $this->table_name = $table_name;
         }
         return $this->table_name;
     }

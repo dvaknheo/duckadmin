@@ -2,6 +2,7 @@
 namespace DuckAdmin\Service;
 
 use DuckAdmin\Model\AdminModel;
+use DuckAdmin\Model\RoleModel;
 
 class AdminService extends BaseService
 {
@@ -17,6 +18,17 @@ class AdminService extends BaseService
         $ret = AdminModel::G()->getList($page, $page_size);
         return $ret;
     }
+    public function getAdmin($id)
+    {
+        $ret = AdminModel::G()->get($id);
+        ServiceException::ThrowOn(!$ret, '没有这个管理员');
+        $ret['role'] = RoleModel::G()->getRoleName($ret['role_id']);
+        return $ret;
+    }
+    public function getRoles()
+    {
+        return RoleModel::G()->getRoles();
+    }
     ///////////////////
     public function add($data)
     {
@@ -26,7 +38,7 @@ class AdminService extends BaseService
     public function checkPermission($admin, $path_info)
     {
         $admin=is_array($admin)? $admin: AdminModel::G()->get($admin);
-        ServiceException::ThrowOn(!$admin, '请重新登录');
+        ServiceException::ThrowOn(!$admin, '没有这个管理员');
         if($admin['id']==1){
             return true;
         }
