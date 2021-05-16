@@ -47,13 +47,15 @@ class Main extends BaseController
             C::Show(get_defined_vars(),'index');
         });
         $post = C::POST();
-        $admin = AdminService::G()->login($post);
         SessionService::G();
-        //->checkCaptcha($post['captcha']);
+        
+        // C::CheckCapthca();
         $builder = new CaptchaBuilder();
-        $flag = $builder->testPhrase($post['captcha']);
+        $flag = PhraseBuilder::comparePhrases($_SESSION['phrase']??'', $post['captcha']);
+        
         SessionServiceException::ThrowOn(!$flag,"验证码错误");
- 
+         $admin = AdminService::G()->login($post);
+
         SessionService::G()->setCurrentAdmin($admin,$post['remember']);
         C::ExitRouteTo('profile/index');
     }
@@ -65,14 +67,16 @@ class Main extends BaseController
     }
     public function captcha()
     {
+        //C::ShowCaptcha();
+        
         $phraseBuilder = new PhraseBuilder(4, '0123456789');
         $builder = new CaptchaBuilder(null, $phraseBuilder);
-        $builder->build();
         SessionService::G();
         
         header('Content-type: image/jpeg');
         header('Cache-Control: no-cache, no-store, max-age=0, must-revalidate');
-        $builder->output();
+        $builder->build()->output();
+        $_SESSION['phrase'] = $builder->getPhrase();
     }
     public function verify()
     {

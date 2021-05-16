@@ -3,9 +3,9 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace SimpleAuth\Service;
+namespace DuckAdmin\Service;
 
-use SimpleAuth\Base\BaseException;
+use DuckAdmin\App\BaseException;
 
 class SessionServiceException extends BaseException
 {

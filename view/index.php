@@ -94,7 +94,12 @@ view\DuckAdimin\index.php
             </div>
             <div class="layui-form-item">
 				<input placeholder="验证码 : " type="text" maxlength="4" name="captcha" hover class="code layui-input layui-input-inline"/>
-				<img id="codeimg" class="codeImage" src="<?=__url('captcha')?>" />
+				<a href="javascript:;" onclick="refresh_captcha()"><img id="codeimg" class="codeImage" src="<?=__url('captcha')?>" /></a>
+                <script>
+                function refresh_captcha(){
+                    document.getElementById('codeimg').src=document.getElementById('codeimg').src
+                }
+              </script>
             </div>
             <div class="layui-form-item">
 				<input type="checkbox" name="remember" title="30天内自动登录" lay-skin="primary" checked>
