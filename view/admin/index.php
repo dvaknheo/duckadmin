@@ -50,7 +50,7 @@
             <td><?=$v['id']?></td>
             <td><?=__h($v['nickname'])?></td>
             <td><?=__h($v['username'])?></td>
-            <td>TODO</td>
+            <td><?=__h($roles[$v['role_id']])?></td>
             <td>
                 <a href="<?=__url('admin/edit?id='.$v['id'])?>">编辑</a>
                 <a href="#">删除</a>

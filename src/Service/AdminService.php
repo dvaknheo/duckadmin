@@ -30,11 +30,17 @@ class AdminService extends BaseService
         return RoleModel::G()->getRoles();
     }
     ///////////////////
-    public function add($data)
+    public function addAdmin($data)
     {
-        $ret = AdminModel::G()->addData($data['username'],$data['nick'],$data['password']);
+        $ret = AdminModel::G()->addData($data);
         return $ret;
     }
+    public function updateAdmin($data)
+    {
+        $ret = AdminModel::G()->updateData($data['id'], $data);
+        return $ret;
+    }
+    ////////////
     public function checkPermission($admin, $path_info)
     {
         $admin=is_array($admin)? $admin: AdminModel::G()->get($admin);

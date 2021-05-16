@@ -29,5 +29,14 @@ class AdminModel extends BaseModel
     {
         return parent::getList($page, $page_size);
     }
+    //////////
+    public function addData($data)
+    {
+        return M::Db()->insertData($this->table(), $data);
+    }
+    public function updateData($id,$data)
+    {
+        return M::Db()->updateData($this->table(), $id, $data);
+    }
 
 }

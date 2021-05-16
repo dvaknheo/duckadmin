@@ -16,7 +16,8 @@ class Admin extends BaseController
     public function index()
     {
         $data = AdminService::G()->getAdminList(C::PageNo(),C::PageSize());
-        
+                $roles = AdminService::G()->getRoles();
+        $data['roles'] = $roles;
         C::Show($data);
     }
 
@@ -27,9 +28,15 @@ class Admin extends BaseController
     public function add()
     {
         $post = C::Post();
-        $result = $post ? AdminService::G()->addAdmin($post) : [];
-        //C::SetSuccessMsg('添加成功');
-        C::Show([]);
+        if($post){
+            AdminService::G()->addAdmin($post);
+            C::ExitRouteTo('Admin/index');
+        }
+        $roles = AdminService::G()->getRoles();
+        $data=[
+            'roles' => $roles,
+        ];
+        C::Show($data);
     }
 
      /**
@@ -37,8 +44,13 @@ class Admin extends BaseController
      */
     public function edit()
     {
-        $admin =  AdminService::G()->getAdmin(C::GET('id'));
-        $roles =  AdminService::G()->getRoles();
+        $post = C::Post();
+        if($post){
+            AdminService::G()->updateAdmin($post);
+            C::ExitRouteTo('Admin/index');
+        }
+        $admin = AdminService::G()->getAdmin(C::GET('id'));
+        $roles = AdminService::G()->getRoles();
         $data=[
             'admin' => $admin,
             'roles' => $roles,

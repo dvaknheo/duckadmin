@@ -1,4 +1,4 @@
-<form  method="post" class="layui-form">
+<form method="post" class="layui-form">
     <div class="mainBox">
         <div class="main-container">
             <div class="layui-form-item">
@@ -20,9 +20,17 @@
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label">职位(这里应该是个下拉列表)</label>
+                <label class="layui-form-label">职位</label>
                 <div class="layui-input-block">
-                    <input type="password" name="role"  placeholder="请输入密码"  lay-verify="required" autocomplete="off"  class="layui-input">
+                    <select name="role_id" lay-verify="">
+<?php
+foreach($roles as $k => $v){
+?>
+                    <option value="<?=$k?>" <?php $k==2?'selected':''?> ><?=__h($v)?></option>
+<?php
+}
+?>
+                    </select>     
                 </div>
             </div>
         </div>
