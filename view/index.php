@@ -4,10 +4,6 @@
 		<meta charset="utf-8">
 		<title></title>
 		<link href="/layui/css/layui.css" rel="stylesheet" />
-        <style>
-
-
-        </style>
 	</head>
 	<body>
     
@@ -22,62 +18,85 @@
     <div class="layui-row " style="border-left:1px solid;border-right:1px solid;padding:1em;">
 		<div class="layui-col-md8" >
 <!-- -->
+<h1>欢迎使用 DuckAdmin</h1>
 
-<pre>
-我们还应该添加是否安装的提示
-
-
-这里是更多说明
-目前系统运行方式为
-[V] 直接运行
-[X] 插件模式运行
-
+<hr />
+<?php
+if(defined('DUCKADMIN_DIRECT_MODE')){
+?>
+<blockquote class="layui-elem-quote">
+你使用的是直接调用的模式
 请注意 DuckAdmin 是 Composer Library 。而不是 Composer Project 。
 简而言之，请勿在 DuckAdmin 作为你的桩代码来修改，而是在你的工程里引入。
+</blockquote>
 
+<?php
+}
+?>
+<h2>安装</h2>
+<pre>
 DuckAdmin 是用来给 DuckPhp 项目做二次开发用的。
-
 你应该在调整选项
-```php
-$options['ext'][\DuckAdmin\App\App::class] = [];
+<pre class="layui-code">
+$options['ext'][\DuckAdmin\Api\DuckAdmin::class] = [
+    // 你要添加的选项
+];
+</pre>
+TODO 安装要点：<br />
 
-```
+TODO 数据库前缀
 
-安装要点：
-
-
-
-
-数据库前缀。
-
-
-使用要点
-
-你后台的控制器类， 
-或者在你的控制器类构造函数里加
-
-\DuckAdmin\App\ControllerHelper::CheckPermission(); 检查权限
-
-或者
-extends \DuckAdmin\Controller\BaseController
-
-
-
-\DuckAdmin\App\ControllerHelper::CheckPermission(); 检查权限
-
-
-魔改 DuckAdmin
+<h2>覆盖这个View</h2>
 
 最必须的魔改： 这个首页要替换
-在你的
-建立了：
-
-view\DuckAdimin\index.php 
+在你的工程添加，<code>view/DuckAdimin/index.php</code>
 
 这个文件，重新设立你的入口页面。
+<br>
+
+<h2>使用 DuckAdmin 的服务</h2>
+控制器助手类： 
+<pre class="layui-code">
+class MyController
+{
+    public function __contruct()
+    {
+        \DuckAdmin\Api\DuckAdminControllerApi::CheckPermission();
+        // 这使得你的控制器必须有权限才能访问。
+    }
+}
+</pre>
+业务助手类： 
+<pre class="layui-code">
+class MyBusiness
+{
+    \DuckAdmin\Api\DuckAdminServiceApi::Foo();
+}
+</pre>
+
+详细请了解控制器助手类有什么方法，请查阅 DuckAdmin, 代码
+<br >
+<h2>命令行</h2>
+
+DuckAdmin 的高级功能都放在命令行里， 运行 --help 指令就能知道。
+<pre class="layui-code">
+duckphp-project --help
+</pre>
 
 
+</pre>
+<h2>覆盖相应类的实现</h2>
+根据 DuckPhp 系统 在你的 初始化 onInit 里添加替换的 
+<pre class="layui-code">
 
+class App
+{
+    public function onInit()
+    {
+        \DuckAdmin\Controller\Profile::G(MyProfile::G());
+        \DuckAdmin\Service\ProfileService::G(MyProfileService::G());
+    }
+}
 </pre>
 <!-- -->
 
@@ -118,7 +137,7 @@ view\DuckAdimin\index.php
 
 <script src="/layui/layui.js"></script>
 <script>
-var error=<?=json_encode($error)?>
+var error=<?=json_encode($error)?>;
 </script>
 <script>
 layui.use('layer', function(){
@@ -130,5 +149,8 @@ layui.use('layer', function(){
 
 </script>
   </div>
+<div class="layui-footer" style ="background-color:#FAFAFA;padding:1em;text-align:center;">
+感谢 LayUI
+</div>
 	</body>
 </html>

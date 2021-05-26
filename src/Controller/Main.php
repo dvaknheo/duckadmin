@@ -9,8 +9,6 @@ use DuckAdmin\App\ControllerHelper as C;
 use DuckAdmin\Service\AdminService;
 use DuckAdmin\Service\SessionService;
 use DuckAdmin\Service\SessionServiceException;
-use Gregwar\Captcha\CaptchaBuilder;
-use Gregwar\Captcha\PhraseBuilder;
 
 class Main extends BaseController
 {
@@ -46,16 +44,13 @@ class Main extends BaseController
             C::assignViewData(['error'=>$error]);
             C::Show(get_defined_vars(),'index');
         });
+        
+        SessionService::G(); // sessionStart;
+        
         $post = C::POST();
-        SessionService::G();
-        
-        // C::CheckCapthca();
-        $builder = new CaptchaBuilder();
-        $flag = PhraseBuilder::comparePhrases($_SESSION['phrase']??'', $post['captcha']);
-        
+        $flag = BaseController::CheckCapthca($post['captcha']);
         SessionServiceException::ThrowOn(!$flag,"验证码错误");
-         $admin = AdminService::G()->login($post);
-
+        $admin = AdminService::G()->login($post);
         SessionService::G()->setCurrentAdmin($admin,$post['remember']);
         C::ExitRouteTo('profile/index');
     }
@@ -63,24 +58,9 @@ class Main extends BaseController
     {
         SessionService::G()->logout();
         C::ExitRouteTo('');
-        
     }
     public function captcha()
     {
-        //C::ShowCaptcha();
-        
-        $phraseBuilder = new PhraseBuilder(4, '0123456789');
-        $builder = new CaptchaBuilder(null, $phraseBuilder);
-        SessionService::G();
-        
-        header('Content-type: image/jpeg');
-        header('Cache-Control: no-cache, no-store, max-age=0, must-revalidate');
-        $builder->build()->output();
-        $_SESSION['phrase'] = $builder->getPhrase();
-    }
-    public function verify()
-    {
-        captcha_check();
-        //CaptchaService::G()->show();
+        BaseController::ShowCaptcha();
     }
 }

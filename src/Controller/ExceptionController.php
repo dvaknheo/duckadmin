@@ -15,8 +15,9 @@ class ExceptionController
     {
         if (static::class === self::class) {
             //禁止直接访问
-            C::Exit404();  // 助手类，从哪里来。
+            C::Exit404();
         }
         $this->initialize();
     }
+
 }

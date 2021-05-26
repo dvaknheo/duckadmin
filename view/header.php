@@ -12,8 +12,10 @@
   <meta name="format-detection" content="telephone=no">
   
   <link href="/layui/css/layui.css" rel="stylesheet" media="all">
+
 </head>
 <body>
+  <script src="/layui/layui.js"></script>
 <div class="layui-layout layui-layout-admin">
   <div class="layui-header">
     <div class="layui-logo">DuckPhp管理后台</div>

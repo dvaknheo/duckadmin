@@ -8,7 +8,9 @@ namespace DuckAdmin\App;
 
 use DuckPhp\DuckPhp;
 use DuckPhp\Component\AppPluginTrait;
-class App extends DuckPhp
+use DuckAdmin\Service\BaseService;
+use DuckAdmin\Controller\BaseController;
+class DuckAdmin extends DuckPhp
 {
     use AppPluginTrait;
     //@override
@@ -17,8 +19,6 @@ class App extends DuckPhp
         'use_setting_file' => true,
         'error_404' => '_sys/error_404',
         'error_500' => '_sys/error_500',
-        
-        //'path_info_compact_enable' => false,        
     ];
     public static function RunAsPlugin($options, $plugin_options = [])
     {
@@ -31,5 +31,30 @@ class App extends DuckPhp
         // 我们还要一些特殊的方法，不在 web 下的操作的危险命令，如彻底抹杀某个员工等
         // 测试自留地
         // 我们测试一下
+    }
+    /**
+     * 
+     * @return BaseService
+     */
+    public static function Service() : BaseService
+    {
+        return BaseSerivce::G();
+        
+    }
+    /**
+     * 
+     * @return BaseService
+     */
+    public static function XService()
+    {
+        return BaseService::class;
+    }
+    public static function Controller()
+    {
+        return; //BaseControllerProxy::G();
+    }
+    public function foo()
+    {
+
     }
 }

@@ -10,8 +10,10 @@ use DuckAdmin\App\SingletonExTrait;
 use DuckAdmin\App\ControllerHelper as C;
 use DuckAdmin\Service\AdminService;
 use DuckAdmin\Service\SessionService;
-use DuckAdmin\Service\ServciceException;
+use Gregwar\Captcha\CaptchaBuilder;
+use Gregwar\Captcha\PhraseBuilder;
 
+// 我们这里只是偷懒一下啦。
 class BaseController
 {
     use SingletonExTrait;
@@ -26,7 +28,7 @@ class BaseController
     }
     protected function initialize()
     {
-        C::assignExceptionHandler(ServciceException::class, function(){
+        C::assignExceptionHandler(\Exception::class, function(){
             // 这里应该调整成可调的
             C::ExitRouteTo('login?r=' . C::getPathInfo());
         });
@@ -49,6 +51,8 @@ class BaseController
         C::assignViewData('admin', $admin);
         C::setViewHeadFoot('header','footer');
     }
+    //////////////////
+    
     public static function CheckPerMission()
     {
         $admin = SessionService::G()->getCurrentAdmin();
@@ -56,12 +60,16 @@ class BaseController
         
         return $flag;
     }
-    public static function X()
+    protected function CheckCapthca($captcha)
     {
-        //
+        $builder = new CaptchaBuilder();
+        $flag = PhraseBuilder::comparePhrases($_SESSION['phrase']??'', captcha);
     }
-    protected static function SetSuccessMsg($msg)
+    public function CaptchaBuilder()
     {
-        //TODO 这里设置 JsonView 的正常返回消息。
+        $phraseBuilder = new PhraseBuilder(4, '0123456789');
+        $builder = new CaptchaBuilder(null, $phraseBuilder);
+        $builder->build()->output();        
+        $_SESSION['phrase'] = $builder->getPhrase();
     }
 }
