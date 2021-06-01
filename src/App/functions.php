@@ -7,12 +7,12 @@ use DuckAdmin\App\DuckAdmin;
 if (function_exists('duckadmin_res')) {
 
     /**
- * 返回资源地址
- * @param type $path
- */
-function duckadmin_res($path)
-{
-    return DuckAdmin::Url($path);
-}
+    * 返回资源地址
+    * @param type $path
+    */
+    function duckadmin_res($path)
+    {
+    return DuckAdmin::ResUrl($path);
+    }
 
 }

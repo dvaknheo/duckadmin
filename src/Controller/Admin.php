@@ -5,7 +5,7 @@
  */
 
 namespace DuckAdmin\Controller;
-use DuckAdmin\App\ControllerHelper as C;
+use DuckAdmin\Controller\BaseController as C;
 use DuckAdmin\Service\AdminService;
 
 class Admin extends BaseController

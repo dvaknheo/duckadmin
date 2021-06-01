@@ -7,7 +7,7 @@
 namespace DuckAdmin\Controller;
 
 use DuckAdmin\App\BaseController as DuckAdminController;
-use DuckAdmin\App\ControllerHelper as C;
+use DuckAdmin\App\BaseController as C;
 
 // 我们这里只是偷懒一下啦。 等价于 ControllerHelper
 //这里和业务相关，严格禁止第三方 
@@ -47,7 +47,7 @@ class BaseController extends DuckAdminController
         C::setViewHeadFoot('header','footer');
     }
     //////////////////
-    
+/*
     public static function CheckPerMission()
     {
         $admin = SessionService::G()->getCurrentAdmin();
@@ -67,4 +67,5 @@ class BaseController extends DuckAdminController
         $builder->build()->output();        
         $_SESSION['phrase'] = $builder->getPhrase();
     }
+*/
 }

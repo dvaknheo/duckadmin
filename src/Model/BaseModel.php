@@ -6,27 +6,16 @@
 
 namespace DuckAdmin\Model;
 
-use DuckAdmin\App\SingletonExTrait;
-use DuckAdmin\App\ModelHelper as M;
-use DuckAdmin\App\App;
+use DuckAdmin\App\BaseModel as DuckAdminModel;
+use DuckAdmin\App\BaseModel as M;
 
-class BaseModel
-{
-    use SingletonExTrait;
-    //use ModelHelperTrait;
-    
+class BaseModel extends DuckAdminModel
+{    
     protected $table_name=null;
-    
     protected function table()
     {
         if(!isset($this->table_name)){
-            $t = explode('\\',static::class);
-            $class = array_pop($t);
-            
-            $table_name = 'admin_'.strtolower(substr($class,0,-5));
-            $table_name = ($table_name==='admin_admin')? 'admin' : $table_name;
-            $table_name = App::Setting('duckadmin_pre_prefix').$table_name;
-            $this->table_name = $table_name;
+            $this->table_name = M::GetTableByClass(static::class);
         }
         return $this->table_name;
     }

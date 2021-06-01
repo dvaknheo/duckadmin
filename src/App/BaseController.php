@@ -6,9 +6,8 @@
 
 namespace DuckAdmin\App;
 
-use DuckAdmin\App\SingletonExTrait;
 use DuckPhp\Helper\ControllerHelperTrait;
-use DuckPhp\SingletonExTrait;
+use DuckPhp\SingletonEx\SingletonExTrait;
 
 use DuckAdmin\App\ControllerHelper as C;
 use DuckAdmin\Service\AdminService;

@@ -44,6 +44,18 @@ class DuckAdmin extends DuckPhp
      */
     public function command_install()
     {
-         //
+        // 安装命令
+    }
+    public function onPluginModeInit()
+    {
+        require_once __DIR__ .'/functions.php';
+    }
+    public static function ResUrl($path)
+    {
+        return static::G()->_ResUrl($path);
+    }
+    public function _ResUrl($path)
+    {
+        return static::URL($path);
     }
 }

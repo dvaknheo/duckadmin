@@ -5,7 +5,7 @@
  */
 
 namespace DuckAdmin\Controller;
-use DuckAdmin\App\ControllerHelper as C;
+use DuckAdmin\Controller\BaseController as C;
 use DuckAdmin\Service\AdminService;
 use DuckAdmin\Service\SessionService;
 use DuckAdmin\Service\SessionServiceException;
@@ -23,7 +23,7 @@ class Main extends BaseController
     }
     public function index()
     {
-        \DuckAdmin\Service\MySqlDumper::G()->foo();
+        //\DuckAdmin\Service\MySqlDumper::G()->foo();
     
         C::Show(get_defined_vars(), 'index');
     }
