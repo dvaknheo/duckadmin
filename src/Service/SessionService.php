@@ -39,10 +39,13 @@ class SessionService
         unset($_SESSION['admin']);
         App::session_destroy();
     }
-    public function checkCsrf($token)
+    public function getPhrase()
     {
-        $session_token = $_SESSION['_token'] ?? null;
-        ServiceException::ThrowOn($token !== $session_token, 'csrf_token 失败', 419);
+        return $_SESSION['phrase'];
+    }
+    public function setPhrase($phrase)
+    {
+        $_SESSION['phrase'] = $phrase;
     }
     ////////////////////////////////////////////////////////////////////////
     public function csrf_token()

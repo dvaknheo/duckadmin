@@ -6,18 +6,13 @@
 
 namespace DuckAdmin\Controller;
 
-use DuckAdmin\App\SingletonExTrait;
+use DuckAdmin\App\BaseController as DuckAdminController;
 use DuckAdmin\App\ControllerHelper as C;
-use DuckAdmin\Service\AdminService;
-use DuckAdmin\Service\SessionService;
-use Gregwar\Captcha\CaptchaBuilder;
-use Gregwar\Captcha\PhraseBuilder;
 
-// 我们这里只是偷懒一下啦。
-class BaseController
+// 我们这里只是偷懒一下啦。 等价于 ControllerHelper
+//这里和业务相关，严格禁止第三方 
+class BaseController extends DuckAdminController
 {
-    use SingletonExTrait;
-
     public function __construct()
     {
         if (static::class === self::class) {

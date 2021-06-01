@@ -7,8 +7,10 @@
 namespace DuckAdmin\App;
 
 use DuckPhp\ThrowOn\ThrowOnTrait;
-use DuckAdmin\App\App;
 
+/**
+ * 这是系统的错误基类。
+ */
 class BaseException extends \Exception
 {
     use ThrowOnTrait;

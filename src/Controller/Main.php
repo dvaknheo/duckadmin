@@ -23,6 +23,8 @@ class Main extends BaseController
     }
     public function index()
     {
+        \DuckAdmin\Service\MySqlDumper::G()->foo();
+    
         C::Show(get_defined_vars(), 'index');
     }
     public function login()

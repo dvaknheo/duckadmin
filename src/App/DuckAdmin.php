@@ -8,8 +8,10 @@ namespace DuckAdmin\App;
 
 use DuckPhp\DuckPhp;
 use DuckPhp\Component\AppPluginTrait;
-use DuckAdmin\Service\BaseService;
-use DuckAdmin\Controller\BaseController;
+
+/**
+ * 入口类
+ */
 class DuckAdmin extends DuckPhp
 {
     use AppPluginTrait;
@@ -20,11 +22,16 @@ class DuckAdmin extends DuckPhp
         'error_404' => '_sys/error_404',
         'error_500' => '_sys/error_500',
     ];
+    /**
+     * 这里是初始化基类，然后把自己当插件运行
+     * @param array $options
+     * @param type $plugin_options
+     * @return type
+     */
     public static function RunAsPlugin($options, $plugin_options = [])
     {
         $options['ext'][static::class] = $plugin_options;
         return DuckPhp::RunQuickly($options);
-        //这里是初始化基类，然后把自己当插件运行
     }
     public function command_test()
     {
@@ -33,28 +40,10 @@ class DuckAdmin extends DuckPhp
         // 我们测试一下
     }
     /**
-     * 
-     * @return BaseService
+     * 安装的方法
      */
-    public static function Service() : BaseService
+    public function command_install()
     {
-        return BaseSerivce::G();
-        
-    }
-    /**
-     * 
-     * @return BaseService
-     */
-    public static function XService()
-    {
-        return BaseService::class;
-    }
-    public static function Controller()
-    {
-        return; //BaseControllerProxy::G();
-    }
-    public function foo()
-    {
-
+         //
     }
 }
