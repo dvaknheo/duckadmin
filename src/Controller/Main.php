@@ -5,7 +5,7 @@
  */
 
 namespace DuckAdmin\Controller;
-use DuckAdmin\Controller\BaseController as C;
+use DuckAdmin\App\BaseController as C;
 use DuckAdmin\Service\AdminService;
 use DuckAdmin\Service\SessionService;
 use DuckAdmin\Service\SessionServiceException;
@@ -63,6 +63,6 @@ class Main extends BaseController
     }
     public function captcha()
     {
-        BaseController::ShowCaptcha();
+        C::ShowCaptcha();
     }
 }

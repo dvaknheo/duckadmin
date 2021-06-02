@@ -5,13 +5,11 @@
  */
 namespace DuckAdmin\Service;
 
-use DuckAdmin\App\App;
+use DuckAdmin\App\DuckAdmin as App;
 use DuckAdmin\App\SingletonExTrait;
 
-class SessionService
+class SessionService extends BaseService
 {
-    use SingletonExTrait;
-    
     public function __construct()
     {
         App::session_start();

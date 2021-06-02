@@ -9,13 +9,17 @@ namespace DuckAdmin\App;
 use DuckPhp\Helper\ControllerHelperTrait;
 use DuckPhp\SingletonEx\SingletonExTrait;
 
-use DuckAdmin\App\ControllerHelper as C;
+use DuckAdmin\App\BaseController as C;
 use DuckAdmin\Service\AdminService;
 use DuckAdmin\Service\SessionService;
+
+use Gregwar\Captcha\CaptchaBuilder;
+use Gregwar\Captcha\PhraseBuilder;
 
 /**
  * 这是充当 Helper 助手的 控制器基类
  * 这里要注意的是，控制器的公开动态方法都会当成 web 动作，所以尽量避免公开动态方法
+ * 第三方的东西在这里写
  */
 class BaseController
 {
@@ -24,10 +28,12 @@ class BaseController
     
     public function __construct()
     {
+        $this->initialize();
     }
     protected function initialize()
     {
     }
+    //////// ////////
     protected function initViewData($admin, $path_info)
     {
         $menu = AdminService::G()->getMenu($admin['id'],$path_info);
@@ -35,47 +41,52 @@ class BaseController
         C::assignViewData('admin', $admin);
         C::setViewHeadFoot('header','footer');
     }
-    //////////////////
     
-    public static function CheckPerMission()
+    public static function ShowCaptcha()
+    {
+        return static::G()->doShowCaptcha();
+    }
+    public static function CheckCaptcha()
+    {
+        return static::G()->doCheckCaptcha();
+    }
+    
+    public static function CheckPermission()
     {
         $admin = SessionService::G()->getCurrentAdmin();
         $flag = AdminService::G()->checkPermission($admin,$path_info);
         
         return $flag;
-    }
-    protected function CheckCapthca($captcha)
-    {
-        $builder = new CaptchaBuilder();
-        $flag = PhraseBuilder::comparePhrases($_SESSION['phrase']??'', captcha);
-    }
-    public function CaptchaBuilder()
+    }    
+    //////// 验证码部分 ////////
+    public function doShowCaptcha()
     {
         $phraseBuilder = new PhraseBuilder(4, '0123456789');
         $builder = new CaptchaBuilder(null, $phraseBuilder);
-        $builder->build()->output();        
-        $_SESSION['phrase'] = $builder->getPhrase();
-    }
-    public static function CheckPerMission()
-    {
-        $admin = SessionService::G()->getCurrentAdmin();
-        $flag = AdminService::G()->checkPermission($admin,$path_info);
         
-        return $flag;
-    }
-    protected function CheckCapthca($captcha)
-    {
-        $phrase = SessionService::G()->getPhrase($phrase);
-        $builder = new CaptchaBuilder();
-        $flag = PhraseBuilder::comparePhrases($phrase, captcha);
-    }
-    public function CaptchaBuilder()
-    {
-        $phraseBuilder = new PhraseBuilder(4, '0123456789');
-        $builder = new CaptchaBuilder(null, $phraseBuilder);
+        C::header('Content-type: image/jpeg');
+        C::header('Cache-Control: no-cache, no-store, max-age=0, must-revalidate');
+        
         $builder->build()->output();
         $phrase = $builder->getPhrase();
         
         SessionService::G()->setPhrase($phrase);
+        ///////////////////////
     }
+    protected function doCheckCapthca($captcha)
+    {
+        $builder = new CaptchaBuilder();
+        $phrase = SessionService::G()->getPhrase();
+        $flag = PhraseBuilder::comparePhrases($phrase, $captcha);
+        return $flag;
+    }
+    //////// 业务逻辑部分 ////////
+    protected function doCheckPermission($path_info)
+    {
+        $admin = SessionService::G()->getCurrentAdmin();
+        $flag = AdminService::G()->checkPermission($admin,$path_info);
+        
+        return $flag;
+    }
+    //////// 和视图相关的部分 ////////
 }

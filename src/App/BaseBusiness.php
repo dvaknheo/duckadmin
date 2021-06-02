@@ -4,7 +4,7 @@
  * From this time, you never be alone~
  */
 
-namespace DuckAdmin\Service;
+namespace DuckAdmin\App;
 
 use DuckPhp\SingletonEx\SingletonExTrait;
 use DuckPhp\Helper\BusinessHelperTrait;
