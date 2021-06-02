@@ -5,7 +5,7 @@
  */
 namespace DuckAdmin\Service;
 
-use DuckAdmin\App\DuckAdmin as App;
+use DuckAdmin\System\App as App;
 
 class SessionService extends BaseService
 {

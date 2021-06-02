@@ -4,7 +4,7 @@
  * From this time, you never be alone~
  */
 
-namespace DuckAdmin\App;
+namespace DuckAdmin\System;
 
 use DuckPhp\DuckPhp;
 use DuckPhp\Component\AppPluginTrait;
@@ -12,7 +12,7 @@ use DuckPhp\Component\AppPluginTrait;
 /**
  * 入口类
  */
-class DuckAdmin extends DuckPhp
+class App extends DuckPhp
 {
     use AppPluginTrait;
     //@override

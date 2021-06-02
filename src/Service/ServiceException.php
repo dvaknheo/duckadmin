@@ -6,9 +6,9 @@
 
 namespace DuckAdmin\Service;
 
-use DuckAdmin\App\BaseException;
+use DuckAdmin\System\Exception;
 
-class ServiceException extends BaseException
+class ServiceException extends Exception
 {
     // 业务异常基类
 }

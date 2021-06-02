@@ -16,4 +16,4 @@ $plugin_options = [
 
 define('DUCKADMIN_DIRECT_MODE', true);
 
-DuckAdmin\App\DuckAdmin::RunAsPlugin($options, $plugin_options);
+DuckAdmin\System\App::RunAsPlugin($options, $plugin_options);

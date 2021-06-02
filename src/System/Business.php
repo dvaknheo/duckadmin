@@ -4,12 +4,12 @@
  * From this time, you never be alone~
  */
 
-namespace DuckAdmin\App;
+namespace DuckAdmin\System;
 
-use DuckPhp\SingletonEx\SingletonExTrait;
 use DuckPhp\Helper\BusinessHelperTrait;
+use DuckPhp\SingletonEx\SingletonExTrait;
 
-class BaseBusiness
+class Business
 {
     use SingletonExTrait;
     use BusinessHelperTrait;

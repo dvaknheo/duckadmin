@@ -6,7 +6,7 @@
 
 namespace DuckAdmin\Service;
 
-use DuckAdmin\App\BaseBusiness as DuckAdminService;
+use DuckAdmin\System\Business as DuckAdminService;
 
 class BaseService extends DuckAdminService
 {

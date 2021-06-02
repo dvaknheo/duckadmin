@@ -2,7 +2,7 @@
 /**
  * 这个文件表示提供的函数用于调用
  */
-use DuckAdmin\App\DuckAdmin;
+use DuckAdmin\System\App;
 
 if (function_exists('duckadmin_res')) {
 
@@ -12,7 +12,7 @@ if (function_exists('duckadmin_res')) {
     */
     function duckadmin_res($path)
     {
-    return DuckAdmin::ResUrl($path);
+        return App::ResUrl($path);
     }
 
 }

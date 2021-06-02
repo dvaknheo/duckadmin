@@ -4,12 +4,12 @@
  * From this time, you never be alone~
  */
 
-namespace DuckAdmin\App;
+namespace DuckAdmin\System;
 
-use DuckPhp\SingletonEx\SingletonExTrait;
 use DuckPhp\Helper\ModelHelperTrait;
+use DuckPhp\SingletonEx\SingletonExTrait;
 
-class BaseModel
+class Model
 {
     use SingletonExTrait;
     use ModelHelperTrait;
@@ -25,7 +25,7 @@ class BaseModel
         
         $table_name = 'admin_'.strtolower(substr($class,0,-5));
         $table_name = ($table_name==='admin_admin')? 'admin' : $table_name;
-        $table_name = DuckAdmin::Setting('duckadmin_pre_prefix').$table_name;
+        $table_name = App::Setting('duckadmin_pre_prefix').$table_name;
         
         return $table_name;
     }

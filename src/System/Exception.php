@@ -4,14 +4,14 @@
  * From this time, you never be alone~
  */
 
-namespace DuckAdmin\App;
+namespace DuckAdmin\System;
 
 use DuckPhp\ThrowOn\ThrowOnTrait;
 
 /**
  * 这是系统的错误基类。
  */
-class BaseException extends \Exception
+class Exception extends \Exception
 {
     use ThrowOnTrait;
 }

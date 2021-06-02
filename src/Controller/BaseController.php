@@ -6,7 +6,7 @@
 
 namespace DuckAdmin\Controller;
 
-use DuckAdmin\App\BaseController as DuckAdminController;
+use DuckAdmin\System\Controller as DuckAdminController;
 use DuckAdmin\Controller\BaseController as C;
 use DuckAdmin\Service\SessionService;
 use DuckAdmin\Service\AdminService;

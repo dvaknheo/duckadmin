@@ -4,12 +4,11 @@
  * From this time, you never be alone~
  */
 
-namespace DuckAdmin\App;
+namespace DuckAdmin\System;
 
 use DuckPhp\Helper\ControllerHelperTrait;
 use DuckPhp\SingletonEx\SingletonExTrait;
 
-use DuckAdmin\App\BaseController as C;
 use DuckAdmin\Service\SessionService;
 use DuckAdmin\Service\AdminService;
 
@@ -21,7 +20,7 @@ use Gregwar\Captcha\PhraseBuilder;
  * 这里要注意的是，控制器的公开动态方法都会当成 web 动作，所以尽量避免公开动态方法
  * 第三方的东西在这里写
  */
-class BaseController
+class Controller
 {
     use SingletonExTrait;
     use ControllerHelperTrait;
@@ -38,7 +37,7 @@ class BaseController
         if ($self === $static) {
             if ($self === DuckAdmin::Route()->getRouteCallingClass()) {
                 //禁止直接访问
-                C::Exit404();
+                static::Exit404();
             }
             // 作为助手调用。
             return true;
@@ -49,11 +48,11 @@ class BaseController
 
     public static function ShowCaptcha()
     {
-        return static::G()->doShowCaptcha();
+        return statistatic::G()->doShowCaptcha();
     }
     public static function CheckCaptcha($captcha)
     {
-        return static::G()->doCheckCaptcha($captcha);
+        return statistatic::G()->doCheckCaptcha($captcha);
     }
     
     public static function CheckPermission()
@@ -72,8 +71,8 @@ class BaseController
         $phrase = $builder->getPhrase();
         SessionService::G()->setPhrase($phrase);
         
-        C::header('Content-type: image/jpeg');
-        C::header('Cache-Control: no-cache, no-store, max-age=0, must-revalidate');
+        static::header('Content-type: image/jpeg');
+        static::header('Cache-Control: no-cache, no-store, max-age=0, must-revalidate');
         $builder->output();
     }
     protected function doCheckCaptcha($captcha)
@@ -97,8 +96,8 @@ class BaseController
     protected function initViewData($admin, $path_info)
     {
         $menu = AdminService::G()->getMenu($admin['id'],$path_info);
-        C::assignViewData('menu', $menu);
-        C::assignViewData('admin', $admin);
-        C::setViewHeadFoot('header','footer');
+        static::assignViewData('menu', $menu);
+        static::assignViewData('admin', $admin);
+        static::setViewHeadFoot('header','footer');
     }
 }
