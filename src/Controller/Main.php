@@ -5,7 +5,8 @@
  */
 
 namespace DuckAdmin\Controller;
-use DuckAdmin\App\BaseController as C;
+use DuckAdmin\Controller\BaseController as C;
+
 use DuckAdmin\Service\AdminService;
 use DuckAdmin\Service\SessionService;
 use DuckAdmin\Service\SessionServiceException;
@@ -46,8 +47,6 @@ class Main extends BaseController
             C::assignViewData(['error'=>$error]);
             C::Show(get_defined_vars(),'index');
         });
-        
-        SessionService::G(); // sessionStart;
         
         $post = C::POST();
         $flag = C::CheckCaptcha($post['captcha']);

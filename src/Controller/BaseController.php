@@ -7,7 +7,7 @@
 namespace DuckAdmin\Controller;
 
 use DuckAdmin\App\BaseController as DuckAdminController;
-use DuckAdmin\App\BaseController as C;
+use DuckAdmin\Controller\BaseController as C;
 use DuckAdmin\Service\SessionService;
 use DuckAdmin\Service\AdminService;
 // 我们这里只是偷懒一下啦。 等价于 ControllerHelper
