@@ -10,8 +10,8 @@ use DuckPhp\Helper\ControllerHelperTrait;
 use DuckPhp\SingletonEx\SingletonExTrait;
 
 use DuckAdmin\App\BaseController as C;
-use DuckAdmin\Service\AdminService;
 use DuckAdmin\Service\SessionService;
+use DuckAdmin\Service\AdminService;
 
 use Gregwar\Captcha\CaptchaBuilder;
 use Gregwar\Captcha\PhraseBuilder;
@@ -33,15 +33,20 @@ class BaseController
     protected function initialize()
     {
     }
-    //////// ////////
-    protected function initViewData($admin, $path_info)
+    public static function CheckLocalController($self,$static)
     {
-        $menu = AdminService::G()->getMenu($admin['id'],$path_info);
-        C::assignViewData('menu', $menu);
-        C::assignViewData('admin', $admin);
-        C::setViewHeadFoot('header','footer');
+        if ($self === $static) {
+            if ($self === DuckAdmin::Route()->getRouteCallingClass()) {
+                //禁止直接访问
+                C::Exit404();
+            }
+            // 作为助手调用。
+            return true;
+        }
+        return false;
     }
-    
+    //////// 提供给第三方用的静态方法 ////////
+
     public static function ShowCaptcha()
     {
         return static::G()->doShowCaptcha();
@@ -63,15 +68,13 @@ class BaseController
     {
         $phraseBuilder = new PhraseBuilder(4, '0123456789');
         $builder = new CaptchaBuilder(null, $phraseBuilder);
-        SessionService::G();
+        $builder->build();
+        $phrase = $builder->getPhrase();
+        SessionService::G()->setPhrase($phrase);
+        
         C::header('Content-type: image/jpeg');
         C::header('Cache-Control: no-cache, no-store, max-age=0, must-revalidate');
-        
-        $builder->build()->output();
-        $phrase = $builder->getPhrase();
-        
-        SessionService::G()->setPhrase($phrase);
-        ///////////////////////
+        $builder->output();
     }
     protected function doCheckCaptcha($captcha)
     {
@@ -81,6 +84,8 @@ class BaseController
         return $flag;
     }
     //////// 业务逻辑部分 ////////
+    
+    
     protected function doCheckPermission($path_info)
     {
         $admin = SessionService::G()->getCurrentAdmin();
@@ -89,4 +94,11 @@ class BaseController
         return $flag;
     }
     //////// 和视图相关的部分 ////////
+    protected function initViewData($admin, $path_info)
+    {
+        $menu = AdminService::G()->getMenu($admin['id'],$path_info);
+        C::assignViewData('menu', $menu);
+        C::assignViewData('admin', $admin);
+        C::setViewHeadFoot('header','footer');
+    }
 }

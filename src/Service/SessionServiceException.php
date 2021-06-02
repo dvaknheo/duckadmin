@@ -5,8 +5,6 @@
  */
 namespace DuckAdmin\Service;
 
-use DuckAdmin\App\BaseException;
-
-class SessionServiceException extends BaseException
+class SessionServiceException extends ServiceException
 {
 }

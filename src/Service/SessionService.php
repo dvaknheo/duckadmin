@@ -6,7 +6,6 @@
 namespace DuckAdmin\Service;
 
 use DuckAdmin\App\DuckAdmin as App;
-use DuckAdmin\App\SingletonExTrait;
 
 class SessionService extends BaseService
 {
