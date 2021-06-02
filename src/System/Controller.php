@@ -29,8 +29,26 @@ class Controller
     {
         $this->initialize();
     }
+    /*
+    */
     protected function initialize()
     {
+        // 入口类
+        static::assignExceptionHandler(\Exception::class, function(){
+            // 这里应该调整成可调的
+            static::ExitRouteTo('login?r=' . static::getPathInfo());
+        });
+        
+        $admin = SessionService::G()->getCurrentAdmin();
+        $path_info = static::getPathInfo();
+        $flag = AdminService::G()->checkPermission($admin,$path_info);
+        
+        if(!$flag){
+            static::Exit404();
+            return;
+        }
+        ///////////////// 正常流程
+        $this->initViewData($admin, $path_info);
     }
     public static function CheckLocalController($self,$static)
     {
@@ -84,7 +102,6 @@ class Controller
     }
     //////// 业务逻辑部分 ////////
     
-    
     protected function doCheckPermission($path_info)
     {
         $admin = SessionService::G()->getCurrentAdmin();
@@ -100,4 +117,5 @@ class Controller
         static::assignViewData('admin', $admin);
         static::setViewHeadFoot('header','footer');
     }
+    //////// 助手方法部分 ////////
 }

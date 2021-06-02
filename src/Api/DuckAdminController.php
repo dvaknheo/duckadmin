@@ -6,7 +6,7 @@
 
 namespace DuckAdmin\Api;
 
-use DuckAdmin\App\BaseController;
+use DuckAdmin\System\BaseController;
 /**
  * 你的 Contoller 控制器调用这里的静态方法类。
  */

@@ -67,7 +67,8 @@ class BaseModel extends DuckAdminModel
     public function delete($id)
     {
         $date = date('Y-m-d H:i:s');
-        $sql = "update {$this->table_name} set deleted_at=? where id=? ";
+        $sql = "update 'TABLE' set deleted_at=? where id=? ";
+        $sql = $this->prepare($sql);
         $ret = M::DB()->execute($sql, $date, $id);
         return $ret;
     }
