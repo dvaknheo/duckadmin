@@ -1,15 +1,15 @@
 <?php
-namespace DuckAdmin\Service;
+namespace DuckAdmin\Business;
 
 use DuckAdmin\Model\AdminModel;
 use DuckAdmin\Model\RoleModel;
 
-class AdminService extends BaseService
+class AdminBusiness extends Base
 {
     public function login(array $data)
     {
         $admin = AdminModel::G()->login($data['username'], $data['password']);
-        ServiceException::ThrowOn(empty($admin), "用户名或密码不正确，无法登录");
+        BusinessException::ThrowOn(empty($admin), "用户名或密码不正确，无法登录");
         // 这里不暴露更多情况。和用户登录的严谨性不同
         return $admin;
     }
@@ -21,24 +21,31 @@ class AdminService extends BaseService
     public function getAdmin($id)
     {
         $ret = AdminModel::G()->get($id);
-        ServiceException::ThrowOn(!$ret, '没有这个管理员');
-        $ret['role'] = RoleModel::G()->getRoleName($ret['role_id']);
+        BusinessException::ThrowOn(!$ret, '没有这个管理员');
+        $ret['role'] = RoleModel::G()->getRoleName($ret['role_id']); // 扩大职位详情
         return $ret;
     }
-    public function getRoles()
-    {
-        return RoleModel::G()->getRoles();
-    }
+
     ///////////////////
     public function addAdmin($data)
     {
+        // 添加管理员
         $ret = AdminModel::G()->addData($data);
         return $ret;
     }
     public function updateAdmin($data)
     {
+        //更新管理员
+        if (empty($data['password'])) {
+            // 更新密码
+        }
         $ret = AdminModel::G()->updateData($data['id'], $data);
         return $ret;
+    }
+    
+    public function getRoles()
+    {
+        return RoleModel::G()->getRoles();
     }
     ////////////
     public function checkPermission($admin, $path_info)

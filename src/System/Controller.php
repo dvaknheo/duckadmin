@@ -66,11 +66,11 @@ class Controller
 
     public static function ShowCaptcha()
     {
-        return statistatic::G()->doShowCaptcha();
+        return static::G()->doShowCaptcha();
     }
     public static function CheckCaptcha($captcha)
     {
-        return statistatic::G()->doCheckCaptcha($captcha);
+        return static::G()->doCheckCaptcha($captcha);
     }
     
     public static function CheckPermission()
@@ -86,6 +86,7 @@ class Controller
         $phraseBuilder = new PhraseBuilder(4, '0123456789');
         $builder = new CaptchaBuilder(null, $phraseBuilder);
         $builder->build();
+        
         $phrase = $builder->getPhrase();
         SessionService::G()->setPhrase($phrase);
         
