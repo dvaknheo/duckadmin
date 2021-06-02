@@ -8,16 +8,25 @@ namespace DuckAdmin\Controller;
 
 use DuckAdmin\App\BaseController as DuckAdminController;
 use DuckAdmin\App\BaseController as C;
-
+use DuckAdmin\Service\SessionService;
+use DuckAdmin\Service\AdminService;
+use DuckPhp\Core\App;
 // 我们这里只是偷懒一下啦。 等价于 ControllerHelper
 //这里和业务相关，严格禁止第三方 
 class BaseController extends DuckAdminController
 {
     public function __construct()
     {
-        if (static::class === self::class) {
+        // 我们弄个小技巧，不允许直接访问，但我们可以创建一个实例填充，
+        if (self::class === App::Route()->getRouteCallingClass()) {
+            //__var_dump(App::Route()->getRouteCallingClass());
             //禁止直接访问
             C::Exit404();
+            return;
+        }
+        if(self::class === static::class){
+            // 作为助手模式。 
+            return;
         }
         $this->initialize();
     }

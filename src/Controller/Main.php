@@ -50,7 +50,7 @@ class Main extends BaseController
         SessionService::G(); // sessionStart;
         
         $post = C::POST();
-        $flag = BaseController::CheckCapthca($post['captcha']);
+        $flag = C::CheckCaptcha($post['captcha']);
         SessionServiceException::ThrowOn(!$flag,"验证码错误");
         $admin = AdminService::G()->login($post);
         SessionService::G()->setCurrentAdmin($admin,$post['remember']);

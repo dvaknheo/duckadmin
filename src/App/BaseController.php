@@ -46,9 +46,9 @@ class BaseController
     {
         return static::G()->doShowCaptcha();
     }
-    public static function CheckCaptcha()
+    public static function CheckCaptcha($captcha)
     {
-        return static::G()->doCheckCaptcha();
+        return static::G()->doCheckCaptcha($captcha);
     }
     
     public static function CheckPermission()
@@ -63,7 +63,7 @@ class BaseController
     {
         $phraseBuilder = new PhraseBuilder(4, '0123456789');
         $builder = new CaptchaBuilder(null, $phraseBuilder);
-        
+        SessionService::G();
         C::header('Content-type: image/jpeg');
         C::header('Cache-Control: no-cache, no-store, max-age=0, must-revalidate');
         
@@ -73,7 +73,7 @@ class BaseController
         SessionService::G()->setPhrase($phrase);
         ///////////////////////
     }
-    protected function doCheckCapthca($captcha)
+    protected function doCheckCaptcha($captcha)
     {
         $builder = new CaptchaBuilder();
         $phrase = SessionService::G()->getPhrase();

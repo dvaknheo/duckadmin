@@ -16,7 +16,7 @@ class Admin extends BaseController
     public function index()
     {
         $data = AdminService::G()->getAdminList(C::PageNo(),C::PageSize());
-                $roles = AdminService::G()->getRoles();
+        $roles = AdminService::G()->getRoles();
         $data['roles'] = $roles;
         C::Show($data);
     }

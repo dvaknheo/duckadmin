@@ -5,7 +5,7 @@
  */
 
 namespace DuckAdmin\Model;
-use DuckAdmin\App\ModelHelper as M;
+use DuckAdmin\App\BaseModel as M;
 
 class AdminModel extends BaseModel
 {

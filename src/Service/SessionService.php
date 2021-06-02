@@ -39,7 +39,7 @@ class SessionService extends BaseService
     }
     public function getPhrase()
     {
-        return $_SESSION['phrase'];
+        return $_SESSION['phrase']??'';
     }
     public function setPhrase($phrase)
     {
