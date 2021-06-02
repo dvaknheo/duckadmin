@@ -9,8 +9,8 @@ namespace DuckAdmin\System;
 use DuckPhp\Helper\ControllerHelperTrait;
 use DuckPhp\SingletonEx\SingletonExTrait;
 
-use DuckAdmin\Service\SessionService;
-use DuckAdmin\Service\AdminService;
+use DuckAdmin\Business\SessionBusiness;
+use DuckAdmin\Business\AdminBusiness;
 
 use Gregwar\Captcha\CaptchaBuilder;
 use Gregwar\Captcha\PhraseBuilder;
@@ -39,9 +39,9 @@ class Controller
             static::ExitRouteTo('login?r=' . static::getPathInfo());
         });
         
-        $admin = SessionService::G()->getCurrentAdmin();
+        $admin = SessionBusiness::G()->getCurrentAdmin();
         $path_info = static::getPathInfo();
-        $flag = AdminService::G()->checkPermission($admin,$path_info);
+        $flag = AdminBusiness::G()->checkPermission($admin,$path_info);
         
         if(!$flag){
             static::Exit404();
@@ -53,7 +53,7 @@ class Controller
     public static function CheckLocalController($self,$static)
     {
         if ($self === $static) {
-            if ($self === DuckAdmin::Route()->getRouteCallingClass()) {
+            if ($self === App::Route()->getRouteCallingClass()) {
                 //禁止直接访问
                 static::Exit404();
             }
@@ -75,8 +75,8 @@ class Controller
     
     public static function CheckPermission()
     {
-        $admin = SessionService::G()->getCurrentAdmin();
-        $flag = AdminService::G()->checkPermission($admin,$path_info);
+        $admin = SessionBusiness::G()->getCurrentAdmin();
+        $flag = AdminBusiness::G()->checkPermission($admin,$path_info);
         
         return $flag;
     }    
@@ -88,7 +88,7 @@ class Controller
         $builder->build();
         
         $phrase = $builder->getPhrase();
-        SessionService::G()->setPhrase($phrase);
+        SessionBusiness::G()->setPhrase($phrase);
         
         static::header('Content-type: image/jpeg');
         static::header('Cache-Control: no-cache, no-store, max-age=0, must-revalidate');
@@ -97,7 +97,7 @@ class Controller
     protected function doCheckCaptcha($captcha)
     {
         $builder = new CaptchaBuilder();
-        $phrase = SessionService::G()->getPhrase();
+        $phrase = SessionBusiness::G()->getPhrase();
         $flag = PhraseBuilder::comparePhrases($phrase, $captcha);
         return $flag;
     }
@@ -105,15 +105,15 @@ class Controller
     
     protected function doCheckPermission($path_info)
     {
-        $admin = SessionService::G()->getCurrentAdmin();
-        $flag = AdminService::G()->checkPermission($admin,$path_info);
+        $admin = SessionBusiness::G()->getCurrentAdmin();
+        $flag = AdminBusiness::G()->checkPermission($admin,$path_info);
         
         return $flag;
     }
     //////// 和视图相关的部分 ////////
     protected function initViewData($admin, $path_info)
     {
-        $menu = AdminService::G()->getMenu($admin['id'],$path_info);
+        $menu = AdminBusiness::G()->getMenu($admin['id'],$path_info);
         static::assignViewData('menu', $menu);
         static::assignViewData('admin', $admin);
         static::setViewHeadFoot('header','footer');

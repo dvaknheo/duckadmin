@@ -5,9 +5,8 @@
  */
 
 namespace DuckAdmin\Controller;
-use DuckAdmin\Controller\BaseController as C;
 
-class Role extends BaseController
+class Role extends Base
 {
     /**
      * 角色

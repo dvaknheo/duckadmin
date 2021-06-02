@@ -4,12 +4,12 @@
  * From this time, you never be alone~
  */
 
-namespace DuckAdmin\Service;
+namespace DuckAdmin\Business;
 
 /**
  * 这里准备作为通用的 sqldumper
  */
-class MySqlDumper extends BaseService
+class MySqlDumper extends Base
 {
     public function foo()
     {

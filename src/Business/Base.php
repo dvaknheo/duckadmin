@@ -4,11 +4,11 @@
  * From this time, you never be alone~
  */
 
-namespace DuckAdmin\Service;
+namespace DuckAdmin\Business;
 
-use DuckAdmin\System\Business as DuckAdminService;
+use DuckAdmin\System\Business;
 
-class BaseService extends DuckAdminService
+class Base extends Business
 {
-    //
+    // 空类，只是隔绝引用
 }

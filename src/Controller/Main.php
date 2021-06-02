@@ -5,13 +5,13 @@
  */
 
 namespace DuckAdmin\Controller;
-use DuckAdmin\Controller\BaseController as C;
+use DuckAdmin\Controller\Base as C;
 
-use DuckAdmin\Service\AdminService;
-use DuckAdmin\Service\SessionService;
-use DuckAdmin\Service\SessionServiceException;
+use DuckAdmin\Business\AdminBusiness;
+use DuckAdmin\Business\SessionBusiness;
+use DuckAdmin\Business\BusinessException;
 
-class Main extends BaseController
+class Main extends Base
 {
     public function __construct()
     {
@@ -50,14 +50,14 @@ class Main extends BaseController
         
         $post = C::POST();
         $flag = C::CheckCaptcha($post['captcha']);
-        SessionServiceException::ThrowOn(!$flag,"验证码错误");
-        $admin = AdminService::G()->login($post);
-        SessionService::G()->setCurrentAdmin($admin,$post['remember']);
+        BusinessException::ThrowOn(!$flag,"验证码错误");
+        $admin = AdminBusiness::G()->login($post);
+        SessionBusiness::G()->setCurrentAdmin($admin,$post['remember']);
         C::ExitRouteTo('profile/index');
     }
     public function logout()
     {
-        SessionService::G()->logout();
+        SessionBusiness::G()->logout();
         C::ExitRouteTo('');
     }
     public function captcha()

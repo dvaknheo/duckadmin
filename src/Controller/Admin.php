@@ -6,18 +6,18 @@
 
 namespace DuckAdmin\Controller;
 
-use DuckAdmin\Controller\BaseController as C;
-use DuckAdmin\Service\AdminService;
+use DuckAdmin\Controller\Base as C;
+use DuckAdmin\Business\AdminBusiness;
 
-class Admin extends BaseController
+class Admin extends Base
 {
     /**
      * 管理员
      */
     public function index()
     {
-        $data = AdminService::G()->getAdminList(C::PageNo(),C::PageSize());
-        $roles = AdminService::G()->getRoles();
+        $data = AdminBusiness::G()->getAdminList(C::PageNo(),C::PageSize());
+        $roles = AdminBusiness::G()->getRoles();
         $data['roles'] = $roles;
         C::Show($data);
     }
@@ -30,10 +30,10 @@ class Admin extends BaseController
     {
         $post = C::Post();
         if($post){
-            AdminService::G()->addAdmin($post);
+            AdminBusiness::G()->addAdmin($post);
             C::ExitRouteTo('Admin/index');
         }
-        $roles = AdminService::G()->getRoles();
+        $roles = AdminBusiness::G()->getRoles();
         $data=[
             'roles' => $roles,
         ];
@@ -47,11 +47,11 @@ class Admin extends BaseController
     {
         $post = C::Post();
         if($post){
-            AdminService::G()->updateAdmin($post);
+            AdminBusiness::G()->updateAdmin($post);
             C::ExitRouteTo('Admin/index');
         }
-        $admin = AdminService::G()->getAdmin(C::GET('id'));
-        $roles = AdminService::G()->getRoles();
+        $admin = AdminBusiness::G()->getAdmin(C::GET('id'));
+        $roles = AdminBusiness::G()->getRoles();
         $data=[
             'admin' => $admin,
             'roles' => $roles,

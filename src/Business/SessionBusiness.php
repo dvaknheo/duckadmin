@@ -3,11 +3,12 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace DuckAdmin\Service;
+namespace DuckAdmin\Business;
 
 use DuckAdmin\System\App as App;
 
-class SessionService extends BaseService
+// 特殊业务， 会话
+class SessionBusiness extends Base
 {
     public function __construct()
     {

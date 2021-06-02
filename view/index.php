@@ -38,7 +38,7 @@ if(defined('DUCKADMIN_DIRECT_MODE')){
 DuckAdmin 是用来给 DuckPhp 项目做二次开发用的。
 你应该在调整选项
 <pre class="layui-code">
-$options['ext'][\DuckAdmin\Api\DuckAdmin::class] = [
+$options['ext'][\DuckAdmin\Api\DuckAdminPlugin::class] = [
     // 你要添加的选项
 ];
 </pre>

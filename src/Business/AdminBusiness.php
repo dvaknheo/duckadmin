@@ -51,7 +51,7 @@ class AdminBusiness extends Base
     public function checkPermission($admin, $path_info)
     {
         $admin=is_array($admin)? $admin: AdminModel::G()->get($admin);
-        ServiceException::ThrowOn(!$admin, '没有这个管理员');
+        BusinessException::ThrowOn(!$admin, '没有这个管理员');
         if($admin['id']==1){
             return true;
         }

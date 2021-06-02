@@ -6,7 +6,7 @@
 
 namespace DuckAdmin\Model;
 
-class MenuMode extends BaseModel
+class MenuModel extends Base
 {
     public function foo()
     {

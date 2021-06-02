@@ -9,7 +9,7 @@ namespace DuckAdmin\Model;
 use DuckAdmin\System\Model as DuckAdminModel;
 use DuckAdmin\Model\BaseModel as M;
 
-class BaseModel extends DuckAdminModel
+class Base extends Model
 {    
     protected $table_name=null;
     protected function table()

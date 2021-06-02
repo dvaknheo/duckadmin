@@ -6,10 +6,8 @@
 
 namespace DuckAdmin\Controller;
 use DuckAdmin\Controller\BaseController as C;
-use DuckAdmin\Service\AdminService;
-use DuckAdmin\Service\SessionService;
 
-class Profile extends BaseController
+class Profile extends Base
 {
     public function __construct()
     {

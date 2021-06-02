@@ -6,7 +6,7 @@
 
 namespace DuckAdmin\Controller;
 
-class Permission extends BaseController
+class Permission extends Base
 {
     
     protected function initialize()

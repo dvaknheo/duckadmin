@@ -6,7 +6,7 @@
 
 namespace DuckAdmin\Api;
 
-use DuckAdmin\System\BaseController;
+use DuckAdmin\System\Controller;
 /**
  * 你的 Contoller 控制器调用这里的静态方法类。
  */
@@ -17,14 +17,14 @@ class DuckAdminController
     }
     public static function CheckPermission()
     {
-        return BaseController::CheckPermission();
+        return Controller::CheckPermission();
     }
     protected function CheckCapthca($captcha)
     {
-        return BaseController::CheckCapthca($captcha);
+        return Controller::CheckCapthca($captcha);
     }
     public function CaptchaBuilder()
     {
-        return BaseController::CaptchaBuilder();
+        return Controller::CaptchaBuilder();
     }
 }
