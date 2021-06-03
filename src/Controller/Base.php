@@ -9,6 +9,7 @@ namespace DuckAdmin\Controller;
 use DuckAdmin\System\Controller;
 
 // 我们这里只是偷懒一下啦。 放空类在这，省得 use .
+// 因为 C 也是这里。 要重载这里的动态方法，要用 Base::G(MyBase::G()); 而不是 Controller::G(MyBase::G());
 class Base extends Controller
 {
     public function __construct()

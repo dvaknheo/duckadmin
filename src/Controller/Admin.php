@@ -32,6 +32,7 @@ class Admin extends Base
         if($post){
             AdminBusiness::G()->addAdmin($post);
             C::ExitRouteTo('Admin/index');
+            return;  // return 是个好习惯。
         }
         $roles = AdminBusiness::G()->getRoles();
         $data=[
@@ -49,6 +50,7 @@ class Admin extends Base
         if($post){
             AdminBusiness::G()->updateAdmin($post);
             C::ExitRouteTo('Admin/index');
+            return // return 是个好习惯。
         }
         $admin = AdminBusiness::G()->getAdmin(C::GET('id'));
         $roles = AdminBusiness::G()->getRoles();
@@ -60,6 +62,6 @@ class Admin extends Base
     }
     public function log()
     {
-        C::Show();
+        C::Show([]);
     }
 }

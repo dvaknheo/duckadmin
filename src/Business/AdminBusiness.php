@@ -50,19 +50,22 @@ class AdminBusiness extends Base
     ////////////
     public function checkPermission($admin, $path_info)
     {
-        $admin=is_array($admin)? $admin: AdminModel::G()->get($admin);
+        $admin = is_array($admin)? $admin: AdminModel::G()->get($admin);
         BusinessException::ThrowOn(!$admin, '没有这个管理员');
-        if($admin['id']==1){
+        if($this->isSuperAdmin($admin)){
             return true;
         }
-        $role=RoleModel::G()->find($admin['role']);
-        if(!$role){
-            return false;
-        }
+        $role = RoleModel::G()->find($admin['role']);
+        
+        BusinessException::ThrowOn(!$role, '你没有这个权限');
         if($path_info===$role['path']){
             return true;
         }
-        return false;
+        BusinessException::ThrowOn(true, '你没有这个权限!');
+    }
+    public function isSuperAdmin($admin)
+    {
+        return $admin['id']==1 ? true:false;
     }
     public function getMenu($admin,$path_info='')
     {

@@ -12,8 +12,6 @@ use DuckPhp\SingletonEx\SingletonExTrait;
 use DuckAdmin\Business\SessionBusiness;
 use DuckAdmin\Business\AdminBusiness;
 
-use Gregwar\Captcha\CaptchaBuilder;
-use Gregwar\Captcha\PhraseBuilder;
 
 /**
  * 这是充当 Helper 助手的 控制器基类
@@ -47,11 +45,27 @@ class Controller
             static::Exit404();
             return;
         }
-        ///////////////// 正常流程
-        $this->initViewData($admin, $path_info);
+        // 初始化View
+        $this->initViewData();
     }
+    // 这里是视图相关的
+    protected function initViewData()
+    {
+        // 这两个重复调用，性能可以忽略不记。
+        $admin = SessionBusiness::G()->getCurrentAdmin();
+        $path_info = static::getPathInfo();
+        
+        $menu = AdminBusiness::G()->getMenu($admin['id'],$path_info);
+        
+        static::assignViewData('menu', $menu);
+        static::assignViewData('admin', $admin);
+        static::setViewHeadFoot('header','footer');
+        // 页眉页脚可能你的类需要额外处理。
+    }
+    
     public static function CheckLocalController($self,$static)
     {
+        // 这个方法可能要给回 DuckPhp
         if ($self === $static) {
             if ($self === App::Route()->getRouteCallingClass()) {
                 //禁止直接访问
@@ -63,60 +77,28 @@ class Controller
         return false;
     }
     //////// 提供给第三方用的静态方法 ////////
-
+    public static function CheckPermission()
+    {
+        return static::G()->doCheckPermission();
+        // static::G() 是为了可替换。
+        // 这就导致了 限定 Controller::G(MyController::G()) 的 MyController 必须是子类。
+        // 不必奢望不继承了。
+    }
+    //////// 验证码这段，要到第三个类里来处理吧 ////////
     public static function ShowCaptcha()
     {
-        return static::G()->doShowCaptcha();
+        return CaptchaHelper::G()->doShowCaptcha();
     }
     public static function CheckCaptcha($captcha)
     {
-        return static::G()->doCheckCaptcha($captcha);
+        return CaptchaHelper::G()->doCheckCaptcha($captcha);
     }
-    
-    public static function CheckPermission()
+    protected function doCheckPermission()
     {
+        $path_info = static::getPathInfo();
         $admin = SessionBusiness::G()->getCurrentAdmin();
         $flag = AdminBusiness::G()->checkPermission($admin,$path_info);
         
-        return $flag;
-    }    
-    //////// 验证码部分 ////////
-    public function doShowCaptcha()
-    {
-        $phraseBuilder = new PhraseBuilder(4, '0123456789');
-        $builder = new CaptchaBuilder(null, $phraseBuilder);
-        $builder->build();
-        
-        $phrase = $builder->getPhrase();
-        SessionBusiness::G()->setPhrase($phrase);
-        
-        static::header('Content-type: image/jpeg');
-        static::header('Cache-Control: no-cache, no-store, max-age=0, must-revalidate');
-        $builder->output();
+        return $flag; // 我们抛出异常得了。 
     }
-    protected function doCheckCaptcha($captcha)
-    {
-        $builder = new CaptchaBuilder();
-        $phrase = SessionBusiness::G()->getPhrase();
-        $flag = PhraseBuilder::comparePhrases($phrase, $captcha);
-        return $flag;
-    }
-    //////// 业务逻辑部分 ////////
-    
-    protected function doCheckPermission($path_info)
-    {
-        $admin = SessionBusiness::G()->getCurrentAdmin();
-        $flag = AdminBusiness::G()->checkPermission($admin,$path_info);
-        
-        return $flag;
-    }
-    //////// 和视图相关的部分 ////////
-    protected function initViewData($admin, $path_info)
-    {
-        $menu = AdminBusiness::G()->getMenu($admin['id'],$path_info);
-        static::assignViewData('menu', $menu);
-        static::assignViewData('admin', $admin);
-        static::setViewHeadFoot('header','footer');
-    }
-    //////// 助手方法部分 ////////
 }

@@ -15,16 +15,15 @@ class DuckAdminController
     public function __construct()
     {
     }
+    
+    // 你的方法调用这个杜绝外部访问。
     public static function CheckPermission()
     {
         return Controller::CheckPermission();
     }
-    protected function CheckCapthca($captcha)
+    // 调用这个，询问当前是否是超级管理员
+    public static function IsSuperAdmin()
     {
-        return Controller::CheckCapthca($captcha);
-    }
-    public function CaptchaBuilder()
-    {
-        return Controller::CaptchaBuilder();
+        return Controller::IsSuperAdmin();
     }
 }
