@@ -19,11 +19,11 @@ class DuckAdminController
     // 你的方法调用这个杜绝外部访问。
     public static function CheckPermission()
     {
-        return Controller::CheckPermission();
+        //return Controller::CheckPermission();
     }
     // 调用这个，询问当前是否是超级管理员
     public static function IsSuperAdmin()
     {
-        return Controller::IsSuperAdmin();
+        //return Controller::IsSuperAdmin();
     }
 }
