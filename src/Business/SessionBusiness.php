@@ -17,7 +17,7 @@ class SessionBusiness extends Base
     public function getCurrentAdmin()
     {
         $ret = $_SESSION['admin'] ?? [];
-        ServiceException::ThrowOn(empty($ret), '请重新登录');
+        BusinessException::ThrowOn(empty($ret), '请重新登录');
         
         return $ret;
     }

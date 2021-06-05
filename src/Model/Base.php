@@ -6,8 +6,8 @@
 
 namespace DuckAdmin\Model;
 
-use DuckAdmin\System\Model as DuckAdminModel;
-use DuckAdmin\Model\BaseModel as M;
+use DuckAdmin\System\Model;
+use DuckAdmin\Model\Base as M;
 
 class Base extends Model
 {    

@@ -5,7 +5,7 @@
  */
 
 namespace DuckAdmin\Controller;
-use DuckAdmin\Controller\BaseController as C;
+use DuckAdmin\Controller\Base as C;
 
 class Profile extends Base
 {

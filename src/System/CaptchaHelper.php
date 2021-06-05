@@ -7,7 +7,9 @@
 namespace DuckAdmin\System;
 
 use DuckPhp\SingletonEx\SingletonExTrait;
+use DuckAdmin\System\App as C;
 use DuckAdmin\Business\SessionBusiness;
+
 use Gregwar\Captcha\CaptchaBuilder;
 use Gregwar\Captcha\PhraseBuilder;
 
@@ -30,8 +32,8 @@ class CaptchaHelper
         $phrase = $builder->getPhrase();
         SessionBusiness::G()->setPhrase($phrase);  // 这个 想处理掉，难受。
         
-        static::header('Content-type: image/jpeg');
-        static::header('Cache-Control: no-cache, no-store, max-age=0, must-revalidate');
+        C::header('Content-type: image/jpeg');
+        C::header('Cache-Control: no-cache, no-store, max-age=0, must-revalidate');
         $builder->output();
     }
     public function doCheckCaptcha($captcha)
@@ -41,3 +43,4 @@ class CaptchaHelper
         $flag = PhraseBuilder::comparePhrases($phrase, $captcha);
         return $flag;
     }
+}
