@@ -34,7 +34,7 @@ class Controller
         // 入口类
         static::assignExceptionHandler(\Exception::class, function(){
             // 这里应该调整成可调的
-            static::ExitRouteTo('login?r=' . static::getPathInfo());
+            static::ExitRouteTo('index?r=' . static::getPathInfo());
         });
         
         $admin = SessionBusiness::G()->getCurrentAdmin();

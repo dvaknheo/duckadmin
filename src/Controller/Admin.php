@@ -50,7 +50,7 @@ class Admin extends Base
         if($post){
             AdminBusiness::G()->updateAdmin($post);
             C::ExitRouteTo('Admin/index');
-            return // return 是个好习惯。
+            return; // return 是个好习惯。
         }
         $admin = AdminBusiness::G()->getAdmin(C::GET('id'));
         $roles = AdminBusiness::G()->getRoles();
