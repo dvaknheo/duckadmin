@@ -21,7 +21,6 @@
     },
     "require": {
         "php": ">=7.2.0",
-        "dvaknheo/duckphp": "^1.2",
         "yzalis/identicon": "^2.0",
         "topthink/think-captcha": "1.0.7",
         "topthink/think-orm": "^2.0",

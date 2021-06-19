@@ -57,10 +57,12 @@ class Controller
         
         $menu = AdminBusiness::G()->getMenu($admin['id'],$path_info);
         
+        
+        
         static::assignViewData('menu', $menu);
         static::assignViewData('admin', $admin);
         static::setViewHeadFoot('header','footer');
-        // 页眉页脚可能你的类需要额外处理。
+        // 页眉页脚，如果是其他项目引用的时候，该怎么处理的问题。
     }
     
     public static function CheckLocalController($self,$static)

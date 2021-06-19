@@ -10,13 +10,14 @@ use DuckAdmin\System\App as App;
 // 特殊业务， 会话
 class SessionBusiness extends Base
 {
+    protected $prefix = 'duckadmin_';
     public function __construct()
     {
         App::session_start();
     }
     public function getCurrentAdmin()
     {
-        $ret = $_SESSION['admin'] ?? [];
+        $ret = App::SessionGet($this->prefix.'admin', []);
         BusinessException::ThrowOn(empty($ret), '请重新登录');
         
         return $ret;
@@ -30,30 +31,31 @@ class SessionBusiness extends Base
     
     public function setCurrentAdmin($admin)
     {
-        $_SESSION['admin'] = $admin;
+        App::SessionSet($this->prefix.'admin', $admin);
     }
     public function logout()
     {
+        App::SessionSet($this->prefix.'admin', []);
         unset($_SESSION['admin']);
-        App::session_destroy();
+        //App::session_destroy();
     }
     public function getPhrase()
     {
-        return $_SESSION['phrase']??'';
+        return App::SessionGet($this->prefix.'phrase', '');
     }
     public function setPhrase($phrase)
     {
-        $_SESSION['phrase'] = $phrase;
+        return App::SessionSet($this->prefix.'phrase', $phrase);
     }
     ////////////////////////////////////////////////////////////////////////
     public function csrf_token()
     {
-        
-        if (!isset($_SESSION['_token'])) {
+        $token = App::SessionGet($this->prefix.'_token');
+        if (!isset($token)) {
             $token = $this->randomString(40);
-            $_SESSION['_token'] = $token;
+            App::SessionSet($this->prefix.'_token', $token);
         }
-        return $_SESSION['_token'];
+        return App::SessionGet($this->prefix.'_token');
     }
     protected function randomString($length = 16)
     {

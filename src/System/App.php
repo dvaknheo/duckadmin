@@ -22,6 +22,10 @@ class App extends DuckPhp
         'error_404' => '_sys/error_404',
         'error_500' => '_sys/error_500',
     ];
+    public $plugin_options = [
+        'plugin_path_document' => 'res',
+        'plugin_enable_readfile' =>true,
+    ];
     /**
      * 这里是初始化基类，然后把自己当插件运行
      * @param array $options
