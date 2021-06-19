@@ -2,8 +2,8 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<title></title>
-		<link href="/layui/css/layui.css" rel="stylesheet" />
+		<title>DuckAdmin 后台系统</title>
+		<link href="<?=duckadmin_res("layui/css/layui.css")?>" rel="stylesheet" />
 	</head>
 	<body>
     

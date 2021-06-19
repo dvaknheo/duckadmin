@@ -53,7 +53,7 @@ class Main extends Base
         BusinessException::ThrowOn(!$flag,"验证码错误");
         $admin = AdminBusiness::G()->login($post);
         SessionBusiness::G()->setCurrentAdmin($admin,$post['remember']);
-        C::ExitRouteTo('profile/index');
+        C::ExitRouteTo('Profile/index');
     }
     public function logout()
     {

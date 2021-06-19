@@ -25,6 +25,7 @@ class App extends DuckPhp
     public $plugin_options = [
         'plugin_path_document' => 'res',
         'plugin_enable_readfile' =>true,
+        'plugin_readfile_prefix' => '/res',
     ];
     /**
      * 这里是初始化基类，然后把自己当插件运行
@@ -34,7 +35,7 @@ class App extends DuckPhp
      */
     public static function RunAsPlugin($options, $plugin_options = [])
     {
-        $options['ext'][static::class] = $plugin_options;
+        $options['ext'][App::class] = $plugin_options;
         return DuckPhp::RunQuickly($options);
     }
     public function command_test()
@@ -60,6 +61,9 @@ class App extends DuckPhp
     }
     public function _ResUrl($path)
     {
+        // 如果设置了url 选项，那么从 url 选项里读取。
+        // 否则从 默认的 /res/? 
+        $path = ltrim($this->plugin_options['plugin_readfile_prefix'].'/'.$path,'/');
         return static::URL($path);
     }
 }
