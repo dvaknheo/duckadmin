@@ -12,4 +12,11 @@ use DuckAdmin\System\Service;
  */
 class DuckAdminService
 {
+    public static function AdminLogin()
+    {
+    }
+    public static function IsSuperAdmin($admin)
+    {
+    }
+    
 }

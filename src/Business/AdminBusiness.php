@@ -67,13 +67,17 @@ class AdminBusiness extends Base
     {
         return $admin['id']==1 ? true:false;
     }
-    public function getMenu($admin,$path_info='')
+    public function getMenu($admin,$path_info='',$path='')
     {
         // 把所有菜单搞到手，然后 
-        $admin=is_array($admin)? $admin: AdminModel::G()->get($admin);
+        $admin = is_array($admin)? $admin: AdminModel::G()->get($admin);
         
         // 我们还要判断现在是在哪个菜单里 ,让其高亮显示
         
         return [];
+    }
+    public function toMenu()
+    {
+        // 我们这里要做的是
     }
 }

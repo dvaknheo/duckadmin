@@ -8,10 +8,6 @@ namespace DuckAdmin\Controller;
 
 class Permission extends Base
 {
-    
-    protected function initialize()
-    {
-    }
     /**
      * 权限
      */

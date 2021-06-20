@@ -20,18 +20,24 @@
   <div class="layui-header">
     <div class="layui-logo">DuckPhp管理后台</div>
     <!-- 头部区域（可配合layui 已有的水平导航） -->
+    <div>
+
+    </div>
     <ul class="layui-nav layui-layout-right">
+        <li class="layui-nav-item">
+        <a href="<?=__url('Permission/show')?>">
+          <i class="layui-icon layui-icon-group" style="color:red;"></i>
+          <?=__h($admin['role'])?>
+        </a>
+        </li>
       <li class="layui-nav-item">
         <a href="javascript:;">
-          <i class="layui-icon layui-icon-friends" style="color: #1E9FFF;"></i>  
-          <?=__h($admin['nickname'])?>
-          (
-          <i class="layui-icon layui-icon-group" style="color: #1E9FFF;"></i>
-            新人<?=__h($admin['role'])?>
-        )
+          <i class="layui-icon layui-icon-friends" style="color: #1E9FFF;"></i>
+          <?=__h($admin['nickname'])?>(<?=__h($admin['username'])?>)
         </a>
         <dl class="layui-nav-child">
-          <dd><a href="">修改密码</a></dd>
+          <dd><a href="<?=__url('Profile/index')?>">工作台首页</a></dd>
+          <dd><a href="<?=__url('Admin/password')?>">修改密码</a></dd>
           <dd><a href="<?=__url('logout')?>">登出</a></dd>
         </dl>
       </li>

@@ -23,6 +23,8 @@ class Profile extends Base
     //修改密码
     public function pass()
     {
+        C::Show(get_defined_vars(),'profile/pass');
+
     }
 
 }

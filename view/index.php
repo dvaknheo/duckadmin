@@ -150,7 +150,8 @@ layui.use('layer', function(){
 </script>
   </div>
 <div class="layui-footer" style ="background-color:#FAFAFA;padding:1em;text-align:center;">
-感谢 LayUI
+感谢 <a href="https://www.layui.com/"> LayUI </a> 前端支持，为我这个不懂得好看的能勉强做出来
+感谢 pearadmin  让我可以 copy  idea.
 </div>
 	</body>
 </html>

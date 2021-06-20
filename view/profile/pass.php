@@ -2,9 +2,21 @@
     <div class="mainBox">
         <div class="main-container">
             <div class="layui-form-item">
-                <label class="layui-form-label">密码</label>
+                <label class="layui-form-label">旧密码</label>
                 <div class="layui-input-block">
-                    <input type="password" name="password"  placeholder="请输入新密码" class="layui-input">
+                    <input type="password" name="old_password"  placeholder="请输入旧密码" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">新密码</label>
+                <div class="layui-input-block">
+                    <input type="password" name="new_password"  placeholder="请输入新密码" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">重复新密码</label>
+                <div class="layui-input-block">
+                    <input type="password" name="new_password2"  placeholder="请重复新密码" class="layui-input">
                 </div>
             </div>
         </div>
