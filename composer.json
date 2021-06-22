@@ -16,7 +16,7 @@
     ],
 	"autoload": {
         "psr-4": {
-            "DuckAdmin\\": "src"
+            "DuckAdmin\\": "src/DuckAdmin"
         }
     },
     "require": {

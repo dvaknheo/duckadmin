@@ -27,6 +27,12 @@ class App extends DuckPhp
         'plugin_enable_readfile' =>true,
         'plugin_readfile_prefix' => '/res',
     ];
+    public function __construct()
+    {
+        $path=realpath(__DIR__.'/../../../').'/';
+        parent::__construct();
+        $this->plugin_options['plugin_path'] = $path;
+    }
     /**
      * 这里是初始化基类，然后把自己当插件运行
      * @param array $options
