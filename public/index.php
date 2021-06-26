@@ -10,10 +10,14 @@ require_once(__DIR__.'/../vendor/autoload.php');    //@DUCKPHP_HEADFILE
 $options = [
     'is_debug'=>true,
     'use_setting_file'=>true,
+    'ext' => [
+    ],
 ];
-$plugin_options = [
+$options['ext'][DuckAdmin\System\App::class]=[
+    //
+];
+$options['ext'][SimpleAuth\System\App::class]=[
+    //
 ];
 
-define('DUCKADMIN_DIRECT_MODE', true);
-
-DuckAdmin\System\App::RunAsPlugin($options, $plugin_options);
+DuckPhp\DuckPhp::RunQuickly($options);

@@ -32,6 +32,7 @@ class App extends DuckPhp
         $path=realpath(__DIR__.'/../../../').'/';
         parent::__construct();
         $this->plugin_options['plugin_path'] = $path;
+        //self::G(static::G());
     }
     /**
      * 这里是初始化基类，然后把自己当插件运行
@@ -60,6 +61,7 @@ class App extends DuckPhp
     public function onPluginModeInit()
     {
         require_once __DIR__ .'/functions.php';
+        self::G(static::G());
     }
     public static function ResUrl($path)
     {
