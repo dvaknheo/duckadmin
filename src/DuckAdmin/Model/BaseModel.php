@@ -8,9 +8,8 @@ namespace DuckAdmin\Model;
 
 use DuckAdmin\System\ProjectModel;
 
-class Base extends ProjectModel
+class BaseModel extends ProjectModel
 {    
-    protected $table_name=null;
     protected function table()
     {
         if(!isset($this->table_name)){
@@ -18,6 +17,7 @@ class Base extends ProjectModel
         }
         return $this->table_name;
     }
+    
     public function getList(int $page = 1, int $page_size = 10)
     {
         $sql = "SELECT * from 'TABLE' where true order by id desc";

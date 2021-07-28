@@ -10,7 +10,7 @@ use DuckPhp\Foundation\SimpleControllerTrait;
 use DuckPhp\Helper\ControllerHelperTrait;
 use DuckPhp\SingletonEx\SingletonExTrait;
 
-use DuckAdmin\Business\SessionBusiness;
+use DuckAdmin\ControllerEx\AdminSession;
 use DuckAdmin\Business\AdminBusiness;
 
 
@@ -19,7 +19,7 @@ use DuckAdmin\Business\AdminBusiness;
  * 这里要注意的是，控制器的公开动态方法都会当成 web 动作，所以尽量避免公开动态方法
  * 第三方的东西在这里写
  */
-class Controller
+class ProjectController
 {
     use SimpleControllerTrait;
     use ControllerHelperTrait;
@@ -38,7 +38,7 @@ class Controller
             static::ExitRouteTo('index?r=' . static::getPathInfo());
         });
         
-        $admin = SessionBusiness::G()->getCurrentAdmin();
+        $admin = AdminSession::G()->getCurrentAdmin();
         $path_info = static::getPathInfo();
         $flag = AdminBusiness::G()->checkPermission($admin,$path_info);
         
@@ -53,7 +53,7 @@ class Controller
     protected function initViewData()
     {
         // 这两个重复调用，性能可以忽略不记。
-        $admin = SessionBusiness::G()->getCurrentAdmin();
+        $admin = AdminSession::G()->getCurrentAdmin();
         $path_info = static::getPathInfo();
         
         $menu = AdminBusiness::G()->getMenu($admin['id'],$path_info);
@@ -99,7 +99,7 @@ class Controller
     protected function doCheckPermission()
     {
         $path_info = static::getPathInfo();
-        $admin = SessionBusiness::G()->getCurrentAdmin();
+        $admin = AdminSession::G()->getCurrentAdmin();
         $flag = AdminBusiness::G()->checkPermission($admin,$path_info);
         
         return $flag; // 我们抛出异常得了。 

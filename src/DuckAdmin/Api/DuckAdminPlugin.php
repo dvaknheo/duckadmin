@@ -7,6 +7,8 @@
 namespace DuckAdmin\Api;
 
 use DuckAdmin\System\App;
+use DuckPhp\Component\AppPluginTrait;
+use DuckPhp\Component\Console;
 /**
  * 这是继承了DuckAdmin 入口类的插件类
  * $options['ext'][\DuckAdmin\Api\DuckAdminPlugin::class] = [
@@ -19,7 +21,9 @@ class DuckAdminPlugin extends App
     public $is_plugin = false;
     
     public $plugin_options = [
-        //
+        'plugin_path_document' => 'res',
+        'plugin_enable_readfile' =>true,
+        'plugin_readfile_prefix' => '/res',
     ];
     public function __construct()
     {
@@ -44,7 +48,7 @@ class DuckAdminPlugin extends App
     }
     protected function onPluginModeBeforeRun()
     {
-        $this->checkInstall();
+        //$this->checkInstall();
     }
     public function getPath()
     {

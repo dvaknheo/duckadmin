@@ -24,6 +24,14 @@ class CaptchaAction
     use SingletonExTrait;
     
     //////// 验证码部分 ////////
+    public static function ShowCaptcha()
+    {
+        return static::G()->doShowCaptcha();
+    }
+    public static function CheckCaptcha($captcha)
+    {
+        return static::G()->doCheckCaptcha($captcha);
+    }
     public function doShowCaptcha()
     {
         $phraseBuilder = new PhraseBuilder(4, '0123456789');
@@ -37,6 +45,7 @@ class CaptchaAction
         C::header('Cache-Control: no-cache, no-store, max-age=0, must-revalidate');
         $builder->output();
     }
+
     public function doCheckCaptcha($captcha)
     {
         $builder = new CaptchaBuilder();

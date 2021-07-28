@@ -7,25 +7,18 @@
 namespace DuckAdmin\System;
 
 use DuckPhp\DuckPhp;
-use DuckPhp\Component\AppPluginTrait;
 
 /**
  * 入口类
  */
 class App extends DuckPhp
 {
-    use AppPluginTrait;
     //@override
     public $options = [
         'is_debug' => true,        
         'use_setting_file' => true,
         'error_404' => '_sys/error_404',
         'error_500' => '_sys/error_500',
-    ];
-    public $plugin_options = [
-        'plugin_path_document' => 'res',
-        'plugin_enable_readfile' =>true,
-        'plugin_readfile_prefix' => '/res',
     ];
     public function __construct()
     {

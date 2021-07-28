@@ -8,8 +8,8 @@ namespace DuckAdmin\Controller;
 
 use DuckAdmin\Business\AdminBusiness;
 use DuckAdmin\Controller\Base as C;
-use DuckAdmin\ControlllerEx\AdminSession;
-use DuckAdmin\ControlllerEx\CaptchaAction;
+use DuckAdmin\ControllerEx\AdminSession;
+use DuckAdmin\ControllerEx\CaptchaAction;
 
 class Main extends Base
 {
