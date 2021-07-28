@@ -15,5 +15,44 @@ use DuckAdmin\System\App;
  */
 class DuckAdminPlugin extends App
 {
-
+    use AppPluginTrait;
+    public $is_plugin = false;
+    
+    public $plugin_options = [
+        //
+    ];
+    public function __construct()
+    {
+        $path=realpath(__DIR__.'/../../../').'/';
+        parent::__construct();
+        $this->plugin_options['plugin_path'] = $path;
+        $this->plugin_options['plugin_search_config'] = false;        
+    }
+    protected function onPluginModeInit()
+    {
+        $this->is_plugin = true;
+        App::G(static::G());
+        
+        //copy options
+        foreach($this->options as $k => $v){
+            if(isset($this->plugin_options[$k])){
+                $this->options[$k]= $this->plugin_options[$k];
+            }
+        }
+        
+        Console::G()->regCommandClass(static::class,  'SimpleAuth');
+    }
+    protected function onPluginModeBeforeRun()
+    {
+        $this->checkInstall();
+    }
+    public function getPath()
+    {
+        return $this->plugin_options['plugin_path'];
+    }
+    public static function RunAsPlugin($options, $plugin_options = [])
+    {
+        $options['ext'][static::class] = $plugin_options;
+        return DuckPhp::RunQuickly($options);
+    }
 }

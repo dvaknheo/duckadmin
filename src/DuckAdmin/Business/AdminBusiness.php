@@ -4,12 +4,12 @@ namespace DuckAdmin\Business;
 use DuckAdmin\Model\AdminModel;
 use DuckAdmin\Model\RoleModel;
 
-class AdminBusiness extends Base
+class AdminBusiness extends BaseBusiness
 {
     public function login(array $data)
     {
         $admin = AdminModel::G()->login($data['username'], $data['password']);
-        BusinessException::ThrowOn(empty($admin), "用户名或密码不正确，无法登录");
+        static::ThrowOn(empty($admin), "用户名或密码不正确，无法登录");
         // 这里不暴露更多情况。和用户登录的严谨性不同
         return $admin;
     }
@@ -21,7 +21,7 @@ class AdminBusiness extends Base
     public function getAdmin($id)
     {
         $ret = AdminModel::G()->get($id);
-        BusinessException::ThrowOn(!$ret, '没有这个管理员');
+        static::ThrowOn(!$ret, '没有这个管理员');
         $ret['role'] = RoleModel::G()->getRoleName($ret['role_id']); // 扩大职位详情
         return $ret;
     }
@@ -51,17 +51,17 @@ class AdminBusiness extends Base
     public function checkPermission($admin, $path_info)
     {
         $admin = is_array($admin)? $admin: AdminModel::G()->get($admin);
-        BusinessException::ThrowOn(!$admin, '没有这个管理员');
+        static::ThrowOn(!$admin, '没有这个管理员');
         if($this->isSuperAdmin($admin)){
             return true;
         }
         $role = RoleModel::G()->find($admin['role']);
         
-        BusinessException::ThrowOn(!$role, '你没有这个权限');
+        static::ThrowOn(!$role, '你没有这个权限');
         if($path_info===$role['path']){
             return true;
         }
-        BusinessException::ThrowOn(true, '你没有这个权限!');
+        static::ThrowOn(true, '你没有这个权限!');
     }
     public function isSuperAdmin($admin)
     {

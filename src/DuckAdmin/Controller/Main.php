@@ -5,11 +5,11 @@
  */
 
 namespace DuckAdmin\Controller;
-use DuckAdmin\Controller\Base as C;
 
 use DuckAdmin\Business\AdminBusiness;
-use DuckAdmin\Business\SessionBusiness;
-use DuckAdmin\Business\BusinessException;
+use DuckAdmin\Controller\Base as C;
+use DuckAdmin\ControlllerEx\AdminSession;
+use DuckAdmin\ControlllerEx\CaptchaAction;
 
 class Main extends Base
 {
@@ -24,8 +24,6 @@ class Main extends Base
     }
     public function index()
     {
-        //\DuckAdmin\Service\MySqlDumper::G()->foo();
-    
         C::Show(get_defined_vars(), 'index');
     }
     public function login()
@@ -49,19 +47,19 @@ class Main extends Base
         });
         
         $post = C::POST();
-        $flag = C::CheckCaptcha($post['captcha']);
-        BusinessException::ThrowOn(!$flag,"验证码错误");
+        $flag = CaptchaAction::CheckCaptcha($post['captcha']);
+        AdminBusiness::ThrowOn(!$flag,"验证码错误");
         $admin = AdminBusiness::G()->login($post);
-        SessionBusiness::G()->setCurrentAdmin($admin,$post['remember']);
+        AdminSession::G()->setCurrentAdmin($admin,$post['remember']);
         C::ExitRouteTo('Profile/index');  // 这里要设置成可配置的
     }
     public function logout()
     {
-        SessionBusiness::G()->logout();
+        AdminSession::G()->logout();
         C::ExitRouteTo('');
     }
     public function captcha()
     {
-        C::ShowCaptcha();
+        CaptchaAction::ShowCaptcha();
     }
 }

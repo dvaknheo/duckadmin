@@ -5,16 +5,15 @@
  */
 
 namespace DuckAdmin\Api;
+use DuckPhp\SingletonEx\SingletonExTrait;
 
 use DuckAdmin\System\Controller;
 /**
  * 你的 Contoller 控制器调用这里的静态方法类。
  */
-class DuckAdminController
+class DuckAdminAction
 {
-    public function __construct()
-    {
-    }
+    use SingletonExTrait;
     
     // 你的方法调用这个杜绝外部访问。
     public static function CheckPermission()

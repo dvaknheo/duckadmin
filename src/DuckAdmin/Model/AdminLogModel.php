@@ -6,7 +6,7 @@
 
 namespace DuckAdmin\Model;
 
-class AdminLogModel extends Base
+class AdminLogModel extends BaseModel
 {
     // 管理员日志记录
     public function record()

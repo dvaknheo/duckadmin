@@ -9,14 +9,13 @@ require_once(__DIR__.'/../vendor/autoload.php');    //@DUCKPHP_HEADFILE
 
 $options = [
     'is_debug'=>true,
-    'use_setting_file'=>true,
     'ext' => [
     ],
 ];
-$options['ext'][DuckAdmin\System\App::class]=[
+$options['ext'][DuckAdmin\Api\DuckAdminPlugin::class]=[
     //
 ];
-$options['ext'][SimpleAuth\System\App::class]=[
+$options['ext'][SimpleAuth\Api\SimpleAuthPlugin::class]=[
     //
 ];
 

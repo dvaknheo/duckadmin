@@ -3,26 +3,18 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace DuckAdmin\Business;
+namespace DuckAdmin\ControllerEx;
 
-use DuckAdmin\System\App as App;
+use DuckAdmin\System\ProjectSession;
 
-// 特殊业务， 会话
-class SessionBusiness extends Base
+class AdminSession extends ProjectSession
 {
-    protected $prefix = 'duckadmin_';
-    public function __construct()
-    {
-        App::session_start();
-    }
     public function getCurrentAdmin()
     {
-        $ret = App::SessionGet($this->prefix.'admin', []);
-        BusinessException::ThrowOn(empty($ret), '请重新登录');
-        
+        $ret = $this->get('admin', []);
+        static::ThrowOn(empty($ret), '请重新登录');
         return $ret;
     }
-    
     public function getCurrentAdminId()
     {
         $user = $this->getCurrentAdmin();
@@ -31,31 +23,30 @@ class SessionBusiness extends Base
     
     public function setCurrentAdmin($admin)
     {
-        App::SessionSet($this->prefix.'admin', $admin);
+        $this->set('admin', $admin);
     }
     public function logout()
     {
-        App::SessionSet($this->prefix.'admin', []);
-        unset($_SESSION['admin']);
-        //App::session_destroy();
+        $this->set('admin', []);
+        $this->unset('admin');
     }
     public function getPhrase()
     {
-        return App::SessionGet($this->prefix.'phrase', '');
+        return $this->get('phrase', '');
     }
     public function setPhrase($phrase)
     {
-        return App::SessionSet($this->prefix.'phrase', $phrase);
+        return $this->set('phrase', $phrase);
     }
     ////////////////////////////////////////////////////////////////////////
     public function csrf_token()
     {
-        $token = App::SessionGet($this->prefix.'_token');
+        $token = $this->get('_token');
         if (!isset($token)) {
             $token = $this->randomString(40);
-            App::SessionSet($this->prefix.'_token', $token);
+            $this->set('_token', $token);
         }
-        return App::SessionGet($this->prefix.'_token');
+        return $this->get('_token');
     }
     protected function randomString($length = 16)
     {

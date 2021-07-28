@@ -6,7 +6,7 @@
 
 namespace DuckAdmin\Model;
 
-class PermissionModel extends Base
+class PermissionModel extends BaseModel
 {
     public function foo()
     {

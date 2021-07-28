@@ -6,9 +6,9 @@
 
 namespace DuckAdmin\Business;
 
-use DuckAdmin\System\Exception;
+use DuckAdmin\System\ProjectException;
 
-class BusinessException extends Exception
+class BusinessException extends ProjectException
 {
     // 业务异常基类
 }

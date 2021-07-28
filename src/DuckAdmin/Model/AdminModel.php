@@ -6,14 +6,14 @@
 
 namespace DuckAdmin\Model;
 
-class AdminModel extends Base
+class AdminModel extends BaseModel
 {
     protected $table_name ='admin';
 
     public function login($username,$password)
     {
         $sql = "select * from 'TABLE' where username = ?";
-        $data = Base::Db()->fetch($this->prepare($sql), $username);
+        $data = BaseModel::Db()->fetch($this->prepare($sql), $username);
         if(empty($data)){
             return [];
         }
@@ -31,11 +31,11 @@ class AdminModel extends Base
     //////////
     public function addData($data)
     {
-        return Base::Db()->insertData($this->table(), $data);
+        return BaseModel::Db()->insertData($this->table(), $data);
     }
     public function updateData($id,$data)
     {
-        return Base::Db()->updateData($this->table(), $id, $data);
+        return BaseModel::Db()->updateData($this->table(), $id, $data);
     }
 
 }

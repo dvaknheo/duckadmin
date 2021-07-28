@@ -6,6 +6,7 @@
 
 namespace DuckAdmin\System;
 
+use DuckPhp\Foundation\SimpleControllerTrait;
 use DuckPhp\Helper\ControllerHelperTrait;
 use DuckPhp\SingletonEx\SingletonExTrait;
 
@@ -20,7 +21,7 @@ use DuckAdmin\Business\AdminBusiness;
  */
 class Controller
 {
-    use SingletonExTrait;
+    use SimpleControllerTrait;
     use ControllerHelperTrait;
     
     public function __construct()
