@@ -6,10 +6,8 @@
 
 namespace DuckAdmin\ControllerEx;
 
-use DuckPhp\SingletonEx\SingletonExTrait;
-
 use DuckAdmin\ControllerEx\AdminSession;
-use DuckAdmin\System\App as C;
+use DuckAdmin\System\ProjectController;
 
 use Gregwar\Captcha\CaptchaBuilder;
 use Gregwar\Captcha\PhraseBuilder;
@@ -19,10 +17,11 @@ use Gregwar\Captcha\PhraseBuilder;
  * 这里要注意的是，控制器的公开动态方法都会当成 web 动作，所以尽量避免公开动态方法
  * 第三方的东西在这里写
  */
-class CaptchaAction
+class CaptchaAction extends ProjectController
 {
-    use SingletonExTrait;
-    
+    public function __construct()
+    {
+    }
     //////// 验证码部分 ////////
     public static function ShowCaptcha()
     {
@@ -41,8 +40,8 @@ class CaptchaAction
         $phrase = $builder->getPhrase();
         AdminSession::G()->setPhrase($phrase);  // 这个 想处理掉，难受。
         
-        C::header('Content-type: image/jpeg');
-        C::header('Cache-Control: no-cache, no-store, max-age=0, must-revalidate');
+        static::header('Content-type: image/jpeg');
+        static::header('Cache-Control: no-cache, no-store, max-age=0, must-revalidate');
         $builder->output();
     }
 

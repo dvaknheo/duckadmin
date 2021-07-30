@@ -8,11 +8,12 @@ namespace DuckAdmin\System;
 
 use DuckPhp\Foundation\SimpleControllerTrait;
 use DuckPhp\Helper\ControllerHelperTrait;
-use DuckPhp\SingletonEx\SingletonExTrait;
 
 use DuckAdmin\ControllerEx\AdminSession;
+use DuckAdmin\ControllerEx\AdminAction;
 use DuckAdmin\Business\AdminBusiness;
 
+use DuckAdmin\System\App;
 
 /**
  * 这是充当 Helper 助手的 控制器基类
@@ -36,11 +37,8 @@ class ProjectController
         static::assignExceptionHandler(\Exception::class, function(){
             // 这里应该调整成可调的
             static::ExitRouteTo('index?r=' . static::getPathInfo());
-        });
-        
-        $admin = AdminSession::G()->getCurrentAdmin();
-        $path_info = static::getPathInfo();
-        $flag = AdminBusiness::G()->checkPermission($admin,$path_info);
+        });        
+        $flag = AdminAction::G()->doCheckPermission();
         
         if(!$flag){
             static::Exit404();
@@ -54,54 +52,14 @@ class ProjectController
     {
         // 这两个重复调用，性能可以忽略不记。
         $admin = AdminSession::G()->getCurrentAdmin();
-        $path_info = static::getPathInfo();
+        $path_info = App::getPathInfo();
         
         $menu = AdminBusiness::G()->getMenu($admin['id'],$path_info);
         
-        
-        
         static::assignViewData('menu', $menu);
         static::assignViewData('admin', $admin);
+        
         static::setViewHeadFoot('header','footer');
         // 页眉页脚，如果是其他项目引用的时候，该怎么处理的问题。
-    }
-    
-    public static function CheckLocalController($self,$static)
-    {
-        // 这个方法可能要给回 DuckPhp
-        if ($self === $static) {
-            if ($self === App::Route()->getRouteCallingClass()) {
-                //禁止直接访问
-                static::Exit404();
-            }
-            // 作为助手调用。
-            return true;
-        }
-        return false;
-    }
-    //////// 提供给第三方用的静态方法 ////////
-    public static function CheckPermission()
-    {
-        return static::G()->doCheckPermission();
-        // static::G() 是为了可替换。
-        // 这就导致了 限定 Controller::G(MyController::G()) 的 MyController 必须是子类。
-        // 不必奢望不继承了。
-    }
-    //////// 验证码这段，要到第三个类里来处理吧 ////////
-    public static function ShowCaptcha()
-    {
-        return CaptchaHelper::G()->doShowCaptcha();
-    }
-    public static function CheckCaptcha($captcha)
-    {
-        return CaptchaHelper::G()->doCheckCaptcha($captcha);
-    }
-    protected function doCheckPermission()
-    {
-        $path_info = static::getPathInfo();
-        $admin = AdminSession::G()->getCurrentAdmin();
-        $flag = AdminBusiness::G()->checkPermission($admin,$path_info);
-        
-        return $flag; // 我们抛出异常得了。 
     }
 }
