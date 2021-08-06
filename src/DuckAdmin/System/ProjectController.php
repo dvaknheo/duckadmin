@@ -25,13 +25,7 @@ class ProjectController
     use SimpleControllerTrait;
     use ControllerHelperTrait;
     
-    public function __construct()
-    {
-        $this->initialize();
-    }
-    /*
-    */
-    protected function initialize()
+    protected function initController()
     {
         // 入口类
         static::assignExceptionHandler(\Exception::class, function(){
@@ -52,7 +46,7 @@ class ProjectController
     {
         // 这两个重复调用，性能可以忽略不记。
         $admin = AdminSession::G()->getCurrentAdmin();
-        $path_info = App::getPathInfo();
+        $path_info = static::getPathInfo();
         
         $menu = AdminBusiness::G()->getMenu($admin['id'],$path_info);
         
