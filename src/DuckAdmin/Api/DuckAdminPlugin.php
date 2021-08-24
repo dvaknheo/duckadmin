@@ -35,7 +35,6 @@ class DuckAdminPlugin extends App
     protected function onPluginModeInit()
     {
         $this->is_plugin = true;
-        App::G(static::G());
         
         //copy options
         foreach($this->options as $k => $v){
@@ -44,15 +43,15 @@ class DuckAdminPlugin extends App
             }
         }
         
-        Console::G()->regCommandClass(static::class,  'SimpleAuth');
+        Console::G()->regCommandClass(static::class,  $this->plugin_options['plugin_namespace']);
+        
+        App::G(static::G());
+        
+        //parent::onPluginModeInit();
     }
     protected function onPluginModeBeforeRun()
     {
-        //$this->checkInstall();
-    }
-    public function getPath()
-    {
-        return $this->plugin_options['plugin_path'];
+        $this->checkInstall();
     }
     public static function RunAsPlugin($options, $plugin_options = [])
     {

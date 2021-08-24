@@ -36,8 +36,9 @@ class AdminBusiness extends BaseBusiness
     public function updateAdmin($data)
     {
         //更新管理员
-        if (empty($data['password'])) {
+        if (!empty($data['password'])) {
             // 更新密码
+            
         }
         $ret = AdminModel::G()->updateData($data['id'], $data);
         return $ret;
@@ -78,6 +79,6 @@ class AdminBusiness extends BaseBusiness
     }
     public function toMenu()
     {
-        // 我们这里要做的是
+        // ？？？
     }
 }

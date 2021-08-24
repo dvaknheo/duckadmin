@@ -13,6 +13,7 @@ class Permission extends Base
      */
     public function index()
     {
+        var_dump("权限列表");
     }
 
     /**

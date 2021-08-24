@@ -61,7 +61,7 @@ class MyController
 {
     public function __contruct()
     {
-        \DuckAdmin\Api\DuckAdminControllerApi::CheckPermission();
+        \DuckAdmin\Api\DuckAdminAction::CheckPermission();
         // 这使得你的控制器必须有权限才能访问。
     }
 }
@@ -70,7 +70,7 @@ class MyController
 <pre class="layui-code">
 class MyBusiness
 {
-    \DuckAdmin\Api\DuckAdminServiceApi::Foo();
+    \DuckAdmin\Api\DuckAdminService::Foo();
 }
 </pre>
 

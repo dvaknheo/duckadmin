@@ -16,7 +16,10 @@
     ],
 	"autoload": {
         "psr-4": {
-            "DuckAdmin\\": "src/DuckAdmin"
+            "DuckAdmin\\": "src/DuckAdmin",
+            "DuckCommon\\": "src/DuckCommon",
+            "DuckMerchant\\": "src/DuckMerchant",
+            "DuckUser\\": "src/DuckUser"
         }
     },
     "require": {

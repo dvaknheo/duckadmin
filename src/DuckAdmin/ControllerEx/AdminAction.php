@@ -8,13 +8,10 @@ namespace DuckAdmin\ControllerEx;
 
 use DuckAdmin\Business\AdminBusiness;
 use DuckAdmin\ControllerEx\AdminSession;
-use DuckAdmin\System\ProjectController;
+use DuckAdmin\System\ProjectAction;
 
-class AdminAction extends ProjectController
+class AdminAction extends ProjectAction
 {
-    public function __construct()
-    {
-    }
     public function doCheckPermission()
     {
         $admin = AdminSession::G()->getCurrentAdmin();
@@ -22,12 +19,11 @@ class AdminAction extends ProjectController
         $flag = AdminBusiness::G()->checkPermission($admin,$path_info);
         return $flag;
     }
-    // 这里是视图相关的
     protected function initViewData()
     {
         // 这两个重复调用，性能可以忽略不记。
         $admin = AdminSession::G()->getCurrentAdmin();
-        $path_info = App::getPathInfo();
+        $path_info = static::getPathInfo();
         
         $menu = AdminBusiness::G()->getMenu($admin['id'],$path_info);
         
