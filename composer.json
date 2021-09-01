@@ -6,7 +6,7 @@
         "backend",
 		"duckphp"
     ],
-    "homepage": "https://www.github.com/dvaknheo/duckphp",
+    "homepage": "https://www.github.com/dvaknheo/duckadmin",
     "license": "MIT",
     "authors": [
         {
@@ -27,7 +27,6 @@
         "yzalis/identicon": "^2.0",
         "topthink/think-captcha": "1.0.7",
         "topthink/think-orm": "^2.0",
-        "topthink/think-validate": "*",
         "gregwar/captcha": "^1.1"
 	}
 }

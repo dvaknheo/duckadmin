@@ -19,7 +19,7 @@ class AdminAction extends ProjectAction
         $flag = AdminBusiness::G()->checkPermission($admin,$path_info);
         return $flag;
     }
-    protected function initViewData()
+    public function initViewData()
     {
         // 这两个重复调用，性能可以忽略不记。
         $admin = AdminSession::G()->getCurrentAdmin();

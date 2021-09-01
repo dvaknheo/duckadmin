@@ -41,8 +41,12 @@ class Installer extends ComponentBase
         parent::init($options, $context);
         
         $this->path_lock = $this->getComponenetPath(Configer::G()->options['path_config'],Configer::G()->options['path']);
-        $this->options['path_sql_dump'] = ($this->context_class)::G()->getPath().'config/'; // 这里再灵活一点？
+        $path = $context->plugin_options['plugin_path'] ?: $context->options['path'];
+        $path_config = $path.'config/';
+        $this->options['path_sql_dump'] = $path_config;
+        
         SqlDumper::G()->init($options, ($this->context_class)::G());
+        
         return $this;
     }
     public function isInstalled()
@@ -73,7 +77,7 @@ class Installer extends ComponentBase
     {
         $ret = false;
         if(!$this->options['force'] && $this->isInstalled()){
-           static::ThrowOn(true,'你已经安装 SimpleAuth',-1);     
+           static::ThrowOn(true,'你已经安装 !',-1);     
         }
         try{
             $ret = SqlDumper::G()->install($this->options['force']??false);

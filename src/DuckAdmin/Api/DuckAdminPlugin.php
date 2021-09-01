@@ -18,41 +18,37 @@ use DuckPhp\Component\Console;
 class DuckAdminPlugin extends App
 {
     use AppPluginTrait;
-    public $is_plugin = false;
     
+    // 可调的外部设置
     public $plugin_options = [
-        'plugin_path_document' => 'res',
-        'plugin_enable_readfile' =>true,
-        'plugin_readfile_prefix' => '/res',
+            'duckadmin_check_installed' => true,
+            'duckadmin_resource_url_prefix' => '/res',
+            
+            'duckadmin_table_prefix' => '',
+            'duckadmin_session_prefix' => '',
     ];
     public function __construct()
     {
-        $path=realpath(__DIR__.'/../../../').'/';
         parent::__construct();
-        $this->plugin_options['plugin_path'] = $path;
-        $this->plugin_options['plugin_search_config'] = false;        
+        parent::G($this); // 这句有问题
+        
+        // 这里的配置是内部配置。
+        $ext_plugin_options = [
+            'plugin_path_document' => 'res',
+            'plugin_enable_readfile' =>true,
+            'plugin_readfile_prefix' => ,
+            'plugin_search_config'  => false,
+        ];
+        $this->plugin_options['plugin_readfile_prefix'] = $this->plugin_options['duckadmin_resource_url_prefix'];
+        
+        $this->plugin_options = array_merge($ext_plugin_options, $this->plugin_options);
     }
-    protected function onPluginModeInit()
-    {
-        $this->is_plugin = true;
-        
-        //copy options
-        foreach($this->options as $k => $v){
-            if(isset($this->plugin_options[$k])){
-                $this->options[$k]= $this->plugin_options[$k];
-            }
-        }
-        
-        Console::G()->regCommandClass(static::class,  $this->plugin_options['plugin_namespace']);
-        
-        App::G(static::G());
-        
-        //parent::onPluginModeInit();
-    }
+    /////////////////////////////////////////
     protected function onPluginModeBeforeRun()
     {
         $this->checkInstall();
     }
+    ////////////////////////////////////
     public static function RunAsPlugin($options, $plugin_options = [])
     {
         $options['ext'][static::class] = $plugin_options;

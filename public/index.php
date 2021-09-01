@@ -8,7 +8,6 @@
 require_once(__DIR__.'/../vendor/autoload.php');    //@DUCKPHP_HEADFILE
 
 $options = [
-    'is_debug'=>true,
     'ext' => [
     ],
 ];
