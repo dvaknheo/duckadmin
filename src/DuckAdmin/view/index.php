@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="utf-8">
 		<title>DuckAdmin 后台系统</title>
-		<link href="<?=duckadmin_res("layui/css/layui.css")?>" rel="stylesheet" />
+		<link href="<?=__res("layui/css/layui.css")?>" rel="stylesheet" />
 	</head>
 	<body>
     
@@ -21,18 +21,6 @@
 <h1>欢迎使用 DuckAdmin</h1>
 
 <hr />
-<?php
-if(defined('DUCKADMIN_DIRECT_MODE')){
-?>
-<blockquote class="layui-elem-quote">
-你使用的是直接调用的模式
-请注意 DuckAdmin 是 Composer Library 。而不是 Composer Project 。
-简而言之，请勿在 DuckAdmin 作为你的桩代码来修改，而是在你的工程里引入。
-</blockquote>
-
-<?php
-}
-?>
 <h2>安装</h2>
 <pre>
 DuckAdmin 是用来给 DuckPhp 项目做二次开发用的。

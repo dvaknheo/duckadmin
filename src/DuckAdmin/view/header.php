@@ -11,11 +11,11 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="format-detection" content="telephone=no">
   
-  <link href="<?=duckadmin_res("layui/css/layui.css")?>" rel="stylesheet" media="all">
+  <link href="<?=__res("layui/css/layui.css")?>" rel="stylesheet" media="all">
 
 </head>
 <body>
-  <script src="<?=duckadmin_res("layui/layui.js")?>"></script>
+  <script src="<?=__res("layui/layui.js")?>"></script>
 <div class="layui-layout layui-layout-admin">
   <div class="layui-header">
     <div class="layui-logo">DuckPhp管理后台</div>

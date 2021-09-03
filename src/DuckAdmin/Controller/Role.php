@@ -30,6 +30,7 @@ class Role extends Base
      */
     public function edit($id)
     { 
+        C::Show(get_defined_vars());
     }
 
     /**
@@ -37,5 +38,6 @@ class Role extends Base
      */
     public function remove($id)
     {
+        C::Show(get_defined_vars());
     }
 }

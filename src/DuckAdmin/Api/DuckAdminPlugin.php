@@ -30,8 +30,6 @@ class DuckAdminPlugin extends App
     public function __construct()
     {
         parent::__construct();
-        parent::G($this); // 这句有问题
-        
         // 这里的配置是内部配置。
         $ext_plugin_options = [
             'plugin_path_document' => 'res',
@@ -46,12 +44,6 @@ class DuckAdminPlugin extends App
     /////////////////////////////////////////
     protected function onPluginModeBeforeRun()
     {
-        $this->checkInstall();
-    }
-    ////////////////////////////////////
-    public static function RunAsPlugin($options, $plugin_options = [])
-    {
-        $options['ext'][static::class] = $plugin_options;
-        return DuckPhp::RunQuickly($options);
+        $this->checkInstall(); // 检查安装
     }
 }
