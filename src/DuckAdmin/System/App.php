@@ -35,7 +35,7 @@ class App extends DuckPhp
         }
         $has_database = (static::Setting('database') ||  static::Setting('database_list')) ? true : false;
         
-        Installer::CheckInstall([],$this , $has_database);
+        (new Installer())->checkInstall($this, [], $has_database);
     }
     //////////////////////
     public function install($parameters)
@@ -45,7 +45,7 @@ class App extends DuckPhp
             'installer_table_prefix' => $this->options[ 'duckadmin_table_prefix'],
         ];
         
-        return Installer::G()->init($options,$this)->run();
+        return (new Installer())->init($options,$this)->run();
     }
     ////////////// 命令行
     public function command_install()

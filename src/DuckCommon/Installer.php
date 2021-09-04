@@ -25,9 +25,9 @@ class Installer extends ComponentBase
         'install_lock_file' => 'installer.lock',
         'force' => false,
         
-            'sql_dump_prefix' => '',
-            'sql_dump_install_replace_prefix' => true,
-            'sql_dump_install_drop_old_table' => false,
+        'sql_dump_prefix' => '',
+        'sql_dump_install_replace_prefix' => true,
+        'sql_dump_install_drop_old_table' => false,
     ];
     protected $path_lock;
     public function __construct()
@@ -55,16 +55,10 @@ class Installer extends ComponentBase
         return is_file($file);
     }
     ////////////////
-
-    public static function CheckInstall($options,$context, $has_database)
+    public  function checkInstall($context, $options,$has_database)
     {
-        return static::G()->_CheckInstall($options,$context ,$has_database)
-    }
-    public  function _CheckInstall($options,$context,$has_database)
-    {
-         static::ThrowOn(!$has_database, '你需要外部配置，如数据库等',static::NEED_DATABASE);
-    
-        $flag = static::G()->init([],$this)->isInstalled()){
+        static::ThrowOn(!$has_database, '你需要外部配置，如数据库等',static::NEED_DATABASE);
+        $flag = $this->init([],$this)->isInstalled();
         static::ThrowOn(!$flag,"你需要安装",static::NEED_INSTALL);
     }
     //////////////////
