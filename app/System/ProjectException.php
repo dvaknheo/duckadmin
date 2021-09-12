@@ -1,17 +1,13 @@
 <?php declare(strict_types=1);
 /**
- * DuckPhp
+ * DuckPHP
  * From this time, you never be alone~
  */
-
-namespace DuckAdmin\System;
+namespace DuckAdminDemo\System;
 
 use DuckPhp\ThrowOn\ThrowOnTrait;
 
-/**
- * 这是工程的错误基类。 可以使用 ThrowOn
- */
-class Exception extends \Exception
+class ProjectException extends \Exception
 {
     use ThrowOnTrait;
 }

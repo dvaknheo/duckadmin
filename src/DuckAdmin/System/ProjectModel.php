@@ -8,13 +8,11 @@ namespace DuckAdmin\System;
 
 use DuckPhp\Foundation\SimpleModelTrait;
 use DuckPhp\Helper\ModelHelperTrait;
-use DuckPhp\SingletonEx\SingletonExTrait;
 
 class ProjectModel
 {
-    use SingletonExTrait;
-    use ModelHelperTrait;
     use SimpleModelTrait;
+    use ModelHelperTrait;
     
     public static function GetTableByClass($class)
     {
@@ -22,12 +20,12 @@ class ProjectModel
     }
     public static function _GetTableByClass($class)
     {
+        $this->table_prefix = $table_prefix ?? (App::G()->options['table_prefix']??'');
         $t = explode('\\', $class);
         $class = array_pop($t);
         
         $table_name = 'admin_'.strtolower(substr($class,0,-5));
-        $table_name = ($table_name==='admin_admin')? 'admin' : $table_name;
-        $table_name = App::Setting('duckadmin_pre_prefix').$table_name;
+        $this->table_name = $this->table_name ??(($table_name==='admin_admin')? 'admin' : $table_name);
         
         return $table_name;
     }

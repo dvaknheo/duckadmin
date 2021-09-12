@@ -5,10 +5,13 @@
  */
 namespace DuckAdmin\System;
 
-use DuckPhp\Foundation\SessionManagerBase;
+use DuckPhp\Foundation\Session;
 use DuckPhp\Foundation\ThrowOnableTrait;
 
-class ProjectSession extends SessionManagerBase
+/*
+ * 工程的 Session
+ */
+class ProjectSession extends Session
 {
     use ThrowOnableTrait;
 }

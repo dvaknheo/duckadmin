@@ -8,45 +8,40 @@ namespace DuckAdmin\System;
 
 use DuckPhp\DuckPhp;
 
-use DuckCommon\Installer;
+use DuckPhp\Ext\InstallableTrait;
 
 /**
  * 入口类
  */
 class App extends DuckPhp
 {
+    use InstallableTrait;
     //@override
     public $options = [
         'error_404' => '_sys/error_404',
         'error_500' => '_sys/error_500',
         
         'duckadmin_installed' => false,  // 检查安装
-        'duckadmin_table_prefix' => '',   // 表前缀
-        'duckadmin_session_prefix' => '',  // Session 前缀 
+        'table_prefix' => '',   // 表前缀
+        'session_prefix' => '',  // Session 前缀 
+        'duckadmin_resource_prefix' => 'res/',  // 资源文件前缀 
     ];
+    ///////
+    /**
+     * @override 覆盖初始化
+     */
+    public function onInit()
+    {
+        $this->options['controller_resource_prefix'] = $this->options['duckadmin_resource_prefix'];
+        // 我们插件生效起来。没有这个资源则调用 res 目录的资源。
+        // 如果是插件模式，则把插件也生效起来。
+    }
+    
     protected function onBeforeRun()
     {
-        $this->checkInstall();
+        //$this->checkInstall(); // checkInstall on InstallableTrait
     }
-    protected function checkInstall()
-    {
-        if ($this->options['duckadmin_installed'] || static::Setting('duckadmin_installed') ){
-            return;
-        }
-        $has_database = (static::Setting('database') ||  static::Setting('database_list')) ? true : false;
-        
-        (new Installer())->checkInstall($this, [], $has_database);
-    }
-    //////////////////////
-    public function install($parameters)
-    {
-        $options = [
-            'force' => $parameters['force']?? false,
-            'installer_table_prefix' => $this->options[ 'duckadmin_table_prefix'],
-        ];
-        
-        return (new Installer())->init($options,$this)->run();
-    }
+
     ////////////// 命令行
     public function command_install()
     {
@@ -56,19 +51,11 @@ class App extends DuckPhp
             // echo "--force  to force install ;";
             //return;
         }
-        echo $this->install($parameters);
+        echo $this->install($parameters); // on InstallableTrait
         echo "Done \n";
     }
     /////////////////////
-    // 表格前缀， session 前缀
-    public function getTablePrefix()
-    {
-        return $this->options['duckadmin_table_prefix'];
-    }
-    public function getSessionPrefix()
-    {
-        return $this->options['duckadmin_session_prefix'];
-    }
+
     //// 以下是测试自留地 ////
     public function command_test()
     {

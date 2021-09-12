@@ -3,13 +3,16 @@ namespace DuckAdmin\Business;
 
 use DuckAdmin\Model\AdminModel;
 use DuckAdmin\Model\RoleModel;
-
+/**
+ * 管理员业务
+ */
 class AdminBusiness extends BaseBusiness
 {
     public function login(array $data)
     {
         $admin = AdminModel::G()->login($data['username'], $data['password']);
         static::ThrowOn(empty($admin), "用户名或密码不正确，无法登录");
+        static::FireEvent([static::class,__METHOD__], $admin); //引发系统异常
         // 这里不暴露更多情况。和用户登录的严谨性不同
         return $admin;
     }

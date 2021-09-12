@@ -5,7 +5,9 @@
  */
 
 namespace DuckAdmin\Model;
-
+/**
+ * 菜单模型
+ */
 class MenuModel extends BaseModel
 {
     public function foo()

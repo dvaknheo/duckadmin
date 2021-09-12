@@ -5,7 +5,9 @@
  */
 
 namespace DuckAdmin\Model;
-
+/**
+ * 管理员日志
+ */
 class AdminLogModel extends BaseModel
 {
     // 管理员日志记录

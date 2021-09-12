@@ -4,12 +4,10 @@
  * From this time, you never be alone~
  */
 
-namespace DuckAdmin\Business;
+namespace DuckAdminDemo\Business;
 
-use DuckAdmin\System\ProjectException;
-/**
- * 业务异常基类
- */
+use DuckAdminDemo\System\ProjectException;
+
 class BusinessException extends ProjectException
 {
 }

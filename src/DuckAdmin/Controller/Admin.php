@@ -8,7 +8,9 @@ namespace DuckAdmin\Controller;
 
 use DuckAdmin\Controller\Base as C;
 use DuckAdmin\Business\AdminBusiness;
-
+/**
+ * 管理员
+ */
 class Admin extends Base
 {
     /**

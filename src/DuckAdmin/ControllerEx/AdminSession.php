@@ -6,7 +6,9 @@
 namespace DuckAdmin\ControllerEx;
 
 use DuckAdmin\System\ProjectSession;
-
+/**
+ * 会话处理
+ */
 class AdminSession extends ProjectSession
 {
     public function getCurrentAdmin()

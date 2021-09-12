@@ -9,7 +9,9 @@ namespace DuckAdmin\System;
 use DuckPhp\Foundation\ThrowOnableTrait;
 use DuckPhp\Helper\ControllerHelperTrait;
 use DuckPhp\SingletonEx\SingletonExTrait;
-
+/**
+ * 工程动作基类，绑定了助手，和 ThrowOn()
+ */
 class ProjectAction
 {
     use SingletonExTrait;

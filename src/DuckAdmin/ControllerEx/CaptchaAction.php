@@ -13,8 +13,7 @@ use Gregwar\Captcha\CaptchaBuilder;
 use Gregwar\Captcha\PhraseBuilder;
 
 /**
- * 这是充当 Helper 助手的 控制器基类
- * 这里要注意的是，控制器的公开动态方法都会当成 web 动作，所以尽量避免公开动态方法
+ * 验证码系统，你可以修改你的实现
  * 第三方的东西在这里写
  */
 class CaptchaAction extends ProjectAction
@@ -49,7 +48,6 @@ class CaptchaAction extends ProjectAction
     {
         $phrase = AdminSession::G()->getPhrase(); // 这个 关联也想处理掉。
         
-        $builder = new CaptchaBuilder();
         $flag = PhraseBuilder::comparePhrases($phrase, $captcha);
         return $flag;
     }

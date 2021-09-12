@@ -13,24 +13,24 @@ use DuckAdmin\ControllerEx\AdminSession;
 use DuckAdmin\ControllerEx\AdminAction;
 use DuckAdmin\Business\AdminBusiness;
 
-use DuckAdmin\System\App;
-
 /**
  * 这是充当 Helper 助手的 控制器基类
  * 这里要注意的是，控制器的公开动态方法都会当成 web 动作，所以尽量避免公开动态方法
- * 第三方的东西在这里写
  */
 class ProjectController
 {
     use SimpleControllerTrait;
     use ControllerHelperTrait;
-    
+    public static function _GetInitRedirectRoute()
+    {
+        return static::Url('index?r=' . static::getPathInfo());
+    }
     protected function initController()
     {
         // 入口类
         static::assignExceptionHandler(\Exception::class, function(){
             // 这里应该调整成可调的
-            static::ExitRouteTo('index?r=' . static::getPathInfo());
+            static::ExitRouteTo(static::_GetInitRedirectRoute());
         });        
         $flag = AdminAction::G()->doCheckPermission();
         
