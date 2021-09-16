@@ -35,17 +35,27 @@ class DuckAdminPlugin extends App
         $ext_plugin_options = [
             'plugin_path_document' => 'res',
             'plugin_enable_readfile' =>true,
-            'plugin_readfile_prefix' =>  'res/' ,
+            //'plugin_readfile_prefix' =>  'res/' ,
             'plugin_search_config'  => false,
         ];
         $this->plugin_options['plugin_readfile_prefix'] = $this->plugin_options['duckadmin_resource_url_prefix'];
+
         $this->plugin_options['plugin_path'] = realpath(__DIR__.'/../').'/';
-        
         $this->plugin_options = array_merge($ext_plugin_options, $this->plugin_options);
     }
     /////////////////////////////////////////
     protected function onPluginModeBeforeRun()
     {
+        $this->plugin_options['plugin_readfile_prefix'] = $this->plugin_options['duckadmin_resource_url_prefix'];
         //$this->checkInstall(); // 检查安装
+    }
+    
+    public static function Action()
+    {
+        return DucckAdminAction::G();
+    }
+    public static function Service()
+    {
+        return DucckAdminService::G();
     }
 }
