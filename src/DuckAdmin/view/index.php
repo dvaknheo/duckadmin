@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="utf-8">
 		<title>DuckAdmin 后台系统</title>
-		<link href="<?=__res("layui/css/layui.css")?>" rel="stylesheet" />
+		<link href="<?=__duckadmin_res("layui/css/layui.css")?>" rel="stylesheet" />
 	</head>
 	<body>
     

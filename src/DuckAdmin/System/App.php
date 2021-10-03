@@ -4,7 +4,8 @@
  * From this time, you never be alone~
  */
 
-namespace DuckAdmin\System;
+namespace DuckAdmin\System
+{
 
 use DuckPhp\DuckPhp;
 
@@ -39,7 +40,7 @@ class App extends DuckPhp
     
     protected function onBeforeRun()
     {
-        //$this->checkInstall(); // checkInstall on InstallableTrait
+        $this->checkInstall(); // checkInstall on InstallableTrait
     }
 
     ////////////// 命令行
@@ -64,4 +65,17 @@ class App extends DuckPhp
         // 我们测试一下
         var_dump("command_test");
     }
+}
+
+}
+namespace {
+function __duckadmin_res($url)
+{
+    return \DuckAdmin\System\App::Res($url);
+}
+function __duckadmin_url($url)
+{
+    return \DuckAdmin\System\App::Url($url);
+}
+
 }
