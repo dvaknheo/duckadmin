@@ -24,7 +24,10 @@ class Admin extends Base
         C::Show($data);
     }
 
-
+    public function password()
+    {
+        var_dump("OK");
+    }
     /**
      * 添加
      */

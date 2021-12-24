@@ -11,7 +11,7 @@ use DuckPhp\ThrowOn\ThrowOnTrait;
 /**
  * 这是工程的错误基类。 可以使用 ThrowOn
  */
-class Exception extends \Exception
+class ProjectException extends \Exception
 {
     use ThrowOnTrait;
 }

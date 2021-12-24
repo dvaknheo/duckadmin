@@ -15,7 +15,7 @@ class AdminAction extends ProjectAction
     public function doCheckPermission()
     {
         $admin = AdminSession::G()->getCurrentAdmin();
-        $path_info = static::getPathInfo();
+        $path_info = static::PathInfo();
         $flag = AdminBusiness::G()->checkPermission($admin,$path_info);
         return $flag;
     }

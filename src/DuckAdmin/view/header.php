@@ -11,11 +11,11 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="format-detection" content="telephone=no">
   
-  <link href="<?=__duckadmin_res("layui/css/layui.css")?>" rel="stylesheet" media="all">
+  <link href="<?=\DuckAdmin\__res("layui/css/layui.css")?>" rel="stylesheet" media="all">
 
 </head>
 <body>
-  <script src="<?=__duckadmin_res("layui/layui.js")?>"></script>
+  <script src="<?=\DuckAdmin\__res("layui/layui.js")?>"></script>
 <div class="layui-layout layui-layout-admin">
   <div class="layui-header">
     <div class="layui-logo">DuckPhp管理后台</div>
@@ -25,7 +25,7 @@
     </div>
     <ul class="layui-nav layui-layout-right">
         <li class="layui-nav-item">
-        <a href="<?=__duckadmin_url('Permission/show')?>">
+        <a href="<?=\DuckAdmin\__url('Permission/show')?>">
           <i class="layui-icon layui-icon-group" style="color:red;"></i>
           <?=__h($admin['role'])?>
         </a>
@@ -36,9 +36,9 @@
           <?=__h($admin['nickname'])?>(<?=__h($admin['username'])?>)
         </a>
         <dl class="layui-nav-child">
-          <dd><a href="<?=__duckadmin_url('Profile/index')?>">工作台首页</a></dd>
-          <dd><a href="<?=__duckadmin_url('Admin/password')?>">修改密码</a></dd>
-          <dd><a href="<?=__duckadmin_url('logout')?>">登出</a></dd>
+          <dd><a href="<?=\DuckAdmin\__url('Profile/index')?>">工作台首页</a></dd>
+          <dd><a href="<?=\DuckAdmin\__url('Admin/password')?>">修改密码</a></dd>
+          <dd><a href="<?=\DuckAdmin\__url('logout')?>">登出</a></dd>
         </dl>
       </li>
     </ul>

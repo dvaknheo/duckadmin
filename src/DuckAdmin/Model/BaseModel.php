@@ -10,7 +10,7 @@ use DuckAdmin\System\ProjectModel;
 
 class BaseModel extends ProjectModel
 {    
-    protected function table()
+    public function table()
     {
         if(!isset($this->table_name)){
             $this->table_name = self::GetTableByClass(static::class);

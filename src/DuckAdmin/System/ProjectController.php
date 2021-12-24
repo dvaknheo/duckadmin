@@ -46,7 +46,7 @@ class ProjectController
     {
         // 这两个重复调用，性能可以忽略不记。
         $admin = AdminSession::G()->getCurrentAdmin();
-        $path_info = static::getPathInfo();
+        $path_info = static::PathInfo();
         
         $menu = AdminBusiness::G()->getMenu($admin['id'],$path_info);
         

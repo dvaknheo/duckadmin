@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<title>DuckAdmin 后台系统</title>
-		<link href="<?=__duckadmin_res("layui/css/layui.css")?>" rel="stylesheet" />
-	</head>
-	<body>
+    <head>
+        <meta charset="utf-8">
+        <title>DuckAdmin 后台系统</title>
+        <link href="<?=\DuckAdmin\__res("layui/css/layui.css")?>" rel="stylesheet" />
+    </head>
+    <body>
     
 <div class="layui-header" style ="background-color:#5FB878;padding:1em;">
     <div>
@@ -16,7 +16,7 @@
 <!-- -->
 
     <div class="layui-row " style="border-left:1px solid;border-right:1px solid;padding:1em;">
-		<div class="layui-col-md8" >
+        <div class="layui-col-md8" >
 <!-- -->
 <h1>欢迎使用 DuckAdmin</h1>
 
@@ -88,20 +88,20 @@ class App
 </pre>
 <!-- -->
 
-		</div>
-		<div class="layui-col-md4">
-		<form method="post" class="layui-form" style="border:1px solid; margin:1em;">
+        </div>
+        <div class="layui-col-md4">
+        <form method="post" class="layui-form" style="border:1px solid; margin:1em;">
             <div class="title" style="font-size:big;background-color:#5FB878;"><h1>登录</h1></div>
             <div style="padding:1em;">
-			<div class="layui-form-item">
-				<input placeholder="账 户" type="text" name="username" hover class="layui-input"/>
-			</div>
-			<div class="layui-form-item">
-				<input placeholder="密 码" type="password" name="password"  hover class="layui-input"/>
+            <div class="layui-form-item">
+                <input placeholder="账 户" type="text" name="username" hover class="layui-input"/>
             </div>
             <div class="layui-form-item">
-				<input placeholder="验证码 : " type="text" maxlength="4" name="captcha" hover class="code layui-input layui-input-inline"/>
-				<a href="javascript:;" onclick="refresh_captcha()"><img id="codeimg" class="codeImage" src="<?=__url('captcha')?>" /></a>
+                <input placeholder="密 码" type="password" name="password"  hover class="layui-input"/>
+            </div>
+            <div class="layui-form-item">
+                <input placeholder="验证码 : " type="text" maxlength="4" name="captcha" hover class="code layui-input layui-input-inline"/>
+                <a href="javascript:;" onclick="refresh_captcha()"><img id="codeimg" class="codeImage" src="<?=\DuckAdmin\__url('captcha')?>" /></a>
                 <script>
                 function refresh_captcha(){
                     document.getElementById('codeimg').src=document.getElementById('codeimg').src
@@ -109,15 +109,15 @@ class App
               </script>
             </div>
             <div class="layui-form-item">
-				<input type="checkbox" name="remember" title="30天内自动登录" lay-skin="primary" checked>
-			</div>
-			<div class="layui-form-item">
-				<button class="login" lay-submit lay-filter="login">
-					登 入
-				</button>
-			</div>
+                <input type="checkbox" name="remember" title="30天内自动登录" lay-skin="primary" checked>
             </div>
-		</form>
+            <div class="layui-form-item">
+                <button class="login" lay-submit lay-filter="login">
+                    登 入
+                </button>
+            </div>
+            </div>
+        </form>
         </div>
     </div>
 <!-- -->
@@ -138,8 +138,8 @@ layui.use('layer', function(){
 </script>
   </div>
 <div class="layui-footer" style ="background-color:#FAFAFA;padding:1em;text-align:center;">
-感谢 <a href="https://www.layui.com/"> LayUI </a> 前端支持，为我这个不懂得好看的能勉强做出来
+感谢 <a href="https://github.com/sentsin/layui/"> LayUI </a> 前端支持，为我这个不懂得好看的能勉强做出来
 感谢 pearadmin  让我可以 copy  idea.
 </div>
-	</body>
+    </body>
 </html>

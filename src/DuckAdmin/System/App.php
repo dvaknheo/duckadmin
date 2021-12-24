@@ -68,12 +68,15 @@ class App extends DuckPhp
 }
 
 }
-namespace {
-function __duckadmin_res($url)
+namespace DuckAdmin
+{
+// 专属的一些函数
+
+function __res($url)
 {
     return \DuckAdmin\System\App::Res($url);
 }
-function __duckadmin_url($url)
+function __url($url)
 {
     return \DuckAdmin\System\App::Url($url);
 }

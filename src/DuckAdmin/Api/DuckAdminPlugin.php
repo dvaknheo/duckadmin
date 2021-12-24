@@ -35,7 +35,7 @@ class DuckAdminPlugin extends App
         $ext_plugin_options = [
             'plugin_path_document' => 'res',
             'plugin_enable_readfile' =>true,
-            //'plugin_readfile_prefix' =>  'res/' ,
+            'plugin_readfile_prefix' =>  'res/' ,
             'plugin_search_config'  => false,
         ];
         $this->plugin_options['plugin_readfile_prefix'] = $this->plugin_options['duckadmin_resource_url_prefix'];
