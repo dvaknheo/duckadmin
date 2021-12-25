@@ -57,10 +57,10 @@
         <li class="layui-nav-item">
         <a href="javascript:;">超级管理员专属</a>
         <dl class="layui-nav-child">
-            <dd><a href="/Admin/index">管理员管理</a></dd>
-            <dd><a href="/Role/index">职务(角色)管理</a></dd>
-            <dd><a href="/Menu/index">菜单和权限</a></dd>
-            <dd><a href="/Admin/log">操作日志</a></dd>
+            <dd><a href="<?=\DuckAdmin\__url('Admin/index')?>">管理员管理</a></dd>
+            <dd><a href="<?=\DuckAdmin\__url('Role/index')?>">职务(角色)管理</a></dd>
+            <dd><a href="<?=\DuckAdmin\__url('Menu/index')?>">菜单和权限</a></dd>
+            <dd><a href="/<?=\DuckAdmin\__url('Admin/log')?>">操作日志</a></dd>
         <dl>
         </li>
 

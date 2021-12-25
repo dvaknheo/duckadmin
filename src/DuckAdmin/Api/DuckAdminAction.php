@@ -15,9 +15,9 @@ use DuckAdmin\System\AdminAction;
 class DuckAdminAction
 {
     use SingletonExTrait;    
-    // 你的方法调用这个杜绝外部访问。
+    // 
     /**
-     * 检查权限
+     * 检查权限 你的方法调用这个杜绝外部访问。
      */
     public function checkPermission()
     {
