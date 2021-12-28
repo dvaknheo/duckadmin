@@ -26,7 +26,7 @@
 
 <div class="layui-card">
     <div class="layui-card-body">
-    <button class="pear-btn pear-btn-primary pear-btn-md"> <i class="layui-icon layui-icon-add-1"></i> <a href="<?=__url('admin/add')?>">新增</a> </button>
+    <button class="pear-btn pear-btn-primary pear-btn-md"> <i class="layui-icon layui-icon-add-1"></i> <a href="<?=__url('Admin/add')?>">新增</a> </button>
     </div>
 </div>
 
@@ -52,7 +52,7 @@
             <td><?=__h($v['username'])?></td>
             <td><?=__h($roles[$v['role_id']])?></td>
             <td>
-                <a href="<?=__url('admin/edit?id='.$v['id'])?>">编辑</a>
+                <a href="<?=__url('Admin/edit?id='.$v['id'])?>">编辑</a>
                 <a href="#">删除</a>
             </td>
         </tr>

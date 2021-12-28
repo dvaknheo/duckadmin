@@ -21,11 +21,16 @@ class App extends DuckPhp
     public $options = [
         'error_404' => '_sys/error_404',
         'error_500' => '_sys/error_500',
+        'controller_base_class' => ProjectController::class,  // 我们固定住控制器基类
+        //////////////////
         
-        'duckadmin_installed' => false,  // 检查安装
+        'duckadmin_installed' => false,  // 检查安装 InstallableTrait 用到
         'table_prefix' => '',   // 表前缀
         'session_prefix' => '',  // Session 前缀 
-        'duckadmin_resource_prefix' => 'res/',  // 资源文件前缀 
+        
+        
+        'duckadmin_resource_prefix' => 'res/',  // 资源文件前缀   // 这段是什么用到呢
+        
     ];
     ///////
     /**

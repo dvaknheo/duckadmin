@@ -31,6 +31,7 @@ class AdminModel extends BaseModel
     //////////
     public function addData($data)
     {
+        // 这里密码要处理一下
         return BaseModel::Db()->insertData($this->table(), $data);
     }
     public function updateData($id,$data)

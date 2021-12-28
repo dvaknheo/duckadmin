@@ -18,14 +18,14 @@ class ProjectModel
     {
         return static::G()->_GetTableByClass($class);
     }
-    public static function _GetTableByClass($class)
+    public function _GetTableByClass($class)
     {
-        $this->table_prefix = $table_prefix ?? (App::G()->options['table_prefix']??'');
+        // 表前缀要跟着自己，而不是系统
+        $this->table_prefix = $table_prefix ?? (\DuckAdmin\System\App::G()->options['table_prefix']??'');
         $t = explode('\\', $class);
         $class = array_pop($t);
         
         $table_name = 'admin_'.strtolower(substr($class,0,-5));
-        $this->table_name = $this->table_name ??(($table_name==='admin_admin')? 'admin' : $table_name);
         
         return $table_name;
     }

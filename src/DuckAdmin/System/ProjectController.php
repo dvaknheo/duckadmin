@@ -21,9 +21,12 @@ class ProjectController
 {
     use SimpleControllerTrait;
     use ControllerHelperTrait;
+    
+    //////////////////////////
+    
     public static function _GetInitRedirectRoute()
     {
-        return static::Url('index?r=' . static::getPathInfo());
+        return __url('index?r=' . static::PathInfo());
     }
     protected function initController()
     {

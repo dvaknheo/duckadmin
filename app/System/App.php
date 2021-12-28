@@ -32,12 +32,12 @@ class App extends DuckPhp
         // 检查有没有设置，如果没有那么那么进入安装模式
         if (!$this->isInstalled()) {
             $database_setting = $this->doDatabaseSetting();
-                    $database = [
-        'dsn' => 'mysql:host='.$database_setting['host'].';port='.$database_setting['port'].';dbname='.$database_setting['dbname'].';charset=utf8mb4;',
-        'username' => $database_setting['username'],
-        'password' => $database_setting['password'],
-        'driver_options' => [],
-        ];
+            $database = [
+                'dsn' => 'mysql:host='.$database_setting['host'].';port='.$database_setting['port'].';dbname='.$database_setting['dbname'].';charset=utf8mb4;',
+                'username' => $database_setting['username'],
+                'password' => $database_setting['password'],
+                'driver_options' => [],
+            ];
             file_put_contents($this->options['path'].'config/setting.php',"<"."?php\n return ". var_export(['database'=>$database],true).';');
             $this->install([]);
             
@@ -84,10 +84,10 @@ EOT;
     protected function checkDatabaseSetting($database_setting)
     {
         $database = [
-        'dsn' => 'mysql:host='.$database_setting['host'].';port='.$database_setting['port'].';dbname='.$database_setting['dbname'].';charset=utf8mb4;',
-        'username' => $database_setting['username'],
-        'password' => $database_setting['password'],
-        'driver_options' => [],
+            'dsn' => 'mysql:host='.$database_setting['host'].';port='.$database_setting['port'].';dbname='.$database_setting['dbname'].';charset=utf8mb4;',
+            'username' => $database_setting['username'],
+            'password' => $database_setting['password'],
+            'driver_options' => [],
         ];
         DbManager::G()->init(['database'=>$database], $this);
         try{
