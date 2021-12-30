@@ -22,32 +22,26 @@ class App extends DuckPhp
         'error_404' => '_sys/error_404',
         'error_500' => '_sys/error_500',
         'controller_base_class' => ProjectController::class,  // 我们固定住控制器基类
+        'controller_resource_prefix' => 'res/',  // 资源文件前缀
         //////////////////
         
-        'duckadmin_installed' => false,  // 检查安装 InstallableTrait 用到
         'table_prefix' => '',   // 表前缀
         'session_prefix' => '',  // Session 前缀 
-        
-        
-        'duckadmin_resource_prefix' => 'res/',  // 资源文件前缀   // 这段是什么用到呢
+        'duckadmin_installed' => false,  // 检查安装 InstallableTrait 用到 InstallableTrait 这里要调整回去
         
     ];
     ///////
     /**
      * @override 覆盖初始化
      */
-    public function onInit()
+    public function init(array $options, ?object $context = NULL)
     {
-        $this->options['controller_resource_prefix'] = $this->options['duckadmin_resource_prefix'];
-        // 我们插件生效起来。没有这个资源则调用 res 目录的资源。
-        // 如果是插件模式，则把插件也生效起来。
+        parent::init($options, $context);
+        
+        //$this->checkInstall(); // checkInstall on InstallableTrait
+        
+        return $this;
     }
-    
-    protected function onBeforeRun()
-    {
-        $this->checkInstall(); // checkInstall on InstallableTrait
-    }
-
     ////////////// 命令行
     public function command_install()
     {
@@ -61,29 +55,18 @@ class App extends DuckPhp
         echo "Done \n";
     }
     /////////////////////
-
-    //// 以下是测试自留地 ////
-    public function command_test()
-    {
-        // 我们还要一些特殊的方法，不在 web 下的操作的危险命令，如彻底抹杀某个员工等
-        // 测试自留地
-        // 我们测试一下
-        var_dump("command_test");
-    }
 }
 
 }
 namespace DuckAdmin
 {
 // 专属的一些函数
-
-function __res($url)
-{
-    return \DuckAdmin\System\App::Res($url);
-}
-function __url($url)
-{
-    return \DuckAdmin\System\App::Url($url);
-}
-
+    function __res($url)
+    {
+        return \DuckAdmin\System\App::Res($url);
+    }
+    function __url($url)
+    {
+        return \DuckAdmin\System\App::Url($url);
+    }
 }

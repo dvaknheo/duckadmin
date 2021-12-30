@@ -13,7 +13,7 @@ class AdminModel extends BaseModel
     public function login($username,$password)
     {
         $sql = "select * from 'TABLE' where username = ?";
-        $data = BaseModel::Db()->fetch($this->prepare($sql), $username);
+        $data = $this->fetch($sql, $username);
         if(empty($data)){
             return [];
         }
@@ -32,11 +32,12 @@ class AdminModel extends BaseModel
     public function addData($data)
     {
         // 这里密码要处理一下
-        return BaseModel::Db()->insertData($this->table(), $data);
+        $data['password']=password_hash($data['password']);
+        return $this->add($data);
     }
     public function updateData($id,$data)
     {
-        return BaseModel::Db()->updateData($this->table(), $id, $data);
+        return $this->update($id, $data);
     }
 
 }

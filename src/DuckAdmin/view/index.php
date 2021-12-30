@@ -91,7 +91,7 @@ class App
         </div>
         <div class="layui-col-md4">
         <form method="post" class="layui-form" style="border:1px solid; margin:1em;">
-            <div class="title" style="font-size:big;background-color:#5FB878;"><h1>登录</h1></div>
+            <div class="title" style="font-size:big;background-color:#5FB878;"><h1>登录[<?=$error?>]</h1></div>
             <div style="padding:1em;">
             <div class="layui-form-item">
                 <input placeholder="账 户" type="text" name="username" hover class="layui-input"/>

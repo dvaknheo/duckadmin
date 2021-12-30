@@ -17,29 +17,32 @@ class App extends DuckPhp
     use InstallableTrait;
     //@override
     public $options = [
-        //'path_info_compact_enable' => false,        
+        'path_info_compact_enable' => false,
     ];
-    protected function onBeforeRun()
+    
+    public function init(array $options, ?object $context = NULL)
     {
-        $this->checkInstall(); // checkInstall on InstallableTrait
+        parent::init($options, $context);
+        
+        //$this->checkInstall(); // checkInstall on InstallableTrait
+        
+        return $this;
     }
     public function __construct()
     {
         parent::__construct();
         
-        $options =[];
+        $options['is_debug'] = true;
         $options['ext'][\DuckAdmin\Api\DuckAdminPlugin::class]=[
             'plugin_url_prefix' => 'admin/',
-            // 'duckadmin_resource_url_prefix' => '/res', // 资源前缀
             
             'duckadmin_installed' => true,
-            'table_prefix' => '',
-            'session_prefix' => '',
+            'duckadmin_table_prefix' => '',
+            'duckadmin_session_prefix' => '',
         ];
         $options['ext'][\DuckUser\Api\DuckUser::class]=[
             'plugin_url_prefix' => 'user/',
         ];
-        $options['is_debug'] = true;
         //*/
         $options['ext'][\DuckMerchant\Api\DuckMerchant::class]=[
             'plugin_url_prefix' => 'merchant/',
@@ -67,6 +70,7 @@ class App extends DuckPhp
     {
         DuckPhpCommand::G()->command_run();
     }
+    ////////////////// 这后面的我们以后要整合起来，变成公用
     protected function doDatabaseSetting()
     {
         do {
