@@ -17,8 +17,4 @@ if(is_file(__DIR__.'/../../DNMVCS/autoload.php')){
     spl_autoload_register($t);
 }
 ////]]]]
-$options=[
-];
-
-
-DuckAdminDemo\System\App::RunQuickly($options);
+DuckAdminDemo\System\App::RunQuickly();

@@ -20,11 +20,22 @@
 <pre>
 恭喜你已经把后台跑起来了
 
-但你不应该把本项目当成 project 来做二次开发，而是应该引入 library ，就像这个 工程那样。
+但你不应该把本项目当成 `composer project` 来做二次开发，而是应该引入 `composerlibrary` ，就像这个 工程那样。
 <pre>
 composer require dvaknheo/duckadmin
 </pre>
-然后调整相关入口代码。 <br />
+你一定会见过很多后台系统，都是在那基础上搞二次开发。
+如果你太懒惰，对代码里的 DuckPhpDemo 命名空间足够无视，你也可以和他们那样搞
+但是，这将不是个符合 duckphp 思维的项目。
+
+duckadmin 这个 composer library 里 src/DuckPhp 是个现成的管理模块。
+你应该像 duckphpdemo 那样使用他。
+duckuser 则是附带的用户系统
+duckmerchant 则是一个商户系统
+
+duckadmindemo 这个 工程，演示了如何使用第三方的 duckphp 工程作为 库
+
+
 
 
 <a href="<?=__url('admin/')?>">管理后台入口在这里（管理员用户名【admin】，密码为【123456】）</a>
