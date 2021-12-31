@@ -6,9 +6,11 @@
 namespace DuckUser\System;
 
 use DuckPhp\DuckPhp;
+use DuckPhp\Ext\InstallableTrait;
 
 class App extends DuckPhp
 {
+    use InstallableTrait;
     //@override
     public $options = [
         'simple_auth_check_installed' => true,  // 检查安装
@@ -21,19 +23,7 @@ class App extends DuckPhp
     }
     protected function onBeforeRun()
     {
-        $this->checkInstall();
-    }
-    protected function checkInstall()
-    {
-        if (!$this->options['simple_auth_check_installed']){
-            return;
-        }
-        if (!(static::Setting('database') ||  static::Setting('database_list'))){
-            throw new NeedInstallException('Need Database',NeedInstallException::NEED_DATABASE);
-        }
-        if (!Installer::G()->init([],$this)->isInstalled()){
-            throw new NeedInstallException("",NeedInstallException::NEED_INSTALL);
-        }
+        //$this->checkInstall();
     }
     //////////////////////
     public function command_install()

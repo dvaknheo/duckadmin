@@ -17,10 +17,8 @@ if(is_file(__DIR__.'/../../DNMVCS/autoload.php')){
     spl_autoload_register($t);
 }
 ////]]]]
-$options=[];
+$options=[
+];
 
-if (!class_exists(\DuckAdminDemo\System\App::class)) {
-    \DuckPhp\DuckPhp::assignPathNamespace(__DIR__ . '/../app', "DuckAdminDemo\\"); 
-    \DuckPhp\DuckPhp::runAutoLoader();
-}
+
 DuckAdminDemo\System\App::RunQuickly($options);

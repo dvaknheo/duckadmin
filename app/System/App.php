@@ -17,7 +17,10 @@ class App extends DuckPhp
     use InstallableTrait;
     //@override
     public $options = [
-        'path_info_compact_enable' => false,
+        'path_view' => 'app/view',  // 我们把 view 目录缩进来。
+        // 'path_info_compact_enable' => false,  //如果你的服务器不做 path_info 用这个
+        'error_404' => '_sys/error_404',
+        'error_500' => '_sys/error_500',
     ];
     
     public function onBeforeRun()
@@ -26,33 +29,33 @@ class App extends DuckPhp
     public function __construct()
     {
         parent::__construct();
-        
-        // $options['is_debug'] = true;
-       $options = $this->options ;
+        $options = $this->options ;
        
-        // 这是后台管理系统
+        // 后台管理系统
         $this->options['ext'][\DuckAdmin\Api\DuckAdminPlugin::class]=[
             'plugin_url_prefix' => 'admin/',
             
             'duckadmin_table_prefix' => '',
             'duckadmin_session_prefix' => '',
         ];
-        //前台用户系统
         
-        $this->options['ext'][\DuckUser\Api\DuckUser::class]=[
+        // 前台用户系统
+        $this->options['ext'][\DuckUser\Api\DuckUserPlugin::class]=[
             'plugin_url_prefix' => 'user/',
             
             'duckuser_table_prefix' => '',
             'duckuser_session_prefix' => '',
         ];
+        /*
         // 前台商户系统
-        $this->options['ext'][\DuckMerchant\Api\DuckMerchant::class]=[
+        $this->options['ext'][\DuckMerchant\Api\DuckMerchantPlugin::class]=[
             'plugin_url_prefix' => 'merchant/',
             
             'duckmerchant_table_prefix' => '',
             'duckmerchant_session_prefix' => '',
 
         ];
+        */
    }
 
     /**
@@ -67,14 +70,11 @@ class App extends DuckPhp
             $this->install([]);
             
         }
-        $this->runHttpServer();
+        DuckPhpCommand::G()->command_run();
         
     }
-    protected function runHttpServer()
-    {
-        DuckPhpCommand::G()->command_run();
-    }
-    ////////////////// 这后面的我们以后要整合起来，变成公用
+
+    ////////////////// 安装系统， 这后面的我们以后要整合起来，变成公用
     protected function doDatabaseSetting()
     {
         do {
@@ -126,6 +126,7 @@ EOT;
     }
     public function exportMySqlSetting($database_setting)
     {
+        //还是写到 env 文件吧
         $database = [
             'dsn' => 'mysql:host='.$database_setting['host'].';port='.$database_setting['port'].';dbname='.$database_setting['dbname'].';charset=utf8mb4;',
             'username' => $database_setting['username'],

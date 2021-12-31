@@ -3,7 +3,7 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace SimpleAuth\System;
+namespace DuckUser\System;
 
 use DuckPhp\ThrowOn\ThrowOnTrait;
 

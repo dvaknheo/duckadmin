@@ -42,7 +42,7 @@ class DuckUserPlugin extends App
     }
     protected function onPluginModeBeforeRun()
     {
-        $this->checkInstall();
+        //$this->checkInstall();
     }
     public function getPath()
     {

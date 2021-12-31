@@ -16,6 +16,7 @@
     ],
 	"autoload": {
         "psr-4": {
+            "DuckAdminDemo\\": "app/",
             "DuckAdmin\\": "src/DuckAdmin",
             "DuckMerchant\\": "src/DuckMerchant",
             "DuckUser\\": "src/DuckUser"
