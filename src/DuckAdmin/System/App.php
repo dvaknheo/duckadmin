@@ -26,22 +26,9 @@ class App extends DuckPhp
         //////////////////
         
         'table_prefix' => '',   // 表前缀
-        'session_prefix' => '',  // Session 前缀 
-        'duckadmin_installed' => false,  // 检查安装 InstallableTrait 用到 InstallableTrait 这里要调整回去
-        
+        'session_prefix' => '',  // Session 前缀         
     ];
     ///////
-    /**
-     * @override 覆盖初始化
-     */
-    public function init(array $options, ?object $context = NULL)
-    {
-        parent::init($options, $context);
-        
-        //$this->checkInstall(); // checkInstall on InstallableTrait
-        
-        return $this;
-    }
     ////////////// 命令行
     public function command_install()
     {

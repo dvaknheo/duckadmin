@@ -20,36 +20,40 @@ class App extends DuckPhp
         'path_info_compact_enable' => false,
     ];
     
-    public function init(array $options, ?object $context = NULL)
+    public function onBeforeRun()
     {
-        parent::init($options, $context);
-        
-        //$this->checkInstall(); // checkInstall on InstallableTrait
-        
-        return $this;
     }
     public function __construct()
     {
         parent::__construct();
         
-        $options['is_debug'] = true;
-        $options['ext'][\DuckAdmin\Api\DuckAdminPlugin::class]=[
+        // $options['is_debug'] = true;
+       $options = $this->options ;
+       
+        // 这是后台管理系统
+        $this->options['ext'][\DuckAdmin\Api\DuckAdminPlugin::class]=[
             'plugin_url_prefix' => 'admin/',
             
-            'duckadmin_installed' => true,
             'duckadmin_table_prefix' => '',
             'duckadmin_session_prefix' => '',
         ];
-        $options['ext'][\DuckUser\Api\DuckUser::class]=[
+        //前台用户系统
+        
+        $this->options['ext'][\DuckUser\Api\DuckUser::class]=[
             'plugin_url_prefix' => 'user/',
+            
+            'duckuser_table_prefix' => '',
+            'duckuser_session_prefix' => '',
         ];
-        //*/
-        $options['ext'][\DuckMerchant\Api\DuckMerchant::class]=[
+        // 前台商户系统
+        $this->options['ext'][\DuckMerchant\Api\DuckMerchant::class]=[
             'plugin_url_prefix' => 'merchant/',
+            
+            'duckmerchant_table_prefix' => '',
+            'duckmerchant_session_prefix' => '',
 
         ];
-        $this->options = array_merge($this->options, $options);
-    }
+   }
 
     /**
      * 快速开始

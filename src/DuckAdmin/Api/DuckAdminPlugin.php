@@ -18,7 +18,11 @@ use DuckPhp\Component\AppPluginTrait;
  */
 class DuckAdminPlugin extends App
 {
-    use AppPluginTrait { pluginModeInit as private _pluginModeInit; }
+    use AppPluginTrait {
+        // 覆盖
+        pluginModeInit as private _pluginModeInit;
+        onPluginModeBeforeRun as private _onPluginModeBeforeRun;
+    }
     
     // 可调的外部设置
     public $plugin_options = [
@@ -34,25 +38,32 @@ class DuckAdminPlugin extends App
     {
         // 这里的配置是内部配置
         $ext_plugin_options = [
+            // 'plugin_readfile_prefix' =>  'res/' ,
             'plugin_path_document' => 'res',
             'plugin_enable_readfile' =>true,
-            'plugin_readfile_prefix' =>  'res/' ,
+            'plugin_init_override_to_options'=> true,
+            'plugin_route_options' => [
+                // 这里要把 controller_base_class 加回去
+            ],
         ];
 
         $this->plugin_options['plugin_path'] = realpath(__DIR__.'/../').'/';
         $this->plugin_options['plugin_readfile_prefix'] = $this->plugin_options['duckadmin_resource_url_prefix'];
         $this->plugin_options = array_merge($ext_plugin_options, $this->plugin_options,);
         
-        $this->options['path'] = $context->options['path'];
-        $this->options['namespace'] = $context->options['namespace'];
+        $ret = $this->_pluginModeInit($plugin_options, $context);
+        //我们还要处理数据库链接？
         $this->options['table_prefix'] = $this->plugin_options['duckadmin_table_prefix'];
         $this->options['session_prefix'] = $this->plugin_options['duckadmin_session_prefix'];
         
-        //$this->checkInstall(); //检查安装
-        
-        return $this->_pluginModeInit($plugin_options, $context);
+        return $ret;
     }
-
+    //
+    protected function onPluginModeBeforeRun()
+    {
+        //$this->checkInstall(); // 检查安装，不能在初始化里
+        return $this->_onPluginModeBeforeRun();
+    }
     /////////////////////////////////////////
     public static function Action()
     {

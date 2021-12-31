@@ -12,5 +12,5 @@ use DuckAdmin\System\ProjectBusiness;
  */
 class BaseBusiness extends ProjectBusiness
 {
-    protected $exception_class = BusinessException::class;
+    protected $exception_class = BusinessException::class;  // 这里要调一下？
 }
