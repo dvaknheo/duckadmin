@@ -11,6 +11,9 @@ use DuckPhp\Component\Console;
 use DuckPhp\Component\DbManager;
 use DuckPhp\Component\DuckPhpCommand;
 use DuckPhp\Ext\InstallableTrait;
+use DuckPhp\HttpServer\HttpServer;
+
+use WorkermanHttpd\WorkermanHttpd;
 
 class App extends DuckPhp
 {
@@ -54,23 +57,22 @@ class App extends DuckPhp
             
             'duckmerchant_table_prefix' => '',
             'duckmerchant_session_prefix' => '',
-
         ];
-        */
+        //*/
    }
 
-    /**
-     * 快速开始
-     */
+
     public function command_run()
     {
         // 检查有没有设置，如果没有那么那么进入安装模式
-        if (!$this->isInstalled()) {
+        if (false && !$this->isInstalled()) {
             $setting = $this->doDatabaseSetting();
             $this->exportMySqlSetting($setting['host'], $setting['port'], $setting['dbname'], $setting['username'], $setting['password']);
             $this->install([]);
             
         }
+        HttpServer::G(WorkermanHttpd::G());
+        //php duckphp.php  run --override-class=WorkermanHttpd/HttpServerForDuckphp --command start
         DuckPhpCommand::G()->command_run();
         
     }

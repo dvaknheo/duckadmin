@@ -17,4 +17,5 @@ if(is_file(__DIR__.'/../../DNMVCS/autoload.php')){
     spl_autoload_register($t);
 }
 ////]]]]
+
 DuckAdminDemo\System\App::RunQuickly();

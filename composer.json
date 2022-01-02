@@ -27,6 +27,7 @@
         "yzalis/identicon": "^2.0",
         "topthink/think-orm": "^2.0",
         "gregwar/captcha": "^1.1",
-        "dvaknheo/duckphp": "dev-master"
+        "dvaknheo/duckphp": "dev-master",
+        "dvaknheo/workermanhttpd": "^1.0"
 	}
 }
