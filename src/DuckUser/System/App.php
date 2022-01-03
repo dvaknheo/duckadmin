@@ -13,10 +13,13 @@ class App extends DuckPhp
     use InstallableTrait;
     //@override
     public $options = [
-        'simple_auth_check_installed' => true,  // 检查安装
-        'simple_auth_table_prefix' => '',   // 表前缀
-        'simple_auth_session_prefix' => '',  // Session 前缀
+        'controller_base_class' => ProjectController::class, // 限定死在 
+        
+        'home_url' => 'Home/index', // 登录页
+        'table_prefix' => 'user_',   // 表前缀
+        'session_prefix' => '',  // Session 前缀
     ];
+    
     public function __construct()
     {
         parent::__construct();
@@ -52,22 +55,5 @@ class App extends DuckPhp
         Installer::G()->init($options,$this);
         
         echo Installer::G()->run();
-    }
-    public function getPath()
-    {
-        return $this->options['path'];
-    }
-    public function getTablePrefix()
-    {
-        return $this->options['simple_auth_table_prefix'];
-    }
-    public function getSessionPrefix()
-    {
-        return $this->options['simple_auth_session_prefix'];
-    }
-    
-    public static function SessionManager()
-    {
-        return SessionManager::G();
     }
 }

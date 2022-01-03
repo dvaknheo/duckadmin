@@ -11,39 +11,40 @@ use DuckUser\System\App;
 
 class DuckUserPlugin extends App
 {
-    use AppPluginTrait;
-    public $is_plugin = false;
-
-    //@override
-    public $plugin_options = [
-            'simple_auth_check_installed' => true,
-            'simple_auth_table_prefix' => '',
-            'simple_auth_session_prefix' => '',
-    ];
-    public function __construct()
-    {
-        $this->plugin_options['plugin_path'] = realpath(__DIR__.'/../').'/';
-        $this->plugin_options['plugin_search_config'] = false;
-        
-        parent::__construct();
+    use AppPluginTrait {
+        // 覆盖
+        pluginModeInit as private _pluginModeInit;
+        onPluginModeBeforeRun as private _onPluginModeBeforeRun;
     }
-    protected function onPluginModeInit()
+    
+    // 可调的外部设置
+    public $plugin_options = [
+            'controller_resource_prefix' => 'res/', //资源前缀
+    ];
+    //////  初始化
+    public function pluginModeInit(array $plugin_options, object $context = null)
     {
-        $this->is_plugin = true;
-        App::G(static::G());
+        // 这里的配置是内部配置
+        $ext_plugin_options = [
+            'plugin_path_document' => 'res/',
+            'plugin_enable_readfile' =>true,
+        ];
+        // 这里
+        $this->plugin_options['plugin_path'] = realpath(__DIR__.'/../').'/'; // 节约性能，不搜索
+        $this->plugin_options['plugin_search_config'] = false; // 节约性能，不搜索
+        $this->plugin_options['plugin_readfile_prefix'] = $this->options['controller_resource_prefix']; // 这里可能要改。
+        $this->plugin_options['plugin_route_options']['controller_base_class'] = $this->options['controller_base_class']; // 拉配置那边的过来。
         
-        //copy options
-        foreach($this->options as $k => $v){
-            if(isset($this->plugin_options[$k])){
-                $this->options[$k]= $this->plugin_options[$k];
-            }
-        }
-        Console::G()->regCommandClass(static::class,  'DuckUser');
+        $this->plugin_options = array_merge($ext_plugin_options, $this->plugin_options);
+        $ret = $this->_pluginModeInit($plugin_options, $context);
+        return $ret;
     }
     protected function onPluginModeBeforeRun()
     {
-        //$this->checkInstall();
+        //$this->checkInstall(); // 检查安装，不能在初始化里
+        return $this->_onPluginModeBeforeRun();
     }
+    ////////////////////////
     public function getPath()
     {
         return $this->plugin_options['plugin_path'];

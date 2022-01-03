@@ -65,6 +65,7 @@ class SessionManager extends ProjectSession
     {
         return '<input type="hidden" name="_token" value="'.$this->csrf_token().'">';
     }
+    ////////////////////////////////////////////////
     protected function randomString($length = 16)
     {
         $string = '';

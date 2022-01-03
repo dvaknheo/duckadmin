@@ -15,7 +15,7 @@ class ProjectSession extends Session
     public function __construct()
     {
         parent::__construct();
-        $this->options['session_prefix'] = App::G()->getSessionPrefix();
-        $this->exception_class = SessionException::class;
+        $this->options['session_prefix'] = App::G()->options['session_prefix'];
+        $this->exception_class = ProjectException::class;
     }
 }

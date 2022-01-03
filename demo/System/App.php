@@ -29,6 +29,7 @@ class App extends DuckPhp
     
     public function onBeforeRun()
     {
+        //我们检查安装
     }
     public function __construct()
     {
@@ -38,17 +39,11 @@ class App extends DuckPhp
         // 后台管理系统
         $this->options['ext'][\DuckAdmin\Api\DuckAdminPlugin::class]=[
             'plugin_url_prefix' => 'admin/',
-            
-            'duckadmin_table_prefix' => '',
-            'duckadmin_session_prefix' => '',
         ];
         
         // 前台用户系统
         $this->options['ext'][\DuckUser\Api\DuckUserPlugin::class]=[
             'plugin_url_prefix' => 'user/',
-            
-            'duckuser_table_prefix' => '',
-            'duckuser_session_prefix' => '',
         ];
         /*
         // 前台商户系统

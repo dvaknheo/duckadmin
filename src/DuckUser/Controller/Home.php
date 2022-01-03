@@ -12,15 +12,20 @@ use DuckUser\ControllerEx\SessionManager;
 class Home extends Base
 {
     public function __construct()
-    {
-        $this->initController();
-    }
-    protected function initController()
-    {
-        $method = C::getRouteCallingMethod();
-        //SessionManager::G()->checkCsrf();
-        //C::assignExceptionHandler(SessionManager::G()::ExceptionClass(), [static::class, 'OnSessionException']);
-        $this->setLayoutData();
+   {
+        parent::__construct();
+        
+        SessionManager::G()->checkCsrf();
+        C::assignExceptionHandler(SessionManager::ExceptionClass(), [static::class, 'OnSessionException']);
+
+        $csrf_token = SessionManager::G()->csrf_token();
+        $csrf_field = SessionManager::G()->csrf_field();
+         
+        $user = SessionManager::G()->getCurrentUser();
+        $user_name = $user['username'] ?? '';
+
+        C::setViewHeadFoot('home/inc-head','home/inc-foot');
+        C::assignViewData(get_defined_vars());
     }
     public static function OnSessionException($ex = null)
     {
@@ -35,20 +40,10 @@ class Home extends Base
         }
         C::ExitRouteTo('login');
     }
-    protected function setLayoutData()
-    {
-        $csrf_token = SessionManager::G()->csrf_token();
-        $csrf_field = SessionManager::G()->csrf_field();
-         
-        $user = SessionManager::G()->getCurrentUser();
-        $user_name = $user['username'] ?? '';
 
-        C::setViewHeadFoot('home/inc-head','home/inc-foot');
-        C::assignViewData(get_defined_vars());
-    }
     public function index()
     {
-        $url_logout = C::Url('logout');
+        $url_logout = __url('logout');
         C::Show(get_defined_vars());
     }
     public function password()
@@ -61,7 +56,6 @@ class Home extends Base
         $error = '';
         try {
             $uid = SessionManager::G()->getCurrentUid();
-
             $old_pass = C::POST('oldpassword','');
             $new_pass = C::POST('newpassword','');
             $confirm_pass = C::POST('newpassword_confirm','');

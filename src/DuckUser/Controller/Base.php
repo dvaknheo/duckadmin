@@ -11,7 +11,8 @@ class Base extends ProjectController
 {
     public function __construct()
     {
-        parent::__construct();
-        //
+        if(static::class === self::class){
+            static::Exit404();
+        }
     }
 }

@@ -10,7 +10,7 @@ class UserModel extends BaseModel
     public function __construct()
     {
         parent::__construct();
-        $this->table_name = 'Users';
+        $this->table_name = 'user';
     }
     public function exsits($name)
     {
@@ -57,11 +57,12 @@ class UserModel extends BaseModel
         $ret = BaseModel::Db()->execute($this->prepare($sql), $password, $uid);
         return $ret;
     }
-    ////
+    /////
     protected function hash($password)
     {
         return password_hash($password, PASSWORD_DEFAULT);
     }
+    /////
     protected function verify($password, $hash)
     {
         return password_verify($password, $hash);

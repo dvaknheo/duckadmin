@@ -11,6 +11,7 @@ require_once(__DIR__.'/../vendor/autoload.php');
 //////////////////////////////////////////////////
 $options = [];
 
+// 我插我自己
 $options['ext'][DuckAdmin\Api\DuckAdminPlugin::class]=[
     'plugin_url_prefix' => 'admin/',
     // 'duckadmin_resource_url_prefix' => '/res', // 资源前缀

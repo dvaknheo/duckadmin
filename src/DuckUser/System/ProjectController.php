@@ -13,4 +13,12 @@ class ProjectController
 {
     use SimpleControllerTrait;
     use ControllerHelperTrait;
+    
+    protected static function GoHome()
+    {
+    }
+    protected function _GoHome()
+    {
+        static::RouteTo(App::G()->options['home_url']);
+    }
 }
