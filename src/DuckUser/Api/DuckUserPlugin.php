@@ -32,7 +32,7 @@ class DuckUserPlugin extends App
         // 这里
         $this->plugin_options['plugin_path'] = realpath(__DIR__.'/../').'/'; // 节约性能，不搜索
         $this->plugin_options['plugin_search_config'] = false; // 节约性能，不搜索
-        $this->plugin_options['plugin_readfile_prefix'] = $this->options['controller_resource_prefix']; // 这里可能要改。
+        $this->plugin_options['plugin_readfile_prefix'] = $this->options['controller_resource_prefix']??''; // 这里可能要改。
         $this->plugin_options['plugin_route_options']['controller_base_class'] = $this->options['controller_base_class']; // 拉配置那边的过来。
         
         $this->plugin_options = array_merge($ext_plugin_options, $this->plugin_options);
@@ -41,7 +41,7 @@ class DuckUserPlugin extends App
     }
     protected function onPluginModeBeforeRun()
     {
-        //$this->checkInstall(); // 检查安装，不能在初始化里
+        //$this->checkInstall();
         return $this->_onPluginModeBeforeRun();
     }
     ////////////////////////

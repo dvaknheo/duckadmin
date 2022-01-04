@@ -15,23 +15,27 @@ class Main extends Base
     {
         $url_reg = __url('register');
         $url_login = __url('login');
+        
         C::Show(get_defined_vars(), 'main');
     }
     public function register()
     {
         $csrf_field = SessionManager::G()->csrf_field();
         $url_register = __url('register');
+        
         C::Show(get_defined_vars(), 'register');
     }
     public function login()
     {
         $csrf_field = SessionManager::G()->csrf_field();
         $url_login = __url('login');
+        
         C::Show(get_defined_vars(),'login');
     }
     public function logout()
     {
         SessionManager::G()->logout();
+        
         C::ExitRouteTo('index');
     }
     ////////////////////////////////////////////
@@ -62,6 +66,5 @@ class Main extends Base
             C::Show(get_defined_vars(), 'login');
             return;
         }
-        
     }
 }

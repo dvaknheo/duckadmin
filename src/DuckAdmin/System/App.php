@@ -41,9 +41,8 @@ class App extends DuckPhp
         echo $this->install($parameters); // on InstallableTrait
         echo "Done \n";
     }
-    /////////////////////
 }
-
+/////////////
 }
 namespace DuckAdmin
 {

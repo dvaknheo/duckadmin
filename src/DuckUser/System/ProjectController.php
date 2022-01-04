@@ -14,11 +14,13 @@ class ProjectController
     use SimpleControllerTrait;
     use ControllerHelperTrait;
     
+    //// 以下是专有助手方法 ////
     protected static function GoHome()
     {
+        return static::G()->_GoHome();
     }
     protected function _GoHome()
     {
-        static::RouteTo(App::G()->options['home_url']);
+        static::ExitRouteTo(App::G()->options['home_url']);
     }
 }

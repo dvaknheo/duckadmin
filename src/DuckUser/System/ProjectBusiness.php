@@ -16,6 +16,7 @@ class ProjectBusiness
     use ThrowOnableTrait;
     public function __construct()
     {
+        // 绑定 ThrowOn 的异常类
         $this->exception_class = $this->exception_class ?? ProjectException::class;
     }
 }

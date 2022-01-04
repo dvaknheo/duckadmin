@@ -7,11 +7,7 @@ namespace DuckUser\Model;
 
 class UserModel extends BaseModel
 {
-    public function __construct()
-    {
-        parent::__construct();
-        $this->table_name = 'user';
-    }
+    protected $table_name = 'users';
     public function exsits($name)
     {
         $sql = "select count(*) as c from 'TABLE' where username=?";
