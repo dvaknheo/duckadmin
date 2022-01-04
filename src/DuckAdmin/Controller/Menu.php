@@ -8,7 +8,9 @@ namespace DuckAdmin\Controller;
 
 use DuckAdmin\Controller\Base as C;
 use DuckAdmin\Business\AdminBusiness;
-
+/**
+ * 菜单管理
+ */
 class Menu extends Base
 {
     /**

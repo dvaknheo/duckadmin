@@ -9,12 +9,12 @@ namespace DuckAdmin\Controller;
 use DuckAdmin\Controller\Base as C;
 use DuckAdmin\Business\AdminBusiness;
 /**
- * 管理员
+ * 管理员管理系列页面
  */
 class Admin extends Base
 {
     /**
-     * 管理员
+     * 管理员列表
      */
     public function index()
     {
@@ -23,13 +23,8 @@ class Admin extends Base
         $data['roles'] = $roles;
         C::Show($data);
     }
-
-    public function password()
-    {
-        var_dump("OK");
-    }
     /**
-     * 添加
+     * 添加管理员
      */
     public function add()
     {
@@ -47,7 +42,7 @@ class Admin extends Base
     }
 
      /**
-     * 编辑
+     * 编辑管理员
      */
     public function edit()
     {
@@ -65,6 +60,9 @@ class Admin extends Base
         ];
         C::Show($data);
     }
+    /**
+     * 日志列表
+     */
     public function log()
     {
         C::Show([]);

@@ -34,26 +34,17 @@ class App extends DuckPhp
     public function __construct()
     {
         parent::__construct();
-        $options = $this->options ;
-       
-        // 后台管理系统
-        $this->options['ext'][\DuckAdmin\Api\DuckAdminPlugin::class]=[
-            'plugin_url_prefix' => 'admin/',
+        $ext = [
+            // 后台管理系统
+            \DuckAdmin\Api\DuckAdminPlugin::class => [
+                'plugin_url_prefix' => 'admin/', // 访问路径
+            ],
+            // 前台用户系统
+            \DuckUser\Api\DuckUserPlugin::class => [
+                'plugin_url_prefix' => 'user/', // 访问路径
+            ],
         ];
-        
-        // 前台用户系统
-        $this->options['ext'][\DuckUser\Api\DuckUserPlugin::class]=[
-            'plugin_url_prefix' => 'user/',
-        ];
-        /*
-        // 前台商户系统
-        $this->options['ext'][\DuckMerchant\Api\DuckMerchantPlugin::class]=[
-            'plugin_url_prefix' => 'merchant/',
-            
-            'duckmerchant_table_prefix' => '',
-            'duckmerchant_session_prefix' => '',
-        ];
-        //*/
+        $this->options['ext']=array_merge($this->options['ext'],$ext);
    }
 
 
@@ -64,10 +55,10 @@ class App extends DuckPhp
             $setting = $this->doDatabaseSetting();
             $this->exportMySqlSetting($setting['host'], $setting['port'], $setting['dbname'], $setting['username'], $setting['password']);
             $this->install([]);
-            
         }
-        HttpServer::G(WorkermanHttpd::G());
-        //php duckphp.php  run --override-class=WorkermanHttpd/HttpServerForDuckphp --command start
+        
+        HttpServer::G(WorkermanHttpd::G()); //我们使用 WorkermanHttpd 作为容器启动
+        
         DuckPhpCommand::G()->command_run();
         
     }

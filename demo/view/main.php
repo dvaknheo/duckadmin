@@ -49,17 +49,6 @@ duckadmindemo 这个 工程，演示了如何使用第三方的 duckphp 工程�
 
 你可以只使用这一小部分，并在这上面改
 </pre>
-<hr />
-
-调整代码的要点地方
-<pre>
-app 目录是工程目录
-
-你要改入口 app/System/App.php
-在配置里加上引入第三方的配置
-</pre>
-<hr >
-
 
 
   </div>
