@@ -1,4 +1,6 @@
-# DuckAdmin\
+# DuckAdmin
+正在不断开发中，暂时没稳定可运行版本。
+说明不一定对
 ## 简介
 
 `DuckAdmin` 是二次开发的基线库，注意，是基线库，而不是基线工程。
@@ -20,7 +22,7 @@ php duckphp-project run
 # 打开 127.0.0.1
 
 ```
-这模式为允许 demo 目录下的代码。 会有一个用户管理系统。用于管理外部注册用户。
+这模式为允许 demo 目录下的代码。 附带会有一个用户管理系统。用于管理外部注册用户。
 
 
 这只是DEMO， 正常模式下：
@@ -29,17 +31,15 @@ php duckphp-project run
 composer require dvaknheo/duckadmin
 
 ```
+然后酌情修改你的代码 。
 
+目前 duckphp 系统还没有自动发现插件机制扩展。
 
 ## 高级问题
 
 ### 前置知识
 
 你需要了解 DuckPhp 的插件机制。
-
-### 静态资源外放
-
-为性能你需要修改 DuckAdmin\Api\DuckAdminPlugin 类的选项 duckadmin_res
 
 
 ### 调整选项
@@ -51,25 +51,36 @@ composer require dvaknheo/duckadmin
         
     ];
 ```
+### 静态资源外放
+
+为性能你需要修改 DuckAdmin\Api\DuckAdminPlugin 类的选项 `duckadmin_res`
+
+`duckadmin_res` = 'https://mycdn.site/', 
+
+// 注意别漏了最后的 斜杠
+
 ### 接管视图
 
 作为 DuckPhp 的插件。
 
-demo/view/DuckUser 就是调整后的视图
+`demo/view/DuckUser` 目录 就是demo工程调整后的视图
 
 ### 使用 API
-你的控制器可能会用到 DuckAdmin\Api\DuckAdminAction，的方法
+
+你的控制器可能会用到 `DuckAdmin\Api\DuckAdminAction`，的方法
 
 
-你的业务代码，可能会用到 DuckAdmin\Api\DuckAdminService ，的方法。
+你的业务代码，可能会用到 `DuckAdmin\Api\DuckAdminService` ，的方法。
 
-不过，为了给你的应用工程师（你的小弟）使用，你应该自己封装入  DuckAdminDemo\System\ProjectController 和 DuckAdminDemo\System\ProjectBusiness 里
+不过，为了给你的应用工程师（你的小弟）使用，你应该自己封装入类似  `DuckAdminDemo\System\ProjectController` 和 `DuckAdminDemo\System\ProjectBusiness` 里。
 
 ### 修改实现
 
-遵从 DuckPhp 应用的可变单例模式，你要在想修改的类前面放这么一句：
+遵从 `DuckPhp` 应用的可变单例模式，你要在想修改的类前面放这么一句：
 
+```
 DuckAdmin\Api\DuckAdminPlugin::G(MyDuckAdminPlugin::G())
+``
 
 ### 在 DuckAdmin 的 url 中修改东西
 
