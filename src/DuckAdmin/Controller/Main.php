@@ -15,6 +15,10 @@ use DuckAdmin\ControllerEx\CaptchaAction;
  */
 class Main extends Base
 {
+    public function __construct()
+    {
+        // 不需要初始化
+    }
     /**
      * 首页
      */

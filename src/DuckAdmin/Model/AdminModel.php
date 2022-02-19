@@ -32,7 +32,7 @@ class AdminModel extends BaseModel
     public function addData($data)
     {
         // 这里密码要处理一下
-        $data['password']=password_hash($data['password']);
+        $data['password']=password_hash($data['password'],PASSWORD_BCRYPT);
         return $this->add($data);
     }
     public function updateData($id,$data)

@@ -18,4 +18,4 @@ if(is_file(__DIR__.'/../../DNMVCS/autoload.php')){
 }
 ////]]]]
 
-DuckAdminDemo\System\App::RunQuickly();
+DuckAdminDemo\System\App::RunQuickly(['is_debug'=>true]);

@@ -20,6 +20,7 @@ class App extends DuckPhp
     use InstallableTrait;
     //@override
     public $options = [
+        'use_env_file'=>true,
         'path_view' => 'demo/view',  // 我们把 view 目录缩进来。
         'path_config' => 'demo/config',  // 我们把 config 目录缩进来。
         // 'path_info_compact_enable' => false,  //如果你的服务器不做 path_info 用这个
@@ -31,6 +32,7 @@ class App extends DuckPhp
     {
         //我们检查安装
     }
+
     public function __construct()
     {
         parent::__construct();
@@ -81,7 +83,7 @@ EOT;
             $options=[
                 'host'=>'127.0.0.1',
                 'port'=>'3306',
-                'dbname'=>'t2',
+                'dbname'=>'duckphp',
                 'username'=>'admin',
                 'password'=>'123456',
             ]; 
@@ -116,12 +118,5 @@ EOT;
     public function exportMySqlSetting($database_setting)
     {
         //还是写到 env 文件吧
-        $database = [
-            'dsn' => 'mysql:host='.$database_setting['host'].';port='.$database_setting['port'].';dbname='.$database_setting['dbname'].';charset=utf8mb4;',
-            'username' => $database_setting['username'],
-            'password' => $database_setting['password'],
-            'driver_options' => [],
-        ];
-        file_put_contents($this->options['path'].'config/setting.php',"<"."?php\n return ". var_export(['database'=>$database],true).';');
     }
 }
