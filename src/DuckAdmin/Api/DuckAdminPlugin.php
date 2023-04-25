@@ -52,8 +52,8 @@ class DuckAdminPlugin extends App
     //
     protected function onPluginModeBeforeRun()
     {
-        $this->checkInstall(false); // 检查安装，不能在初始化里
-        return $this->_onPluginModeBeforeRun();
+        //$this->checkInstall(false); // 检查安装，不能在初始化里
+        //return $this->_onPluginModeBeforeRun();
     }
     
     // 后两个是通用的方法，只留一个入口

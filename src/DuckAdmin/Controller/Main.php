@@ -15,52 +15,39 @@ use DuckAdmin\ControllerEx\CaptchaAction;
  */
 class Main extends Base
 {
-    public function __construct()
-    {
-        // 不需要初始化
-    }
+    /**
+     * 无需登录的方法
+     * @var string[]
+     */
+    protected $noNeedLogin = ['index'];
+
+    /**
+     * 不需要鉴权的方法
+     * @var string[]
+     */
+    protected $noNeedAuth = ['dashboard'];
     /**
      * 首页
      */
     public function index()
     {
-        C::Show(get_defined_vars(), 'index');
+		C::Show(get_defined_vars(), 'index/index');return;
+		$isInstalled = false;//C::IsInstalled();
+		
+        if (!$isInstalled) {
+			C::Show(get_defined_vars(), 'index/install');
+			return;
+        }
+        $admin =  AdminSession::G()->getCurrentAdmin();
+        if (!$admin) {
+			C::Show(get_defined_vars(), 'account/login');
+            return ;
+        }		
+        C::Show(get_defined_vars(), 'index/index');
     }
-    public function do_index()
-    {
-        $this->doLogin();
-    }
-    /**
-     * 登录处理
-     */
-    protected function doLogin()
-    {
-        C::assignExceptionHandler(\Exception::class,function($ex){
-            $error = $ex->getMessage();
-            C::assignViewData(['error'=>$error]);
-            C::Show(get_defined_vars(),'index');
-        });
-        
-        $post = C::POST();
-        $flag = CaptchaAction::CheckCaptcha($post['captcha']);
-        AdminBusiness::ThrowOn(!$flag,"验证码错误");
-        $admin = AdminBusiness::G()->login($post);
-        AdminSession::G()->setCurrentAdmin($admin,$post['remember']);
-        C::ExitRouteTo('Profile/index');  // 这里要设置成可配置的
-    }
-    /**
-     * 登出
-     */
-    public function logout()
-    {
-        AdminSession::G()->logout();
-        C::ExitRouteTo('');
-    }
-    /**
-     * 验证码
-     */
-    public function captcha()
-    {
-        CaptchaAction::ShowCaptcha();
-    }
+	public function dashboard()
+	{
+		$dashboard=AllInOnBusiness::G()->getDashboard()
+		C::Show($dashboard, 'index/dashboard');
+	}
 }

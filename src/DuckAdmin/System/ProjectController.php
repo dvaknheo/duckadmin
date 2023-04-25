@@ -28,18 +28,20 @@ class ProjectController
     {
         return __url('index?r=' . static::PathInfo());
     }
+	//@override;
     protected function initController()
     {
+		return;
         // 入口类
         static::assignExceptionHandler(\Exception::class, function(){
             // 这里应该调整成可调的
             static::ExitRouteTo(static::_GetInitRedirectRoute());
         });        
-        $flag = AdminAction::G()->doCheckPermission();
+        //$flag = AdminAction::G()->doCheckPermission();
         
         if(!$flag){
-            static::Exit404();
-            return;
+            //static::Exit404();
+            //return;
         }
         // 初始化View
         $this->initViewData();
