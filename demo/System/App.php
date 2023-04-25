@@ -21,8 +21,6 @@ class App extends DuckPhp
     //@override
     public $options = [
         'use_env_file'=>true,
-        'path_view' => 'demo/view',  // 我们把 view 目录缩进来。
-        'path_config' => 'demo/config',  // 我们把 config 目录缩进来。
         // 'path_info_compact_enable' => false,  //如果你的服务器不做 path_info 用这个
         'error_404' => '_sys/error_404',
         'error_500' => '_sys/error_500',

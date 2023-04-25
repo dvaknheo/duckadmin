@@ -21,5 +21,6 @@ class Base extends ProjectController
             return;
         }
         parent::__construct();
+		//我们检查安装？
     }
 }
