@@ -46,7 +46,7 @@ class ProjectRoute extends Route
 		////]]]]
         $full_class = $this->namespace_prefix.str_replace('/', '\\', $path_class).$this->options['controller_class_postfix'];
         $full_class = ''.ltrim($full_class, '\\');
-		var_dump($full_class);
+		//var_dump($full_class);
 		return [$full_class,$method];
 	}
     public function defaultGetRouteCallback($path_info)

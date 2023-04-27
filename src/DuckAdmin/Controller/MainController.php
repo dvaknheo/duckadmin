@@ -12,7 +12,7 @@ use DuckAdmin\System\ControllerHelper as C;
 /**
  * 主入口
  */
-class Main extends ProjectController
+class MainController extends ProjectController
 {
     /**
      * 无需登录的方法
