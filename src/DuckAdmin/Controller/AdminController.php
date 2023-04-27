@@ -41,46 +41,46 @@ class AdminController extends Crud
      * 浏览
      * @return Response
      */
-    public function index(): Response
+    public function index()
     {
     }
 
     /**
      * 查询
-     * @param Request $request
+     * @param 
      * @return Response
      * @throws BusinessException
      */
-    public function select(Request $request): Response
+    public function select()
     {
     }
 
     /**
      * 插入
-     * @param Request $request
+     * @param 
      * @return Response
      * @throws BusinessException
      */
-    public function insert(Request $request): Response
+    public function insert()
     {
     }
 
     /**
      * 更新
-     * @param Request $request
+     * @param 
      * @return Response
      * @throws BusinessException
     */
-    public function update(Request $request): Response
+    public function update()
     {
     }
 
     /**
      * 删除
-     * @param Request $request
+     * @param 
      * @return Response
      */
-    public function delete(Request $request): Response
+    public function delete()
     {
 
     }

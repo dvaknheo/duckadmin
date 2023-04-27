@@ -12,7 +12,7 @@ use DuckAdmin\System\ControllerHelper as C;
 /**
  * 系统设置
  */
-class config extends ProjectController
+class ConfigController extends ProjectController
 {
     /**
      * 不需要验证权限的方法
@@ -35,7 +35,7 @@ class config extends ProjectController
      */
     public function get()
     {
-		$s=file_get_contents(__DIR__.'/config.json');
+		$s=file_get_contents(__DIR__.'/data/config.json');
 		C::ExitJson(json_decode($s,true));
     }
 

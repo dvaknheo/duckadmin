@@ -30,11 +30,11 @@ class Main extends ProjectController
      */
     public function index()
     {
-		C::Show(get_defined_vars(), 'index/index');return;
+		C::Show([], 'index/index');return;
 		$isInstalled = false;//C::IsInstalled();
 		
         if (!$isInstalled) {
-			C::Show(get_defined_vars(), 'index/install');
+			C::Show([], 'index/install');
 			return;
         }
         $admin =  AdminSession::G()->getCurrentAdmin();
