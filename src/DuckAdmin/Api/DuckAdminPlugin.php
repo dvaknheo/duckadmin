@@ -7,8 +7,10 @@
 namespace DuckAdmin\Api;
 
 use DuckAdmin\System\App;
-use DuckPhp\Component\AppPluginTrait;
+use DuckAdmin\System\ProjectRoute;
 
+use DuckPhp\Component\AppPluginTrait;
+use DuckPhp\Core\Route;
 /**
  * 这是继承了DuckAdmin 入口类的插件类
  * $options['ext'][\DuckAdmin\Api\DuckAdminPlugin::class] = [
@@ -38,6 +40,7 @@ class DuckAdminPlugin extends App
         $ext_plugin_options = [
             'plugin_path_document' => 'res/',
             'plugin_enable_readfile' =>true,
+			'plugin_component_class_route'=>ProjectRoute::class,
         ];
         // 这里
         $this->plugin_options['plugin_path'] = realpath(__DIR__.'/../').'/'; // 节约性能，不搜索
@@ -47,6 +50,8 @@ class DuckAdminPlugin extends App
         
         $this->plugin_options = array_merge($ext_plugin_options, $this->plugin_options);
         $ret = $this->_pluginModeInit($plugin_options, $context);
+		//ProjectRoute::G()->init(Route::G()->options);
+		//Route::G(ProjectRoute::G());
         return $ret;
     }
     //

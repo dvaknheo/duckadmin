@@ -69,7 +69,7 @@ class account extends ProjectController
      * @param Request $request
      * @return Response
      */
-    public function update(Request $request): Response
+    public function update(Request $request)
     {
         
     }
@@ -79,7 +79,7 @@ class account extends ProjectController
      * @param Request $request
      * @return Response
      */
-    public function password(Request $request): Response
+    public function password()
     {
 
     }
@@ -90,8 +90,9 @@ class account extends ProjectController
      * @param string $type
      * @return Response
      */
-    public function captcha(Request $request, string $type = 'login'): Response
+    public function captcha()
     {
+	
     }
 
 }

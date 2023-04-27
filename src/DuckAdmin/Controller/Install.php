@@ -1,22 +1,31 @@
-<?php
-namespace plugin\admin\app\controller;
+<?php declare(strict_types=1);
+/**
+ * DuckPhp
+ * From this time, you never be alone~
+ */
+
+namespace DuckAdmin\Controller;
+
+use DuckAdmin\System\ProjectController;
+use DuckAdmin\System\ControllerHelper as C;
 
 /**
- * 安装
+ * 主入口
  */
-class Install extends Base
+class Install extends ProjectController
 {
     /**
      * 设置数据库
      */
     public function step1()
     {
+		var_dump(DATE(DATE_ATOM));exit;
 		try{
 			InstallBusiness::G()->step1();
-		}catch{
-			static::ExitJson([$ex->getCode(),$ex->getMessage()]);
+		}catch(\Exception $ex){
+			C::ExitJson([$ex->getCode(),$ex->getMessage()]);
 		}
-		static::ExitJson(0);
+		C::ExitJson(0);
     }
 
     /**
@@ -27,10 +36,10 @@ class Install extends Base
     {
 		try{
 			InstallBusiness::G()->step2();
-		}catch{
-			static::ExitJson([$ex->getCode(),$ex->getMessage()]);
+		}catch(\Exception $ex){
+			C::ExitJson([$ex->getCode(),$ex->getMessage()]);
 		}
-		static::ExitJson(0);
+		C::ExitJson(0);
     }
 
 }
