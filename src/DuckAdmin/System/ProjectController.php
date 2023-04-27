@@ -19,8 +19,8 @@ use DuckAdmin\Business\AdminBusiness;
  */
 class ProjectController
 {
-    use SimpleControllerTrait;
-    use ControllerHelperTrait;
+    //use SimpleControllerTrait;
+    //use ControllerHelperTrait;
     
     //////////////////////////
     

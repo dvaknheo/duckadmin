@@ -1,17 +1,18 @@
-<?php
+<?php declare(strict_types=1);
+/**
+ * DuckPhp
+ * From this time, you never be alone~
+ */
 
-namespace plugin\admin\app\controller;
+namespace DuckAdmin\Controller;
 
-use plugin\admin\app\common\Util;
-use plugin\admin\app\model\Option;
-use support\exception\BusinessException;
-use support\Request;
-use support\Response;
+use DuckAdmin\System\ProjectController;
+use DuckAdmin\System\ControllerHelper as C;
 
 /**
  * 系统设置
  */
-class ConfigController extends Base
+class config extends ProjectController
 {
     /**
      * 不需要验证权限的方法
@@ -23,17 +24,19 @@ class ConfigController extends Base
      * 账户设置
      * @return Response
      */
-    public function index(): Response
+    public function index()
     {
-        return view('config/index');
+        var_dump("???");
     }
 
     /**
      * 获取配置
      * @return Response
      */
-    public function get(): Response
+    public function get()
     {
+		$s=file_get_contents(__DIR__.'/config.json');
+		C::ExitJson(json_decode($s,true));
     }
 
     /**
@@ -42,7 +45,7 @@ class ConfigController extends Base
      * @return Response
      * @throws BusinessException
      */
-    public function update(Request $request): Response
+    public function update()
     {
     }
 }

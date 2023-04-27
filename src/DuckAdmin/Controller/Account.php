@@ -1,20 +1,18 @@
-<?php
+<?php declare(strict_types=1);
+/**
+ * DuckPhp
+ * From this time, you never be alone~
+ */
 
-namespace plugin\admin\app\controller;
+namespace DuckAdmin\Controller;
 
-use plugin\admin\app\common\Auth;
-use plugin\admin\app\common\Util;
-use plugin\admin\app\model\Admin;
-use support\exception\BusinessException;
-use support\Request;
-use support\Response;
-use Webman\Captcha\CaptchaBuilder;
-use Webman\Captcha\PhraseBuilder;
+use DuckAdmin\System\ProjectController;
+use DuckAdmin\System\ControllerHelper as C;
 
 /**
- * 管理员账户
+ * 系统设置
  */
-class AccountController extends Crud
+class account extends ProjectController
 {
     /**
      * 不需要登录的方法
@@ -60,8 +58,10 @@ class AccountController extends Crud
      * @param Request $request
      * @return Response
      */
-    public function info(Request $request): Response
+    public function info()
     {
+		$s=file_get_contents(__DIR__.'/account.json');
+		C::ExitJson(json_decode($s,true));
     }
 
     /**

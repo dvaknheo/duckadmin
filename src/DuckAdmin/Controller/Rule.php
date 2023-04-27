@@ -1,19 +1,18 @@
-<?php
+<?php declare(strict_types=1);
+/**
+ * DuckPhp
+ * From this time, you never be alone~
+ */
 
-namespace plugin\admin\app\controller;
+namespace DuckAdmin\Controller;
 
-use plugin\admin\app\common\Tree;
-use plugin\admin\app\common\Util;
-use plugin\admin\app\model\Role;
-use plugin\admin\app\model\Rule;
-use support\exception\BusinessException;
-use support\Request;
-use support\Response;
+use DuckAdmin\System\ProjectController;
+use DuckAdmin\System\ControllerHelper as C;
 
 /**
  * 权限菜单
  */
-class RuleController extends Crud
+class rule extends ProjectController
 {
     /**
      * 不需要权限的方法
@@ -32,7 +31,6 @@ class RuleController extends Crud
      */
     public function __construct()
     {
-        $this->model = new Rule;
     }
 
     /**
@@ -62,8 +60,8 @@ class RuleController extends Crud
      */
     function get()
     {
-
-        return $this->json(0, 'ok', Tree::arrayValues($tree_items));
+		$s=file_get_contents(__DIR__.'/rule.json');
+		C::ExitJson(json_decode($s,true));
     }
 
     /**

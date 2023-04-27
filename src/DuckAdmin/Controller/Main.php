@@ -6,14 +6,13 @@
 
 namespace DuckAdmin\Controller;
 
-use DuckAdmin\Business\AdminBusiness;
-use DuckAdmin\Controller\Base as C;
-use DuckAdmin\ControllerEx\AdminSession;
-use DuckAdmin\ControllerEx\CaptchaAction;
+use DuckAdmin\System\ProjectController;
+use DuckAdmin\System\ControllerHelper as C;
+
 /**
  * 主入口
  */
-class Main extends Base
+class Main extends ProjectController
 {
     /**
      * 无需登录的方法
@@ -47,7 +46,8 @@ class Main extends Base
     }
 	public function dashboard()
 	{
-		$dashboard=AllInOnBusiness::G()->getDashboard()
+		var_dump(DATE(DATE_ATOM));return;
+		$dashboard=[];//AllInOnBusiness::G()->getDashboard();
 		C::Show($dashboard, 'index/dashboard');
 	}
 }
