@@ -8,6 +8,7 @@ namespace DuckAdmin\Controller;
 
 use DuckAdmin\System\ProjectController;
 use DuckAdmin\System\ControllerHelper as C;
+use DuckAdmin\Business\AccountBusiness;
 
 /**
  * 系统设置
@@ -60,7 +61,8 @@ class AccountController extends ProjectController
      */
     public function info()
     {
-		$data = json_decode(file_get_contents(__DIR__.'/data/account.json'),true);
+		
+		$data = AccountBusiness::G()->getAccountInfo();
 		C::ExitJson($data);
     }
 

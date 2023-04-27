@@ -8,6 +8,7 @@ namespace DuckAdmin\Controller;
 
 use DuckAdmin\System\ProjectController;
 use DuckAdmin\System\ControllerHelper as C;
+use DuckAdmin\Business\ConfigBusiness;
 
 /**
  * 系统设置
@@ -27,6 +28,7 @@ class ConfigController extends ProjectController
     public function index()
     {
         var_dump("???");
+		var_dump(DATE(DATE_ATOM));
     }
 
     /**
@@ -35,8 +37,8 @@ class ConfigController extends ProjectController
      */
     public function get()
     {
-		$s=file_get_contents(__DIR__.'/data/config.json');
-		C::ExitJson(json_decode($s,true));
+		$data = ConfigBusiness::G()->getDefaultConfig();
+		C::ExitJson($data);
     }
 
     /**
@@ -47,5 +49,6 @@ class ConfigController extends ProjectController
      */
     public function update()
     {
+        C::ThrowOn(true,"No Impelement");
     }
 }

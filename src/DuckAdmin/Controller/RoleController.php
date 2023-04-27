@@ -37,55 +37,55 @@ class RoleController extends ProjectController
 
     /**
      * 查询
-     * @param Request $request
+     * @param 
      * @return Response
      * @throws BusinessException
      */
-    public function select(Request $request): Response
+    public function select()
     {
 		C::ThrowOn(true,"No Impelement");
     }
 
     /**
      * 插入
-     * @param Request $request
+     * @param 
      * @return Response
      * @throws BusinessException
      */
-    public function insert(Request $request): Response
+    public function insert()
     {
-
+		C::ThrowOn(true,"No Impelement");
     }
 
     /**
      * 更新
-     * @param Request $request
+     * @param 
      * @return Response
      * @throws BusinessException
      */
-    public function update(Request $request): Response
+    public function update()
     {
-       
+		C::ThrowOn(true,"No Impelement");
     }
 
     /**
      * 删除
-     * @param Request $request
+     * @param 
      * @return Response
      * @throws BusinessException
      */
-    public function delete(Request $request): Response
+    public function delete()
     {
-
+		C::ThrowOn(true,"No Impelement");
     }
 
     /**
      * 获取角色权限
-     * @param Request $request
+     * @param 
      * @return Response
      */
-    public function rules(Request $request): Response
+    public function rules()
     {
-        
+		C::ThrowOn(true,"No Impelement");
     }
 }

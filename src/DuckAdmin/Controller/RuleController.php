@@ -8,6 +8,7 @@ namespace DuckAdmin\Controller;
 
 use DuckAdmin\System\ProjectController;
 use DuckAdmin\System\ControllerHelper as C;
+use DuckAdmin\Business\RuleBusiness;
 
 /**
  * 权限菜单
@@ -49,8 +50,8 @@ class RuleController extends ProjectController
      */
     function get()
     {
-		$s=file_get_contents(__DIR__.'/data/rule.json');
-		C::ExitJson(json_decode($s,true));
+		$data = RuleBusiness::G()->get();
+		C::ExitJson($data);
     }
 
     /**
