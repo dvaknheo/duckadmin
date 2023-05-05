@@ -6,20 +6,20 @@
 
 namespace DuckAdmin\Controller;
 
+use DuckAdmin\Business\InstallBusiness;
 use DuckAdmin\System\ProjectController;
 use DuckAdmin\System\ControllerHelper as C;
 
 /**
  * 主入口
  */
-class Install extends ProjectController
+class Install extends Base
 {
     /**
      * 设置数据库
      */
     public function step1()
     {
-		var_dump(DATE(DATE_ATOM));exit;
 		try{
 			InstallBusiness::G()->step1();
 		}catch(\Exception $ex){

@@ -6,16 +6,11 @@ namespace DuckAdmin\Business;
  */
 class RuleBusiness extends BaseBusiness 
 {
-	public function get()
+	public function get($roles,$types)
 	{
-		$data = json_decode(file_get_contents(__DIR__.'/data/rule.json'),true);
-		return $data;
-		
-		$rules = $this->getRules(admin('roles'));
-        $types = $request->get('type', '0,1');
-        $types = is_string($types) ? explode(',', $types) : [0, 1];
+		$rules = $this->getRules($roles);
+        
         $items = Rule::orderBy('weight', 'desc')->get()->toArray();
-
         $formatted_items = [];
         foreach ($items as $item) {
             $item['pid'] = (int)$item['pid'];
@@ -32,7 +27,8 @@ class RuleBusiness extends BaseBusiness
             $this->removeNotContain($tree_items, 'id', $rules);
         }
         $this->removeNotContain($tree_items, 'type', $types);
-        return $this->json(0, 'ok', Tree::arrayValues($tree_items));
+		
+        return Tree::arrayValues($tree_items);
 	}
     /**
      * 获取权限规则

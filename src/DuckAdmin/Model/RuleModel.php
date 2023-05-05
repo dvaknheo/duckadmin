@@ -12,9 +12,11 @@ class RuleModel extends BaseModel
 {
 	public function foo()
 	{
+		//这里有个 like
 		$rule = Rule::where(function ($query) use ($controller, $action) {
-            $query->where('key', "$controller@$action")->orWhere('key', $controller);
-        })->whereIn('id', $rule_ids)->first();
+			$controller_like = str_replace('\\', '\\\\', $controller);
+			$query->where('key', 'like', "$controller_like@%")->orWhere('key', $controller);
+		})->whereIn('id', $rule_ids)->first();
 		return $rule;
 	}
 	public function foo2()

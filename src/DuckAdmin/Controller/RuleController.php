@@ -13,7 +13,7 @@ use DuckAdmin\Business\RuleBusiness;
 /**
  * 权限菜单
  */
-class RuleController extends ProjectController
+class RuleController extends Base
 {
     /**
      * 不需要权限的方法
@@ -50,8 +50,13 @@ class RuleController extends ProjectController
      */
     function get()
     {
-		$data = RuleBusiness::G()->get();
-		C::ExitJson($data);
+		$types = $request->get('type', '0,1');
+        $types = is_string($types) ? explode(',', $types) : [0, 1];
+		$roles= admin('roles');
+		$data = RuleBusiness::G()->get($roles,$types);
+		
+		return $this->json(0, 'ok', $data);
+
     }
 
     /**

@@ -10,6 +10,10 @@ namespace DuckAdmin\Model;
  */
 class RoleModel extends BaseModel
 {
+	public function getRules($roles)
+	{
+		Role::whereIn('id', $roles)->pluck('rules');
+	}
 	public function hasSuperAdmin($roles)
     {
         $rules = Role::whereIn('id', $roles)->pluck('rules');

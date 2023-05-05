@@ -43,6 +43,7 @@ class AdminController extends Crud
      */
     public function index()
     {
+        C::ThrowOn(true,"No Impelement");
     }
 
     /**
@@ -53,6 +54,7 @@ class AdminController extends Crud
      */
     public function select()
     {
+        C::ThrowOn(true,"No Impelement");
     }
 
     /**
@@ -63,6 +65,7 @@ class AdminController extends Crud
      */
     public function insert()
     {
+        C::ThrowOn(true,"No Impelement");
     }
 
     /**
@@ -73,6 +76,8 @@ class AdminController extends Crud
     */
     public function update()
     {
+        C::ThrowOn(true,"No Impelement");
+
     }
 
     /**
@@ -82,7 +87,7 @@ class AdminController extends Crud
      */
     public function delete()
     {
-
+        C::ThrowOn(true,"No Impelement");
     }
 
 }

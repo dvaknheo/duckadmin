@@ -16,19 +16,14 @@ class Base extends ProjectController
 {
     public function __construct()
     {
-		var_dump("???");
         // 我们弄个小技巧，不允许直接访问，但我们可以创建一个实例填充，
-        if (static::CheckRunningController(self::class, static::class)) {
-            return;
-        }
-        parent::__construct();
+        //if (static::CheckRunningController(self::class, static::class)) {
+        //    return;
+        //}
+        //parent::__construct();
 		//我们检查安装？
     }
 	//
-    /**
-     * @var Model
-     */
-    protected $model = null;
 
     /**
      * 无需登录及鉴权的方法
@@ -49,10 +44,7 @@ class Base extends ProjectController
      */
     protected $dataLimit = null;
 
-    /**
-     * 数据限制字段
-     */
-    protected $dataLimitField = 'admin_id';
+
 
     /**
      * 返回格式化json数据
@@ -66,6 +58,41 @@ class Base extends ProjectController
     {
         return json(['code' => $code, 'data' => $data, 'msg' => $msg]);
     }
+	
+	protected static function Sucess()
+	{
+		//
+	}
+    public function process(Request $request, callable $handler): Response
+    {
+        $controller = $request->controller;
+        $action = $request->action;
 
+        $code = 0;
+        $msg = '';
+        if (!Auth::canAccess($controller, $action, $code, $msg)) {
+            if ($request->expectsJson()) {
+                $response = json(['code' => $code, 'msg' => $msg, 'type' => 'error']);
+            } else {
+                if ($code === 401) {
+                    $response = response(<<<EOF
+<script>
+    if (self !== top) {
+        parent.location.reload();
+    }
+</script>
+EOF
+                    );
+                } else {
+                    $request->app = '';
+                    $request->plugin = 'admin';
+                    $response = view('common/error/403')->withStatus(403);
+                }
+            }
+        } else {
+            $response = $request->method() == 'OPTIONS' ? response('') : $handler($request);
+        }
+        return $response;
+    }
 	
 }

@@ -27,8 +27,7 @@ class ConfigController extends ProjectController
      */
     public function index()
     {
-        var_dump("???");
-		var_dump(DATE(DATE_ATOM));
+		C::ThrowOn(true,"No Impelement");
     }
 
     /**
@@ -38,7 +37,7 @@ class ConfigController extends ProjectController
     public function get()
     {
 		$data = ConfigBusiness::G()->getDefaultConfig();
-		C::ExitJson($data);
+		C::ExitJson($data); //注意这里不能用 sucess
     }
 
     /**

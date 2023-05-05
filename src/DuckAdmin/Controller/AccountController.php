@@ -6,14 +6,13 @@
 
 namespace DuckAdmin\Controller;
 
-use DuckAdmin\System\ProjectController;
 use DuckAdmin\System\ControllerHelper as C;
 use DuckAdmin\Business\AccountBusiness;
 
 /**
  * 系统设置
  */
-class AccountController extends ProjectController
+class AccountController extends Base
 {
     /**
      * 不需要登录的方法
@@ -33,6 +32,7 @@ class AccountController extends ProjectController
      */
     public function index()
     {
+		C::Show('account/index');
     }
 
     /**
@@ -45,41 +45,16 @@ class AccountController extends ProjectController
     {
         $username = C::Post('username', '');
         $password = C::Post('password', '');
+        $captcha = C::Post('captcha');
 		
-		/*
-        $captcha = $request->post('captcha');
-        if (strtolower($captcha) !== session('captcha-login')) {
-            return $this->json(1, '验证码错误');
-        }
-		$request->session()->forget('captcha-login');
-		*/
-        
-
-        C::ThrowOn(!$username, '用户名不能为空',1);
+		$flag = CaptchaAction::G()->doCheckCaptcha($captcha);
+        C::ThrowOn(!$flag, '验证码错误',1);
 		
-        //$this->checkLoginLimit($username);
-        $admin = Admin::where('username', $username)->first();
-        if (!$admin || !Util::passwordVerify($password, $admin->password)) {
-            return $this->json(1, '账户不存在或密码错误');
-        }
-        if ($admin->status != 0) {
-            return $this->json(1, '当前账户暂时无法登录');
-        }
-		//////////////////////////////////////////
-        $admin->login_at = date('Y-m-d H:i:s');
-        $admin->save();
-        //$this->removeLoginLimit($username);
-        $admin = $admin->toArray();
-        $session = $request->session();
-        unset($admin['password']);
-        $session->set('admin', $admin);
+		$admin = AccountBusiness::G()->login($username,$password,$captcha);
+		AdminSesseion::G()->setCurrentAdmin($admin);
 		
-		////////////
-        return $this->json(0, '登录成功', [
-            'nickname' => $admin['nickname'],
-            'token' => $request->sessionId(),
-        ]);    
-		}
+		C::Sucess($admin,'登录成功');
+	}
 
     /**
      * 退出
@@ -88,8 +63,8 @@ class AccountController extends ProjectController
      */
     public function logout()
     {
-        $request->session()->delete('admin');
-        return $this->json(0);
+		AdminSesseion::G()->setCurrentAdmin([]);
+        C::Sucess(0);
     }
 
     /**
@@ -99,10 +74,8 @@ class AccountController extends ProjectController
      */
     public function info()
     {
-		C::GetCurrentAdmin();
 		$data = AccountBusiness::G()->getAccountInfo();
-		//$data['isSupperAdmin'] = C::isSupperAdmin(),
-		//$data['token'] = C::SessionId();// $request->sessionId(),
+		$data['token'] = AdminSesseion::G()->SessionId();
 		
 		C::Sucess($data);
     }
@@ -114,7 +87,7 @@ class AccountController extends ProjectController
      */
     public function update()
     {
-        
+		C::ThrowOn(true,"No Impelement");
     }
 
     /**
@@ -124,6 +97,7 @@ class AccountController extends ProjectController
      */
     public function password()
     {
+		C::ThrowOn(true,"No Impelement");
 
     }
 
@@ -135,19 +109,12 @@ class AccountController extends ProjectController
      */
     public function captcha()
     {
-	
+		C::ThrowOn(true,"No Impelement");
     }
     /**
      * 解除登录频率限制
      * @param $username
      * @return void
      */
-    protected function removeLoginLimit($username)
-    {
-        $limit_log_path = runtime_path() . '/login';
-        $limit_file = $limit_log_path . '/' . md5($username) . '.limit';
-        if (is_file($limit_file)) {
-            unlink($limit_file);
-        }
-    }
+
 }
