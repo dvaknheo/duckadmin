@@ -15,7 +15,6 @@ use DuckAdmin\System\AdminAction;
 class DuckAdminAction
 {
     use SingletonExTrait;    
-    // 
     /**
      * 检查权限 你的方法调用这个杜绝外部访问。
      */
@@ -32,5 +31,8 @@ class DuckAdminAction
     {
         return AdminAction::G()->doCheckPermission();
     }
-    
+	public static function IsSuperAdmin()
+	{
+		//
+	}
 }

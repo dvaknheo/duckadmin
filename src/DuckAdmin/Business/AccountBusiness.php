@@ -6,10 +6,8 @@ namespace DuckAdmin\Business;
  */
 class AccountBusiness extends BaseBusiness 
 {
-	public function getAccountInfo()
+	public function getAccountInfo($admin)
 	{
-		$data = json_decode(file_get_contents(__DIR__.'/data/account.json'),true);
-		return $data;
         $info = [
             'id' => $admin['id'],
             'username' => $admin['username'],
@@ -17,35 +15,31 @@ class AccountBusiness extends BaseBusiness
             'avatar' => $admin['avatar'],
             'email' => $admin['email'],
             'mobile' => $admin['mobile'],
-            'isSupperAdmin' => static::isSupperAdmin($admin['id']),
+            'isSupperAdmin' => statistatic::isSupperAdmin($admin['id']),
         ];
 		
 		return $info;
-		
-
 	}
     public function isSupperAdmin(int $admin_id = 0): bool
     {
-		BusinessException::ThrowOn($admin_id==0,'参数错误，请指定管理员');
+		static::ThrowOn($admin_id==0,'参数错误，请指定管理员');
 		$roles = AdminRoleModel::G()->getRoles($admin_id);
-        $rules = Role::G()->getRules($roles);
+        $rules = RoleModel::G()->getRules($roles);
         return $rules && in_array('*', $rules->toArray());
     }
 	public function login($username,$password,$captcha)
 	{
-		
-        C::ThrowOn(!$flag, '验证码错误',1);
 		////[[[[ business
-        C::ThrowOn(!$username, '用户名不能为空',1);
+        static::ThrowOn(!$username, '用户名不能为空',1);
 		
 		// 不直接用 model 而是用business //这一片都是 business
         //$this->checkLoginLimit($username);
 		
         $admin = AdminModel::G()->getUserByName($username);
         if (!$admin || !AdminModel::G()->passwordVerify($password, $admin->password)) {
-            C::ThrowOn(true,'账户不存在或密码错误');
+            static::ThrowOn(true,'账户不存在或密码错误');
         }
-		C::ThrowOn($admin->status != 0, '当前账户暂时无法登录',1);
+		static::ThrowOn($admin->status != 0, '当前账户暂时无法登录',1);
 		//////////////////////////////////////////
 		
 		AdminModel::G()->updateLoginAt($admin);
@@ -58,12 +52,13 @@ class AccountBusiness extends BaseBusiness
         $admin = $admin->toArray();
         unset($admin['password']);
 		
-        //static::FireEvent([static::class,__METHOD__], $admin);
+        //statistatic::FireEvent([statistatic::class,__METHOD__], $admin);
 
 		return $admin;
 	}
     protected function removeLoginLimit($username)
     {
+		//
         $limit_log_path = runtime_path() . '/login';
         $limit_file = $limit_log_path . '/' . md5($username) . '.limit';
         if (is_file($limit_file)) {

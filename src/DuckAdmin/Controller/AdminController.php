@@ -12,7 +12,7 @@ use support\Response;
 /**
  * 管理员列表 
  */
-class AdminController extends Crud
+class AdminController extends Base
 {
     /**
      * 不需要鉴权的方法

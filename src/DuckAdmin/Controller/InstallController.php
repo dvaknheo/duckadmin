@@ -20,6 +20,13 @@ class Install extends Base
      */
     public function step1()
     {
+		$user = $request->post('user');
+        $password = $request->post('password');
+        $database = $request->post('database');
+        $host = $request->post('host');
+        $port = (int)$request->post('port') ?: 3306;
+        $overwrite = $request->post('overwrite');	
+		
 		try{
 			InstallBusiness::G()->step1();
 		}catch(\Exception $ex){
@@ -35,7 +42,7 @@ class Install extends Base
     public function step2()
     {
 		try{
-			InstallBusiness::G()->step2();
+			InstallBusiness::G()->step2($username,$password,$password_confirm);
 		}catch(\Exception $ex){
 			C::ExitJson([$ex->getCode(),$ex->getMessage()]);
 		}

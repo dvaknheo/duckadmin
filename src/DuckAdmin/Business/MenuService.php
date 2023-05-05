@@ -5,7 +5,7 @@ namespace plugin\admin\api;
 /**
  * 对外提供的菜单接口
  */
-class MenuBusiness
+class MenuService
 {
 
     /**

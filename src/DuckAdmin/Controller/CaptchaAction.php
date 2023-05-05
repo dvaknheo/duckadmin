@@ -6,7 +6,7 @@
 
 namespace DuckAdmin\ControllerEx;
 
-use DuckAdmin\ControllerEx\AdminSession;
+use DuckAdmin\Controller\AdminSession;
 use DuckAdmin\System\ProjectAction;
 
 use Gregwar\Captcha\CaptchaBuilder;
