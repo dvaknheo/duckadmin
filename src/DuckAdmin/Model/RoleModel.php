@@ -8,9 +8,19 @@ namespace DuckAdmin\Model;
 /**
  * 菜单模型
  */
-class OptionModel extends BaseModel
+class RoleModel extends BaseModel
 {
-    public function foo()
+	public function hasSuperAdmin($roles)
     {
-    }
+        $rules = Role::whereIn('id', $roles)->pluck('rules');
+        $rule_ids = [];
+        foreach ($rules as $rule_string) {
+            if (!$rule_string) {
+                continue;
+            }
+            $rule_ids = array_merge($rule_ids, explode(',', $rule_string));
+        }
+		return $rule_ids;
+	}
+
 }

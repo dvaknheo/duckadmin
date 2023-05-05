@@ -8,9 +8,21 @@ namespace DuckAdmin\Model;
 /**
  * 菜单模型
  */
-class OptionModel extends BaseModel
+class RuleModel extends BaseModel
 {
-    public function foo()
-    {
-    }
+	public function foo()
+	{
+		$rule = Rule::where(function ($query) use ($controller, $action) {
+            $query->where('key', "$controller@$action")->orWhere('key', $controller);
+        })->whereIn('id', $rule_ids)->first();
+		return $rule;
+	}
+	public function foo2()
+	{
+	        $rule = Rule::where(function ($query) use ($controller, $action) {
+            $query->where('key', "$controller@$action")->orWhere('key', $controller);
+        })->whereIn('id', $rule_ids)->first();
+		return $rule;
+	}
+           
 }

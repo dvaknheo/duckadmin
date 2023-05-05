@@ -14,13 +14,13 @@ class AdminSession extends ProjectSession
     public function getCurrentAdmin()
     {
         $ret = $this->get('admin', []);
-        static::ThrowOn(empty($ret), '请重新登录');
+        //static::ThrowOn(empty($ret), '请重新登录');
         return $ret;
     }
     public function getCurrentAdminId()
     {
         $user = $this->getCurrentAdmin();
-        return $user['id'];
+        return $user['id']??0;
     }
     
     public function setCurrentAdmin($admin)

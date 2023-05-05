@@ -23,9 +23,7 @@ class DuckAdminPlugin extends App
     use AppPluginTrait {
         // 覆盖
         pluginModeInit as private _pluginModeInit;
-        onPluginModeBeforeRun as private _onPluginModeBeforeRun;
     }
-    
     // 可调的外部设置， 声明
     public $plugin_options = [
             'installed' => true,
@@ -57,8 +55,11 @@ class DuckAdminPlugin extends App
     //
     protected function onPluginModeBeforeRun()
     {
+	
+		
         //$this->checkInstall(false); // 检查安装，不能在初始化里
-        //return $this->_onPluginModeBeforeRun();
+        static::FireEvent([static::class, __FUNCTION__]);
+		//return $this->_onPluginModeBeforeRun();
     }
     
     // 后两个是通用的方法，只留一个入口

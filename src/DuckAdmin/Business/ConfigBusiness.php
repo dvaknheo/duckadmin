@@ -12,11 +12,12 @@ class ConfigBusiness extends BaseBusiness
 		return $data;
 		
 		$name = 'system_config';
-		$config = OptionModel::G()->GetSystemConfig(); where('name', $name)->value('value');
+		$config = OptionModel::G()->GetSystemConfig(); 
 		if (empty($config)) {
-			//$config = file_get_contents(base_path('plugin/admin/public/config/pear.config.json'));
+			$config = file_get_contents(base_path('plugin/admin/public/config/pear.config.json'));
+			
 			OptionModel::G()->setSystemConfig($config);
 		}
-		return json_decode($config, true);
+		return $config;
 	}
 }

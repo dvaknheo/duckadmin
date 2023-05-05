@@ -10,7 +10,13 @@ namespace DuckAdmin\Model;
  */
 class OptionModel extends BaseModel
 {
-    public function foo()
+    public function GetSystemConfig()
     {
+		//where('name', $name)->value('value');
+		static::Db()->fetch("select * from wa_options where name='system_config'");
     }
+	public function setSystemConfig($value)
+	{
+		//
+	}
 }
