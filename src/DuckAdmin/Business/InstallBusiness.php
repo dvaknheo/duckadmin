@@ -6,6 +6,10 @@ namespace DuckAdmin\Business;
  */
 class InstallBusiness extends BaseBusiness 
 {
+	public function isInstalled()
+	{
+		return true;
+	}
 	public function step1($post)
     {
         $user = $request->post('user');
@@ -17,8 +21,8 @@ class InstallBusiness extends BaseBusiness
         clearstatcache();
 		
         $database_config_file = base_path() . '/plugin/admin/config/database.php';
-        $flag = is_file($database_config_file)) {
-		MyException::ThrowOn($flag ,'管理后台已经安装！如需重新安装，请删除该插件数据库配置文件并重启');
+        $flag = is_file($database_config_file);
+		static::ThrowOn($flag ,'管理后台已经安装！如需重新安装，请删除该插件数据库配置文件并重启');
 
         try {
             $db = $this->getPdo($host, $user, $password, $port);
@@ -30,9 +34,9 @@ class InstallBusiness extends BaseBusiness
             $smt = $db->query("show tables");
             $tables = $smt->fetchAll();
         } catch (\Throwable $e) {
-			MyException::ThrowOn(stripos($e, 'Access denied for user'), '数据库用户名或密码错误');
-			MyException::ThrowOn(stripos($e, 'Connection refused'), 'Connection refused. 请确认数据库IP端口是否正确，数据库已经启动');
-			MyException::ThrowOn(stripos($e, 'timed out'), '数据库连接超时，请确认数据库IP端口是否正确，安全组及防火墙已经放行端口');
+			static::ThrowOn(stripos($e, 'Access denied for user'), '数据库用户名或密码错误');
+			static::ThrowOn(stripos($e, 'Connection refused'), 'Connection refused. 请确认数据库IP端口是否正确，数据库已经启动');
+			static::ThrowOn(stripos($e, 'timed out'), '数据库连接超时，请确认数据库IP端口是否正确，安全组及防火墙已经放行端口');
 			throw $e;
         }
 
@@ -52,7 +56,7 @@ class InstallBusiness extends BaseBusiness
         }
         $tables_conflict = array_intersect($tables_to_install, $tables_exist);
         if (!$overwrite) {
-			MyException::ThrowOn( $tables_conflict, '以下表' . implode(',', $tables_conflict) . '已经存在，如需覆盖请选择强制覆盖');
+			static::ThrowOn( $tables_conflict, '以下表' . implode(',', $tables_conflict) . '已经存在，如需覆盖请选择强制覆盖');
         } else {
             foreach ($tables_conflict as $table) {
                 $db->exec("DROP TABLE `$table`");
@@ -60,7 +64,7 @@ class InstallBusiness extends BaseBusiness
         }
 
         $sql_file = base_path() . '/plugin/admin/install.sql';
-		MyException::ThrowOn( !is_file($sql_file),  '数据库SQL文件不存在');
+		static::ThrowOn( !is_file($sql_file),  '数据库SQL文件不存在');
 
         $sql_query = file_get_contents($sql_file);
         $sql_query = $this->removeComments($sql_query);
@@ -203,9 +207,9 @@ class InstallBusiness extends BaseBusiness
      */
     public function step2($username,$password,$password_confirm)
     {
-		MyException::ThrowOn($password != $password_confirm, '两次密码不一致');
+		static::ThrowOn($password != $password_confirm, '两次密码不一致');
         if (!is_file($config_file = base_path() . '/plugin/admin/config/database.php')) {
-            MyException::ThrowOn(true, '请先完成第一步数据库配置');
+            static::ThrowOn(true, '请先完成第一步数据库配置');
         }
 		
         $config = include $config_file;
@@ -214,7 +218,7 @@ class InstallBusiness extends BaseBusiness
         $pdo = $this->getPdo($connection['host'], $connection['username'], $connection['password'], $connection['port'], $connection['database']);
 
         if ($pdo->query('select * from `wa_admins`')->fetchAll()) {
-            MyException::ThrowOn(1, '后台已经安装完毕，无法通过此页面创建管理员');
+            static::ThrowOn(1, '后台已经安装完毕，无法通过此页面创建管理员');
         }
 
         $smt = $pdo->prepare("insert into `wa_admins` (`username`, `password`, `nickname`, `created_at`, `updated_at`) values (:username, :password, :nickname, :created_at, :updated_at)");

@@ -8,9 +8,11 @@ class RuleBusiness extends BaseBusiness
 {
 	public function get($roles,$types)
 	{
-		$rules = $this->getRules($roles);
+		$rules = RoleModel::G()->getRules($roles);
         
-        $items = Rule::orderBy('weight', 'desc')->get()->toArray();
+        $items = RuleModel::G()->allRules();
+		
+		// 格式化数据
         $formatted_items = [];
         foreach ($items as $item) {
             $item['pid'] = (int)$item['pid'];
@@ -30,23 +32,6 @@ class RuleBusiness extends BaseBusiness
 		
         return Tree::arrayValues($tree_items);
 	}
-    /**
-     * 获取权限规则
-     * @param $roles
-     * @return array
-     */
-    protected function getRules($roles): array
-    {
-        $rules_strings = $roles ? Role::whereIn('id', $roles)->pluck('rules') : []; //model
-        $rules = [];
-        foreach ($rules_strings as $rule_string) {
-            if (!$rule_string) {
-                continue;
-            }
-            $rules = array_merge($rules, explode(',', $rule_string));
-        }
-        return $rules;
-    }
 ///////////////////////////////////
     /**
      * 移除不包含某些数据的数组

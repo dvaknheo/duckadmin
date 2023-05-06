@@ -47,14 +47,14 @@
 
                 var $ = layui.$, layer = layui.layer, form = layui.form;
                 function switchCaptcha() {
-                    $('.codeImage').attr("src", "<?=\DuckAdmin\__res('')?>account/captcha/login?v=" + new Date().getTime());
+                    $('.codeImage').attr("src", "<?=\DuckAdmin\__url('')?>/account/captcha/login?v=" + new Date().getTime());
                 }
                 switchCaptcha();
                 // 登 录 提 交
                 form.on('submit(login)', function (data) {
                     layer.load();
                     $.ajax({
-                        url: '<?=\DuckAdmin\__res('')?>account/login',
+                        url: '<?=\DuckAdmin\__url('')?>/account/login',
                         type: "POST",
                         data: data.field,
                         success: function (res) {

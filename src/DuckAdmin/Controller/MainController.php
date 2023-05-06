@@ -6,13 +6,13 @@
 
 namespace DuckAdmin\Controller;
 
-use DuckAdmin\System\ProjectController;
+use DuckAdmin\Business\InstallBusiness;
 use DuckAdmin\System\ControllerHelper as C;
 
 /**
  * 主入口
  */
-class MainController extends ProjectController
+class MainController extends Base
 {
     /**
      * 无需登录的方法
@@ -30,19 +30,17 @@ class MainController extends ProjectController
      */
     public function index()
     {
-		C::Show([], 'index/index');return;
-		$isInstalled = false;//C::IsInstalled();
-		
+		$isInstalled = InstallBusiness::G()->IsInstalled();
         if (!$isInstalled) {
 			C::Show([], 'index/install');
 			return;
         }
         $admin =  AdminSession::G()->getCurrentAdmin();
         if (!$admin) {
-			C::Show(get_defined_vars(), 'account/login');
+			C::Show([], 'account/login');
             return ;
         }		
-        C::Show(get_defined_vars(), 'index/index');
+        C::Show([], 'index/index');
     }
 	public function dashboard()
 	{

@@ -15,8 +15,7 @@ class MenuService
      */
     public static function get($key)
     {
-        $menu = Rule::where('key', $key)->first();
-        return $menu ? $menu->toArray() : null;
+		return RuleModel::G()->findByKey($key);
     }
 
     /**
@@ -26,7 +25,7 @@ class MenuService
      */
     public static function find($id): array
     {
-        return Rule::find($id)->toArray();
+		return RuleModel::G()->findById($id);
     }
 
     /**
@@ -36,12 +35,7 @@ class MenuService
      */
     public static function add(array $menu)
     {
-        $item = new Rule;
-        foreach ($menu as $key => $value) {
-            $item->$key = $value;
-        }
-        $item->save();
-        return $item->id;
+		return RuleModel::G()->AddMenu($menu);
     }
 
     /**
@@ -59,7 +53,7 @@ class MenuService
         }
         $children = $menu_tree['children'] ?? [];
         unset($menu_tree['children']);
-        if ($old_menu = Menu::get($menu_tree['key'])) {
+        if ($old_menu = static::get($menu_tree['key'])) {
             $pid = $old_menu['id'];
             Rule::where('key', $menu_tree['key'])->update($menu_tree);
         } else {
@@ -88,7 +82,7 @@ class MenuService
             $children_ids = Rule::whereIn('pid', $children_ids)->pluck('id')->toArray();
             $delete_ids = array_merge($delete_ids, $children_ids);
         }
-        Rule::whereIn('id', $delete_ids)->delete();
+		RuleModel::dropByIds($delete_ids);
     }
 
 

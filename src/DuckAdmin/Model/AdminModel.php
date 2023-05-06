@@ -10,6 +10,10 @@ namespace DuckAdmin\Model;
  */
 class AdminModel extends BaseModel
 {
+	public function getAdmin()
+	{
+		//$data= self::Db()->fetch("select * from wa_admin where id=1");
+	}
     public function getAdminByName($username)
     {
 		$admin = Admin::where('username', $username)->first();

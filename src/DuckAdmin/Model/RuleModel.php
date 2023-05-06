@@ -10,6 +10,12 @@ namespace DuckAdmin\Model;
  */
 class RuleModel extends BaseModel
 {
+	public function allRules()
+	{
+		$sql= "select * from wa_rule  order by weight desc";
+		$data = self::Db()->fetchAll($sql);
+		return $data;
+	}
 	public function foo()
 	{
 		//这里有个 like
@@ -26,5 +32,8 @@ class RuleModel extends BaseModel
         })->whereIn('id', $rule_ids)->first();
 		return $rule;
 	}
-           
+    public function dropByIds($delete_ids)
+	{
+		Rule::whereIn('id', $delete_ids)->delete();
+	}
 }

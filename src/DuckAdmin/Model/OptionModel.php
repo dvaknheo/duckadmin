@@ -13,7 +13,8 @@ class OptionModel extends BaseModel
     public function GetSystemConfig()
     {
 		//where('name', $name)->value('value');
-		return self::Db()->fetch("select * from wa_options where name='system_config'");
+		$data= self::Db()->fetch("select * from wa_options where name='system_config'");
+		return $data?json_decode($data['value'],true):[];
     }
 	public function setSystemConfig($value)
 	{

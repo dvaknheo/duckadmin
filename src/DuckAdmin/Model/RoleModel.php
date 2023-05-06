@@ -10,6 +10,13 @@ namespace DuckAdmin\Model;
  */
 class RoleModel extends BaseModel
 {
+	public function getRules2($roles)
+	{
+		$sql="select rules from wa_role where id in " . implode($roles)
+		$data = self::Db()->fetchColumn($sql);
+		return $data;
+
+	}
 	public function getRules($roles)
 	{
 		Role::whereIn('id', $roles)->pluck('rules');

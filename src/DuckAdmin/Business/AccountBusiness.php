@@ -1,5 +1,7 @@
 <?php
 namespace DuckAdmin\Business;
+use DuckAdmin\Model\AdminRoleModel;
+use DuckAdmin\Model\RoleModel;
 
 /**
  * 个人资料业务
@@ -15,7 +17,7 @@ class AccountBusiness extends BaseBusiness
             'avatar' => $admin['avatar'],
             'email' => $admin['email'],
             'mobile' => $admin['mobile'],
-            'isSupperAdmin' => statistatic::isSupperAdmin($admin['id']),
+            'isSupperAdmin' => static::isSupperAdmin($admin['id']),
         ];
 		
 		return $info;
@@ -29,10 +31,7 @@ class AccountBusiness extends BaseBusiness
     }
 	public function login($username,$password,$captcha)
 	{
-		////[[[[ business
         static::ThrowOn(!$username, '用户名不能为空',1);
-		
-		// 不直接用 model 而是用business //这一片都是 business
         //$this->checkLoginLimit($username);
 		
         $admin = AdminModel::G()->getUserByName($username);
@@ -47,22 +46,12 @@ class AccountBusiness extends BaseBusiness
 		
         //$this->removeLoginLimit($username);
 		
-		////]]]]
 		
-        $admin = $admin->toArray();
+        //$admin = $admin->toArray();
         unset($admin['password']);
 		
-        //statistatic::FireEvent([statistatic::class,__METHOD__], $admin);
+        //static::FireEvent([static::class,__METHOD__], $admin);
 
 		return $admin;
 	}
-    protected function removeLoginLimit($username)
-    {
-		//
-        $limit_log_path = runtime_path() . '/login';
-        $limit_file = $limit_log_path . '/' . md5($username) . '.limit';
-        if (is_file($limit_file)) {
-            unlink($limit_file);
-        }
-    }
 }

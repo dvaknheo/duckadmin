@@ -50,12 +50,13 @@ class RuleController extends Base
      */
     function get()
     {
-		$types = $request->get('type', '0,1');
+		$types = C::GET('type', '0,1');
         $types = is_string($types) ? explode(',', $types) : [0, 1];
-		$roles= admin('roles');
-		$data = RuleBusiness::G()->get($roles,$types);
 		
-		return $this->json(0, 'ok', $data);
+		$admin = AdminSession::G()->getCurrentAdmin();
+		$data = RuleBusiness::G()->get($admin['roles'],$types);
+		
+		C::Sucess($data);
 
     }
 
