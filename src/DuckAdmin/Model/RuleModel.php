@@ -10,10 +10,14 @@ namespace DuckAdmin\Model;
  */
 class RuleModel extends BaseModel
 {
+	public function isSuper($rules)
+	{
+		return $rules && in_array('*', $rules);
+	}
 	public function allRules()
 	{
 		$sql= "select * from wa_rule  order by weight desc";
-		$data = self::Db()->fetchAll($sql);
+		$data = static::Db()->fetchAll($sql);
 		return $data;
 	}
 	public function foo()
@@ -24,6 +28,9 @@ class RuleModel extends BaseModel
 			$query->where('key', 'like', "$controller_like@%")->orWhere('key', $controller);
 		})->whereIn('id', $rule_ids)->first();
 		return $rule;
+		
+		$sql= "select * from wa_rule where key  = ?  or  key ";
+		$data = static::Db()->fetchAll($sql);
 	}
 	public function foo2()
 	{
@@ -34,6 +41,7 @@ class RuleModel extends BaseModel
 	}
     public function dropByIds($delete_ids)
 	{
-		Rule::whereIn('id', $delete_ids)->delete();
+		$sql= "delete from wa_rule where in " . static::Db()->quoteIn($delete_ids);
+		return static::Db()->exec($sql);
 	}
 }

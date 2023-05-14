@@ -6,43 +6,21 @@
 
 namespace DuckAdmin\ControllerEx;
 
-use DuckAdmin\Business\AdminBusiness;
-use DuckAdmin\ControllerEx\AdminSession;
+use DuckAdmin\Business\AccountBusiness;
+use DuckAdmin\Controller\AdminSession;
 use DuckAdmin\System\ProjectAction;
 
 class AdminAction extends ProjectAction
 {
-
-	/**
-	 * 当前管理员id
-	 * @return integer|null
-	 */
-	function admin_id(): ?int
-	{
-		return AdminSession::G()->getCurrentAdminId ('admin.id');
-	}
 	/**
 	 * 当前管理员
 	 * @param null|array|string $fields
 	 * @return array|mixed|null
 	 */
-	function admin($fields = null)
+	public function admin($fields = null)
 	{
-		refresh_admin_session();
-		if (!$admin = session('admin')) {
-			return null;
-		}
-		if ($fields === null) {
-			return $admin;
-		}
-		if (is_array($fields)) {
-			$results = [];
-			foreach ($fields as $field) {
-				$results[$field] = $admin[$field] ?? null;
-			}
-			return $results;
-		}
-		return $admin[$fields] ?? null;
+		$this->refresh_admin_session();		
+		return AdminSession::G()->getCurrentAdmin();
 	}
 
 	/**
@@ -50,36 +28,83 @@ class AdminAction extends ProjectAction
 	 * @param bool $force
 	 * @return void
 	 */
-	function refresh_admin_session(bool $force = false) //protected
+	protected function refresh_admin_session(bool $force = false) //protected
 	{
-		if (!$admin_id = $this->admin_id()) {
-			return null;
-		}
 		$time_now = time();
-		// session在2秒内不刷新
 		$session_ttl = 2;
-		$session_last_update_time = session('admin.session_last_update_time', 0);
+		$admin = AdminSession::G()->getCurrentAdmin();
+		
+		$session_last_update_time = $admin['session_last_update_time'] ?? 0;
+		
 		if (!$force && $time_now - $session_last_update_time < $session_ttl) {
 			return null;
 		}
 		
-		$admin = Admin::find($admin_id); 
-		
-		$session = request()->session();
-		if (!$admin) {
-			$session->forget('admin');
+		$admin = AccountBusiness::G()->getAdmin($admin_id);
+		if(!$admin){
 			return null;
 		}
-		$admin = $admin->toArray();
+		
 		unset($admin['password']);
-		// 账户被禁用
-		if ($admin['status'] != 0) {
-			$session->forget('admin');
-			return;
-		}
-		$admin['roles'] = AdminRole::where('admin_id', $admin_id)->pluck('role_id')->toArray();
 		$admin['session_last_update_time'] = $time_now;
-		$session->set('admin', $admin);
+		AdminSession::G()->setCurrentAdmin($admin);	
 	}
-    
+    ////////////////
+	
+	public static function json(int $code, string $msg = 'ok', array $data = []): Response
+    {
+        return static::ExitJson(['code' => $code, 'data' => $data, 'msg' => $msg]);
+    }
+	
+	public static function Success($data)
+	{
+		return static::json(['code' => 0, 'data' => $data, 'msg' => 'ok']);
+	}
+	protected function isOptionsMethod()
+	{
+		return $_SERVER['REQUEST_METHOD']=='OPTIONS'?true:false;
+	}
+    public function checkAccess($controller,$action)
+    {
+        $code = 0;
+        $msg = '';
+		
+		$admin = $this->getCurrentAdmin();	
+		$flag = AccountBusiness.::canAccess($admin, $controller, $action, $code, $msg);
+		if($flag){
+			$flag = $this->isOptionsMethod();
+			if($flag){
+				echo '';
+				static::Exit();
+			}
+		}
+		
+		if (static::IsJson()) {
+			static::ExitJson(['code' => $code, 'msg' => $msg, 'type' => 'error']);
+		}
+		if($code == 401){
+			$this->exit401();
+		}else if($code == 403){
+			$this->exit403();
+		}		
+    }
+	protected function exit401()
+	{
+		$response = <<<EOF
+<script>
+if (self !== top) {
+	parent.location.reload();
+}
+</script>
+EOF;
+		static::Header(403);
+		echo $response;
+		static::Exit();
+	}
+	protected function exit403()
+	{
+		static::Header(403);
+		static::Show('_sys/403');
+		static::Exit();
+	}
 }

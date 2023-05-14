@@ -221,25 +221,9 @@ class InstallBusiness extends BaseBusiness
             static::ThrowOn(1, '后台已经安装完毕，无法通过此页面创建管理员');
         }
 
-        $smt = $pdo->prepare("insert into `wa_admins` (`username`, `password`, `nickname`, `created_at`, `updated_at`) values (:username, :password, :nickname, :created_at, :updated_at)");
-        $time = date('Y-m-d H:i:s');
-        $data = [
-            'username' => $username,
-            'password' => Util::passwordHash($password), //X
-            'nickname' => '超级管理员',
-            'created_at' => $time,
-            'updated_at' => $time
-        ];
-        foreach ($data as $key => $value) {
-            $smt->bindValue($key, $value);
-        }
-        $smt->execute();
-        $admin_id = $pdo->lastInsertId();
-
-        $smt = $pdo->prepare("insert into `wa_admin_roles` (`role_id`, `admin_id`) values (:role_id, :admin_id)");
-        $smt->bindValue('role_id', 1);
-        $smt->bindValue('admin_id', $admin_id);
-        $smt->execute();
+   
+        $admin_id = AdminModel::G()->addFirstAdmin($username,$password);
+		AdminRoleModel::G()->addFirstRole($admin_id);
     }
 
 }

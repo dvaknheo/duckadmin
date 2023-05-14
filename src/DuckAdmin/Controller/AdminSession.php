@@ -26,7 +26,6 @@ class AdminSession extends ProjectSession
     {
         $this->set('admin', $admin);
     }
-
 	/////////////
     public function getPhrase()
     {

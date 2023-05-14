@@ -31,8 +31,4 @@ class DuckAdminAction
     {
         return AdminAction::G()->doCheckPermission();
     }
-	public static function IsSuperAdmin()
-	{
-		//
-	}
 }

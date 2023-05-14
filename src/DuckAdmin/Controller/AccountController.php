@@ -6,7 +6,7 @@
 
 namespace DuckAdmin\Controller;
 
-use DuckAdmin\System\ControllerHelper as C;
+use AdminAction as C;
 use DuckAdmin\Business\AccountBusiness;
 
 /**
@@ -50,10 +50,10 @@ class AccountController extends Base
 		$flag = CaptchaAction::G()->doCheckCaptcha($captcha);
         C::ThrowOn(!$flag, '验证码错误',1);
 		
-		$admin = AccountBusiness::G()->login($username,$password,$captcha);
+		$admin = AccountBusiness::G()->login($username, $password);
 		AdminSesseion::G()->setCurrentAdmin($admin);
 		
-		C::Sucess($admin,'登录成功');
+		C::Success($admin,'登录成功');
 	}
 
     /**
@@ -64,7 +64,7 @@ class AccountController extends Base
     public function logout()
     {
 		AdminSesseion::G()->setCurrentAdmin([]);
-        C::Sucess(0);
+        C::Success(0);
     }
 
     /**
@@ -75,9 +75,9 @@ class AccountController extends Base
     public function info()
     {
 		$data = AccountBusiness::G()->getAccountInfo();
-		$data['token'] = AdminSesseion::G()->SessionId();
+		$data['token'] = 'TODO TOKEN';////AdminSesseion::G()->SessionId();
 		
-		C::Sucess($data);
+		C::Success($data);
     }
 
     /**

@@ -1,8 +1,7 @@
 <?php
+namespace DuckAdmin\Business;
 
-namespace plugin\admin\api;
-
-class Install
+class SystemInstallBusiness
 {
     /**
      * 安装
@@ -13,7 +12,7 @@ class Install
     public static function install($version)
     {
         // 导入菜单
-        Menu::import(static::getMenus());
+        MenuService::import(static::getMenus());
     }
 
     /**
@@ -26,7 +25,7 @@ class Install
     {
         // 删除菜单
         foreach (static::getMenus() as $menu) {
-            Menu::delete($menu['name']);
+            MenuService::delete($menu['name']);
         }
     }
 
@@ -45,7 +44,7 @@ class Install
             static::removeUnnecessaryMenus($context['previous_menus']);
         }
         // 导入新菜单
-        Menu::import(static::getMenus());
+        MenuService::import(static::getMenus());
     }
 
     /**
@@ -84,9 +83,9 @@ class Install
      */
     public static function removeUnnecessaryMenus($previous_menus)
     {
-        $menus_to_remove = array_diff(Menu::column($previous_menus, 'name'), Menu::column(static::getMenus(), 'name'));
+        $menus_to_remove = array_diff(MenuService::column($previous_menus, 'name'), MenuService::column(static::getMenus(), 'name'));
         foreach ($menus_to_remove as $name) {
-            Menu::delete($name);
+            MenuService::delete($name);
         }
     }
 

@@ -44,8 +44,6 @@ class Base extends ProjectController
      */
     protected $dataLimit = null;
 
-
-
     /**
      * 返回格式化json数据
      *
@@ -54,45 +52,17 @@ class Base extends ProjectController
      * @param array $data
      * @return Response
      */
-    protected function json(int $code, string $msg = 'ok', array $data = []): Response
+
+    public function __construct()
     {
-        return json(['code' => $code, 'data' => $data, 'msg' => $msg]);
+        $controller = get_class($this);
+        $action = AdminAction::getRouteMethod();
+		
+		AdminAction::G()->checkAccess($controller,$action);
+		
+		return;
     }
 	
-	protected static function Sucess()
-	{
-		//
-	}
-    public function process(Request $request, callable $handler): Response
-    {
-        $controller = $request->controller;
-        $action = $request->action;
-
-        $code = 0;
-        $msg = '';
-        if (!Auth::canAccess($controller, $action, $code, $msg)) {
-            if ($request->expectsJson()) {
-                $response = json(['code' => $code, 'msg' => $msg, 'type' => 'error']);
-            } else {
-                if ($code === 401) {
-                    $response = response(<<<EOF
-<script>
-    if (self !== top) {
-        parent.location.reload();
-    }
-</script>
-EOF
-                    );
-                } else {
-                    $request->app = '';
-                    $request->plugin = 'admin';
-                    $response = view('common/error/403')->withStatus(403);
-                }
-            }
-        } else {
-            $response = $request->method() == 'OPTIONS' ? response('') : $handler($request);
-        }
-        return $response;
-    }
+	  
 	
 }

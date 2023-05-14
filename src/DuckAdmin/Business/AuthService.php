@@ -23,8 +23,8 @@ class AuthService
 		
 		// 这里
         $role_ids = $admin['roles'];
-        $rules = Role::whereIn('id', $role_ids)->pluck('rules')->toArray();
-        if ($rules && in_array('*', $rules)) {
+        $rules = RoleModel::G()->getRules($role_ids)
+        if (RuleModel::G()->isSuper($rules)) {
             return Role::pluck('id')->toArray();
         }
 
@@ -64,7 +64,7 @@ class AuthService
         
         return   RoleModel::G()->hasSuperAdmin($roles);
     }
-/**
+	/**
      * 判断是否有权限
      * @param string $controller
      * @param string $action

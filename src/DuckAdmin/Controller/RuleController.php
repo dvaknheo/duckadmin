@@ -56,7 +56,7 @@ class RuleController extends Base
 		$admin = AdminSession::G()->getCurrentAdmin();
 		$data = RuleBusiness::G()->get($admin['roles'],$types);
 		
-		C::Sucess($data);
+		C::Success($data);
 
     }
 

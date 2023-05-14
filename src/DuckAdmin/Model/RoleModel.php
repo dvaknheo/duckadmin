@@ -12,8 +12,8 @@ class RoleModel extends BaseModel
 {
 	public function getRules2($roles)
 	{
-		$sql="select rules from wa_role where id in " . implode($roles)
-		$data = self::Db()->fetchColumn($sql);
+		$sql="select rules from wa_role where id in " . static::Db()->quoteIn($roles);
+		$data = static::Db()->fetchColumn($sql);
 		return $data;
 
 	}
@@ -23,7 +23,9 @@ class RoleModel extends BaseModel
 	}
 	public function hasSuperAdmin($roles)
     {
-        $rules = Role::whereIn('id', $roles)->pluck('rules');
+		$sql="select rules from wa_role where id in " . static::Db()->quoteIn($roles);
+		$rules = static::Db()->fetchColumn($sql);
+		
         $rule_ids = [];
         foreach ($rules as $rule_string) {
             if (!$rule_string) {
