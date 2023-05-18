@@ -14,12 +14,11 @@ class AdminRoleModel extends BaseModel
     {
 		$sql="select role_id from wa_admin_roles where id = ?";
 		$data = static::Db()->fetchColumn($sql,$admin_id);
+		return $data;
     }
 	public function addFirstRole($admin)
 	{
-        $smt = $pdo->prepare("insert into `wa_admin_roles` (`role_id`, `admin_id`) values (:role_id, :admin_id)");
-        $smt->bindValue('role_id', 1);
-        $smt->bindValue('admin_id', $admin_id);
-        $smt->execute();
+        $sql = "insert into `wa_admin_roles` (`role_id`, `admin_id`) values (:role_id, :admin_id)";
+		$data = static::Db()->exec($sql,1,$admin_id);
 	}
 }

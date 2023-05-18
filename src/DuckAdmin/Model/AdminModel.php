@@ -26,7 +26,7 @@ class AdminModel extends BaseModel
 	}
 	protected function passwordHash($password)
 	{
-		return password_hash($password);
+		return \password_hash($password);
 	}
 	public function updateLoginAt($admin_id)
 	{
@@ -35,19 +35,13 @@ class AdminModel extends BaseModel
 	public function addFirstAdmin($username,$password)
 	{
         $smt = $pdo->prepare("insert into `wa_admins` (`username`, `password`, `nickname`, `created_at`, `updated_at`) values (:username, :password, :nickname, :created_at, :updated_at)");
-        $time = date('Y-m-d H:i:s');
-        $data = [
-            'username' => $username,
-            'password' => $this->passwordHash($password),
-            'nickname' => '超级管理员',
-            'created_at' => $time,
-            'updated_at' => $time
-        ];
-        foreach ($data as $key => $value) {
-            $smt->bindValue($key, $value);
-        }
-        $smt->execute();
-        $admin_id = $pdo->lastInsertId();
+		
+		$sql="insert into `wa_admins` (`username`, `password`, `nickname`, `created_at`, `updated_at`) values (:username, :password, :nickname, :created_at, :updated_at)";
+		
+		$password = $this->passwordHash($password);
+		$time = date('Y-m-d H:i:s');
+		static::Db()->exec($sql, $username,$password, '超级管理员',$time,$time);
+        $admin_id = static::Db()->insertId();
 		return $admin_id;
 	}
 }

@@ -20,7 +20,7 @@ class RuleModel extends BaseModel
 		$data = static::Db()->fetchAll($sql);
 		return $data;
 	}
-	public function foo()
+	public function checkWildRules($rule_ids,$controller,$action)
 	{
 		//这里有个 like
 		$rule = Rule::where(function ($query) use ($controller, $action) {
@@ -32,7 +32,7 @@ class RuleModel extends BaseModel
 		$sql= "select * from wa_rule where key  = ?  or  key ";
 		$data = static::Db()->fetchAll($sql);
 	}
-	public function foo2()
+	public function checkRules($rule_ids,$controller,$action)
 	{
 	        $rule = Rule::where(function ($query) use ($controller, $action) {
             $query->where('key', "$controller@$action")->orWhere('key', $controller);
@@ -45,3 +45,22 @@ class RuleModel extends BaseModel
 		return static::Db()->exec($sql);
 	}
 }
+/*
+
+    if (strtolower($action) === 'index') {
+            $rule = Rule::where(function ($query) use ($controller, $action) {
+                $controller_like = str_replace('\\', '\\\\', $controller);
+                $query->where('key', 'like', "$controller_like@%")->orWhere('key', $controller);
+            })->whereIn('id', $rule_ids)->first();
+            if ($rule) {
+                return true;
+            }
+            $msg = '无权限';
+            $code = 2;
+            return false;
+        }
+
+        // 查询是否有当前控制器的规则
+        $rule = Rule::where(function ($query) use ($controller, $action) {
+            $query->where('key', "$controller@$action")->orWhere('key', $controller);
+        })->whereIn('id', $rule_ids)->first();

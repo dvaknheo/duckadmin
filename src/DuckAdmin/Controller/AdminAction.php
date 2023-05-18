@@ -70,7 +70,7 @@ class AdminAction extends ProjectAction
         $msg = '';
 		
 		$admin = $this->getCurrentAdmin();	
-		$flag = AccountBusiness.::canAccess($admin, $controller, $action, $code, $msg);
+		$flag = AccountBusiness::G()->canAccess($admin, $controller, $action, $code, $msg);
 		if($flag){
 			$flag = $this->isOptionsMethod();
 			if($flag){
