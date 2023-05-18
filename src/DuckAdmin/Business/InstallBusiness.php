@@ -8,39 +8,15 @@ class InstallBusiness extends BaseBusiness
 {
 	public function isInstalled()
 	{
+		// 这里应该拆分成两个 本类用的和上一个类用的
+		$database_config_file = base_path() . '/plugin/admin/config/database.php';
+        $flag = is_file($database_config_file);
+		
 		return true;
 	}
-	public function step1($post)
-    {
-        $user = $request->post('user');
-        $password = $request->post('password');
-        $database = $request->post('database');
-        $host = $request->post('host');
-        $port = (int)$request->post('port') ?: 3306;
-        $overwrite = $request->post('overwrite');	
-        clearstatcache();
-		
-        $database_config_file = base_path() . '/plugin/admin/config/database.php';
-        $flag = is_file($database_config_file);
-		static::ThrowOn($flag ,'管理后台已经安装！如需重新安装，请删除该插件数据库配置文件并重启');
-
-        try {
-            $db = $this->getPdo($host, $user, $password, $port);
-            $smt = $db->query("show databases like '$database'");
-            if (empty($smt->fetchAll())) {
-                $db->exec("create database $database");
-            }
-            $db->exec("use $database");
-            $smt = $db->query("show tables");
-            $tables = $smt->fetchAll();
-        } catch (\Throwable $e) {
-			static::ThrowOn(stripos($e, 'Access denied for user'), '数据库用户名或密码错误');
-			static::ThrowOn(stripos($e, 'Connection refused'), 'Connection refused. 请确认数据库IP端口是否正确，数据库已经启动');
-			static::ThrowOn(stripos($e, 'timed out'), '数据库连接超时，请确认数据库IP端口是否正确，安全组及防火墙已经放行端口');
-			throw $e;
-        }
-
-        $tables_to_install = [
+	protected function checkTableOverwrite($overwrite)
+	{
+		$tables_to_install = [
             'wa_admins',
             'wa_admin_roles',
             'wa_roles',
@@ -62,58 +38,59 @@ class InstallBusiness extends BaseBusiness
                 $db->exec("DROP TABLE `$table`");
             }
         }
-
+	}
+	protected function initSql()
+	{
         $sql_file = base_path() . '/plugin/admin/install.sql';
 		static::ThrowOn( !is_file($sql_file),  '数据库SQL文件不存在');
 
         $sql_query = file_get_contents($sql_file);
+		
         $sql_query = $this->removeComments($sql_query);
         $sql_query = $this->splitSqlFile($sql_query, ';');
+		
         foreach ($sql_query as $sql) {
             $db->exec($sql);
         }
+		
+	}
+	public function step1($post)
+    {
+        $user = $post['user'];
+        $password = $post['password'];
+        $database = $post['database'];
+        $host =  $post['host'];
+        $port = $post['port'];
+		
+		
+        $port = $post['overwrite'];
+		
+		
+		$flag = $this->isInstalled();
+		static::ThrowOn($flag ,'管理后台已经安装！如需重新安装，请删除该插件数据库配置文件并重启');
 
+        try {
+            $db = $this->getPdo($host, $user, $password, $port);
+            $smt = $db->query("show databases like '$database'");
+            if (empty($smt->fetchAll())) {
+                $db->exec("create database $database");
+            }
+            $db->exec("use $database");
+            $smt = $db->query("show tables");
+            $tables = $smt->fetchAll();
+        } catch (\Throwable $e) {
+			static::ThrowOn(stripos($e, 'Access denied for user'), '数据库用户名或密码错误');
+			static::ThrowOn(stripos($e, 'Connection refused'), 'Connection refused. 请确认数据库IP端口是否正确，数据库已经启动');
+			static::ThrowOn(stripos($e, 'timed out'), '数据库连接超时，请确认数据库IP端口是否正确，安全组及防火墙已经放行端口');
+			throw $e;
+        }
+		$this->checkTableOverwrite();
+		$this->initSql();
+        
         // 导入菜单
         $menus = include base_path() . '/plugin/admin/config/menu.php';
         // 安装过程中没有数据库配置，无法使用api\Menu::import()方法
-        $this->importMenu($menus, $db);
-    }
-    /**
-     * 导入菜单
-     * @param array $menu_tree
-     * @param \PDO $pdo
-     * @return void
-     */
-    protected function importMenu(array $menu_tree, \PDO $pdo)
-    {
-        if (is_numeric(key($menu_tree)) && !isset($menu_tree['key'])) {
-            foreach ($menu_tree as $item) {
-                $this->importMenu($item, $pdo);
-            }
-            return;
-        }
-        $children = $menu_tree['children'] ?? [];
-        unset($menu_tree['children']);
-        $smt = $pdo->prepare("select * from wa_rules where `key`=:key limit 1");
-        $smt->execute(['key' => $menu_tree['key']]);
-        $old_menu = $smt->fetch();
-        if ($old_menu) {
-            $pid = $old_menu['id'];
-            $params = [
-                'title' => $menu_tree['title'],
-                'icon' => $menu_tree['icon'] ?? '',
-                'key' => $menu_tree['key'],
-            ];
-            $sql = "update wa_rules set title=:title, icon=:icon where `key`=:key";
-            $smt = $pdo->prepare($sql);
-            $smt->execute($params);
-        } else {
-            $pid = $this->addMenu($menu_tree, $pdo);
-        }
-        foreach ($children as $menu) {
-            $menu['pid'] = $pid;
-            $this->importMenu($menu, $pdo);
-        }
+        RuleModel::G()->importMenu($menus);
     }
 
     /**
@@ -208,22 +185,18 @@ class InstallBusiness extends BaseBusiness
     public function step2($username,$password,$password_confirm)
     {
 		static::ThrowOn($password != $password_confirm, '两次密码不一致');
-        if (!is_file($config_file = base_path() . '/plugin/admin/config/database.php')) {
-            static::ThrowOn(true, '请先完成第一步数据库配置');
-        }
+        $flag = $this->checkDataBase();
+		static::ThrowOn(!$flag, '请先完成第一步数据库配置');
+        
+		$flag = AdminRoleModel::G()->hasAdmins();
+		static::ThrowOn($flag, '后台已经安装完毕，无法通过此页面创建管理员');
 		
-        $config = include $config_file;
-        $connection = $config['connections']['mysql'];
-		
-        $pdo = $this->getPdo($connection['host'], $connection['username'], $connection['password'], $connection['port'], $connection['database']);
-
-        if ($pdo->query('select * from `wa_admins`')->fetchAll()) {
-            static::ThrowOn(1, '后台已经安装完毕，无法通过此页面创建管理员');
-        }
-
-   
         $admin_id = AdminModel::G()->addFirstAdmin($username,$password);
 		AdminRoleModel::G()->addFirstRole($admin_id);
     }
+	protected function checkDatabase()
+	{
+		return !is_file($config_file = base_path() . '/plugin/admin/config/database.php');
+	}
 
 }

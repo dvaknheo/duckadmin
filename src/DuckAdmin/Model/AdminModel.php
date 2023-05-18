@@ -34,8 +34,6 @@ class AdminModel extends BaseModel
 	}
 	public function addFirstAdmin($username,$password)
 	{
-        $smt = $pdo->prepare("insert into `wa_admins` (`username`, `password`, `nickname`, `created_at`, `updated_at`) values (:username, :password, :nickname, :created_at, :updated_at)");
-		
 		$sql="insert into `wa_admins` (`username`, `password`, `nickname`, `created_at`, `updated_at`) values (:username, :password, :nickname, :created_at, :updated_at)";
 		
 		$password = $this->passwordHash($password);
@@ -43,5 +41,9 @@ class AdminModel extends BaseModel
 		static::Db()->exec($sql, $username,$password, '超级管理员',$time,$time);
         $admin_id = static::Db()->insertId();
 		return $admin_id;
+	}
+	public function hasAdmins()
+	{
+		return static::Db()->fetchColumn("select count(*) as c from wa_admin");
 	}
 }

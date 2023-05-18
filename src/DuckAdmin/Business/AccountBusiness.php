@@ -162,7 +162,6 @@ class AccountBusiness extends BaseBusiness
 				static::ThrowOn(!$rule, $msg = '无权限', 2);
 				return true;
 			}
-			return true;
 		}catch(\Exception $ex){
 			$code = $ex->getCode();
 			$msg = $ex->getMessage();

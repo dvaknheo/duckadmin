@@ -12,7 +12,7 @@ class SystemInstallBusiness
     public static function install($version)
     {
         // 导入菜单
-        MenuService::import(static::getMenus());
+        RuleModel::import(static::getMenus());
     }
 
     /**
@@ -25,7 +25,7 @@ class SystemInstallBusiness
     {
         // 删除菜单
         foreach (static::getMenus() as $menu) {
-            MenuService::delete($menu['name']);
+            RuleModel::G()->deleteAll($menu['name']);
         }
     }
 
@@ -44,7 +44,7 @@ class SystemInstallBusiness
             static::removeUnnecessaryMenus($context['previous_menus']);
         }
         // 导入新菜单
-        MenuService::import(static::getMenus());
+        RuleModel::import(static::getMenus());
     }
 
     /**
@@ -65,9 +65,8 @@ class SystemInstallBusiness
      *
      * @return array|mixed
      */
-    public static function getMenus()
+    protected static function getMenus()
     {
-        clearstatcache();
         if (is_file($menu_file = __DIR__ . '/../config/menu.php')) {
             $menus = include $menu_file;
             return $menus ?: [];
@@ -83,9 +82,9 @@ class SystemInstallBusiness
      */
     public static function removeUnnecessaryMenus($previous_menus)
     {
-        $menus_to_remove = array_diff(MenuService::column($previous_menus, 'name'), MenuService::column(static::getMenus(), 'name'));
+        $menus_to_remove = array_diff(RuleModel::column($previous_menus, 'name'), RuleModel::column(static::getMenus(), 'name'));
         foreach ($menus_to_remove as $name) {
-            MenuService::delete($name);
+            RuleModel::G()->deleteAll($name);
         }
     }
 
