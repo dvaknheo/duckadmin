@@ -17,7 +17,7 @@ class AdminAction extends ProjectAction
 	 * @param null|array|string $fields
 	 * @return array|mixed|null
 	 */
-	public function admin($fields = null)
+	public function getCurrentAdmin($fields = null)
 	{
 		$this->refresh_admin_session();		
 		return AdminSession::G()->getCurrentAdmin();
@@ -51,7 +51,7 @@ class AdminAction extends ProjectAction
 	}
     ////////////////
 	
-	public static function json(int $code, string $msg = 'ok', array $data = []): Response
+	public static function json(int $code, string $msg = 'ok', array $data = [])
     {
         return static::ExitJson(['code' => $code, 'data' => $data, 'msg' => $msg]);
     }
@@ -74,8 +74,7 @@ class AdminAction extends ProjectAction
 		if($flag){
 			$flag = $this->isOptionsMethod();
 			if($flag){
-				echo '';
-				static::Exit();
+				static::Exit('');
 			}
 		}
 		

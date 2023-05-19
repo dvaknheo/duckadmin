@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 /**
- * DuckPHP
+ * 系统的路由规则和这里的路由规则不一样，所以我们把他调整一下
  * From this time, you never be alone~
  */
 namespace DuckAdmin\System;

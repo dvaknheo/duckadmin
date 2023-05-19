@@ -2,12 +2,6 @@
 
 namespace plugin\admin\app\controller;
 
-use plugin\admin\app\common\Auth;
-use plugin\admin\app\model\Admin;
-use plugin\admin\app\model\AdminRole;
-use support\exception\BusinessException;
-use support\Request;
-use support\Response;
 
 /**
  * 管理员列表 

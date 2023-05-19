@@ -41,7 +41,7 @@ duckadmindemo 这个 工程，演示了如何使用第三方的 duckphp 工程�
 
 
 
-<a href="<?=__url('admin/')?>">管理后台入口在这里（管理员用户名【admin】，密码为【123456】）</a>
+<a href="<?=__url('admin/index')?>">管理后台入口在这里（管理员用户名【admin】，密码为【123456】）</a>
 
 <a href="<?=__url('user/')?>">用户基本注册登录页面在这里</a>
 

@@ -6,8 +6,8 @@
 
 namespace DuckAdmin\Controller;
 
-use AdminAction as C;
 use DuckAdmin\Business\AccountBusiness;
+use DuckAdmin\Controller\AdminAction as C;
 
 /**
  * 系统设置

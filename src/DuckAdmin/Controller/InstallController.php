@@ -7,8 +7,7 @@
 namespace DuckAdmin\Controller;
 
 use DuckAdmin\Business\InstallBusiness;
-use DuckAdmin\System\ProjectController;
-use DuckAdmin\System\ControllerHelper as C;
+use DuckAdmin\Controller\AdminAction as C;
 
 /**
  * 主入口
@@ -16,19 +15,31 @@ use DuckAdmin\System\ControllerHelper as C;
 class Install extends Base
 {
     /**
+     * 无需登录的方法
+     * @var string[]
+     */
+    protected $noNeedLogin = ['step1','step2'];
+    /**
+     * 不需要鉴权的方法
+     * @var string[]
+     */
+    protected $noNeedAuth = ['step1','step2'];
+	
+    /**
      * 设置数据库
      */
     public function step1()
     {
-		$user = $request->post('user');
-        $password = $request->post('password');
-        $database = $request->post('database');
-        $host = $request->post('host');
-        $port = (int)$request->post('port') ?: 3306;
-        $overwrite = $request->post('overwrite');	
+		$post = [];
+		$post['user'] = C::POST('user');
+        $post['password'] = C::POST('password');
+        $post['database'] = C::POST('database');
+        $post['host'] = C::POST('host');
+        $post['port'] = (int)C::POST('port') ?: 3306;
+        $post['overwrite'] = C::POST('overwrite');	
 		
 		try{
-			InstallBusiness::G()->step1();
+			InstallBusiness::G()->step1($post);
 		}catch(\Exception $ex){
 			C::ExitJson([$ex->getCode(),$ex->getMessage()]);
 		}
@@ -41,6 +52,9 @@ class Install extends Base
      */
     public function step2()
     {
+		$user = C::POST('user');
+        $password = C::POST('password');
+        $password_confirm = C::POST('password_confirm');
 		try{
 			InstallBusiness::G()->step2($username,$password,$password_confirm);
 		}catch(\Exception $ex){

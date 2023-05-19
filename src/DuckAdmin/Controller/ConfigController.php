@@ -7,7 +7,7 @@
 namespace DuckAdmin\Controller;
 
 use DuckAdmin\System\ProjectController;
-use DuckAdmin\System\ControllerHelper as C;
+use DuckAdmin\Controller\AdminAction as C;
 use DuckAdmin\Business\ConfigBusiness;
 
 /**

@@ -7,7 +7,7 @@
 namespace DuckAdmin\Controller;
 
 use DuckAdmin\Business\InstallBusiness;
-use DuckAdmin\System\ControllerHelper as C;
+use DuckAdmin\Controller\AdminAction as C;
 
 /**
  * 主入口

@@ -171,40 +171,6 @@ class AccountBusiness extends BaseBusiness
 		return true;
     }
     /**
-     * 获取权限范围内的所有角色id
-     * @param bool $with_self
-     * @return array
-     */
-    public static function getScopeRoleIds(bool $with_self = false): array
-    {
-        if (!$admin = admin()) {
-            return [];
-        }
-		
-		// 这里
-        $role_ids = $admin['roles'];
-        $rules = RoleModel::G()->getRules($role_ids);
-        if (RuleModel::G()->isSuper($rules)) {
-            return Role::pluck('id')->toArray();
-        }
-
-        $roles = Role::get(); 
-        $descendants = (new Tree($roles))->getDescendant($role_ids, $with_self);
-        return array_column($descendants, 'id');
-    }
-
-    /**
-     * 获取权限范围内的所有管理员id
-     * @param bool $with_self
-     * @return array
-     */
-    public static function getScopeAdminIds(bool $with_self = false): array
-    {
-        $role_ids = static::getScopeRoleIds($with_self);
-        return AdminRole::whereIn('role_id', $role_ids)->pluck('admin_id')->toArray();
-    }
-
-    /**
      * 是否是超级管理员
      * @param int $admin_id
      * @return bool
@@ -220,6 +186,6 @@ class AccountBusiness extends BaseBusiness
             $roles = AdminRoleModel::G()->getRoles($admin_id);
         }
         
-        return   RoleModel::G()->hasSuperAdmin($roles);
+        return RoleModel::G()->hasSuperAdmin($roles);
     }
 }

@@ -1,7 +1,6 @@
 <?php declare(strict_types=1);
 /**
- * DuckPhp
- * From this time, you never be alone~
+ * ，这里我们做一下
  */
 
 namespace DuckAdmin\System
@@ -24,9 +23,6 @@ class App extends DuckPhp
         'controller_base_class' => ProjectController::class,  // 我们固定住控制器基类
         'controller_resource_prefix' => 'res/',  // 资源文件前缀
         //////////////////
-        
-        'table_prefix' => '',   // 表前缀
-        'session_prefix' => '',  // Session 前缀         
     ];
     ///////
     ////////////// 命令行

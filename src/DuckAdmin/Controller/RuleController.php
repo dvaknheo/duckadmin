@@ -6,8 +6,7 @@
 
 namespace DuckAdmin\Controller;
 
-use DuckAdmin\System\ProjectController;
-use DuckAdmin\System\ControllerHelper as C;
+use DuckAdmin\Controller\AdminAction as C;
 use DuckAdmin\Business\RuleBusiness;
 
 /**
@@ -53,7 +52,7 @@ class RuleController extends Base
 		$types = C::GET('type', '0,1');
         $types = is_string($types) ? explode(',', $types) : [0, 1];
 		
-		$admin = AdminSession::G()->getCurrentAdmin();
+		$admin = AdminAction::G()->getCurrentAdmin();
 		$data = RuleBusiness::G()->get($admin['roles'],$types);
 		
 		C::Success($data);

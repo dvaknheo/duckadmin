@@ -6,13 +6,12 @@
 
 namespace DuckAdmin\Controller;
 
-use DuckAdmin\System\ProjectController;
-use DuckAdmin\System\ControllerHelper as C;
+use DuckAdmin\Controller\AdminAction as C;
 
 /**
  * 系统设置
  */
-class RoleController extends ProjectController
+class RoleController extends Base
 {
     /**
      * 不需要鉴权的方法

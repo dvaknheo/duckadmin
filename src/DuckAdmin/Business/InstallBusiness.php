@@ -54,6 +54,10 @@ class InstallBusiness extends BaseBusiness
         }
 		
 	}
+	public function checkInstallLogFile()
+	{
+		return true;
+	}
 	public function step1($post)
     {
         $user = $post['user'];
@@ -61,19 +65,16 @@ class InstallBusiness extends BaseBusiness
         $database = $post['database'];
         $host =  $post['host'];
         $port = $post['port'];
+        $overwrite = $post['overwrite'];
 		
-		
-        $port = $post['overwrite'];
-		
-		
-		$flag = $this->isInstalled();
+		$flag = $this->checkInstallLogFile(); // 原版是锁文件
 		static::ThrowOn($flag ,'管理后台已经安装！如需重新安装，请删除该插件数据库配置文件并重启');
 
         try {
-            $db = $this->getPdo($host, $user, $password, $port);
+            $db = App::G()-> foo(); // 这段是系统程序员的活了
             $smt = $db->query("show databases like '$database'");
             if (empty($smt->fetchAll())) {
-                $db->exec("create database $database");
+                $db->exec("create database $database");// 安全问题
             }
             $db->exec("use $database");
             $smt = $db->query("show tables");
@@ -89,7 +90,6 @@ class InstallBusiness extends BaseBusiness
         
         // 导入菜单
         $menus = include base_path() . '/plugin/admin/config/menu.php';
-        // 安装过程中没有数据库配置，无法使用api\Menu::import()方法
         RuleModel::G()->importMenu($menus);
     }
 
@@ -109,7 +109,7 @@ class InstallBusiness extends BaseBusiness
      * @param $delimiter
      * @return array
      */
-    function splitSqlFile($sql, $delimiter): array
+    protected function splitSqlFile($sql, $delimiter): array
     {
         $tokens = explode($delimiter, $sql);
         $output = array();
@@ -152,29 +152,6 @@ class InstallBusiness extends BaseBusiness
         return $output;
     }
 
-    /**
-     * 获取pdo连接
-     * @param $host
-     * @param $username
-     * @param $password
-     * @param $port
-     * @param $database
-     * @return \PDO
-     */
-    protected function getPdo($host, $username, $password, $port, $database = null): \PDO
-    {
-        $dsn = "mysql:host=$host;port=$port;";
-        if ($database) {
-            $dsn .= "dbname=$database";
-        }
-        $params = [
-            \PDO::MYSQL_ATTR_INIT_COMMAND => "set names utf8mb4",
-            \PDO::ATTR_EMULATE_PREPARES => false,
-            \PDO::ATTR_TIMEOUT => 5,
-            \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
-        ];
-        return new \PDO($dsn, $username, $password, $params);
-    }
 	////////////
     /**
      * 设置管理员
@@ -191,7 +168,7 @@ class InstallBusiness extends BaseBusiness
 		$flag = AdminRoleModel::G()->hasAdmins();
 		static::ThrowOn($flag, '后台已经安装完毕，无法通过此页面创建管理员');
 		
-        $admin_id = AdminModel::G()->addFirstAdmin($username,$password);
+        $admin_id = AdminModel::G()->addFirstAdmin($username, $password);
 		AdminRoleModel::G()->addFirstRole($admin_id);
     }
 	protected function checkDatabase()

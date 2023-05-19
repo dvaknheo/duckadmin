@@ -57,7 +57,6 @@ class Base extends ProjectController
     {
         $controller = get_class($this);
         $action = AdminAction::getRouteMethod();
-		
 		AdminAction::G()->checkAccess($controller,$action);
 		
 		return;
