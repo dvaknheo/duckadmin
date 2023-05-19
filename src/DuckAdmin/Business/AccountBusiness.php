@@ -37,7 +37,7 @@ class AccountBusiness extends BaseBusiness
 		static::ThrowOn($admin_id==0,'参数错误，请指定管理员');
 		$roles = AdminRoleModel::G()->getRoles($admin_id);
         $rules = RoleModel::G()->getRules($roles);
-        return $rules && in_array('*', $rules);
+        return RuleModel::G()->isSuper($rules); 
     }
 	public function login($username,$password)
 	{
@@ -118,11 +118,8 @@ class AccountBusiness extends BaseBusiness
      */
 	public function canAccess($admin, string $controller, string $action, int &$code = 0, string &$msg = ''): bool
 	{
-		static::ThrowOn(!$admin, $msg = '请登录', 401);
-        // 无控制器信息说明是函数调用，函数不属于任何控制器，鉴权操作应该在函数内部完成。
-        if (!$controller) {
-            return true;
-        }
+
+
         // 获取控制器鉴权信息
         $class = new \ReflectionClass($controller);
         $properties = $class->getDefaultProperties();
@@ -131,6 +128,12 @@ class AccountBusiness extends BaseBusiness
 
         // 不需要登录
         if (in_array($action, $noNeedLogin)) {
+            return true;
+        }
+		
+		static::ThrowOn(!$admin, $msg = '请登录', 401);
+        // 无控制器信息说明是函数调用，函数不属于任何控制器，鉴权操作应该在函数内部完成。
+		if (!$controller) {
             return true;
         }
 		try{
@@ -170,22 +173,5 @@ class AccountBusiness extends BaseBusiness
 		}
 		return true;
     }
-    /**
-     * 是否是超级管理员
-     * @param int $admin_id
-     * @return bool
-     */
-    public function isSupperAdmin(int $admin_id = 0): bool
-    {
-        if (!$admin_id) {
-			$roles = admin('roles'); // TODO change
-            if (!$roles) {
-                return false;
-            }
-        } else {
-            $roles = AdminRoleModel::G()->getRoles($admin_id);
-        }
-        
-        return RoleModel::G()->hasSuperAdmin($roles);
-    }
+
 }

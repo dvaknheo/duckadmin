@@ -3,7 +3,7 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace DuckAdmin\ControllerEx;
+namespace DuckAdmin\Controller;
 
 use DuckAdmin\System\ProjectSession;
 /**

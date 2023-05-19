@@ -14,16 +14,7 @@ use DuckAdmin\System\ProjectController;
  */
 class Base extends ProjectController
 {
-    public function __construct()
-    {
-        // 我们弄个小技巧，不允许直接访问，但我们可以创建一个实例填充，
-        //if (static::CheckRunningController(self::class, static::class)) {
-        //    return;
-        //}
-        //parent::__construct();
-		//我们检查安装？
-    }
-	//
+
 
     /**
      * 无需登录及鉴权的方法
@@ -44,24 +35,21 @@ class Base extends ProjectController
      */
     protected $dataLimit = null;
 
-    /**
-     * 返回格式化json数据
-     *
-     * @param int $code
-     * @param string $msg
-     * @param array $data
-     * @return Response
-     */
 
     public function __construct()
     {
         $controller = get_class($this);
-        $action = AdminAction::getRouteMethod();
+        $action = AdminAction::getRouteCallingMethod();
 		AdminAction::G()->checkAccess($controller,$action);
 		
 		return;
+   
+        // 我们弄个小技巧，不允许直接访问，但我们可以创建一个实例填充，
+        //if (static::CheckRunningController(self::class, static::class)) {
+        //    return;
+        //}
+        //parent::__construct();
+		//我们检查安装？
     }
-	
-	  
 	
 }

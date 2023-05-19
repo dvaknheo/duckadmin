@@ -4,7 +4,7 @@
  * From this time, you never be alone~
  */
 
-namespace DuckAdmin\ControllerEx;
+namespace DuckAdmin\Controller;
 
 use DuckAdmin\Business\AccountBusiness;
 use DuckAdmin\Controller\AdminSession;
@@ -33,14 +33,15 @@ class AdminAction extends ProjectAction
 		$time_now = time();
 		$session_ttl = 2;
 		$admin = AdminSession::G()->getCurrentAdmin();
-		
+		if(!$admin){
+			return null;
+		}
 		$session_last_update_time = $admin['session_last_update_time'] ?? 0;
 		
 		if (!$force && $time_now - $session_last_update_time < $session_ttl) {
 			return null;
 		}
-		
-		$admin = AccountBusiness::G()->getAdmin($admin_id);
+		$admin = AccountBusiness::G()->getAdmin($admin['id']);
 		if(!$admin){
 			return null;
 		}
@@ -62,13 +63,16 @@ class AdminAction extends ProjectAction
 	}
 	protected function isOptionsMethod()
 	{
-		return $_SERVER['REQUEST_METHOD']=='OPTIONS'?true:false;
+		return @$_SERVER['REQUEST_METHOD']=='OPTIONS'?true:false;
+	}
+	public static function IsJson()
+	{
+		return @$_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest' ? true : false;
 	}
     public function checkAccess($controller,$action)
     {
         $code = 0;
         $msg = '';
-		
 		$admin = $this->getCurrentAdmin();	
 		$flag = AccountBusiness::G()->canAccess($admin, $controller, $action, $code, $msg);
 		if($flag){
@@ -76,6 +80,7 @@ class AdminAction extends ProjectAction
 			if($flag){
 				static::Exit('');
 			}
+			return;
 		}
 		
 		if (static::IsJson()) {
