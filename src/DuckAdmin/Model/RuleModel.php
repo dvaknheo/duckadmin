@@ -16,7 +16,7 @@ class RuleModel extends BaseModel
 	}
 	public function allRules()
 	{
-		$sql= "select * from wa_rule  order by weight desc";
+		$sql= "select * from wa_rules  order by weight desc";
 		$data = static::Db()->fetchAll($sql);
 		return $data;
 	}
@@ -26,7 +26,7 @@ class RuleModel extends BaseModel
 		$key = static::Db()->qoute($controller);
 		$like = static::Db()->qoute($controller.'@%');
 		
-		$sql = "select * from wa_rule where id in $str and (key = $key  or key like $like)";
+		$sql = "select * from wa_rules where id in $str and (key = $key  or key like $like)";
 		$data = static::Db()->fetchColumn($sql);
 		return $data;
 	}
@@ -36,29 +36,41 @@ class RuleModel extends BaseModel
 		$full = static::Db()->qoute($controller.'@'.$action);
 		$c = static::Db()->qoute($controller);
 		
-		$sql = "select * from wa_rule where id in $str and (key = $full  or key = $c)";
+		$sql = "select * from wa_rules where id in $str and (key = $full  or key = $c)";
 		$data = static::Db()->fetchColumn($sql);
 		return $data;
 	}
     public function dropByIds($delete_ids)
 	{
-		$sql= "delete from wa_rule where in " . static::Db()->quoteIn($delete_ids);
+		$sql= "delete from wa_rules where in " . static::Db()->quoteIn($delete_ids);
 		return static::Db()->exec($sql);
 	}
 	////////////////////////////////////////////
-	public function updateMenuTree($key,$menu_tree)
+	protected function updateMenu($key,$menu)
 	{
-		Rule::where('key', $menu_tree['key'])->update($menu_tree);  // 这里 要从 安装类里找
+		$pid = $menu['pid']??0;
+		$time = date('Y-m-d H:i:s');
+		$sql = "update wa_rules set pid=?, title=?, icon=?, updated_at=? where `key`=?";
+		return static::Db()->execute($sql, $pid, $menu['title'], $menu['icon']??null, $time, $key);
+	}
+	protected function addMenu($key,$menu)
+	{
+		$pid = $menu['pid']??0;
+		$time = date('Y-m-d H:i:s');
+		$sql = "insert into wa_rules (pid,title,icon,`key`,created_at,updated_at) values(?,?,?,?,?,?)";
+		static::Db()->execute($sql,$pid,$menu['title'], $menu['icon']??null, $key,$time,$time);
+		return static::Db()->lastInsertId();
 	}
 	public function findByKey($key)
 	{
-		$sql="select * from wa_rule where key = ?";
+		$sql="select * from wa_rules where `key`= ?";
 		return static::Db()->fetch($sql, $key);
 	}
-	public function get_children_ids($ids)
+	protected function get_children_ids($ids)
 	{
-		$children_ids = Rule::whereIn('pid', $ids)->pluck('id')->toArray();
-		
+		$sql ="select id from wa_rules where pid in " .static::Db()->qouteIn($ids);
+		$data = static::Db()->fetchAll($sql);
+		return array_column($data,'id');
 	}
     /**
      * 删除菜单
@@ -67,44 +79,43 @@ class RuleModel extends BaseModel
      */
     public static function deleteAll($key)
     {
-        $item = RuleModel::G()->findByKey($key);
+        $item = $this->findByKey($key);
         if (!$item) {
             return;
         }
         // 子规则一起删除
         $delete_ids = $children_ids = [$item['id']];
         while($children_ids) {
-            $children_ids = RuleModel::G()->get_children_ids($children_ids);
+            $children_ids = $this->get_children_ids($children_ids);
             $delete_ids = array_merge($delete_ids, $children_ids);
         }
-		RuleModel::dropByIds($delete_ids);
+		$this->dropByIds($delete_ids);
     }
 
-	////////////
-	    /**
+	/**
      * 导入菜单
      * @param array $menu_tree
      * @return void
      */
-    public static function import(array $menu_tree)
+    public function importMenu(array $menu_tree)
     {
         if (is_numeric(key($menu_tree)) && !isset($menu_tree['key'])) {
             foreach ($menu_tree as $item) {
-                static::import($item);
+                $this->importMenu($item);
             }
             return;
         }
         $children = $menu_tree['children'] ?? [];
         unset($menu_tree['children']);
-        if ($old_menu = static::get($menu_tree['key'])) {
+        if ($old_menu = $this->findByKey($menu_tree['key'])) {
             $pid = $old_menu['id'];
-            RuleModel::G()->updateMenuTree($menu_tree['key'],$menu_tree);
+            $this->updateMenu($menu_tree['key'],$menu_tree);
         } else {
-            $pid = static::add($menu_tree);
+            $pid = $this->addMenu($menu_tree['key'],$menu_tree);
         }
         foreach ($children as $menu) {
             $menu['pid'] = $pid;
-            static::import($menu);
+            $this->importMenu($menu);
         }
     }
 	////////////////

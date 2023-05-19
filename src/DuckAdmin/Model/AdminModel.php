@@ -12,12 +12,12 @@ class AdminModel extends BaseModel
 {
     public function getAdminByName($username)
     {
-		return static::Db()->fetch("select * from wa_admin where username = ?",$username);
+		return static::Db()->fetch("select * from wa_admins where username = ?",$username);
 
     }
 	public function getAdminById($admin_id)
 	{
-		return static::Db()->fetch("select * from wa_admin where username = ?", $admin_id);
+		return static::Db()->fetch("select * from wa_admins where username = ?", $admin_id);
 	}
 
 	public function passwordVerify($password, $admin_password)
@@ -26,24 +26,24 @@ class AdminModel extends BaseModel
 	}
 	protected function passwordHash($password)
 	{
-		return \password_hash($password);
+		return \password_hash($password, PASSWORD_DEFAULT);
 	}
 	public function updateLoginAt($admin_id)
 	{
-		static::Db()->exec("update wa_admin set login_at =? where id=?",date('Y-m-d H:i:s'),$admin_id);
+		static::Db()->exec("update wa_admins set login_at =? where id=?",date('Y-m-d H:i:s'),$admin_id);
 	}
 	public function addFirstAdmin($username,$password)
 	{
-		$sql="insert into `wa_admins` (`username`, `password`, `nickname`, `created_at`, `updated_at`) values (:username, :password, :nickname, :created_at, :updated_at)";
+		$sql="insert into `wa_admins` (`username`, `password`, `nickname`, `created_at`, `updated_at`) values (?, ?, ?, ?, ?)";
 		
 		$password = $this->passwordHash($password);
 		$time = date('Y-m-d H:i:s');
-		static::Db()->exec($sql, $username,$password, '超级管理员',$time,$time);
-        $admin_id = static::Db()->insertId();
+		static::Db()->execute($sql, $username,$password, '超级管理员',$time,$time);
+        $admin_id = static::Db()->lastInsertId();
 		return $admin_id;
 	}
 	public function hasAdmins()
 	{
-		return static::Db()->fetchColumn("select count(*) as c from wa_admin");
+		return static::Db()->fetchColumn("select count(*) as c from wa_admins");
 	}
 }

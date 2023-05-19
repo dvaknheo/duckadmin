@@ -1,6 +1,11 @@
 <?php
 namespace DuckAdmin\Business;
 
+use DuckPhp\Core\App;
+use DuckPhp\Component\DbManager;
+use DuckAdmin\Model\RuleModel;
+use DuckAdmin\Model\AdminModel;
+use DuckAdmin\Model\AdminRoleModel;
 /**
  * 个人资料业务
  */
@@ -8,14 +13,19 @@ class InstallBusiness extends BaseBusiness
 {
 	public function isInstalled()
 	{
-		return true;
+		return false;
 		// 这里应该拆分成两个 本类用的和上一个类用的
 		$database_config_file = base_path() . '/plugin/admin/config/database.php';
         $flag = is_file($database_config_file);
 		
 		return true;
 	}
-	protected function checkTableOverwrite($overwrite)
+	
+	protected function getConfigPath()
+	{
+		return realpath(__DIR__. '/../config').'/';
+	}
+	protected function checkTableOverwrite($tables, $overwrite)
 	{
 		$tables_to_install = [
             'wa_admins',
@@ -36,13 +46,13 @@ class InstallBusiness extends BaseBusiness
 			static::ThrowOn( $tables_conflict, '以下表' . implode(',', $tables_conflict) . '已经存在，如需覆盖请选择强制覆盖');
         } else {
             foreach ($tables_conflict as $table) {
-                $db->exec("DROP TABLE `$table`");
+                DbManager::Db()->execute("DROP TABLE `$table`");
             }
         }
 	}
 	protected function initSql()
 	{
-        $sql_file = base_path() . '/plugin/admin/install.sql';
+        $sql_file = $this->getConfigPath() . 'install.sql';
 		static::ThrowOn( !is_file($sql_file),  '数据库SQL文件不存在');
 
         $sql_query = file_get_contents($sql_file);
@@ -51,13 +61,36 @@ class InstallBusiness extends BaseBusiness
         $sql_query = $this->splitSqlFile($sql_query, ';');
 		
         foreach ($sql_query as $sql) {
-            $db->exec($sql);
+            DbManager::Db()->execute($sql);
         }
 		
 	}
-	public function checkInstallLogFile()
+	protected function checkInstallLogFile()
 	{
-		return true;
+		return false;
+	}
+	protected  function createDatabase($post)
+	{
+		// 首先我们要把 DbManager 搞出来，重新初始化。
+		// 如果 DbManager 的数据已设置，我们就用里面的数据，不然我们用自己额外的数据
+		$old = DbManager::G();
+		$options = $old->options;
+
+		$options['database']=[
+			'dsn'=>"mysql:host={$post['host']};port={$post['port']};dbname={$post['database']};charset=utf8;",
+            'username'=>$post['user'],	
+            'password'=>$post['password'],
+		
+		];
+		DbManager::G(new DbManager())->init($options);
+		$database=$post['database'];
+		$data = DbManager::Db()->fetchAll("show databases like '$database'");
+		if (!$data){
+			DbManager::Db()->execute("create database $database");
+		}
+		DbManager::Db()->execute("use $database");
+		$tables = DbManager::Db()->fetchAll("show tables");
+		return $tables;
 	}
 	public function step1($post)
     {
@@ -68,31 +101,42 @@ class InstallBusiness extends BaseBusiness
         $port = $post['port'];
         $overwrite = $post['overwrite'];
 		
-		$flag = $this->checkInstallLogFile(); // 原版是锁文件
+		$flag = $this->checkInstallLogFile();
 		static::ThrowOn($flag ,'管理后台已经安装！如需重新安装，请删除该插件数据库配置文件并重启');
 
         try {
-            $db = App::G()-> foo(); // 这段是系统程序员的活了
-            $smt = $db->query("show databases like '$database'");
-            if (empty($smt->fetchAll())) {
-                $db->exec("create database $database");// 安全问题
-            }
-            $db->exec("use $database");
-            $smt = $db->query("show tables");
-            $tables = $smt->fetchAll();
+            $tables = $this->createDatabase($post); // 这段是系统程序员的活了
         } catch (\Throwable $e) {
 			static::ThrowOn(stripos($e, 'Access denied for user'), '数据库用户名或密码错误');
 			static::ThrowOn(stripos($e, 'Connection refused'), 'Connection refused. 请确认数据库IP端口是否正确，数据库已经启动');
 			static::ThrowOn(stripos($e, 'timed out'), '数据库连接超时，请确认数据库IP端口是否正确，安全组及防火墙已经放行端口');
 			throw $e;
         }
-		$this->checkTableOverwrite();
+		$this->checkTableOverwrite($tables,$overwrite);
 		$this->initSql();
-        
         // 导入菜单
-        $menus = include base_path() . '/plugin/admin/config/menu.php';
+        $menus =  static::Config(null,[],'menu');
         RuleModel::G()->importMenu($menus);
+		
+		$this->writeDbConfigFile($post);
     }
+	protected function writeDbConfigFile($post)
+	{
+        $file = $this->getConfigPath() . 'database.template';
+		$data = file_get_contents($file);
+		$data =str_replace( [
+			'USER','PASSWORD','DATABASE','HOST','PORT'
+		],[
+			var_export($post['user'],true),
+			var_export($post['password'],true),
+			var_export($post['database'],true),
+			var_export($post['host'],true),
+			var_export($post['port'],true),
+		] ,$data);
+		
+		$output = App::G()->options['path'].'config/database.php';
+		file_put_contents($output,$data);
+	}
 
     /**
      * 去除sql文件中的注释
@@ -162,11 +206,11 @@ class InstallBusiness extends BaseBusiness
      */
     public function step2($username,$password,$password_confirm)
     {
-		static::ThrowOn($password != $password_confirm, '两次密码不一致');
+		static::ThrowOn($password !== $password_confirm, '两次密码不一致');
         $flag = $this->checkDataBase();
 		static::ThrowOn(!$flag, '请先完成第一步数据库配置');
         
-		$flag = AdminRoleModel::G()->hasAdmins();
+		$flag = AdminModel::G()->hasAdmins();
 		static::ThrowOn($flag, '后台已经安装完毕，无法通过此页面创建管理员');
 		
         $admin_id = AdminModel::G()->addFirstAdmin($username, $password);
@@ -174,7 +218,8 @@ class InstallBusiness extends BaseBusiness
     }
 	protected function checkDatabase()
 	{
-		return !is_file($config_file = base_path() . '/plugin/admin/config/database.php');
+		return true;
+		//return !is_file($config_file = base_path() . '/plugin/admin/config/database.php');
 	}
 
 }

@@ -13,7 +13,7 @@ $e =[
 ];
 return [
     // 'duckphp_is_debug' => true,  // 设置这项打开测试项
-    'database_list' =>
+    'database_list2' =>
         [[
             'dsn'=>"mysql:host={$e['host']};port=3306;dbname={$e['dbname']};charset=utf8;",
             'username'=>$e['username'],	
