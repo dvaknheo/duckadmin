@@ -48,6 +48,7 @@ class RuleModel extends BaseModel
 	////////////////////////////////////////////
 	protected function updateMenu($key,$menu)
 	{
+		var_dump(DATE(DATE_ATOM));exi;
 		$pid = $menu['pid']??0;
 		$time = date('Y-m-d H:i:s');
 		$sql = "update wa_rules set pid=?, title=?, icon=?, updated_at=? where `key`=?";
@@ -55,10 +56,16 @@ class RuleModel extends BaseModel
 	}
 	protected function addMenu($key,$menu)
 	{
-		$pid = $menu['pid']??0;
 		$time = date('Y-m-d H:i:s');
-		$sql = "insert into wa_rules (pid,title,icon,`key`,created_at,updated_at) values(?,?,?,?,?,?)";
-		static::Db()->execute($sql,$pid,$menu['title'], $menu['icon']??null, $key,$time,$time);
+		//$sql = "insert into wa_rules (pid,title,icon,`key`,href,created_at,updated_at) values(?,?,?,?,?,?,?)";
+		//static::Db()->execute($sql,$menu['pid']??0,$menu['title'], $menu['icon']??null,$key, $menu['href']??'', $time,$time);
+
+		$menu['`key`']=$menu['key'];
+		unset($menu['key']);
+		$menu['created_at']=$time;
+		$menu['updated_at']=$time;
+		static::Db()->insertData('wa_rules',$menu);
+		
 		return static::Db()->lastInsertId();
 	}
 	public function findByKey($key)
