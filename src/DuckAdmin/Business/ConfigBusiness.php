@@ -11,10 +11,10 @@ class ConfigBusiness extends BaseBusiness
 	{
 		$config = OptionModel::G()->GetSystemConfig(); 
 		if (empty($config)) {
-			$config = static::Config('system_config',[],'pear_config');
+			$config = static::Config(null,[],'pear_config');
 			OptionModel::G()->setSystemConfig($config);
 		}
-		$config['menu']['data']="/admin/rule/get";
+		$config['menu']['data']="/admin/rule/get"; // 为这次特别定制
 		return $config;
 	}
 }

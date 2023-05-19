@@ -17,7 +17,8 @@ class AdminModel extends BaseModel
     }
 	public function getAdminById($admin_id)
 	{
-		return static::Db()->fetch("select * from wa_admins where username = ?", $admin_id);
+		$data = static::Db()->fetch("select * from wa_admins where id = ?", $admin_id);
+		return $data;
 	}
 
 	public function passwordVerify($password, $admin_password)

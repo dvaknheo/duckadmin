@@ -33,6 +33,7 @@ class AdminAction extends ProjectAction
 		$time_now = time();
 		$session_ttl = 2;
 		$admin = AdminSession::G()->getCurrentAdmin();
+		
 		if(!$admin){
 			return null;
 		}
@@ -59,7 +60,7 @@ class AdminAction extends ProjectAction
 	
 	public static function Success($data)
 	{
-		return static::json(['code' => 0, 'data' => $data, 'msg' => 'ok']);
+		return static::ExitJson(['code' => 0, 'data' => $data, 'msg' => 'ok']);
 	}
 	protected function isOptionsMethod()
 	{

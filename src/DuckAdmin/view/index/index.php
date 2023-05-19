@@ -43,7 +43,7 @@
                         <a class="layui-icon layui-icon-username" href="javascript:;"></a>
                         <!-- 功 能 菜 单 -->
                         <dl class="layui-nav-child">
-                            <dd><a user-menu-url="<?=\DuckAdmin\__url('')?>account/index" user-menu-id="10" user-menu-title="基本资料">基本资料</a></dd>
+                            <dd><a user-menu-url="<?=\DuckAdmin\__url('account/index')?>" user-menu-id="10" user-menu-title="基本资料">基本资料</a></dd>
                             <dd><a href="javascript:void(0);" class="logout">注销登录</a></dd>
                         </dl>
                     </li>
@@ -106,14 +106,14 @@
                 var popup = layui.popup;
 
                 admin.setConfigType("json");
-                admin.setConfigPath("<?=\DuckAdmin\__url('')?>/config/get");
+                admin.setConfigPath("<?=\DuckAdmin\__url('config/get')?>");
 
                 admin.render();
 
                 // 登出逻辑
                 admin.logout(function(){
                     $.ajax({
-                        url: "<?=\DuckAdmin\__url('')?>/account/logout",
+                        url: "<?=\DuckAdmin\__url('account/logout')?>",
                         dataType: "json",
                         success: function (res) {
                             if (res.code) {
@@ -128,7 +128,7 @@
                 })
 
                 $.ajax({
-                    url: "<?=\DuckAdmin\__url('')?>/account/info",
+                    url: "<?=\DuckAdmin\__url('account/info')?>",
                     dataType: 'json',
                     success: function (res) {
                         window.Admin.Account = res.data;

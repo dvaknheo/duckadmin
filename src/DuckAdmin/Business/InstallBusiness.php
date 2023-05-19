@@ -13,12 +13,8 @@ class InstallBusiness extends BaseBusiness
 {
 	public function isInstalled()
 	{
-		return false;
-		// 这里应该拆分成两个 本类用的和上一个类用的
-		$database_config_file = base_path() . '/plugin/admin/config/database.php';
-        $flag = is_file($database_config_file);
-		
-		return true;
+		$output = App::G()->options['path'].'config/database.php';
+		return is_file($output);
 	}
 	
 	protected function getConfigPath()

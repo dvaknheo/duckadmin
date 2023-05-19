@@ -10,20 +10,15 @@ namespace DuckAdmin\Model;
  */
 class RoleModel extends BaseModel
 {
-	public function getRules2($roles)
-	{
-		$sql="select rules from wa_role where id in " . static::Db()->quoteIn($roles);
-		$data = static::Db()->fetchColumn($sql);
-		return $data;
-
-	}
 	public function getRules($roles)
 	{
-		Role::whereIn('id', $roles)->pluck('rules');
+		$sql="select rules from wa_roles where id in (". static::Db()->quoteIn($roles).')';
+		$data = static::Db()->fetchAll($sql);
+		return array_column($data,'rules');
 	}
 	public function hasSuperAdmin($roles)
     {
-		$sql="select rules from wa_role where id in " . static::Db()->quoteIn($roles);
+		$sql="select rules from wa_roles where id in (" . static::Db()->quoteIn($roles).')';
 		$rules = static::Db()->fetchColumn($sql);
 		
         $rule_ids = [];

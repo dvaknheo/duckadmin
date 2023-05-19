@@ -42,13 +42,12 @@ class RuleModel extends BaseModel
 	}
     public function dropByIds($delete_ids)
 	{
-		$sql= "delete from wa_rules where in " . static::Db()->quoteIn($delete_ids);
-		return static::Db()->exec($sql);
+		$sql= "delete from wa_rules where in (" . static::Db()->quoteIn($delete_ids).')';
+		return static::Db()->execute($sql);
 	}
 	////////////////////////////////////////////
 	protected function updateMenu($key,$menu)
 	{
-		var_dump(DATE(DATE_ATOM));exit;
 		$pid = $menu['pid']??0;
 		$time = date('Y-m-d H:i:s');
 		$sql = "update wa_rules set pid=?, title=?, icon=?, updated_at=? where `key`=?";
@@ -56,12 +55,10 @@ class RuleModel extends BaseModel
 	}
 	protected function addMenu($key,$menu)
 	{
-		$time = date('Y-m-d H:i:s');
-		//$sql = "insert into wa_rules (pid,title,icon,`key`,href,created_at,updated_at) values(?,?,?,?,?,?,?)";
-		//static::Db()->execute($sql,$menu['pid']??0,$menu['title'], $menu['icon']??null,$key, $menu['href']??'', $time,$time);
-
 		$menu['`key`']=$menu['key'];
 		unset($menu['key']);
+		
+		$time = date('Y-m-d H:i:s');
 		$menu['created_at']=$time;
 		$menu['updated_at']=$time;
 		static::Db()->insertData('wa_rules',$menu);

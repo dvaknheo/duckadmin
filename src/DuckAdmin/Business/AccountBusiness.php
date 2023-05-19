@@ -3,6 +3,7 @@ namespace DuckAdmin\Business;
 use DuckAdmin\Model\AdminModel;
 use DuckAdmin\Model\AdminRoleModel;
 use DuckAdmin\Model\RoleModel;
+use DuckAdmin\Model\RuleModel;
 
 /**
  * 个人资料业务
@@ -11,7 +12,8 @@ class AccountBusiness extends BaseBusiness
 {
 	public function getAdmin($admin_id)
 	{
-		$admin = AdminModel::G()->find($admin_id); 
+		$admin = AdminModel::G()->getAdminById($admin_id); 
+		
 		if (!$admin || $admin['status'] != 0) {
 			return null;
 		}

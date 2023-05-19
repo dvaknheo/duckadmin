@@ -13,8 +13,8 @@ class AdminRoleModel extends BaseModel
     public function getRoles($admin_id)
     {
 		$sql="select role_id from wa_admin_roles where id = ?";
-		$data = static::Db()->fetchColumn($sql,$admin_id);
-		return $data;
+		$data = static::Db()->fetchAll($sql,$admin_id);
+		return array_column($data,'role_id');
     }
 	public function addFirstRole($admin_id)
 	{

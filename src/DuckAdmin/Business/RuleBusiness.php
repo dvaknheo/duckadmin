@@ -1,6 +1,9 @@
 <?php
 namespace DuckAdmin\Business;
 
+use DuckAdmin\Model\RuleModel;
+use DuckAdmin\Model\RoleModel;
+
 /**
  * 个人资料业务
  */

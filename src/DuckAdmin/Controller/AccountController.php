@@ -48,10 +48,10 @@ class AccountController extends Base
         $captcha = C::Post('captcha');
 		
 		$flag = CaptchaAction::G()->doCheckCaptcha($captcha);
-        C::ThrowOn(!$flag, '验证码错误',1);
+        //C::ThrowOn(!$flag, '验证码错误',1);
 		
 		$admin = AccountBusiness::G()->login($username, $password);
-		AdminSesseion::G()->setCurrentAdmin($admin);
+		AdminSession::G()->setCurrentAdmin($admin);
 		
 		C::Success($admin,'登录成功');
 	}
@@ -63,7 +63,7 @@ class AccountController extends Base
      */
     public function logout()
     {
-		AdminSesseion::G()->setCurrentAdmin([]);
+		AdminSession::G()->setCurrentAdmin([]);
         C::Success(0);
     }
 
@@ -74,8 +74,9 @@ class AccountController extends Base
      */
     public function info()
     {
-		$data = AccountBusiness::G()->getAccountInfo();
-		$data['token'] = 'TODO TOKEN';////AdminSesseion::G()->SessionId();
+		$admin = AdminSession::G()->getCurrentAdmin();
+		$data = AccountBusiness::G()->getAccountInfo($admin);
+		$data['token'] = 'TODO TOKEN';////AdminSession::G()->SessionId();
 		
 		C::Success($data);
     }
