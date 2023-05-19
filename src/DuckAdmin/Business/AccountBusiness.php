@@ -1,5 +1,6 @@
 <?php
 namespace DuckAdmin\Business;
+use DuckAdmin\Model\AdminModel;
 use DuckAdmin\Model\AdminRoleModel;
 use DuckAdmin\Model\RoleModel;
 
@@ -44,7 +45,7 @@ class AccountBusiness extends BaseBusiness
         static::ThrowOn(!$username, '用户名不能为空',1);
 		
         //$this->checkLoginLimit($username);
-        $admin = AdminModel::G()->getUserByName($username);
+        $admin = AdminModel::G()->getAdminByName($username);
 		static::ThrowOn(!$admin,'账户不存在或密码错误');
 		$flag = AdminModel::G()->passwordVerify($password, $admin['password']);
 		static::ThrowOn(!$flag,'账户不存在或密码错误');

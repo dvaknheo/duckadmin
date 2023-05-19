@@ -30,7 +30,7 @@ class AdminModel extends BaseModel
 	}
 	public function updateLoginAt($admin_id)
 	{
-		static::Db()->exec("update wa_admins set login_at =? where id=?",date('Y-m-d H:i:s'),$admin_id);
+		static::Db()->execute("update wa_admins set login_at =? where id=?",date('Y-m-d H:i:s'),$admin_id);
 	}
 	public function addFirstAdmin($username,$password)
 	{

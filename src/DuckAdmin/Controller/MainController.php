@@ -60,9 +60,11 @@ class MainController extends Base
 			'overwrite' =>true,
 			
 		];
-		InstallBusiness::G()->step1($post);
+		//InstallBusiness::G()->step1($post);
+		//InstallBusiness::G()->step2('cgb','123456','123456');
 		
-		InstallBusiness::G()->step2('cgb','123456','123456');
+		\DuckAdmin\Business\AccountBusiness::G()->login('cgb', '123456');
+		
 		var_dump(DATE(DATE_ATOM));
 	}
 }

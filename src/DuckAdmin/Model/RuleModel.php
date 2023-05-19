@@ -48,7 +48,7 @@ class RuleModel extends BaseModel
 	////////////////////////////////////////////
 	protected function updateMenu($key,$menu)
 	{
-		var_dump(DATE(DATE_ATOM));exi;
+		var_dump(DATE(DATE_ATOM));exit;
 		$pid = $menu['pid']??0;
 		$time = date('Y-m-d H:i:s');
 		$sql = "update wa_rules set pid=?, title=?, icon=?, updated_at=? where `key`=?";
