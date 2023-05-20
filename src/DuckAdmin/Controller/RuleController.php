@@ -39,6 +39,9 @@ class RuleController extends Base
      */
     public function select()
     {
+		$this->syncRules();
+        return parent::select($request);
+		
         C::ThrowOn(true,"No Impelement");
     }
 
@@ -66,8 +69,24 @@ class RuleController extends Base
      */
     public function permission()
     {
-        C::ThrowOn(true,"No Impelement");
-    }
+		$admin = AdminAction::G()->getCurrentAdmin();
+        $rules = RuleBusiness::G()->getRules($admin['roles']); //
+        if (in_array('*', $rules)) {
+			C::Success(['*']);
+            return;
+        }
+		C::ThrowOn(true,"No Impelement");
+		
+        $keys = Rule::whereIn('id', $rules)->pluck('key');
+        $permissions = [];
+        foreach ($keys as $key) {
+            if (!$key = Util::controllerToUrlPath($key)) {
+                continue;
+            }
+            $code = str_replace('/', '.', trim($key, '/'));
+            $permissions[] = $code;
+        }
+        return $this->json(0, 'ok', $permissions);    }
 
 
     /**

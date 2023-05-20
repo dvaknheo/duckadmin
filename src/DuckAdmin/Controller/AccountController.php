@@ -47,13 +47,17 @@ class AccountController extends Base
         $password = C::Post('password', '');
         $captcha = C::Post('captcha');
 		
-		$flag = CaptchaAction::G()->doCheckCaptcha($captcha);
-        //C::ThrowOn(!$flag, '验证码错误',1);
-		
-		$admin = AccountBusiness::G()->login($username, $password);
-		AdminSession::G()->setCurrentAdmin($admin);
-		
-		C::Success($admin,'登录成功');
+		try{
+			$flag = CaptchaAction::G()->doCheckCaptcha($captcha);
+			C::ThrowOn(!$flag, '验证码错误',1);
+			
+			$admin = AccountBusiness::G()->login($username, $password);
+			AdminSession::G()->setCurrentAdmin($admin);
+			
+			C::Success($admin,'登录成功');
+		}catch(\Throwable $ex){
+			C::json($ex->getCode(), $ex->getMessage(), []);
+		}
 	}
 
     /**
@@ -110,7 +114,7 @@ class AccountController extends Base
      */
     public function captcha()
     {
-		C::ThrowOn(true,"No Impelement");
+		CaptchaAction::G()->doShowCaptcha();
     }
     /**
      * 解除登录频率限制
