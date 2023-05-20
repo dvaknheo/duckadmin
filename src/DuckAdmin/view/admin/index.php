@@ -10,7 +10,65 @@
     <body class="pear-container">
     
         <!-- 顶部查询表单 -->
-        
+        <div class="layui-card">
+            <div class="layui-card-body">
+                <form class="layui-form top-search-from">
+                    
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">用户名</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="username" value="" class="layui-input">
+                        </div>
+                    </div>
+                    
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">昵称</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="nickname" value="" class="layui-input">
+                        </div>
+                    </div>
+                    
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">邮箱</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="email" value="" class="layui-input">
+                        </div>
+                    </div>
+                    
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">手机</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="mobile" value="" class="layui-input">
+                        </div>
+                    </div>
+                    
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">创建时间</label>
+                        <div class="layui-input-block">
+                            <div class="layui-input-block" id="created_at">
+                                <input type="text" autocomplete="off" name="created_at[]" id="created_at-date-start" class="layui-input inline-block" placeholder="开始时间">
+                                -
+                                <input type="text" autocomplete="off" name="created_at[]" id="created_at-date-end" class="layui-input inline-block" placeholder="结束时间">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="layui-form-item layui-inline">
+                        <label class="layui-form-label"></label>
+                        <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="table-query">
+                            <i class="layui-icon layui-icon-search"></i>查询
+                        </button>
+                        <button type="reset" class="pear-btn pear-btn-md" lay-submit lay-filter="table-reset">
+                            <i class="layui-icon layui-icon-refresh"></i>重置
+                        </button>
+                    </div>
+                    <div class="toggle-btn">
+                        <a class="layui-hide">展开<i class="layui-icon layui-icon-down"></i></a>
+                        <a class="layui-hide">收起<i class="layui-icon layui-icon-up"></i></a>
+                    </div>
+                </form>
+            </div>
+        </div>
         
         <!-- 数据表格 -->
         <div class="layui-card">
@@ -21,19 +79,19 @@
 
         <!-- 表格顶部工具栏 -->
         <script type="text/html" id="table-toolbar">
-            <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add" permission="app.admin.role.insert">
+            <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add" permission="app.admin.admin.insert">
                 <i class="layui-icon layui-icon-add-1"></i>新增
             </button>
-            <button class="pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove" permission="app.admin.role.delete">
+            <button class="pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove" permission="app.admin.admin.delete">
                 <i class="layui-icon layui-icon-delete"></i>删除
             </button>
         </script>
 
         <!-- 表格行工具栏 -->
         <script type="text/html" id="table-bar">
-            {{# if(d.id!==1&&d.pid&&!d.isRoot){ }}
-            <button class="pear-btn pear-btn-xs tool-btn" lay-event="edit" permission="app.admin.role.update">编辑</button>
-            <button class="pear-btn pear-btn-xs tool-btn" lay-event="remove" permission="app.admin.role.delete">删除</button>
+            {{# if(d.show_toolbar){ }}
+            <button class="pear-btn pear-btn-xs tool-btn" lay-event="edit" permission="app.admin.admin.update">编辑</button>
+            <button class="pear-btn pear-btn-xs tool-btn" lay-event="remove" permission="app.admin.admin.delete">删除</button>
             {{# } }}
         </script>
 
@@ -41,20 +99,26 @@
         <script src="<?=\DuckAdmin\__res('')?>component/pear/pear.js"></script>
         <script src="<?=\DuckAdmin\__res('')?>admin/js/permission.js"></script>
         <script src="<?=\DuckAdmin\__res('')?>admin/js/common.js"></script>
-        
         <script>
 
             // 相关常量
             const PRIMARY_KEY = "id";
-            const SELECT_API = "<?=\DuckAdmin\__url('role/select')?>";
-            const UPDATE_API = "<?=\DuckAdmin\__url('role/update')?>";
-            const DELETE_API = "<?=\DuckAdmin\__url('role/delete')?>";
-            const INSERT_URL = "<?=\DuckAdmin\__url('role/insert')?>";
-            const UPDATE_URL = "<?=\DuckAdmin\__url('role/update')?>";
+            const SELECT_API = "<?=\DuckAdmin\__url('admin/select')?>";
+            const UPDATE_API = "<?=\DuckAdmin\__url('admin/update')?>";
+            const DELETE_API = "<?=\DuckAdmin\__url('admin/delete')?>";
+            const INSERT_URL = "<?=\DuckAdmin\__url('admin/insert')?>";
+            const UPDATE_URL = "<?=\DuckAdmin\__url('admin/update')?>";
+            
+            // 字段 创建时间 created_at
+            layui.use(["laydate"], function() {
+                layui.laydate.render({
+                    elem: "#created_at",
+                    range: ["#created_at-date-start", "#created_at-date-end"],
+                });
+            })
             
             // 表格渲染
-            layui.use(["table", "treetable", "form", "common", "popup", "util"], function() {
-                let treeTable = layui.treetable;
+            layui.use(["table", "form", "common", "popup", "util"], function() {
                 let table = layui.table;
                 let form = layui.form;
                 let $ = layui.$;
@@ -66,81 +130,121 @@
 					{
 						type: "checkbox"
 					},{
-                        title: "角色组",
-                        field: "name",
-                    },{
-						title: "主键",
+						title: "ID",
 						field: "id",
+                        width: 100,
+                        sort: true,
 					},{
-						title: "权限",
-						field: "rules",
+						title: "用户名",
+						field: "username",
+					},{
+						title: "昵称",
+						field: "nickname",
+					},{
+						title: "密码",
+						field: "password",
+						hide: true,
+					},{
+						title: "头像",
+						field: "avatar",
 						templet: function (d) {
-							let field = "rules";
-							if (typeof d[field] == "undefined") return "";
-							let items = [];
-							layui.each((d[field] + "").split(","), function (k , v) {
-								items.push(apiResults[field][v] || v);
-							});
-							return util.escape(items.join(","));
+							return '<img src="'+encodeURI(d['avatar'])+'" style="max-width:32px;max-height:32px;" alt="" />'
 						},
+                        width: 90,
+					},{
+						title: "邮箱",
+						field: "email",
+                        hide: true,
+					},{
+						title: "手机",
+						field: "mobile",
                         hide: true,
 					},{
 						title: "创建时间",
 						field: "created_at",
+						hide: true,
 					},{
 						title: "更新时间",
 						field: "updated_at",
+						hide: true,
 					},{
-						title: "父级",
-						field: "pid",
+                        title: "登录时间",
+                        field: "login_at",
+                    },{
+						title: "角色",
+						field: "roles",
 						templet: function (d) {
-							let field = "pid";
+							let field = "roles";
 							if (typeof d[field] == "undefined") return "";
 							let items = [];
 							layui.each((d[field] + "").split(","), function (k , v) {
 								items.push(apiResults[field][v] || v);
 							});
 							return util.escape(items.join(","));
-						},
-                        hide: true,
+						}
 					},{
+                        title: "禁用",
+                        field: "status",
+                        templet: function (d) {
+                            let field = "status";
+                            form.on("switch("+field+")", function (data) {
+                                let load = layer.load();
+                                let postData = {};
+                                postData[field] = data.elem.checked ? 1 : 0;
+                                postData[PRIMARY_KEY] = this.value;
+                                $.post(UPDATE_API, postData, function (res) {
+                                    layer.close(load);
+                                    if (res.code) {
+                                        return layui.popup.failure(res.msg, function () {
+                                            data.elem.checked = !data.elem.checked;
+                                            form.render();
+                                        });
+                                    }
+                                    return layui.popup.success("操作成功");
+                                })
+                            });
+                            let checked = d[field] === 1 ? "checked" : "";
+                            if (parent.Admin.Account.id === d.id) return '';
+                            return '<input type="checkbox" value="'+util.escape(d[PRIMARY_KEY])+'" lay-filter="'+util.escape(field)+'" lay-skin="switch" lay-text="'+util.escape('')+'" '+checked+'/>';
+                        },
+                        width: 90,
+                    },{
 						title: "操作",
 						toolbar: "#table-bar",
 						align: "center",
 						fixed: "right",
-						width: 120,
+                        width: 130,
 					}
 				];
 				
 				// 渲染表格
 				function render()
 				{
-                    treeTable.render({
+				    table.render({
 				        elem: "#data-table",
 				        url: SELECT_API,
-                        treeColIndex: 1,
-                        treeIdName: "id",
-                        treePidName: "pid",
-                        treeDefaultClose: false,
-                        cols: [cols],
-                        skin: "line",
-                        size: "lg",
-                        toolbar: "#table-toolbar",
-                        defaultToolbar: [{
-                            title: "刷新",
-                            layEvent: "refresh",
-                            icon: "layui-icon-refresh",
-                        }, "filter", "print", "exports"]
+				        page: true,
+				        cols: [cols],
+				        skin: "line",
+				        size: "lg",
+				        toolbar: "#table-toolbar",
+				        autoSort: false,
+				        defaultToolbar: [{
+				            title: "刷新",
+				            layEvent: "refresh",
+				            icon: "layui-icon-refresh",
+				        }, "filter", "print", "exports"],
+				        done: function () {
+				            layer.photos({photos: 'div[lay-id="data-table"]', anim: 5});
+				        }
 				    });
 				}
 				
 				// 获取表格中下拉或树形组件数据
 				let apis = [];
-				apis.push(["rules", "<?=\DuckAdmin\__url('rule/get?type=0,1,2')?>"]);
-				apis.push(["pid", "<?=\DuckAdmin\__url('role/select?format=tree')?>"]);
+				apis.push(["roles", "<?=\DuckAdmin\__url('role/select?format=select')?>"]);
 				let apiResults = {};
-				apiResults["rules"] = [];
-				apiResults["pid"] = [];
+				apiResults["roles"] = [];
 				let count = apis.length;
 				layui.each(apis, function (k, item) {
 				    let [field, url] = item;
@@ -286,7 +390,9 @@
 
                 // 刷新表格数据
                 window.refreshTable = function(param) {
-                    treeTable.reload("#data-table");
+                    table.reloadData("data-table", {
+                        scrollPos: "fixed"
+                    });
                 }
             })
 

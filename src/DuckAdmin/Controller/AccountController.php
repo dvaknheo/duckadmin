@@ -103,9 +103,25 @@ class AccountController extends Base
     public function password()
     {
 		C::ThrowOn(true,"No Impelement");
-
+        $password = $request->post('password');
+		$request->post('password_confirm');
+		$request->post('old_password');
+		
+        $hash = Admin::find(admin_id())['password'];
+        if (!$password) {
+            return $this->json(2, '密码不能为空');
+        }
+        if ($request->post('password_confirm') !== $password) {
+            return $this->json(3, '两次密码输入不一致');
+        }
+        if (!Util::passwordVerify($request->post('old_password'), $hash)) {
+            return $this->json(1, '原始密码不正确');
+        }
+        $update_data = [
+            'password' => Util::passwordHash($password)
+        ];
+        Admin::where('id', admin_id())->update($update_data);
     }
-
     /**
      * 验证码
      * @param 
@@ -116,10 +132,4 @@ class AccountController extends Base
     {
 		CaptchaAction::G()->doShowCaptcha();
     }
-    /**
-     * 解除登录频率限制
-     * @param $username
-     * @return void
-     */
-
 }

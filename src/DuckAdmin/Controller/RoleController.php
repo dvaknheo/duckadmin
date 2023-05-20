@@ -86,5 +86,32 @@ class RoleController extends Base
     public function rules()
     {
 		C::ThrowOn(true,"No Impelement");
+        $role_id = $request->get('id');
+        if (empty($role_id)) {
+            return $this->json(0, 'ok', []);
+        }
+        if (!Auth::isSupperAdmin() && !in_array($role_id, Auth::getScopeRoleIds(true))) {
+            return $this->json(1, '角色组超出权限范围');
+        }
+        $rule_id_string = Role::where('id', $role_id)->value('rules');
+        if ($rule_id_string === '') {
+            return $this->json(0, 'ok', []);
+        }
+        $rules = Rule::get();
+        $include = [];
+        if ($rule_id_string !== '*') {
+            $include = explode(',', $rule_id_string);
+        }
+        $items = [];
+        foreach ($rules as $item) {
+            $items[] = [
+                'name' => $item->title ?? $item->name ?? $item->id,
+                'value' => (string)$item->id,
+                'id' => $item->id,
+                'pid' => $item->pid,
+            ];
+        }
+        $tree = new Tree($items);
+        return $this->json(0, 'ok', $tree->getTree($include));
     }
 }

@@ -27,7 +27,7 @@ class ConfigController extends ProjectController
      */
     public function index()
     {
-		C::ThrowOn(true,"No Impelement");
+		C::Show([],'config/index');
     }
 
     /**
@@ -39,7 +39,7 @@ class ConfigController extends ProjectController
 		$data = ConfigBusiness::G()->getDefaultConfig();
 		C::ExitJson($data); //注意这里不能用 success
     }
-
+ 
     /**
      * 更改
      * @param Request $request
@@ -49,5 +49,64 @@ class ConfigController extends ProjectController
     public function update()
     {
         C::ThrowOn(true,"No Impelement");
+        $post = $request->post();
+        $config = $this->getByDefault();
+        $data = [];
+        foreach ($post as $section => $items) {
+            if (!isset($config[$section])) {
+                continue;
+            }
+            switch ($section) {
+                case 'logo':
+                    $data[$section]['title'] = htmlspecialchars($items['title'] ?? '');
+                    $data[$section]['image'] = Util::filterUrlPath($items['image'] ?? '');
+                    break;
+                case 'menu':
+                    $data[$section]['data'] = Util::filterUrlPath($items['data'] ?? '');
+                    $data[$section]['accordion'] = !empty($items['accordion']);
+                    $data[$section]['collapse'] = !empty($items['collapse']);
+                    $data[$section]['control'] = !empty($items['control']);
+                    $data[$section]['controlWidth'] = (int)$items['controlWidth'] ?? 500;
+                    $data[$section]['select'] = (int)$items['select'] ?? 0;
+                    $data[$section]['async'] = true;
+                    break;
+                case 'tab':
+                    $data[$section]['enable'] = true;
+                    $data[$section]['keepState'] = !empty($items['keepState']);
+                    $data[$section]['preload'] = !empty($items['preload']);
+                    $data[$section]['session'] = !empty($items['session']);
+                    $data[$section]['max'] = Util::filterNum($items['max'] ?? '30');
+                    $data[$section]['index']['id'] = Util::filterNum($items['index']['id'] ?? '0');
+                    $data[$section]['index']['href'] = Util::filterUrlPath($items['index']['href'] ?? '');
+                    $data[$section]['index']['title'] = htmlspecialchars($items['index']['title'] ?? '首页');
+                    break;
+                case 'theme':
+                    $data[$section]['defaultColor'] = Util::filterNum($items['defaultColor'] ?? '2');
+                    $data[$section]['defaultMenu'] = $items['defaultMenu'] ?? '' == 'dark-theme' ?  'dark-theme' : 'light-theme';
+                    $data[$section]['defaultHeader'] = $items['defaultHeader'] ?? '' == 'dark-theme' ?  'dark-theme' : 'light-theme';
+                    $data[$section]['allowCustom'] = !empty($items['allowCustom']);
+                    $data[$section]['banner'] = !empty($items['banner']);
+                    break;
+                case 'colors':
+                    foreach ($config['colors'] as $index => $item) {
+                        if (!isset($items[$index])) {
+                            $config['colors'][$index] = $item;
+                            continue;
+                        }
+                        $data_item = $items[$index];
+                        $data[$section][$index]['id'] = $index + 1;
+                        $data[$section][$index]['color'] = $this->filterColor($data_item['color'] ?? '');
+                        $data[$section][$index]['second'] = $this->filterColor($data_item['second'] ?? '');
+                    }
+                    break;
+
+            }
+        }
+        $config = array_merge($config, $data);
+        $name = 'system_config';
+        Option::where('name', $name)->update([
+            'value' => json_encode($config)
+        ]);
+        return $this->json(0);
     }
 }

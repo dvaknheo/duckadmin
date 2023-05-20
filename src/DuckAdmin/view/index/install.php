@@ -154,7 +154,7 @@
         form.on("submit(formStep)", function(data) {
             let loading = layer.load();
             $.ajax({
-                url: "/app/admin/install/step1",
+                url: "<?=\DuckAdmin\__url('install/step1')?>",
                 type: "POST",
                 dataType: "json",
                 data: data.field,
@@ -176,7 +176,7 @@
         form.on("submit(formStep2)", function(data) {
             let loading = layer.load();
             $.ajax({
-                url: "/app/admin/install/step2",
+                url: "<?=\DuckAdmin\__url('install/step2')?>",
                 type: "POST",
                 dataType: "json",
                 data: data.field,
