@@ -1,6 +1,6 @@
 <?php
-
-namespace plugin\admin\app\controller;
+namespace DuckAdmin\Controller;
+use DuckAdmin\Controller\AdminAction as C;
 
 
 /**

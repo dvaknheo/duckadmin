@@ -28,7 +28,7 @@ class RuleController extends Base
      */
     public function index()
     {
-        return view('rule/index');
+        C::Show([], 'rule/index');
     }
 
     /**

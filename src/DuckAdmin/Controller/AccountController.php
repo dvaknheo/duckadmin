@@ -32,7 +32,7 @@ class AccountController extends Base
      */
     public function index()
     {
-		C::Show('account/index');
+		C::Show([],'account/index');
     }
 
     /**

@@ -149,7 +149,7 @@ class AccountBusiness extends BaseBusiness
 			static::ThrowOn(!$roles, $msg = '无权限', 2);
 
 			// 角色没有规则
-			$rule_ids = RoleModel::G()->GetRole($roles);
+			$rule_ids = RoleModel::G()->getRules($roles);
 			static::ThrowOn(!$rule_ids, $msg = '无权限', 2);
 			
 			// 超级管理员

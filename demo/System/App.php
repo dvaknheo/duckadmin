@@ -37,7 +37,7 @@ class App extends DuckPhp
         $ext = [
             // 后台管理系统
             \DuckAdmin\Api\DuckAdminPlugin::class => [
-                'plugin_url_prefix' => 'admin/', // 访问路径
+                'plugin_url_prefix' => 'app/admin/', // 访问路径
             ],
             // 前台用户系统
             \DuckUser\Api\DuckUserPlugin::class => [

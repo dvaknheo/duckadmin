@@ -14,7 +14,7 @@ class ConfigBusiness extends BaseBusiness
 			$config = static::Config(null,[],'pear_config');
 			OptionModel::G()->setSystemConfig($config);
 		}
-		$config['menu']['data']="/admin/rule/get"; // 为这次特别定制
+		//$config['menu']['data']="/admin/rule/get"; // 为这次特别定制
 		return $config;
 	}
 }
