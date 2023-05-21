@@ -112,4 +112,11 @@ EOF;
 		static::Show('_sys/403');
 		static::Exit();
 	}
+	public static function OnException($ex)
+	{
+		$code = $ex->getCode();
+		$msg = $ex->getMessage();
+		if(!$code){$code = -1;}
+		static::ExitJson(['code' => $code, 'msg' => $msg, 'type' => 'error']);
+	}
 }

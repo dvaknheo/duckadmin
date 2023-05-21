@@ -7,6 +7,7 @@
 namespace DuckAdmin\Controller;
 
 use DuckAdmin\Controller\AdminAction as C;
+use DuckAdmin\Business\RoleBusiness;
 
 /**
  * 系统设置
@@ -36,9 +37,9 @@ class RoleController extends Base
      */
     public function select()
     {
-		C::ThrowOn(true,"No Impelement");
-		$id = $request->get('id');
-		RoleBusiness::G()->selectRoles();
+		$id = C::GET('id');
+		$data = RoleBusiness::G()->selectRoles($id);
+		C::Success($data);
     }
 
     /**

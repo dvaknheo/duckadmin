@@ -8,8 +8,53 @@ use DuckAdmin\Model\RoleModel;
  */
 class AdminBusiness extends BaseBusiness
 {
+
+    /**
+     * 查询前置
+     * @param Request $request
+     * @return array
+     * @throws BusinessException
+     */
+    protected function selectInput(Request $request): array
+    {
+        $field = $request->get('field');
+        $order = $request->get('order', 'asc');
+        $format = $request->get('format', 'normal');
+        $limit = (int)$request->get('limit', $format === 'tree' ? 1000 : 10);
+        $limit = $limit <= 0 ? 10 : $limit;
+        $order = $order === 'asc' ? 'asc' : 'desc';
+        $where = $request->get();
+        $page = (int)$request->get('page');
+        $page = $page > 0 ? $page : 1;
+        $table = config('plugin.admin.database.connections.mysql.prefix') . $this->model->getTable();
+
+        $allow_column = Util::db()->select("desc `$table`");
+        if (!$allow_column) {
+            throw new BusinessException('表不存在');
+        }
+        $allow_column = array_column($allow_column, 'Field', 'Field');
+        if (!in_array($field, $allow_column)) {
+            $field = null;
+        }
+        foreach ($where as $column => $value) {
+            if ($value === '' || !isset($allow_column[$column]) ||
+                (is_array($value) && (in_array($value[0], ['', 'undefined']) || in_array($value[1], ['', 'undefined'])))) {
+                unset($where[$column]);
+            }
+        }
+        // 按照数据限制字段返回数据
+		if ($this->dataLimit === 'auth') {
+            $primary_key = $this->model->getKeyName();
+            if (!Auth::isSupperAdmin() && (!isset($where[$primary_key]) || $this->dataLimitField != $primary_key)) {
+                $where[$this->dataLimitField] = ['in', Auth::getScopeAdminIds(true)];
+            }
+        }
+        return [$where, $format, $limit, $field, $order, $page];
+    }
+	
 	public function showAdmin()
 	{
+		return [100,[]];
         [$where, $format, $limit, $field, $order] = $this->selectInput($request);
         $query = $this->doSelect($where, $field, $order);
         if ($format === 'select') {

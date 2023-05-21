@@ -9,8 +9,10 @@ use DuckAdmin\Model\RoleModel;
  */
 class RoleBusiness extends BaseBusiness 
 {
-	public function selectRoles()
+	public function selectRoles($id)
 	{
+		return [['name' => '超级管理员','value'=>1]];
+		//return 
         [$where, $format, $limit, $field, $order] = $this->selectInput($request);
         $role_ids = Auth::getScopeRoleIds(true);
         if (!$id) {

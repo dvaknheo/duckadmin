@@ -1,7 +1,7 @@
 <?php
 namespace DuckAdmin\Controller;
 use DuckAdmin\Controller\AdminAction as C;
-
+use DuckAdmin\Business\AdminBusiness;
 
 /**
  * 管理员列表 
@@ -44,7 +44,7 @@ class AdminController extends Base
      */
     public function select()
     {
-        C::ThrowOn(true, "No Impelement");
+		$post = C::REQUEST();
 		[$count, $data] = AdminBusiness::G()->showAdmin($post);
         C::ExitJson(['code' => 0, 'msg' => 'ok', 'count' => $count, 'data' => $data]);
     }

@@ -38,6 +38,10 @@ class Base extends ProjectController
 
     public function __construct()
     {
+		if(AdminAction::IsJson()){
+			AdminAction::G()->assignExceptionHandler(\Exception::class,[AdminAction::class,'OnException']);
+		}
+		
         $controller = get_class($this);
         $action = AdminAction::getRouteCallingMethod();
 		AdminAction::G()->checkAccess($controller,$action);
