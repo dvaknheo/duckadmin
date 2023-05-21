@@ -47,8 +47,6 @@ class AccountController extends Base
         $password = C::Post('password', '');
         $captcha = C::Post('captcha');
 		
-		try{
-		
 		$flag = CaptchaAction::G()->doCheckCaptcha($captcha);
 		C::ThrowOn(!$flag, '验证码错误',1);
 		
@@ -56,10 +54,6 @@ class AccountController extends Base
 		AdminSession::G()->setCurrentAdmin($admin);
 		
 		C::Success($admin,'登录成功');
-		
-		}catch(\Throwable $ex){
-			C::json($ex->getCode(), $ex->getMessage(), []);
-		}
 	}
 
     /**

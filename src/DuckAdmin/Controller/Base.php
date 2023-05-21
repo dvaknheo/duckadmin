@@ -28,16 +28,13 @@ class Base extends ProjectController
      */
     protected $noNeedAuth = [];
 
-    /**
-     * 数据限制
-     * 例如当$dataLimit='personal'时将只返回当前管理员的数据
-     * @var string
-     */
-    protected $dataLimit = null;
-
-
     public function __construct()
     {
+		$this->init();	
+		return;
+    }
+	protected function init()
+	{
 		if(AdminAction::IsJson()){
 			AdminAction::G()->assignExceptionHandler(\Exception::class,[AdminAction::class,'OnException']);
 		}
@@ -45,15 +42,5 @@ class Base extends ProjectController
         $controller = get_class($this);
         $action = AdminAction::getRouteCallingMethod();
 		AdminAction::G()->checkAccess($controller,$action);
-		
-		return;
-   
-        // 我们弄个小技巧，不允许直接访问，但我们可以创建一个实例填充，
-        //if (static::CheckRunningController(self::class, static::class)) {
-        //    return;
-        //}
-        //parent::__construct();
-		//我们检查安装？
-    }
-	
+	}
 }

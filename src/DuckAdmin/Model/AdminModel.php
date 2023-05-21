@@ -10,6 +10,8 @@ namespace DuckAdmin\Model;
  */
 class AdminModel extends BaseModel
 {
+	public $table_name = 'wa_admins';
+	
     public function getAdminByName($username)
     {
 		return static::Db()->fetch("select * from wa_admins where username = ?",$username);

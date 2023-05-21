@@ -98,10 +98,13 @@ class RuleBusiness extends BaseBusiness
     }
 	/////////////////////////////
 	
-	public function selectRules()
+	public function selectRules($data)
 	{
-		$this->syncRules();
-        return parent::select($request);
+		//$this->syncRules(); //暂时不同步
+		[$where, $format, $limit, $field, $order] = $this->selectInput($data,RuleModel::G()->table());
+        [$data,$total] = RuleModel::G()->doSelect($where, $field, $order);
+        return $this->doFormat($data, $total, $format, $limit);
+		
 	}
 	/**
      * 根据类同步规则到数据库
@@ -119,37 +122,39 @@ class RuleBusiness extends BaseBusiness
                 $methods_in_db[$class] = $class;
                 continue;
             }
-            if (class_exists($class)) {
-                $reflection = new \ReflectionClass($class);
-                $properties = $reflection->getDefaultProperties();
-                $no_need_auth = array_merge($properties['noNeedLogin'] ?? [], $properties['noNeedAuth'] ?? []);
-                $class = $reflection->getName();
-                $pid = $item->id;
-                $methods = $reflection->getMethods(\ReflectionMethod::IS_PUBLIC);
-                foreach ($methods as $method) {
-                    $method_name = $method->getName();
-                    if (strtolower($method_name) === 'index' || strpos($method_name, '__') === 0 || in_array($method_name, $no_need_auth)) {
-                        continue;
-                    }
-                    $name = "$class@$method_name";
+            if (!class_exists($class)) {
+				continue;
+			}
+			$reflection = new \ReflectionClass($class);
+			$properties = $reflection->getDefaultProperties();
+			$no_need_auth = array_merge($properties['noNeedLogin'] ?? [], $properties['noNeedAuth'] ?? []);
+			$class = $reflection->getName();
+			$pid = $item->id;
+			$methods = $reflection->getMethods(\ReflectionMethod::IS_PUBLIC);
+			foreach ($methods as $method) {
+				$method_name = $method->getName();
+				if (strtolower($method_name) === 'index' || strpos($method_name, '__') === 0 || in_array($method_name, $no_need_auth)) {
+					continue;
+				}
+				$name = "$class@$method_name";
 
-                    $methods_in_files[$name] = $name;
-                    $title = Util::getCommentFirstLine($method->getDocComment()) ?: $method_name;
-                    $menu = $items[$name] ?? [];
-                    if ($menu) {
-                        if ($menu->title != $title) {
-                            Rule::where('key', $name)->update(['title' => $title]);
-                        }
-                        continue;
-                    }
-                    $menu = new Rule;
-                    $menu->pid = $pid;
-                    $menu->key = $name;
-                    $menu->title = $title;
-                    $menu->type = 2;
-                    $menu->save();
-                }
-            }
+				$methods_in_files[$name] = $name;
+				$title = Util::getCommentFirstLine($method->getDocComment()) ?: $method_name;
+				$menu = $items[$name] ?? [];
+				if ($menu) {
+					if ($menu->title != $title) {
+						Rule::where('key', $name)->update(['title' => $title]);
+					}
+					continue;
+				}
+				$menu = new Rule;
+				$menu->pid = $pid;
+				$menu->key = $name;
+				$menu->title = $title;
+				$menu->type = 2;
+				$menu->save();
+			}
+            
         }
         // 从数据库中删除已经不存在的方法
         $menu_names_to_del = array_diff($methods_in_db, $methods_in_files);
@@ -186,7 +191,7 @@ class RuleBusiness extends BaseBusiness
         $data['key'] = str_replace('\\\\', '\\', $data['key']);
         $key = $data['key'] ?? '';
         if ($this->model->where('key', $key)->first()) {
-            return $this->json(1, "菜单标识 $key 已经存在");
+			static::ThrowOn(true, "菜单标识 $key 已经存在", 1);
         }
         $data['pid'] = empty($data['pid']) ? 0 : $data['pid'];
         $this->doInsert($data);
@@ -194,14 +199,12 @@ class RuleBusiness extends BaseBusiness
 	public function updateRule()
 	{
         [$id, $data] = $this->updateInput($request);
-        if (!$row = $this->model->find($id)) {
-            return $this->json(2, '记录不存在');
-        }
+		$row = $this->model->find($id);
+		static::ThrowOn(!$row, '记录不存在',2);
         if (isset($data['pid'])) {
             $data['pid'] = $data['pid'] ?: 0;
-            if ($data['pid'] == $row['id']) {
-                return $this->json(2, '不能将自己设置为上级菜单');
-            }
+            static::ThrowOn($data['pid'] == $row['id'], '不能将自己设置为上级菜单',2);
+            
         }
         if (isset($data['key'])) {
             $data['key'] = str_replace('\\\\', '\\', $data['key']);
@@ -236,5 +239,42 @@ class RuleBusiness extends BaseBusiness
             }
         }
         return $ids;
+    }
+	
+
+
+    /**
+     * 执行查询
+     * @param array $where
+     * @param string|null $field
+     * @param string $order
+     * @return EloquentBuilder|QueryBuilder|Model
+     */
+    protected function doSelect(array $where, string $field = null, string $order= 'desc')
+    {
+        $model = $this->model;
+        foreach ($where as $column => $value) {
+            if (is_array($value)) {
+                if (in_array($value[0], ['>', '=', '<', '<>', 'like', 'not like'])) {
+                    $model = $model->where($column, $value[0], $value[1]);
+                } elseif ($value[0] == 'in') {
+                    $model = $model->whereIn($column, $value[1]);
+                } elseif ($value[0] == 'not in') {
+                    $model = $model->whereNotIn($column, $value[1]);
+                } elseif ($value[0] == 'null') {
+                    $model = $model->whereNull($column, $value[1]);
+                } elseif ($value[0] == 'not null') {
+                    $model = $model->whereNotNull($column, $value[1]);
+                } else {
+                    $model = $model->whereBetween($column, $value);
+                }
+            } else {
+                $model = $model->where($column, $value);
+            }
+        }
+        if ($field) {
+            $model = $model->orderBy($field, $order);
+        }
+        return $model;
     }
 }

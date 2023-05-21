@@ -200,21 +200,20 @@ class AccountBusiness extends BaseBusiness
         }
 		return $admin;
 	}
-	public function changePassword($old_password, $password, $password_cofirm)
+	public function changePassword($admin_id, $old_password, $password, $password_cofirm)
 	{
 		static::ThrowOn(!$password, '密码不能为空',2);
 		static::ThrowOn($password !== $password_cofirm, '两次密码输入不一致',3);
 		
-        $hash = Admin::find(admin_id())['password'];
+        $hash = Admin::find($admin_id)['password'];
 
-		
-        if (!Util::passwordVerify($request->post('old_password'), $hash)) {
-            return $this->json(1, '原始密码不正确');
+        if (!Util::passwordVerify($old_password, $hash)) {
+			static::ThrowOn(true, '原始密码不正确', 1);
         }
 		
         $update_data = [
             'password' => Util::passwordHash($password)
         ];
-        Admin::where('id', admin_id())->update($update_data);
+        Admin::where('id', $admin_id)->update($update_data);
 	}
 }

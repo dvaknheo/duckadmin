@@ -10,6 +10,8 @@ namespace DuckAdmin\Model;
  */
 class RuleModel extends BaseModel
 {
+	public $table_name = 'wa_rules';
+
 	public function isSuper($rules)
 	{
 		return $rules && in_array('*', $rules);

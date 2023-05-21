@@ -6,10 +6,30 @@
 
 namespace DuckAdmin\Model;
 
-use DuckAdmin\System\ProjectModel;
+use DuckPhp\Foundation\SimpleModelTrait;
+use DuckPhp\Helper\ModelHelperTrait;
 
-class BaseModel extends ProjectModel
-{    
+class BaseModel
+{
+    use SimpleModelTrait;
+    use ModelHelperTrait;
+    
+    public static function GetTableByClass($class)
+    {
+        return static::G()->_GetTableByClass($class);
+    }
+    public function _GetTableByClass($class)
+    {
+        // 表前缀要跟着自己，而不是系统
+        $this->table_prefix = $table_prefix ?? (\DuckAdmin\System\App::G()->options['table_prefix']??'');
+        $t = explode('\\', $class);
+        $class = array_pop($t);
+        
+        $table_name = 'admin_'.strtolower(substr($class,0,-5));
+        
+        return $table_name;
+    }
+
     public function table()
     {
         if(!isset($this->table_name)){
@@ -17,7 +37,42 @@ class BaseModel extends ProjectModel
         }
         return $this->table_name;
     }
+	
+	//这对外
+	public function doSelect(array $where, string $field = null, string $order= 'desc' ,$page=1,$page_size=10)
+    {
+		$sql_where =' TRUE ';
+        foreach ($where as $column => $value) {
+            if (is_array($value)) {
+                if (in_array($value[0], ['>', '=', '<', '<>', 'like', 'not like'])) {
+					$sql_where.=" and`$column` ". $value[0] . self::Db()->qoute($value[1]);
+                } elseif ($value[0] == 'in') {
+					$sql_where.="`$column` in(". self::Db()->qouteIn($value[1]).")";
+                } elseif ($value[0] == 'not in') {
+					$sql_where.="`$column` not in(". self::Db()->qouteIn($value[1]).")";
+                } elseif ($value[0] == 'null') {
+					$sql_where.="`$column`  is_null()";
+                } elseif ($value[0] == 'not null') {
+					$sql_where.="`$column`  not null()";
+                } else {
+					$sql_where.="`$column`  between(".self::Db()->qouteIn($value[1]).")";
+                }
+            } else {
+				$sql_where.="`$column` = ". self::Db()->qoute($value);
+            }
+        }
+		// 我们老土的用 sql  语句来完成代码
+		$sql = "select * from 'TABLE' where $sql_where";
+		$total = self::Db()->table($this->table())->fetchColumn(self::SqlForCountSimply($sql));
+		if ($field) {
+			$sql .=" order by `$field` $order "; // 这里可能会有些问题
+		}
+		$items = self::Db()->table($this->table())->fetchAll(self::SqlForPager($sql, $page, $page_size));
+        return [$items, $total];
+    }
+	
     
+	/////////////////////// 以下代码没用上///////////////////////////
     public function getList(int $page = 1, int $page_size = 10)
     {
         $sql = "SELECT * from 'TABLE' where true order by id desc";

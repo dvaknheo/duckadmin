@@ -14,23 +14,22 @@ class RoleBusiness extends BaseBusiness
 		return [['name' => '超级管理员','value'=>1]];
 		//return 
         [$where, $format, $limit, $field, $order] = $this->selectInput($request);
-        $role_ids = Auth::getScopeRoleIds(true);
+        $role_ids = Auth::getScopeRoleIds(true);  //------------>TODO
         if (!$id) {
             $where['id'] = ['in', $role_ids];
-        } elseif (!in_array($id, $role_ids)) {
-            throw new BusinessException('无权限');
+        } else{
+			static::ThrowOn(!in_array($id, $role_ids),'无权限',1);
         }
         $query = $this->doSelect($where, $field, $order);
         return $this->doFormat($query, $format, $limit);
 	}
-	public function insertRole()
+	public function insertRole($data)
 	{
 		$pid = $data['pid'] ?? null;
-		if (!$pid) {
-			return $this->json(1, '请选择父级角色组');
-		}
+		static::ThrowOn(!$pid,'请选择父级角色组',1);
+		
 		if (!Auth::isSupperAdmin() && !in_array($pid, Auth::getScopeRoleIds(true))) {
-			return $this->json(1, '父级角色组超出权限范围');
+			static::ThrowOn(true,'父级角色组超出权限范围',1);
 		}
 		$this->checkRules($pid, $data['rules'] ?? '');
 
@@ -39,17 +38,16 @@ class RoleBusiness extends BaseBusiness
 	public function updateRole()
 	{
 		[$id, $data] = $this->updateInput($request);
-        $is_supper_admin = Auth::isSupperAdmin();
+       ;
         $descendant_role_ids = Auth::getScopeRoleIds();
-        if (!$is_supper_admin && !in_array($id, $descendant_role_ids)) {
-            return $this->json(1, '无数据权限');
+        if (!Auth::isSupperAdmin() && !in_array($id, Auth::getScopeRoleIds())) {
+			static::ThrowOn(true,'无数据权限',1);
         }
 
         $role = Role::find($id);
-        if (!$role) {
-            return $this->json(1, '数据不存在');
-        }
-        $is_supper_role = $role->rules === '*';
+		static::ThrowOn(!$role,'数据不存在',1);
+
+        $is_supper_role = $role['rules'] === '*';
 
         // 超级角色组不允许更改rules pid 字段
         if ($is_supper_role) {
@@ -58,14 +56,10 @@ class RoleBusiness extends BaseBusiness
 
         if (key_exists('pid', $data)) {
             $pid = $data['pid'];
-            if (!$pid) {
-                return $this->json(1, '请选择父级角色组');
-            }
-            if ($pid == $id) {
-                return $this->json(1, '父级不能是自己');
-            }
-            if (!$is_supper_admin && !in_array($pid, Auth::getScopeRoleIds(true))) {
-                return $this->json(1, '父级超出权限范围');
+			static::ThrowOn(!$pid,'请选择父级角色组',1);
+			static::ThrowOn($pid == $id,'父级不能是自己',1);
+            if (!Auth::isSupperAdmin() && !in_array($pid, Auth::getScopeRoleIds(true))) {
+				static::ThrowOn(true,'父级超出权限范围',1);
             }
         } else {
             $pid = $role->pid;
@@ -94,13 +88,14 @@ class RoleBusiness extends BaseBusiness
 	}
 	public function deleteRole()
 	{
-				$ids = $this->deleteInput($request);
-        if (in_array(1, $ids)) {
-            return $this->json(1, '无法删除超级管理员角色');
-        }
+		$ids = $this->deleteInput($request);
+        
+        static::ThrowOn(in_array(1, $ids), '无法删除超级管理员角色');
+        
         if (!Auth::isSupperAdmin() && array_diff($ids, Auth::getScopeRoleIds())) {
-            return $this->json(1, '无删除权限');
+			static::ThrowOn(true,'无删除权限',1);
         }
+		
         $tree = new Tree(Role::get());
         $descendants = $tree->getDescendant($ids);
         if ($descendants) {
@@ -111,30 +106,75 @@ class RoleBusiness extends BaseBusiness
 	public function tree()
 	{
         if (empty($role_id)) {
-            return $this->json(0, 'ok', []);
+            return [];
         }
-        if (!Auth::isSupperAdmin() && !in_array($role_id, Auth::getScopeRoleIds(true))) {
-            return $this->json(1, '角色组超出权限范围');
+        if (!$this->isSupperAdmin() && !in_array($role_id, $this->getScopeRoleIds(true))) {
+            static::ThrowOn(true,'角色组超出权限范围',1);
         }
         $rule_id_string = Role::where('id', $role_id)->value('rules');
+		
         if ($rule_id_string === '') {
-            return $this->json(0, 'ok', []);
+            return [];
         }
-        $rules = Rule::get();
         $include = [];
         if ($rule_id_string !== '*') {
             $include = explode(',', $rule_id_string);
         }
+		
+        $rules = Rule::get();  // =================>model;
         $items = [];
         foreach ($rules as $item) {
             $items[] = [
-                'name' => $item->title ?? $item->name ?? $item->id,
-                'value' => (string)$item->id,
-                'id' => $item->id,
-                'pid' => $item->pid,
+                'name' => $item['title'] ?? $item['name'] ?? $item['id'],
+                'value' => (string)$item['id'],
+                'id' => $item['id'],
+                'pid' => $item['pid'],
             ];
         }
+		
         $tree = new Tree($items);
-		return $tree;
+        return [$tree->getTree($include)];
 	}
+	
+	
+	
+    /**
+     * 是否是超级管理员
+     * @param int $admin_id
+     * @return bool
+     */
+    public static function isSupperAdmin(int $admin_id = 0): bool
+    {
+        if (!$admin_id) {
+            if (!$roles = admin('roles')) {
+                return false;
+            }
+        } else {
+            $roles = AdminRole::where('admin_id', $admin_id)->pluck('role_id');
+        }
+        $rules = Role::whereIn('id', $roles)->pluck('rules');
+        return $rules && in_array('*', $rules->toArray());
+    }
+	/**
+     * 获取权限范围内的所有角色id
+     * @param bool $with_self
+     * @return array
+     */
+    public static function getScopeRoleIds(bool $with_self = false): array
+    {
+		//!Auth::isSupperAdmin() && !in_array($role_id, $this->getScopeRoleIds(true)
+        if (!$admin = admin()) {
+            return [];
+        }
+        $role_ids = $admin['roles'];
+        $rules = Role::whereIn('id', $role_ids)->pluck('rules')->toArray();
+        if ($rules && in_array('*', $rules)) {
+            return Role::pluck('id')->toArray();
+        }
+
+        $roles = Role::get();
+        $tree = new Tree($roles);
+        $descendants = $tree->getDescendant($role_ids, $with_self);
+        return array_column($descendants, 'id');
+    }
 }

@@ -15,11 +15,6 @@ class AdminController extends Base
     protected $noNeedAuth = ['select'];
 
 
-    /**
-     * 开启auth数据限制
-     * @var string
-     */
-    protected $dataLimit = 'auth'; //TODO 了解并删除
 
     /**
      * 以id为数据限制字段

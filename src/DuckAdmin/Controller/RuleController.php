@@ -39,11 +39,11 @@ class RuleController extends Base
      */
     public function select()
     {
-        C::ThrowOn(true,"No Impelement");
+		$data = C::GET();
 		
-		$data = RuleBusiness::G()->selectRules();
-        
-		C::Success($data);
+		// 本类的状态也要传过去
+		[$data,$total] = RuleBusiness::G()->selectRules($data); // 结果还是一股脑把参数传进去了
+		C::Success($data,$total);
     }
 
     /**

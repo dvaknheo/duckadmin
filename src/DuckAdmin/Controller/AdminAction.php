@@ -53,15 +53,16 @@ class AdminAction extends ProjectAction
 	}
     ////////////////
 	
-	public static function json(int $code, string $msg = 'ok', array $data = [])
-    {
-        return static::ExitJson(['code' => $code, 'data' => $data, 'msg' => $msg]);
-    }
-	
-	public static function Success($data = [])
+
+	public static function Success($data = [],$count = null)
 	{
-		return static::ExitJson(['code' => 0, 'data' => $data, 'msg' => 'ok']);
+		if(is_null($count)){
+			static::ExitJson(['code' => 0, 'data' => $data, 'msg' => 'ok']);
+		}else{
+			static::ExitJson(['code' => 0, 'msg' => 'ok', 'count' => $count, 'data' => $data]);
+		}
 	}
+	
 	protected function isOptionsMethod()
 	{
 		return @$_SERVER['REQUEST_METHOD']=='OPTIONS'?true:false;
