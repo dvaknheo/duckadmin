@@ -21,7 +21,7 @@ class BaseBusiness extends ProjectBusiness
      * @return array
      * @throws BusinessException
      */
-    protected function selectInput($data, $table, $dataLimitField =null): array
+    protected function selectInput($data, $table, $dataLimit=null, $dataLimitField =null): array
     {
         $where = $data;
 		
@@ -40,7 +40,7 @@ class BaseBusiness extends ProjectBusiness
 		
 		////[[[[
 
-        $allow_column = App::Db()->fetch("desc `$table`"); // 这个放到 BaseModel 里。
+        $allow_column = App::Db()->fetchAll("desc `$table`"); // 这个放到 BaseModel 里。
         $allow_column = array_column($allow_column, 'Field', 'Field');
         if (!in_array($field, $allow_column)) {
             $field = null;

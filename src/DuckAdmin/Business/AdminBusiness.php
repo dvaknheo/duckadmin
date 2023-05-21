@@ -3,37 +3,35 @@ namespace DuckAdmin\Business;
 
 use DuckAdmin\Model\AdminModel;
 use DuckAdmin\Model\RoleModel;
+use DuckAdmin\Model\AdminRoleModel;
 /**
  * 管理员业务
  */
 class AdminBusiness extends BaseBusiness
 {
 
-	public function showAdmin($input)
+	public function showAdmins($login_admin_id,$input, $table, $dataLimit=null, $dataLimitField =null)
 	{
-		return [[],100];
 		
-        [$where, $format, $limit, $field, $order] = $this->selectInput($input);//-->一大堆参数要定
+        [$where, $format, $limit, $field, $order] = $this->selectInput($input, AdminModel::G()->table(), $dataLimit, $dataLimitField);
 		
         [$items,$total] = AdminModel::G()->doSelect($where, $field, $order);
-        if ($format === 'select') {
+		
+        if ('select' ===  ($input['format']??null)) {
             return $this->formatSelect($items,$format,$limit);
         }
 		
 		// 后处理
         $admin_ids = array_column($items, 'id');
-        $roles = AdminRole::whereIn('admin_id', $admin_ids)->get();
-        $roles_map = [];
-        foreach ($roles as $role) {
-            $roles_map[$role['admin_id']][] = $role['role_id'];
-        }
-        $login_admin_id = admin_id();
+		$roles_map = AdminRoleModel::G()->getAdminRoles($admin_ids);
+		
 		
         foreach ($items as $index => $item) {
             $admin_id = $item['id'];
             $items[$index]['roles'] = isset($roles_map[$admin_id]) ? implode(',', $roles_map[$admin_id]) : '';
             $items[$index]['show_toolbar'] = $admin_id != $login_admin_id;
         }
+		return [$items,$total];
 	}
 	public function addAdmin($input)
 	{

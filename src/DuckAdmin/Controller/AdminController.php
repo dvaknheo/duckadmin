@@ -47,7 +47,10 @@ class AdminController extends Base
     public function select()
     {
 		$input = C::REQUEST();
-		[$data, $count] = AdminBusiness::G()->showAdmin($input);
+		$dataLimitField = 'id';
+		$dataLimit = 'auth';
+		$admin_id = AdminAction::G()->getCurrentAdmin()['id'];
+		[$data, $count] = AdminBusiness::G()->showAdmins($admin_id,$input,$dataLimit,$dataLimitField);
         return C::Success($data,$count);
     }
 
@@ -62,9 +65,9 @@ class AdminController extends Base
         if (!C::POST()) {
 			return C::Show([],'admin/insert');
 		}
-        C::ThrowOn(true,"No Impelement");
-		$post = C::POST();
-		$admin = AdminBusiness::G()->addAdmin($post);
+		$input = C::POST();
+		$admin_id = AdminAction::G()->getCurrentAdmin()['id'];
+		$admin = AdminBusiness::G()->addAdmin($input);
 		return C::Success(['id' => $admin_id]);
     }
 
