@@ -10,6 +10,8 @@ namespace DuckAdmin\Model;
  */
 class AdminRoleModel extends BaseModel
 {
+	public $table_name = 'wa_admin_roles';
+
     public function getRoles($admin_id)
     {
 		$sql="select role_id from wa_admin_roles where id = ?";
@@ -30,5 +32,39 @@ class AdminRoleModel extends BaseModel
             $roles_map[$role['admin_id']][] = $role['role_id'];
         }
 		return $roles_map;
+	}
+	public function renew($admin_id,$role_ids)
+	{
+		$sql = "delete from `wa_admin_roles` where admin_id = ?";
+		static::Db()->execute($sql,$admin_id);
+		foreach ($role_ids as $id) {
+			$sql = "insert into `wa_admin_roles` (`role_id`, `admin_id`) values (?,?)";
+			$data = static::Db()->execute($sql,1,$admin_id);
+		}
+	}
+	public function deleteByAdminIds($ids)
+	{
+		$sql ="delete form wa_admin_roles where admin_id in(".static::Db()->quoteIn($ids).")";
+		static::execute($sql);
+	}
+	public function updateAdminRole($admin_id, $exist_role_ids, $role_ids)
+	{
+			// 删除账户角色
+			$delete_ids = array_diff($exist_role_ids, $role_ids);
+			AdminRole::whereIn('role_id', $delete_ids)->where('admin_id', $admin_id)->delete();
+			// 添加账户角色
+			$add_ids = array_diff($role_ids, $exist_role_ids);
+			foreach ($add_ids as $role_id) {
+				$admin_role = new AdminRole;
+				$admin_role->admin_id = $admin_id;
+				$admin_role->role_id = $role_id;
+				$admin_role->save();
+			}
+	}
+	public function rolesByAdmin($admin_id)
+	{
+		$sql="select role_id from wa_admin_roles where admin_id = ?";
+		$data = static::Db()->fetchAll($sql,$admin_id);
+		return array_column($data,'role_id');
 	}
 }

@@ -103,7 +103,7 @@ class RoleBusiness extends BaseBusiness
         }
         $this->doDelete($ids);
 	}
-	public function tree()
+	public function tree($role_id)
 	{
         if (empty($role_id)) {
             return [];
@@ -111,27 +111,16 @@ class RoleBusiness extends BaseBusiness
         if (!$this->isSupperAdmin() && !in_array($role_id, $this->getScopeRoleIds(true))) {
             static::ThrowOn(true,'角色组超出权限范围',1);
         }
-        $rule_id_string = Role::where('id', $role_id)->value('rules');
 		
+        $rule_id_string = Role::where('id', $role_id)->value('rules');
         if ($rule_id_string === '') {
             return [];
         }
-        $include = [];
-        if ($rule_id_string !== '*') {
-            $include = explode(',', $rule_id_string);
-        }
+        
+		$include =($rule_id_string !== '*') ? explode(',', $rule_id_string) : [];
+        
 		
-        $rules = Rule::get();  // =================>model;
-        $items = [];
-        foreach ($rules as $item) {
-            $items[] = [
-                'name' => $item['title'] ?? $item['name'] ?? $item['id'],
-                'value' => (string)$item['id'],
-                'id' => $item['id'],
-                'pid' => $item['pid'],
-            ];
-        }
-		
+        $items = RuleModel::G()->allRulesForTree();		
         $tree = new Tree($items);
         return [$tree->getTree($include)];
 	}

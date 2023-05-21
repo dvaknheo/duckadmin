@@ -18,7 +18,7 @@ class RuleModel extends BaseModel
 	}
 	public function allRules()
 	{
-		$sql= "select * from wa_rules  order by weight desc";
+		$sql= "select * from wa_rules order by weight desc";
 		$data = static::Db()->fetchAll($sql);
 		return $data;
 	}
@@ -42,6 +42,23 @@ class RuleModel extends BaseModel
 		$data = static::Db()->fetchColumn($sql);
 		return $data;
 	}
+	public function allRulesForTree()
+	{
+		$sql= "select * from wa_rules";
+		$rules = static::Db()->fetchAll($sql);
+		
+        $items = [];
+        foreach ($rules as $item) {
+            $items[] = [
+                'name' => $item['title'] ?? $item['name'] ?? $item['id'],
+                'value' => (string)$item['id'],
+                'id' => $item['id'],
+                'pid' => $item['pid'],
+            ];
+        }
+		return $items;
+	}
+	///////////////
     public function dropByIds($delete_ids)
 	{
 		$sql= "delete from wa_rules where in (" . static::Db()->quoteIn($delete_ids).')';
@@ -125,6 +142,8 @@ class RuleModel extends BaseModel
         }
     }
 	////////////////
+	
+	
 	///////////////////////
     /**
      * 获取菜单中某个(些)字段的值

@@ -146,4 +146,67 @@ class BaseBusiness extends ProjectBusiness
     {
         return [$items, $total];
     }
+	///////////////////////////////////////////////
+	    /**
+     * 插入前置方法
+     * @param Request $request
+     * @return array
+     * @throws BusinessException
+     */
+    protected function insertInput($input): array
+    {
+        $data = $this->inputFilter($input);
+		
+        $password_filed = 'password';
+        if (isset($data[$password_filed])) {
+            $data[$password_filed] = Util::passwordHash($data[$password_filed]);
+        }
+
+        if (!Auth::isSupperAdmin() && $this->dataLimit) {
+            if (!empty($data[$this->dataLimitField])) {
+                $admin_id = $data[$this->dataLimitField];
+                if (!in_array($admin_id, Auth::getScopeAdminIds(true))) {
+                    throw new BusinessException('无数据权限');
+                }
+            }
+        }
+        return $data;
+    }
+    /**
+     * 对用户输入表单过滤
+     * @param array $data
+     * @return array
+     * @throws BusinessException
+     */
+    protected function inputFilter(array $data): array
+    {
+		//这个要移动出去
+        $table = config('plugin.admin.database.connections.mysql.prefix') . $this->model->getTable();
+        $allow_column = $this->model->getConnection()->select("desc `$table`");
+        if (!$allow_column) {
+            throw new BusinessException('表不存在', 2);
+        }
+        $columns = array_column($allow_column, 'Type', 'Field');
+        foreach ($data as $col => $item) {
+            if (!isset($columns[$col])) {
+                unset($data[$col]);
+                continue;
+            }
+            // 非字符串类型传空则为null
+            if ($item === '' && strpos(strtolower($columns[$col]), 'varchar') === false && strpos(strtolower($columns[$col]), 'text') === false) {
+                $data[$col] = null;
+            }
+            if (is_array($item)) {
+                $data[$col] = implode(',', $item);
+            }
+        }
+        if (empty($data['created_at'])) {
+            unset($data['created_at']);
+        }
+        if (empty($data['updated_at'])) {
+            unset($data['updated_at']);
+        }
+        return $data;
+    }
+
 }

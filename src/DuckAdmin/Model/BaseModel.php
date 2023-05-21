@@ -71,6 +71,42 @@ class BaseModel
         return [$items, $total];
     }
 	
+	/**
+     * 对用户输入表单过滤
+     * @param array $data
+     * @return array
+     * @throws BusinessException
+     */
+    public function inputFilter(array $data): array
+    {
+        $allow_column = self::Db()->fetchAll("desc `".$this->table()."`");
+        if (!$allow_column) {
+            throw new \Exception('表不存在', 2); // 这里应该搞个错误类
+        }
+        $columns = array_column($allow_column, 'Type', 'Field');
+        foreach ($data as $col => $item) {
+            if (!isset($columns[$col])) {
+                unset($data[$col]);
+                continue;
+            }
+            // 非字符串类型传空则为null
+            if ($item === '' && strpos(strtolower($columns[$col]), 'varchar') === false && strpos(strtolower($columns[$col]), 'text') === false) {
+                $data[$col] = null;
+            }
+            if (is_array($item)) {
+                $data[$col] = implode(',', $item);
+            }
+        }
+        if (empty($data['created_at'])) {
+            unset($data['created_at']);
+        }
+        if (empty($data['updated_at'])) {
+            unset($data['updated_at']);
+        }
+        return $data;
+    }
+
+
     
 	/////////////////////// 以下代码没用上///////////////////////////
     public function getList(int $page = 1, int $page_size = 10)
@@ -121,4 +157,5 @@ class BaseModel
         $ret = self::Db()->execute($sql, $date, $id);
         return $ret;
     }
+	
 }

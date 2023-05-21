@@ -176,24 +176,9 @@ class AccountBusiness extends BaseBusiness
 		}
 		return true;
     }
-	public function update($data)
+	public function update($admin_id, $data)
 	{
-        $allow_column = [
-            'nickname' => 'nickname',
-            'avatar' => 'avatar',
-            'email' => 'email',
-            'mobile' => 'mobile',
-        ];
-
-        $update_data = [];
-        foreach ($allow_column as $key => $column) {
-            if (isset($data[$key])) {
-                $update_data[$column] = $data[$key];
-            }
-        }
-		
-        Admin::where('id', admin_id())->update($update_data);
-        $admin = admin();
+		$update_data = AdminModel::G()->updateAdmin($admin_id,$data);
 		
         foreach ($update_data as $key => $value) {
             $admin[$key] = $value;
@@ -205,15 +190,8 @@ class AccountBusiness extends BaseBusiness
 		static::ThrowOn(!$password, '密码不能为空',2);
 		static::ThrowOn($password !== $password_cofirm, '两次密码输入不一致',3);
 		
-        $hash = Admin::find($admin_id)['password'];
-
-        if (!Util::passwordVerify($old_password, $hash)) {
-			static::ThrowOn(true, '原始密码不正确', 1);
-        }
-		
-        $update_data = [
-            'password' => Util::passwordHash($password)
-        ];
-        Admin::where('id', $admin_id)->update($update_data);
+		$flag = AdminModel::G()->checkPasword($old_password);
+		static::ThrowOn(!$flag, '原始密码不正确', 1);
+        AdminModel::G()->updateAdminPassword($admin_id, $$password);
 	}
 }

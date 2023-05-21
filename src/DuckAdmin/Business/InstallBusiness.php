@@ -214,7 +214,8 @@ class InstallBusiness extends BaseBusiness
     }
 	protected function checkDatabase()
 	{
-		return true;
+		$output = App::G()->options['path'].'config/database.php';
+		return is_file($output);
 		//return !is_file($config_file = base_path() . '/plugin/admin/config/database.php');
 	}
 

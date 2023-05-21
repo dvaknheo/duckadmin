@@ -49,4 +49,61 @@ class AdminModel extends BaseModel
 	{
 		return static::Db()->fetchColumn("select count(*) as c from wa_admins");
 	}
+	public function prepareInsert(array $data)
+	{
+		static::Throw(true,'prepareInsert');
+	}
+	public function addAdmin(array $data)
+    {
+		//$data['`key`']=$data['key'];
+		//unset($data['key']);
+		
+		$time = date('Y-m-d H:i:s');
+		$data['created_at']=$time;
+		$data['updated_at']=$time;
+		static::Db()->insertData($this->table(),$data);
+        return 	static::Db()->lastInsertId();
+    }
+	public function inputFilter(array $data): array
+	{
+		$data = parent::inputFilter($data);
+		$password_filed = 'password';
+        if (isset($data[$password_filed])) {
+            $data[$password_filed] = $this->passwordHash($data[$password_filed]);
+        }
+		return $data
+	}
+	
+	public function updateAdmin($admin_id, $data)
+	{
+		$allow_column = [
+            'nickname' => 'nickname',
+            'avatar' => 'avatar',
+            'email' => 'email',
+            'mobile' => 'mobile',
+        ];
+
+        $update_data = [];
+        foreach ($allow_column as $key => $column) {
+            if (isset($data[$key])) {
+                $update_data[$column] = $data[$key];
+            }
+        }
+		static::Db()->updateData($this->table(),$update_data,$admin_id, 'id');
+		return $update_data;
+	}
+	public function checkPassword($admin_id, $password)
+	{
+		static::ThrowOn(true ,"No Impelement ");
+	}
+	public function changePassword($admin_id,$password)
+	{
+		static::ThrowOn(true ,"No Impelement ");
+	}
+	public function deleteByIds($ids)
+	{
+		$sql ="delete form wa_admins where id in(".static::Db()->quoteIn($ids).")";
+		static::execute($sql);
+	}
+
 }
