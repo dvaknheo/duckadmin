@@ -130,8 +130,8 @@ class BaseBusiness extends ProjectBusiness
         $formatted_items = [];
         foreach ($items as $item) {
             $formatted_items[] = [
-                'name' => $item->title ?? $item->name ?? $item->id,
-                'value' => $item->id
+                'name' => $item['title'] ?? $item['name'] ?? $item['id'],
+                'value' => $item['id']
             ];
         }
         return [$formatted_items,null];

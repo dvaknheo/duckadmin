@@ -27,7 +27,7 @@ class ConfigController extends ProjectController
      */
     public function index()
     {
-		C::Show([],'config/index');
+		return C::Show([],'config/index');
     }
 
     /**

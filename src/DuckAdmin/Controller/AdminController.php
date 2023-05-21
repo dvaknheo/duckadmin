@@ -28,7 +28,7 @@ class AdminController extends Base
      */
     public function index()
     {
-        C::Show([],'admin/index');
+        return C::Show([],'admin/index');
     }
 
     /**
@@ -53,13 +53,12 @@ class AdminController extends Base
     public function insert()
     {
         if (!C::POST()) {
-			C::Show([],'admin/insert');
-			return;
+			return C::Show([],'admin/insert');
 		}
         C::ThrowOn(true,"No Impelement");
 		$post = C::POST();
 		$admin = AdminBusiness::G()->addAdmin($post);
-		C::Success(['id' => $admin_id]);
+		return C::Success(['id' => $admin_id]);
     }
 
     /**
@@ -71,8 +70,7 @@ class AdminController extends Base
     public function update()
     {
 		if (!C::POST()) {
-			C::Show([],'admin/update');
-			return;
+			return C::Show([],'admin/update');
 		}
         C::ThrowOn(true,"No Impelement");
 

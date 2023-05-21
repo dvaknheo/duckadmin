@@ -32,7 +32,7 @@ class AccountController extends Base
      */
     public function index()
     {
-		C::Show([],'account/index');
+		return C::Show([],'account/index');
     }
 
     /**
@@ -53,7 +53,7 @@ class AccountController extends Base
 		$admin = AccountBusiness::G()->login($username, $password);
 		AdminSession::G()->setCurrentAdmin($admin);
 		
-		C::Success($admin,'登录成功');
+		return C::Success($admin);  // 这里有问题 //'登录成功' 是message 里的，这是个非标准的
 	}
 
     /**
@@ -64,7 +64,7 @@ class AccountController extends Base
     public function logout()
     {
 		AdminSession::G()->setCurrentAdmin([]);
-        C::Success(0);
+        return C::Success(0);
     }
 
     /**
@@ -78,7 +78,7 @@ class AccountController extends Base
 		$data = AccountBusiness::G()->getAccountInfo($admin);
 		//$data['token'] = 'TODO TOKEN';////AdminSession::G()->SessionId();
 		
-		C::Success($data);
+		return C::Success($data);
     }
 
     /**

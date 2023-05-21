@@ -26,7 +26,7 @@ class RoleController extends Base
      */
     public function index()
     {
-        C::Show([],'role/index');
+        return C::Show([],'role/index');
     }
 
     /**
@@ -39,7 +39,7 @@ class RoleController extends Base
     {
 		$id = C::GET('id');
 		$data = RoleBusiness::G()->selectRoles($id);
-		C::Success($data);
+		return C::Success($data);
     }
 
     /**
@@ -51,13 +51,12 @@ class RoleController extends Base
     public function insert()
     {
 		if (!C::POST()) {
-			C::Show([],'role/insert');
-			return;
+			return C::Show([],'role/insert');
 		}
         C::ThrowOn(true,"No Impelement");
 		$post = C::POST();
 		$id = RoleBusiness::G()->insertRole($post);
-		C::Success(['id' => $id]);
+		return C::Success(['id' => $id]);
 
     }
 
@@ -70,13 +69,12 @@ class RoleController extends Base
     public function update()
     {
 		if (!C::POST()) {
-			C::Show([],'role/update');
-			return;
+			return C::Show([],'role/update');
 		}
 		C::ThrowOn(true,"No Impelement");
 		$post = C::POST();
 		$id = RoleBusiness::G()->updateRole($post);
-		C::Success(['id' => $id]);
+		return C::Success(['id' => $id]);
     }
 
     /**
@@ -103,6 +101,6 @@ class RoleController extends Base
 		C::ThrowOn(true,"No Impelement");
         $role_id = C::GET('id');
 		$tree = RoleBusiness::G()->tree($role_id);
-        C::Success($tree);
+        return C::Success($tree);
     }
 }

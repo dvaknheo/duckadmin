@@ -33,21 +33,19 @@ class MainController extends Base
     {
 		$isInstalled = InstallBusiness::G()->IsInstalled();
         if (!$isInstalled) {
-			C::Show([], 'index/install');
-			return;
+			return C::Show([], 'index/install');
         }
         $admin =  AdminSession::G()->getCurrentAdmin();
         if (!$admin) {
-			C::Show([], 'account/login');
-            return ;
+			return C::Show([], 'account/login');
         }		
-        C::Show([], 'index/index');
+        return C::Show([], 'index/index');
     }
 	public function dashboard()
 	{
 		var_dump(DATE(DATE_ATOM));return;
 		$dashboard=[];//AllInOnBusiness::G()->getDashboard();
-		C::Show($dashboard, 'index/dashboard');
+		return C::Show($dashboard, 'index/dashboard');
 	}
 	public function test()
 	{

@@ -31,7 +31,6 @@ class Base extends ProjectController
     public function __construct()
     {
 		$this->init();	
-		return;
     }
 	protected function init()
 	{

@@ -28,7 +28,7 @@ class RuleController extends Base
      */
     public function index()
     {
-        C::Show([], 'rule/index');
+        return C::Show([], 'rule/index');
     }
 
     /**
@@ -43,7 +43,7 @@ class RuleController extends Base
 		
 		// 本类的状态也要传过去
 		[$data,$total] = RuleBusiness::G()->selectRules($data); // 结果还是一股脑把参数传进去了
-		C::Success($data,$total);
+		return C::Success($data,$total);
     }
 
     /**
@@ -59,7 +59,7 @@ class RuleController extends Base
 		$admin = AdminAction::G()->getCurrentAdmin();
 		$data = RuleBusiness::G()->get($admin['roles'],$types);
 		
-		C::Success($data);
+		return C::Success($data);
     }
     /**
      * 获取权限
@@ -70,7 +70,7 @@ class RuleController extends Base
     {
 		$admin = AdminAction::G()->getCurrentAdmin();
         $permissions = RuleBusiness::G()->permission($admin['roles']);
-        C::Success($permissions);
+        return C::Success($permissions);
 	}
     /**
      * 添加
@@ -81,11 +81,11 @@ class RuleController extends Base
     public function insert()
     {
         if (!C::POST()) {
-            C::Show([], 'rule/insert');
+            return C::Show([], 'rule/insert');
         }
 
 		RuleBusiness::G()->insertRule();
-        C::Success();
+        return C::Success();
     }
 
     /**
@@ -97,11 +97,11 @@ class RuleController extends Base
     public function update()
     {
 		if (!C::POST()) {
-            C::Show([], 'rule/update');
+            return C::Show([], 'rule/update');
         }
 		
 		RuleBusiness::G()->updateRule();
-        C::Success();
+        return C::Success();
     }
     
     /**
@@ -112,7 +112,7 @@ class RuleController extends Base
     public function delete()
     {
 		RuleBusiness::G()->deleteRule();
-        C::Success();
+        return C::Success();
     }
 
 }
