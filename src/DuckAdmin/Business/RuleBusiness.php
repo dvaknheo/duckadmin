@@ -97,6 +97,12 @@ class RuleBusiness extends BaseBusiness
         return false;
     }
 	/////////////////////////////
+	
+	public function selectRules()
+	{
+		$this->syncRules();
+        return parent::select($request);
+	}
 	/**
      * 根据类同步规则到数据库
      * @return void
@@ -151,5 +157,84 @@ class RuleBusiness extends BaseBusiness
             //Rule::whereIn('key', $menu_names_to_del)->delete();
         }
     }
-
+	
+	///////////////////////////////
+	public function permission($roles)
+	{
+		$rules = RuleBusiness::G()->getRules($roles);
+        if (in_array('*', $rules)) {
+			return ['*'];
+        }
+		
+        $keys = Rule::whereIn('id', $rules)->pluck('key');
+        $permissions = [];
+        foreach ($keys as $key) {
+            if (!$key = Util::controllerToUrlPath($key)) {
+                continue;
+            }
+            $code = str_replace('/', '.', trim($key, '/'));
+            $permissions[] = $code;
+        }
+	}
+	
+	public function insertRule()
+	{
+        $data = $this->insertInput($request);
+        if (empty($data['type'])) {
+            $data['type'] = strpos($data['key'], '\\') ? 1 : 0;
+        }
+        $data['key'] = str_replace('\\\\', '\\', $data['key']);
+        $key = $data['key'] ?? '';
+        if ($this->model->where('key', $key)->first()) {
+            return $this->json(1, "菜单标识 $key 已经存在");
+        }
+        $data['pid'] = empty($data['pid']) ? 0 : $data['pid'];
+        $this->doInsert($data);
+	}
+	public function updateRule()
+	{
+        [$id, $data] = $this->updateInput($request);
+        if (!$row = $this->model->find($id)) {
+            return $this->json(2, '记录不存在');
+        }
+        if (isset($data['pid'])) {
+            $data['pid'] = $data['pid'] ?: 0;
+            if ($data['pid'] == $row['id']) {
+                return $this->json(2, '不能将自己设置为上级菜单');
+            }
+        }
+        if (isset($data['key'])) {
+            $data['key'] = str_replace('\\\\', '\\', $data['key']);
+        }
+        $this->doUpdate($id, $data);
+	}
+	public function deleteRule()
+	{
+        $ids = $this->deleteInput($request);
+        // 子规则一起删除
+        $delete_ids = $children_ids = $ids;
+        while($children_ids) {
+            $children_ids = $this->model->whereIn('pid', $children_ids)->pluck('id')->toArray();
+            $delete_ids = array_merge($delete_ids, $children_ids);
+        }
+        $this->doDelete($delete_ids);
+	}
+	/**
+     * 删除前置方法
+     * @param Request $request
+     * @return array
+     * @throws BusinessException
+     */
+    protected function deleteInput(Request $request): array
+    {		
+		$primary_key = $this->model->getKeyName();
+        $ids = (array)$request->post($primary_key, []);
+        if (!Auth::isSupperAdmin() && $this->dataLimit) {
+            $admin_ids = $this->model->where($primary_key, $ids)->pluck($this->dataLimitField)->toArray();
+            if (array_diff($admin_ids, Auth::getScopeAdminIds(true))) {
+                throw new BusinessException('无数据权限');
+            }
+        }
+        return $ids;
+    }
 }

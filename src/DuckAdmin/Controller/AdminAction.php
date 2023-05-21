@@ -58,7 +58,7 @@ class AdminAction extends ProjectAction
         return static::ExitJson(['code' => $code, 'data' => $data, 'msg' => $msg]);
     }
 	
-	public static function Success($data)
+	public static function Success($data = [])
 	{
 		return static::ExitJson(['code' => 0, 'data' => $data, 'msg' => 'ok']);
 	}

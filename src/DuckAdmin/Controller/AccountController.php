@@ -48,13 +48,15 @@ class AccountController extends Base
         $captcha = C::Post('captcha');
 		
 		try{
-			$flag = CaptchaAction::G()->doCheckCaptcha($captcha);
-			C::ThrowOn(!$flag, '验证码错误',1);
-			
-			$admin = AccountBusiness::G()->login($username, $password);
-			AdminSession::G()->setCurrentAdmin($admin);
-			
-			C::Success($admin,'登录成功');
+		
+		$flag = CaptchaAction::G()->doCheckCaptcha($captcha);
+		C::ThrowOn(!$flag, '验证码错误',1);
+		
+		$admin = AccountBusiness::G()->login($username, $password);
+		AdminSession::G()->setCurrentAdmin($admin);
+		
+		C::Success($admin,'登录成功');
+		
 		}catch(\Throwable $ex){
 			C::json($ex->getCode(), $ex->getMessage(), []);
 		}
@@ -80,7 +82,7 @@ class AccountController extends Base
     {
 		$admin = AdminSession::G()->getCurrentAdmin();
 		$data = AccountBusiness::G()->getAccountInfo($admin);
-		$data['token'] = 'TODO TOKEN';////AdminSession::G()->SessionId();
+		//$data['token'] = 'TODO TOKEN';////AdminSession::G()->SessionId();
 		
 		C::Success($data);
     }
@@ -92,7 +94,12 @@ class AccountController extends Base
      */
     public function update()
     {
-		C::ThrowOn(true,"No Impelement");
+        $data = C::POST();
+		
+		$admin = AccountBusiness::G()->update($data);
+        AdminSession::G()->setCurrentAdmin($admin);
+		
+        C::Sucess();
     }
 
     /**
@@ -102,25 +109,12 @@ class AccountController extends Base
      */
     public function password()
     {
-		C::ThrowOn(true,"No Impelement");
-        $password = $request->post('password');
-		$request->post('password_confirm');
-		$request->post('old_password');
+        $password = C::POST('password');
+		$password_confirm = C::POST('password_confirm');
+		$old_password = C::POST('old_password');
 		
-        $hash = Admin::find(admin_id())['password'];
-        if (!$password) {
-            return $this->json(2, '密码不能为空');
-        }
-        if ($request->post('password_confirm') !== $password) {
-            return $this->json(3, '两次密码输入不一致');
-        }
-        if (!Util::passwordVerify($request->post('old_password'), $hash)) {
-            return $this->json(1, '原始密码不正确');
-        }
-        $update_data = [
-            'password' => Util::passwordHash($password)
-        ];
-        Admin::where('id', admin_id())->update($update_data);
+		AccountBusiness::G()->changePassword($old_password, $password, $password_confirm );
+		C::Sucess();
     }
     /**
      * 验证码

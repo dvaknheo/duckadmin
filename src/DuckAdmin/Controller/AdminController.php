@@ -14,22 +14,18 @@ class AdminController extends Base
      */
     protected $noNeedAuth = ['select'];
 
-    /**
-     * @var Admin
-     */
-    protected $model = null;
 
     /**
      * 开启auth数据限制
      * @var string
      */
-    protected $dataLimit = 'auth';
+    protected $dataLimit = 'auth'; //TODO 了解并删除
 
     /**
      * 以id为数据限制字段
      * @var string
      */
-    protected $dataLimitField = 'id';
+    protected $dataLimitField = 'id'; //TODO 了解并删除
 
     /**
      * 浏览
@@ -48,27 +44,9 @@ class AdminController extends Base
      */
     public function select()
     {
-        C::ThrowOn(true,"No Impelement");
-        [$where, $format, $limit, $field, $order] = $this->selectInput($request);
-        $query = $this->doSelect($where, $field, $order);
-        if ($format === 'select') {
-            return $this->formatSelect($query->get());
-        }
-        $paginator = $query->paginate($limit);
-        $items = $paginator->items();
-        $admin_ids = array_column($items, 'id');
-        $roles = AdminRole::whereIn('admin_id', $admin_ids)->get();
-        $roles_map = [];
-        foreach ($roles as $role) {
-            $roles_map[$role['admin_id']][] = $role['role_id'];
-        }
-        $login_admin_id = admin_id();
-        foreach ($items as $index => $item) {
-            $admin_id = $item['id'];
-            $items[$index]['roles'] = isset($roles_map[$admin_id]) ? implode(',', $roles_map[$admin_id]) : '';
-            $items[$index]['show_toolbar'] = $admin_id != $login_admin_id;
-        }
-        return json(['code' => 0, 'msg' => 'ok', 'count' => $paginator->total(), 'data' => $items]);
+        C::ThrowOn(true, "No Impelement");
+		[$count, $data] = AdminBusiness::G()->showAdmin($post);
+        C::ExitJson(['code' => 0, 'msg' => 'ok', 'count' => $count, 'data' => $data]);
     }
 
     /**
@@ -79,28 +57,14 @@ class AdminController extends Base
      */
     public function insert()
     {
+        if (!C::POST()) {
+			C::Show([],'admin/insert');
+			return;
+		}
         C::ThrowOn(true,"No Impelement");
-        if ($request->method() === 'POST') {
-            $data = $this->insertInput($request);
-            $admin_id = $this->doInsert($data);
-            $role_ids = $request->post('roles');
-            $role_ids = $role_ids ? explode(',', $role_ids) : [];
-            if (!$role_ids) {
-                return $this->json(1, '至少选择一个角色组');
-            }
-            if (!Auth::isSupperAdmin() && array_diff($role_ids, Auth::getScopeRoleIds())) {
-                return $this->json(1, '角色超出权限范围');
-            }
-            AdminRole::where('admin_id', $admin_id)->delete();
-            foreach ($role_ids as $id) {
-                $admin_role = new AdminRole;
-                $admin_role->admin_id = $admin_id;
-                $admin_role->role_id = $id;
-                $admin_role->save();
-            }
-            return $this->json(0, 'ok', ['id' => $admin_id]);
-        }
-        return view('admin/insert');
+		$post = C::POST();
+		$admin = AdminBusiness::G()->addAdmin($post);
+		C::Success(['id' => $admin_id]);
     }
 
     /**
@@ -111,56 +75,14 @@ class AdminController extends Base
     */
     public function update()
     {
+		if (!C::POST()) {
+			C::Show([],'admin/update');
+			return;
+		}
         C::ThrowOn(true,"No Impelement");
-        if ($request->method() === 'POST') {
 
-            [$id, $data] = $this->updateInput($request);
-            $admin_id = $request->post('id');
-            if (!$admin_id) {
-                return $this->json(1, '缺少参数');
-            }
-
-            // 不能禁用自己
-            if (isset($data['status']) && $data['status'] == 1 && $id == admin_id()) {
-                return $this->json(1, '不能禁用自己');
-            }
-
-            // 需要更新角色
-            $role_ids = $request->post('roles');
-            if ($role_ids !== null) {
-                if (!$role_ids) {
-                    return $this->json(1, '至少选择一个角色组');
-                }
-                $role_ids = explode(',', $role_ids);
-
-                $is_supper_admin = Auth::isSupperAdmin();
-                $exist_role_ids = AdminRole::where('admin_id', $admin_id)->pluck('role_id')->toArray();
-                $scope_role_ids = Auth::getScopeRoleIds();
-                if (!$is_supper_admin && !array_intersect($exist_role_ids, $scope_role_ids)) {
-                    return $this->json(1, '无权限更改该记录');
-                }
-                if (!$is_supper_admin && array_diff($role_ids, $scope_role_ids)) {
-                    return $this->json(1, '角色超出权限范围');
-                }
-
-                // 删除账户角色
-                $delete_ids = array_diff($exist_role_ids, $role_ids);
-                AdminRole::whereIn('role_id', $delete_ids)->where('admin_id', $admin_id)->delete();
-                // 添加账户角色
-                $add_ids = array_diff($role_ids, $exist_role_ids);
-                foreach ($add_ids as $role_id) {
-                    $admin_role = new AdminRole;
-                    $admin_role->admin_id = $admin_id;
-                    $admin_role->role_id = $role_id;
-                    $admin_role->save();
-                }
-            }
-
-            $this->doUpdate($id, $data);
-            return $this->json(0);
-        }
-
-        return view('admin/update');
+		$post = C::POST();
+		AdminBusiness::G()->updateAdmin($post);
     }
 
     /**
@@ -170,22 +92,8 @@ class AdminController extends Base
      */
     public function delete()
     {
-        C::ThrowOn(true,"No Impelement");
-		$primary_key = $this->model->getKeyName();
-        $ids = $request->post($primary_key);
-        if (!$ids) {
-            return $this->json(0);
-        }
-        $ids = (array)$ids;
-        if (in_array(admin_id(), $ids)) {
-            return $this->json(1, '不能删除自己');
-        }
-        if (!Auth::isSupperAdmin() && array_diff($ids, Auth::getScopeAdminIds())) {
-            return $this->json(1, '无数据权限');
-        }
-        $this->model->whereIn($primary_key, $ids)->delete();
-        AdminRole::whereIn('admin_id', $ids)->delete();
-        return $this->json(0);
+		$post = C::POST();
+		AdminBusiness::G()->deleteAdmin($post);
     }
 
 }

@@ -39,10 +39,11 @@ class RuleController extends Base
      */
     public function select()
     {
-		$this->syncRules();
-        return parent::select($request);
-		
         C::ThrowOn(true,"No Impelement");
+		
+		$data = RuleBusiness::G()->selectRules();
+        
+		C::Success($data);
     }
 
     /**
@@ -50,7 +51,7 @@ class RuleController extends Base
      * @param Request $request
      * @return Response
      */
-    function get()
+    public function get()
     {
 		$types = C::GET('type', '0,1');
         $types = is_string($types) ? explode(',', $types) : [0, 1];
@@ -59,9 +60,7 @@ class RuleController extends Base
 		$data = RuleBusiness::G()->get($admin['roles'],$types);
 		
 		C::Success($data);
-
     }
-
     /**
      * 获取权限
      * @param Request $request
@@ -70,25 +69,9 @@ class RuleController extends Base
     public function permission()
     {
 		$admin = AdminAction::G()->getCurrentAdmin();
-        $rules = RuleBusiness::G()->getRules($admin['roles']); //
-        if (in_array('*', $rules)) {
-			C::Success(['*']);
-            return;
-        }
-		C::ThrowOn(true,"No Impelement");
-		
-        $keys = Rule::whereIn('id', $rules)->pluck('key');
-        $permissions = [];
-        foreach ($keys as $key) {
-            if (!$key = Util::controllerToUrlPath($key)) {
-                continue;
-            }
-            $code = str_replace('/', '.', trim($key, '/'));
-            $permissions[] = $code;
-        }
-        return $this->json(0, 'ok', $permissions);    }
-
-
+        $permissions = RuleBusiness::G()->permissions($admin['roles']);
+        C::Success($permissions);
+	}
     /**
      * 添加
      * @param Request $request
@@ -97,7 +80,12 @@ class RuleController extends Base
      */
     public function insert()
     {
-		C::ThrowOn(true,"No Impelement");
+        if (!C::POST()) {
+            C::Show([], 'rule/insert');
+        }
+
+		RuleBusiness::G()->insertRule();
+        C::Success();
     }
 
     /**
@@ -108,7 +96,12 @@ class RuleController extends Base
      */
     public function update()
     {
-		C::ThrowOn(true,"No Impelement");
+		if (!C::POST()) {
+            C::Show([], 'rule/update');
+        }
+		
+		RuleBusiness::G()->updateRule();
+        C::Success();
     }
     
     /**
@@ -118,6 +111,8 @@ class RuleController extends Base
      */
     public function delete()
     {
-		C::ThrowOn(true,"No Impelement");
+		RuleBusiness::G()->deleteRule();
+        C::Success();
     }
+
 }

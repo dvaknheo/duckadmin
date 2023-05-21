@@ -146,11 +146,11 @@ class AccountBusiness extends BaseBusiness
 			}
 			// 当前管理员无角色
 			$roles = $admin['roles'];
-			static::ThrowOn(!$roles, $msg = '无权限', 2);
+			static::ThrowOn(!$roles,  '无权限', 2);
 
 			// 角色没有规则
 			$rule_ids = RoleModel::G()->getRules($roles);
-			static::ThrowOn(!$rule_ids, $msg = '无权限', 2);
+			static::ThrowOn(!$rule_ids,  '无权限', 2);
 			
 			// 超级管理员
 			if (in_array('*', $rule_ids)){
@@ -160,12 +160,12 @@ class AccountBusiness extends BaseBusiness
 			// 如果action为index，规则里有任意一个以$controller开头的权限即可
 			if (strtolower($action) === 'index') {
 				$rule = RuleModel::G()->checkWildRules($rule_ids,$controller,$action);
-				static::ThrowOn(!$rule, $msg = '无权限', 2);
+				static::ThrowOn(!$rule, '无权限', 2);
 				return true;
 			}else{
 				// 查询是否有当前控制器的规则
 				RuleModel::G()->checkRules($rule_ids,$controller,$action);
-				static::ThrowOn(!$rule, $msg = '无权限', 2);
+				static::ThrowOn(!$rule, '无权限', 2);
 				return true;
 			}
 		}catch(\Exception $ex){
@@ -176,5 +176,45 @@ class AccountBusiness extends BaseBusiness
 		}
 		return true;
     }
+	public function update($data)
+	{
+        $allow_column = [
+            'nickname' => 'nickname',
+            'avatar' => 'avatar',
+            'email' => 'email',
+            'mobile' => 'mobile',
+        ];
 
+        $update_data = [];
+        foreach ($allow_column as $key => $column) {
+            if (isset($data[$key])) {
+                $update_data[$column] = $data[$key];
+            }
+        }
+		
+        Admin::where('id', admin_id())->update($update_data);
+        $admin = admin();
+		
+        foreach ($update_data as $key => $value) {
+            $admin[$key] = $value;
+        }
+		return $admin;
+	}
+	public function changePassword($old_password, $password, $password_cofirm)
+	{
+		static::ThrowOn(!$password, '密码不能为空',2);
+		static::ThrowOn($password !== $password_cofirm, '两次密码输入不一致',3);
+		
+        $hash = Admin::find(admin_id())['password'];
+
+		
+        if (!Util::passwordVerify($request->post('old_password'), $hash)) {
+            return $this->json(1, '原始密码不正确');
+        }
+		
+        $update_data = [
+            'password' => Util::passwordHash($password)
+        ];
+        Admin::where('id', admin_id())->update($update_data);
+	}
 }

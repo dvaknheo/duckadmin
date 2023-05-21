@@ -20,18 +20,12 @@ class RoleController extends Base
     protected $noNeedAuth = ['select'];
 
     /**
-     * @var Role
-     */
-    protected $model = null;
-	
-    /**
      * 浏览
      * @return Response
      */
     public function index()
     {
-		C::ThrowOn(true,"No Impelement");
-        //return view('role/index');
+        C::Show([],'role/index');
     }
 
     /**
@@ -43,6 +37,8 @@ class RoleController extends Base
     public function select()
     {
 		C::ThrowOn(true,"No Impelement");
+		$id = $request->get('id');
+		RoleBusiness::G()->selectRoles();
     }
 
     /**
@@ -53,7 +49,15 @@ class RoleController extends Base
      */
     public function insert()
     {
-		C::ThrowOn(true,"No Impelement");
+		if (!C::POST()) {
+			C::Show([],'role/insert');
+			return;
+		}
+        C::ThrowOn(true,"No Impelement");
+		$post = C::POST();
+		$id = RoleBusiness::G()->insertRole($post);
+		C::Success(['id' => $id]);
+
     }
 
     /**
@@ -64,7 +68,14 @@ class RoleController extends Base
      */
     public function update()
     {
+		if (!C::POST()) {
+			C::Show([],'role/update');
+			return;
+		}
 		C::ThrowOn(true,"No Impelement");
+		$post = C::POST();
+		$id = RoleBusiness::G()->updateRole($post);
+		C::Success(['id' => $id]);
     }
 
     /**
@@ -76,6 +87,9 @@ class RoleController extends Base
     public function delete()
     {
 		C::ThrowOn(true,"No Impelement");
+		$post = C::POST();
+		$id = RoleBusiness::G()->deleteRole($post);
+        return $this->json(0);
     }
 
     /**
@@ -86,32 +100,8 @@ class RoleController extends Base
     public function rules()
     {
 		C::ThrowOn(true,"No Impelement");
-        $role_id = $request->get('id');
-        if (empty($role_id)) {
-            return $this->json(0, 'ok', []);
-        }
-        if (!Auth::isSupperAdmin() && !in_array($role_id, Auth::getScopeRoleIds(true))) {
-            return $this->json(1, '角色组超出权限范围');
-        }
-        $rule_id_string = Role::where('id', $role_id)->value('rules');
-        if ($rule_id_string === '') {
-            return $this->json(0, 'ok', []);
-        }
-        $rules = Rule::get();
-        $include = [];
-        if ($rule_id_string !== '*') {
-            $include = explode(',', $rule_id_string);
-        }
-        $items = [];
-        foreach ($rules as $item) {
-            $items[] = [
-                'name' => $item->title ?? $item->name ?? $item->id,
-                'value' => (string)$item->id,
-                'id' => $item->id,
-                'pid' => $item->pid,
-            ];
-        }
-        $tree = new Tree($items);
-        return $this->json(0, 'ok', $tree->getTree($include));
+        $role_id = C::GET('id');
+		$tree = RoleBusiness::G()->tree($role_id);
+        C::Success($tree);
     }
 }
