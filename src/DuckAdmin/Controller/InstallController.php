@@ -40,9 +40,9 @@ class Install extends Base
 		try{
 			InstallBusiness::G()->step1($post);
 		}catch(\Exception $ex){
-			C::ExitJson([$ex->getCode(),$ex->getMessage()]);
+			return C::ExitJson([$ex->getCode(),$ex->getMessage()]);
 		}
-		C::ExitJson(0);
+		return C::ExitJson(0);
     }
 
     /**
@@ -57,9 +57,9 @@ class Install extends Base
 		try{
 			InstallBusiness::G()->step2($username,$password,$password_confirm);
 		}catch(\Exception $ex){
-			C::ExitJson([$ex->getCode(),$ex->getMessage()]);
+			return C::ExitJson([$ex->getCode(),$ex->getMessage()]);
 		}
-		C::ExitJson(0);
+		return C::ExitJson(0);
     }
 
 }

@@ -11,11 +11,11 @@ class AdminBusiness extends BaseBusiness
 
 	public function showAdmin($input)
 	{
-		return [100,[]];
+		return [[],100];
+		
         [$where, $format, $limit, $field, $order] = $this->selectInput($input);//-->一大堆参数要定
 		
         [$items,$total] = AdminModel::G()->doSelect($where, $field, $order);
-		
         if ($format === 'select') {
             return $this->formatSelect($items,$format,$limit);
         }

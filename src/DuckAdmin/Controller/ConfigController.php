@@ -37,7 +37,7 @@ class ConfigController extends ProjectController
     public function get()
     {
 		$data = ConfigBusiness::G()->getDefaultConfig();
-		C::ExitJson($data); //注意这里不能用 success
+		return C::ExitJson($data); //注意这里不能用 success
     }
  
     /**

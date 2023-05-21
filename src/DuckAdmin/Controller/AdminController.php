@@ -16,11 +16,18 @@ class AdminController extends Base
 
 
 
+
+    /**
+     * 开启auth数据限制
+     * @var string
+     */
+    //protected $dataLimit = 'auth';
+
     /**
      * 以id为数据限制字段
      * @var string
      */
-    protected $dataLimitField = 'id'; //TODO 了解并删除
+    //protected $dataLimitField = 'id';
 
     /**
      * 浏览
@@ -39,9 +46,9 @@ class AdminController extends Base
      */
     public function select()
     {
-		$post = C::REQUEST();
-		[$count, $data] = AdminBusiness::G()->showAdmin($post);
-        C::ExitJson(['code' => 0, 'msg' => 'ok', 'count' => $count, 'data' => $data]);
+		$input = C::REQUEST();
+		[$data, $count] = AdminBusiness::G()->showAdmin($input);
+        return C::Success($data,$count);
     }
 
     /**

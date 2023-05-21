@@ -12,6 +12,15 @@ use DuckAdmin\System\ProjectAction;
 
 class AdminAction extends ProjectAction
 {
+	public function initController($class)
+	{
+		AdminAction::G()->assignExceptionHandler(\Exception::class,[AdminAction::class,'OnException']);
+		if(AdminAction::IsJson()){
+		}
+		$controller = $class;
+        $action = AdminAction::getRouteCallingMethod();
+		AdminAction::G()->checkAccess($controller,$action);
+	}
 	/**
 	 * 当前管理员
 	 * @param null|array|string $fields
@@ -80,7 +89,7 @@ class AdminAction extends ProjectAction
 		if($flag){
 			$flag = $this->isOptionsMethod();
 			if($flag){
-				static::Exit('');
+				return static::Exit('');
 			}
 			return;
 		}
@@ -89,9 +98,9 @@ class AdminAction extends ProjectAction
 			static::ExitJson(['code' => $code, 'msg' => $msg, 'type' => 'error']);
 		}
 		if($code == 401){
-			$this->exit401();
+			return $this->exit401();
 		}else if($code == 403){
-			$this->exit403();
+			return $this->exit403();
 		}		
     }
 	protected function exit401()
@@ -118,6 +127,6 @@ EOF;
 		$code = $ex->getCode();
 		$msg = $ex->getMessage();
 		if(!$code){$code = -1;}
-		static::ExitJson(['code' => $code, 'msg' => $msg, 'type' => 'error']);
+		return static::ExitJson(['code' => $code, 'msg' => $msg, 'type' => 'error']);
 	}
 }
