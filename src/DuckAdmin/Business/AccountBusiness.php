@@ -35,13 +35,7 @@ class AccountBusiness extends BaseBusiness
 		
 		return $info;
 	}
-    public function isSupperAdmin(int $admin_id = 0): bool
-    {
-		static::ThrowOn($admin_id==0,'参数错误，请指定管理员');
-		$roles = AdminRoleModel::G()->getRoles($admin_id);
-        $rules = RoleModel::G()->getRules($roles);
-        return RuleModel::G()->isSuper($rules); 
-    }
+
 	public function login($username,$password)
 	{
         static::ThrowOn(!$username, '用户名不能为空',1);
@@ -164,7 +158,7 @@ class AccountBusiness extends BaseBusiness
 				return true;
 			}else{
 				// 查询是否有当前控制器的规则
-				RuleModel::G()->checkRules($rule_ids,$controller,$action);
+				$rule = RuleModel::G()->checkRules($rule_ids,$controller,$action);
 				static::ThrowOn(!$rule, '无权限', 2);
 				return true;
 			}
@@ -192,6 +186,6 @@ class AccountBusiness extends BaseBusiness
 		
 		$flag = AdminModel::G()->checkPasword($old_password);
 		static::ThrowOn(!$flag, '原始密码不正确', 1);
-        AdminModel::G()->updateAdminPassword($admin_id, $$password);
+        AdminModel::G()->updateAdminPassword($admin_id, $password);
 	}
 }

@@ -98,10 +98,11 @@ class RuleBusiness extends BaseBusiness
     }
 	/////////////////////////////
 	
-	public function selectRules($data)
+	public function selectRules(($input, $table, $dataLimit=null, $dataLimitField =null)
 	{
+		//$login_admin_id,
 		//$this->syncRules(); //暂时不同步
-		[$where, $format, $limit, $field, $order] = $this->selectInput($data,RuleModel::G()->table());
+		[$where, $format, $limit, $field, $order] = $this->selectInput($input, RuleModel::G()->table(), $dataLimit, $dataLimitField);
         [$data,$total] = RuleModel::G()->doSelect($where, $field, $order);
         return $this->doFormat($data, $total, $format, $limit);
 		
@@ -166,12 +167,12 @@ class RuleBusiness extends BaseBusiness
 	///////////////////////////////
 	public function permission($roles)
 	{
-		$rules = $this->getRules($roles);
+		$rules = $this->getRules($roles); // 这里要放到 RoleModel里
         if (in_array('*', $rules)) {
 			return ['*'];
         }
 		
-        $keys = Rule::whereIn('id', $rules)->pluck('key');
+        $keys = RuleModel::G()->getKeysByIds($rules);
         $permissions = [];
         foreach ($keys as $key) {
             if (!$key = Util::controllerToUrlPath($key)) {
@@ -183,40 +184,37 @@ class RuleBusiness extends BaseBusiness
 		return $permissions;
 	}
 	
-	public function insertRule()
+	public function insertRule($input)
 	{
-        $data = $this->insertInput($request);
+        $data = $this->insertInput($input);
         if (empty($data['type'])) {
             $data['type'] = strpos($data['key'], '\\') ? 1 : 0;
         }
         $data['key'] = str_replace('\\\\', '\\', $data['key']);
         $key = $data['key'] ?? '';
-        if (Rule::where('key', $key)->first()) {
+        if (RuleModel::G()->findByKey($key)) {
 			static::ThrowOn(true, "菜单标识 $key 已经存在", 1);
         }
         $data['pid'] = empty($data['pid']) ? 0 : $data['pid'];
         $this->doInsert($data);
 	}
-	public function updateRule()
+	public function updateRule($input)
 	{
-        [$id, $data] = $this->updateInput($request);
-		$row = Rule::find($id);
+        [$id, $data] = $this->updateInput($input);
+		$row = RuleModel::G()->findById($id);
 		static::ThrowOn(!$row, '记录不存在',2);
         if (isset($data['pid'])) {
             $data['pid'] = $data['pid'] ?: 0;
             static::ThrowOn($data['pid'] == $row['id'], '不能将自己设置为上级菜单',2);
-            
         }
         if (isset($data['key'])) {
             $data['key'] = str_replace('\\\\', '\\', $data['key']);
         }
         $this->doUpdate($id, $data);
 	}
-	public function deleteRule()
+	public function deleteRule($ids)
 	{
-		$primary_key = Rule::getKeyName();
-        $ids = (array)$request->post($primary_key, []);
-        if (!Auth::isSupperAdmin() && $this->dataLimit) {
+        if (false && !Auth::isSupperAdmin() && $this->dataLimit) {
             $admin_ids = Rule::where($primary_key, $ids)->pluck($this->dataLimitField)->toArray();
             if (array_diff($admin_ids, Auth::getScopeAdminIds(true))) {
                 throw new BusinessException('无数据权限');
@@ -226,9 +224,9 @@ class RuleBusiness extends BaseBusiness
 		// 子规则一起删除
         $delete_ids = $children_ids = $ids;
         while($children_ids) {
-            $children_ids = Rule::whereIn('pid', $children_ids)->pluck('id')->toArray();
+            $children_ids = RuleModel::G()->get_children_ids($children_ids);
             $delete_ids = array_merge($delete_ids, $children_ids);
         }
-        $this->doDelete($delete_ids);
+		RuleModel::G()->deleteByIds($delete_ids);
 	}
 }

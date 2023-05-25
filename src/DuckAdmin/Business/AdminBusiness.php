@@ -19,9 +19,7 @@ class AdminBusiness extends BaseBusiness
         }
 		
 		// 后处理
-        $admin_ids = array_column($items, 'id');
-		$roles_map = AdminRoleModel::G()->getAdminRoles($admin_ids);
-		
+		$roles_map = AdminRoleModel::G()->getAdminRoles(array_column($items, 'id'));
         foreach ($items as $index => $item) {
             $admin_id = $item['id'];
             $items[$index]['roles'] = isset($roles_map[$admin_id]) ? implode(',', $roles_map[$admin_id]) : '';
@@ -34,11 +32,13 @@ class AdminBusiness extends BaseBusiness
 		// 这里要区分操作的 admin_id和得到的 admin_id;
 		$role_ids = $role_ids ? explode(',', $role_ids) : [];
 		static::ThrowOn(!$role_ids,'至少选择一个角色组',1);
+		
+		// 这里两个
 		if (false && !Auth::isSupperAdmin() && array_diff($role_ids, Auth::getScopeRoleIds())) {
 			static::ThrowOn(true,'角色超出权限范围',1);
 		}
 		
-		if (!Auth::isSupperAdmin() && $this->dataLimit) {
+		if (false &&!Auth::isSupperAdmin() && $this->dataLimit) {
             if (!empty($data[$this->dataLimitField])) {
                 $admin_id = $data[$this->dataLimitField];
                 if (!in_array($admin_id, Auth::getScopeAdminIds(true))) {
@@ -81,11 +81,11 @@ class AdminBusiness extends BaseBusiness
 				static::ThrowOn(true,'角色超出权限范围',1);
 			}
 
-			AdminRouteModel::G()->updateAdminRole($admin_id, $exist_role_ids, $role_ids);
+			AdminRoleModel::G()->updateAdminRole($admin_id, $exist_role_ids, $role_ids);
 		}
 
-		$this->doUpdate($id, $data);
-		return $this->json(0);
+		AdminModel::G()->updateAdmin($id, $data);
+		return 0;
 	}
 	public function deleteAdmin()
 	{
@@ -96,9 +96,10 @@ class AdminBusiness extends BaseBusiness
             return true;
         }
         $ids = (array)$ids;
-        if (in_array(, $ids)) {
+        if (in_array($admin_id, $ids)) {
 			static::ThrowOn(true,'不能删除自己',1);
         }
+		
         if (!Auth::isSupperAdmin() && array_diff($ids, Auth::getScopeAdminIds())) {
 			static::ThrowOn(true,'无数据权限',1);
         }

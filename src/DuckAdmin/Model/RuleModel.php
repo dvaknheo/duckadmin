@@ -58,6 +58,16 @@ class RuleModel extends BaseModel
         }
 		return $items;
 	}
+	public function findById($id)
+	{
+		$sql = "select * from wa_rules where id =?";
+		return static::Db()->fetch($sql,$id);
+	}
+	public function findByKey($key)
+	{
+		sql = "select * from wa_rules where `key` =?";
+		return static::Db()->fetch($sql,$key);
+	}
 	///////////////
     public function dropByIds($delete_ids)
 	{
@@ -89,9 +99,9 @@ class RuleModel extends BaseModel
 		$sql="select * from wa_rules where `key`= ?";
 		return static::Db()->fetch($sql, $key);
 	}
-	protected function get_children_ids($ids)
+	public function get_children_ids($ids)
 	{
-		$sql ="select id from wa_rules where pid in " .static::Db()->qouteIn($ids);
+		$sql ="select id from wa_rules where pid in (" .static::Db()->qouteIn($ids) .")";
 		$data = static::Db()->fetchAll($sql);
 		return array_column($data,'id');
 	}
@@ -141,8 +151,27 @@ class RuleModel extends BaseModel
             $this->importMenu($menu);
         }
     }
+
+	public function getKeysByIds($rules)
+	{
+		$sql ="select `key` from wa_rules where id in (" .static::Db()->qouteIn($rules) .")";
+		$data = static::Db()->fetchAll($sql);
+		return array_column($data,'key');
+	}
+	/*
+	$menu = new Rule;
+				$menu->pid = $pid;
+				$menu->key = $name;
+				$menu->title = $title;
+				$menu->type = 2;
+				$menu->save();
+	*/
 	////////////////
-	
+	//        $items = Rule::where('key', 'like', '%\\\\%')->get()->keyBy('key');
+	//						Rule::where('key', $name)->update(['title' => $title]);
+	//        $keys = Rule::whereIn('id', $rules)->pluck('key');
+	//            $admin_ids = Rule::where($primary_key, $ids)->pluck($this->dataLimitField)->toArray();
+	//
 	
 	///////////////////////
     /**
@@ -195,4 +224,10 @@ class RuleModel extends BaseModel
         }
         return $values;
     }
+	
+	public function deleteByIds($ids)
+	{
+		$sql="delete from wa_rules where id in (" . static::Db()->quoteIn($ids).')';
+		static::Db()->execute($sql);
+	}
 }

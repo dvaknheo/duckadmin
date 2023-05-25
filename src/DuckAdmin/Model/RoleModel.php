@@ -30,5 +30,41 @@ class RoleModel extends BaseModel
         }
 		return $rule_ids;
 	}
+	
+	public function getAllId()
+	{
+		$sql="select id from wa_roles";
+		$data = static::Db()->fetchAll($sql);
+		return array_column($data,'id');
+	}
+	public function getAll()
+	{
+		$sql="select * from wa_roles";
+		$data = static::Db()->fetchAll($sql);
+		return $data;
+	}
+	public function getById($id)
+	{
+		$sql="select * from wa_roles where id = ?";
+		$data = static::Db()->fetch($sql,$id);
+		return $data;
+	}
+	public function getRulesByRoleId($role_id)
+	{
+		$sql = "select rules from wa_roles where id = ?";
+		$data = static::Db()->fetchColumn($sql,$role_id);
+		return $data;
+	}
+	public function getAllIdPid()
+	{
+		$sql = "select id,pid from wa_roles";
+		$data = static::Db()->fetchAll($sql);
+		return $data;
+	}
+	public function deleteByIds($ids)
+	{
+		$sql="delete from wa_roles where id in (" . static::Db()->quoteIn($ids).')';
+		static::Db()->execute($sql);
+	}
 
 }

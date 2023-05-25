@@ -106,6 +106,40 @@ class BaseModel
         return $data;
     }
 
+    /**
+     * 执行插入
+     * @param array $data
+     * @return mixed|null
+     */
+    protected function doInsert(array $data)
+    {
+        $primary_key = $this->model->getKeyName();
+        $model_class = get_class($this->model);
+        $model = new $model_class;
+        foreach ($data as $key => $val) {
+            $model->{$key} = $val;
+        }
+        $model->save();
+        return $primary_key ? $model->$primary_key : null;
+    }
+    /**
+     * 执行更新
+     * @param $id
+     * @param $data
+     * @return void
+     * @throws BusinessException
+     */
+    protected function doUpdate($id, $data)
+    {
+        $model = $this->model->find($id);
+        if (!$model) {
+            throw new BusinessException('记录不存在', 2);
+        }
+        foreach ($data as $key => $val) {
+            $model->{$key} = $val;
+        }
+        $model->save();
+    }
 
     
 	/////////////////////// 以下代码没用上///////////////////////////

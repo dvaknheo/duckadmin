@@ -21,7 +21,7 @@ class BaseBusiness extends ProjectBusiness
      * @return array
      * @throws BusinessException
      */
-    protected function selectInput($data, $table, $dataLimit=null, $dataLimitField =null): array
+    public function selectInput($data, $table, $dataLimit=null, $dataLimitField =null): array
     {
         $where = $data;
 		
@@ -147,7 +147,7 @@ class BaseBusiness extends ProjectBusiness
         return [$items, $total];
     }
 	///////////////////////////////////////////////
-	    /**
+	/**
      * 插入前置方法
      * @param Request $request
      * @return array
@@ -208,5 +208,40 @@ class BaseBusiness extends ProjectBusiness
         }
         return $data;
     }
-
+	///////////////////////
+	protected function noRole($admin_id,$role_id,bool $with_self = false)
+	{
+		$roles = AdminRoleModel::G()->getRoleIds($admin_id);
+		if(!$this->isSupperAdmin($admin_id) && !in_array($role_id, $this->getScopeRoleIds($roles, $with_self))){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	public function isSupperAdmin(int $admin_id = 0): bool
+    {
+		static::ThrowOn($admin_id==0,'参数错误，请指定管理员');
+		$roles = AdminRoleModel::G()->getRoles($admin_id);
+        $rules = RoleModel::G()->getRules($roles);
+        return RuleModel::G()->isSuper($rules); 
+    }
+	/**
+     * 获取权限范围内的所有角色id
+     * @param bool $with_self
+     * @return array
+     */
+    public function getScopeRoleIds($role_ids,  bool $with_self = false): array
+    {
+        $role_ids = $admin['roles'];
+		
+        $rules = RoleModel::G()->getRules($role_ids);
+        if ($rules && in_array('*', $rules)) {
+            return RoleModel::G()->getAllId();
+        }
+        $roles = RoleModel::G()->getAll();
+		
+        $tree = new Tree($roles);
+        $descendants = $tree->getDescendant($role_ids, $with_self);
+        return array_column($descendants, 'id');
+    }
 }
