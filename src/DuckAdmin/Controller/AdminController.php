@@ -46,7 +46,7 @@ class AdminController extends Base
      */
     public function select()
     {
-		$input = C::REQUEST();
+		$input = C::GET();
 		$dataLimitField = 'id';
 		$dataLimit = 'auth';
 		$admin_id = AdminAction::G()->getCurrentAdmin()['id'];
@@ -66,8 +66,8 @@ class AdminController extends Base
 			return C::Show([],'admin/insert');
 		}
 		$input = C::POST();
-		$admin_id = AdminAction::G()->getCurrentAdmin()['id'];
-		$admin = AdminBusiness::G()->addAdmin($input);
+		$op_id = AdminAction::G()->getCurrentAdmin()['id'];
+		$admin_id = AdminBusiness::G()->addAdmin($op_id, $input);
 		return C::Success(['id' => $admin_id]);
     }
 
@@ -96,7 +96,9 @@ class AdminController extends Base
     public function delete()
     {
 		$post = C::POST();
-		AdminBusiness::G()->deleteAdmin($post);
+		$op_id = AdminAction::G()->getCurrentAdmin()['id'];
+		AdminBusiness::G()->deleteAdmin($op_id, $post['id']);
+		return C::Success();
     }
 
 }

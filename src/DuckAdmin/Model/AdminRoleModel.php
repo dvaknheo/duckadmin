@@ -44,7 +44,7 @@ class AdminRoleModel extends BaseModel
 	}
 	public function deleteByAdminIds($ids)
 	{
-		$sql ="delete form wa_admin_roles where admin_id in(".static::Db()->quoteIn($ids).")";
+		$sql ="delete from wa_admin_roles where admin_id in(".static::Db()->quoteIn($ids).")";
 		static::execute($sql);
 	}
 	public function updateAdminRole($admin_id, $exist_role_ids, $role_ids)

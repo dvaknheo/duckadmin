@@ -12,6 +12,8 @@ class AdminBusiness extends BaseBusiness
 	public function showAdmins($login_admin_id,$input, $table, $dataLimit=null, $dataLimitField =null)
 	{
         [$where, $format, $limit, $field, $order] = $this->selectInput($input, AdminModel::G()->table(), $dataLimit, $dataLimitField);
+		
+
         [$items,$total] = AdminModel::G()->doSelect($where, $field, $order);
 		
         if ('select' ===  ($input['format']??null)) {
@@ -27,8 +29,9 @@ class AdminBusiness extends BaseBusiness
         }
 		return [$items,$total];
 	}
-	public function addAdmin($role_ids, $input)
+	public function addAdmin($op_id, $input)
 	{
+		$role_ids=$input['roles'];
 		// 这里要区分操作的 admin_id和得到的 admin_id;
 		$role_ids = $role_ids ? explode(',', $role_ids) : [];
 		static::ThrowOn(!$role_ids,'至少选择一个角色组',1);
@@ -87,23 +90,18 @@ class AdminBusiness extends BaseBusiness
 		AdminModel::G()->updateAdmin($id, $data);
 		return 0;
 	}
-	public function deleteAdmin()
+	public function deleteAdmin($op_id, $ids)
 	{
-		$ids = $request->post($primary_key);
-		$admin_id = admin_id();
-		
         if (!$ids) {
             return true;
         }
         $ids = (array)$ids;
-        if (in_array($admin_id, $ids)) {
-			static::ThrowOn(true,'不能删除自己',1);
-        }
+		static::ThrowOn(in_array($op_id, $ids),'不能删除自己',1);
 		
-        if (!Auth::isSupperAdmin() && array_diff($ids, Auth::getScopeAdminIds())) {
+        if (false && !Auth::isSupperAdmin() && array_diff($ids, Auth::getScopeAdminIds())) {
 			static::ThrowOn(true,'无数据权限',1);
         }
-
+		
 		AdminModel::G()->deleteByIds($ids);
         AdminRoleModel::G()->deleteByAdminIds($ids);
 		

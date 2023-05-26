@@ -49,10 +49,6 @@ class AdminModel extends BaseModel
 	{
 		return static::Db()->fetchColumn("select count(*) as c from wa_admins");
 	}
-	public function prepareInsert(array $data)
-	{
-		static::Throw(true,'prepareInsert');
-	}
 	public function addAdmin(array $data)
     {
 		//$data['`key`']=$data['key'];
@@ -102,7 +98,7 @@ class AdminModel extends BaseModel
 	}
 	public function deleteByIds($ids)
 	{
-		$sql ="delete form wa_admins where id in(".static::Db()->quoteIn($ids).")";
+		$sql ="delete from wa_admins where id in(".static::Db()->quoteIn($ids).")";
 		static::execute($sql);
 	}
 

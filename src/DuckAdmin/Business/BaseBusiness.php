@@ -41,7 +41,6 @@ class BaseBusiness extends ProjectBusiness
         $order = $order === 'asc' ? 'asc' : 'desc';
         $page = $page > 0 ? $page : 1;
 		//////////////////////////////////
-        
 		
 		////[[[[
 
