@@ -8,6 +8,11 @@ namespace DuckAdmin\Business;
 
 use DuckAdmin\System\ProjectBusiness;
 use DuckPhp\Core\App;
+
+use DuckAdmin\Model\AdminRoleModel;
+use DuckAdmin\Model\RoleModel;
+use DuckAdmin\Model\RuleModel;
+
 /**
  * 业务基本类，业务程序员的公用代码放在这里
  */
@@ -155,7 +160,15 @@ class BaseBusiness extends ProjectBusiness
      */
     protected function insertInput($input): array
     {
-        $data = $this->inputFilter($input);
+		//这个要移动出去
+        $table = config('plugin.admin.database.connections.mysql.prefix') . $this->model->getTable();
+        $allow_column = $this->model->getConnection()->select("desc `$table`");
+        if (!$allow_column) {
+            throw new BusinessException('表不存在', 2);
+        }
+        $columns = array_column($allow_column, 'Type', 'Field');
+		
+        $data = $this->inputFilter($input,$columns);
 		
 
         if (!Auth::isSupperAdmin() && $this->dataLimit) {
@@ -174,15 +187,9 @@ class BaseBusiness extends ProjectBusiness
      * @return array
      * @throws BusinessException
      */
-    protected function inputFilter(array $data): array
+    protected function inputFilter(array $data,$columns): array
     {
-		//这个要移动出去
-        $table = config('plugin.admin.database.connections.mysql.prefix') . $this->model->getTable();
-        $allow_column = $this->model->getConnection()->select("desc `$table`");
-        if (!$allow_column) {
-            throw new BusinessException('表不存在', 2);
-        }
-        $columns = array_column($allow_column, 'Type', 'Field');
+
         foreach ($data as $col => $item) {
             if (!isset($columns[$col])) {
                 unset($data[$col]);

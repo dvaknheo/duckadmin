@@ -71,7 +71,7 @@ class AdminModel extends BaseModel
         if (isset($data[$password_filed])) {
             $data[$password_filed] = $this->passwordHash($data[$password_filed]);
         }
-		return $data
+		return $data;
 	}
 	
 	public function updateAdmin($admin_id, $data)

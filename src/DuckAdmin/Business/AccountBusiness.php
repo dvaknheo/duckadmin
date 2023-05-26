@@ -115,8 +115,6 @@ class AccountBusiness extends BaseBusiness
      */
 	public function canAccess($admin, string $controller, string $action, int &$code = 0, string &$msg = ''): bool
 	{
-
-
         // 获取控制器鉴权信息
         $class = new \ReflectionClass($controller);
         $properties = $class->getDefaultProperties();

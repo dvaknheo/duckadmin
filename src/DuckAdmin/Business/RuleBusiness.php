@@ -98,11 +98,11 @@ class RuleBusiness extends BaseBusiness
     }
 	/////////////////////////////
 	
-	public function selectRules(($input, $table, $dataLimit=null, $dataLimitField =null)
+	public function selectRules($input)
 	{
 		//$login_admin_id,
 		//$this->syncRules(); //暂时不同步
-		[$where, $format, $limit, $field, $order] = $this->selectInput($input, RuleModel::G()->table(), $dataLimit, $dataLimitField);
+		[$where, $format, $limit, $field, $order] = $this->selectInput($input, RuleModel::G()->table(), null, null);
         [$data,$total] = RuleModel::G()->doSelect($where, $field, $order);
         return $this->doFormat($data, $total, $format, $limit);
 		

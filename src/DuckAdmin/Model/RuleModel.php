@@ -65,7 +65,7 @@ class RuleModel extends BaseModel
 	}
 	public function findByKey($key)
 	{
-		sql = "select * from wa_rules where `key` =?";
+		$sql = "select * from wa_rules where `key` =?";
 		return static::Db()->fetch($sql,$key);
 	}
 	///////////////
@@ -92,7 +92,7 @@ class RuleModel extends BaseModel
 	}
 	public function updateRule($id, $data)
 	{
-		if(isset($menu['key']){
+		if(isset($menu['key'])){
 			$menu['`key`']=$menu['key'];  //修复 db 类的 bug
 			unset($menu['key']);
 		}
@@ -120,11 +120,7 @@ class RuleModel extends BaseModel
 		
 		return static::Db()->lastInsertId();
 	}
-	public function findByKey($key)
-	{
-		$sql="select * from wa_rules where `key`= ?";
-		return static::Db()->fetch($sql, $key);
-	}
+
 	public function get_children_ids($ids)
 	{
 		//这个函数名字要改

@@ -26,24 +26,25 @@ class BaseModel
         foreach ($where as $column => $value) {
             if (is_array($value)) {
                 if (in_array($value[0], ['>', '=', '<', '<>', 'like', 'not like'])) {
-					$sql_where.=" and`$column` ". $value[0] . self::Db()->qoute($value[1]);
+					$sql_where.=" and `$column` ". $value[0] . self::Db()->quote($value[1]);
                 } elseif ($value[0] == 'in') {
-					$sql_where.="`$column` in(". self::Db()->qouteIn($value[1]).")";
+					$sql_where.=" and `$column` in(". self::Db()->quoteIn($value[1]).")";
                 } elseif ($value[0] == 'not in') {
-					$sql_where.="`$column` not in(". self::Db()->qouteIn($value[1]).")";
+					$sql_where.=" and `$column` not in(". self::Db()->quoteIn($value[1]).")";
                 } elseif ($value[0] == 'null') {
-					$sql_where.="`$column`  is_null()";
+					$sql_where.=" and `$column`  is_null()";
                 } elseif ($value[0] == 'not null') {
-					$sql_where.="`$column`  not null()";
+					$sql_where.=" and `$column`  not null()";
                 } else {
-					$sql_where.="`$column`  between(".self::Db()->qouteIn($value[1]).")";
+					$sql_where.="`$column`  between(".self::Db()->quoteIn($value[1]).")";
                 }
             } else {
-				$sql_where.="`$column` = ". self::Db()->qoute($value);
+				$sql_where.=" and `$column` = ". self::Db()->quote($value);
             }
         }
 		// 我们老土的用 sql  语句来完成代码
 		$sql = "select * from `".$this->table()."` where $sql_where";
+
 		$total = self::Db()->fetchColumn(self::SqlForCountSimply($sql));
 		if ($field) {
 			$sql .=" order by `$field` $order "; // 这里可能会有些问题
