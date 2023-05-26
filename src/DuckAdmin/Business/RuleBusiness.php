@@ -114,11 +114,11 @@ class RuleBusiness extends BaseBusiness
     protected function syncRules()
     {
 		static::ThrowOn(true,'未完成');
-        $items = Rule::where('key', 'like', '%\\\\%')->get()->keyBy('key');
+        $items = RuleModel::G()->getAllByKey();
         $methods_in_db = [];
         $methods_in_files = [];
         foreach ($items as $item) {
-            $class = $item->key;
+            $class = $item['key'];
             if (strpos($class, '@')) {
                 $methods_in_db[$class] = $class;
                 continue;
@@ -140,20 +140,20 @@ class RuleBusiness extends BaseBusiness
 				$name = "$class@$method_name";
 
 				$methods_in_files[$name] = $name;
-				$title = Util::getCommentFirstLine($method->getDocComment()) ?: $method_name;
+				$title = $this->getCommentFirstLine($method->getDocComment()) ?: $method_name;
 				$menu = $items[$name] ?? [];
 				if ($menu) {
-					if ($menu->title != $title) {
-						Rule::where('key', $name)->update(['title' => $title]);
+					if ($menu['title'] != $title) {
+						RuleModel::G()->updateTitleByKey($name,$title);
 					}
 					continue;
 				}
-				$menu = new Rule;
-				$menu->pid = $pid;
-				$menu->key = $name;
-				$menu->title = $title;
-				$menu->type = 2;
-				$menu->save();
+				RuleModel::G()->addMenu($key,[
+					'pid'=>$pid,
+					'key'=>$key,
+					'title'=>$name,
+					'type'=>2,
+				]);
 			}
             
         }
@@ -175,7 +175,7 @@ class RuleBusiness extends BaseBusiness
         $keys = RuleModel::G()->getKeysByIds($rules);
         $permissions = [];
         foreach ($keys as $key) {
-            if (!$key = Util::controllerToUrlPath($key)) {
+            if (!$key = $this->controllerToUrlPath($key)) {
                 continue;
             }
             $code = str_replace('/', '.', trim($key, '/'));
@@ -196,7 +196,7 @@ class RuleBusiness extends BaseBusiness
 			static::ThrowOn(true, "菜单标识 $key 已经存在", 1);
         }
         $data['pid'] = empty($data['pid']) ? 0 : $data['pid'];
-        $this->doInsert($data);
+		RuleModel::G()->addMenu($data['key'],$data);
 	}
 	public function updateRule($input)
 	{
@@ -210,17 +210,10 @@ class RuleBusiness extends BaseBusiness
         if (isset($data['key'])) {
             $data['key'] = str_replace('\\\\', '\\', $data['key']);
         }
-        $this->doUpdate($id, $data);
+        RuleModel::G()->updateRule($id, $data);
 	}
 	public function deleteRule($ids)
 	{
-        if (false && !Auth::isSupperAdmin() && $this->dataLimit) {
-            $admin_ids = Rule::where($primary_key, $ids)->pluck($this->dataLimitField)->toArray();
-            if (array_diff($admin_ids, Auth::getScopeAdminIds(true))) {
-                throw new BusinessException('无数据权限');
-            }
-        }
-
 		// 子规则一起删除
         $delete_ids = $children_ids = $ids;
         while($children_ids) {
@@ -229,4 +222,61 @@ class RuleBusiness extends BaseBusiness
         }
 		RuleModel::G()->deleteByIds($delete_ids);
 	}
+	
+	    /**
+     * 类转换为url path
+     * @param $controller_class
+     * @return false|string
+     */
+    static function controllerToUrlPath($controller_class)
+    {
+        $key = strtolower($controller_class);
+        $action = '';
+        if (strpos($key, '@')) {
+            [$key, $action] = explode( '@', $key, 2);
+        }
+        $prefix = 'plugin';
+        $paths = explode('\\', $key);
+        if (count($paths) < 2) {
+            return false;
+        }
+        $base = '';
+        if (strpos($key, "$prefix\\") === 0) {
+            if (count($paths) < 4) {
+                return false;
+            }
+            array_shift($paths);
+            $plugin = array_shift($paths);
+            $base = "/app/$plugin/";
+        }
+        array_shift($paths);
+        foreach ($paths as $index => $path) {
+            if ($path === 'controller') {
+                unset($paths[$index]);
+            }
+        }
+        $suffix = 'controller';
+        $code = $base . implode('/', $paths);
+        if (substr($code, -strlen($suffix)) === $suffix) {
+            $code = substr($code, 0, -strlen($suffix));
+        }
+        return $action ? "$code/$action" : $code;
+    }
+    /**
+     * 获取注释中第一行
+     * @param $comment
+     * @return false|mixed|string
+     */
+    public static function getCommentFirstLine($comment)
+    {
+        if ($comment === false) {
+            return false;
+        }
+        foreach (explode("\n", $comment) as $str) {
+            if ($s = trim($str, "*/\ \t\n\r\0\x0B")) {
+                return $s;
+            }
+        }
+        return $comment;
+    }
 }

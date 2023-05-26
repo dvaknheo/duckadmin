@@ -157,10 +157,6 @@ class BaseBusiness extends ProjectBusiness
     {
         $data = $this->inputFilter($input);
 		
-        $password_filed = 'password';
-        if (isset($data[$password_filed])) {
-            $data[$password_filed] = Util::passwordHash($data[$password_filed]);
-        }
 
         if (!Auth::isSupperAdmin() && $this->dataLimit) {
             if (!empty($data[$this->dataLimitField])) {

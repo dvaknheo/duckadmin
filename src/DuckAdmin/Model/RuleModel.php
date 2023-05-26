@@ -71,10 +71,36 @@ class RuleModel extends BaseModel
 	///////////////
     public function dropByIds($delete_ids)
 	{
+		// 这两个要合并
 		$sql= "delete from wa_rules where in (" . static::Db()->quoteIn($delete_ids).')';
 		return static::Db()->execute($sql);
 	}
+	public function deleteByIds($ids)
+	{
+	
+		// 这两个要合并
+		$sql = "delete from wa_rules where id in (" . static::Db()->quoteIn($ids).')';
+		static::Db()->execute($sql);
+	}
 	////////////////////////////////////////////
+	
+	public function updateTitleByKey($name,$title)
+	{
+		$time = date('Y-m-d H:i:s');
+		$sql = "update wa_rules set title=?, updated_at=? where `key`=?";
+		return static::Db()->execute($sql, $title, $time, $key);
+	}
+	public function updateRule($id, $data)
+	{
+		if(isset($menu['key']){
+			$menu['`key`']=$menu['key'];  //修复 db 类的 bug
+			unset($menu['key']);
+		}
+		
+		$time = date('Y-m-d H:i:s');
+		$data['updated_at'] =$time;
+		return static::Db()->updateData("wa_rules", $id, $data, 'id');
+	}
 	protected function updateMenu($key,$menu)
 	{
 		$pid = $menu['pid']??0;
@@ -84,7 +110,7 @@ class RuleModel extends BaseModel
 	}
 	protected function addMenu($key,$menu)
 	{
-		$menu['`key`']=$menu['key'];
+		$menu['`key`']=$menu['key'];  //修复 db 类的 bug
 		unset($menu['key']);
 		
 		$time = date('Y-m-d H:i:s');
@@ -101,6 +127,7 @@ class RuleModel extends BaseModel
 	}
 	public function get_children_ids($ids)
 	{
+		//这个函数名字要改
 		$sql ="select id from wa_rules where pid in (" .static::Db()->qouteIn($ids) .")";
 		$data = static::Db()->fetchAll($sql);
 		return array_column($data,'id');
@@ -124,7 +151,6 @@ class RuleModel extends BaseModel
         }
 		$this->dropByIds($delete_ids);
     }
-
 	/**
      * 导入菜单
      * @param array $menu_tree
@@ -158,6 +184,22 @@ class RuleModel extends BaseModel
 		$data = static::Db()->fetchAll($sql);
 		return array_column($data,'key');
 	}
+	public function checkRulesExist($rule_ids)
+	{
+		$sql ="select count(*) as c where id in (" .static::Db()->qouteIn($rule_ids) .")";
+		$data = static::Db()->fetchColumn($sql);
+		return (count($rule_exists) === count($rule_ids))?true:false;
+	}
+	public function getAllByKey()
+	{
+		$sql ="select * from wa_rules where `key` like '%\\\\%'";
+		$data = static::Db()->fetchAll($sql);
+		$ret=[];
+		foreach($data as $v){
+			$ret[$v['key']]=$v;
+		}
+		return $ret;
+	}
 	/*
 	$menu = new Rule;
 				$menu->pid = $pid;
@@ -167,10 +209,7 @@ class RuleModel extends BaseModel
 				$menu->save();
 	*/
 	////////////////
-	//        $items = Rule::where('key', 'like', '%\\\\%')->get()->keyBy('key');
 	//						Rule::where('key', $name)->update(['title' => $title]);
-	//        $keys = Rule::whereIn('id', $rules)->pluck('key');
-	//            $admin_ids = Rule::where($primary_key, $ids)->pluck($this->dataLimitField)->toArray();
 	//
 	
 	///////////////////////
@@ -225,9 +264,5 @@ class RuleModel extends BaseModel
         return $values;
     }
 	
-	public function deleteByIds($ids)
-	{
-		$sql="delete from wa_rules where id in (" . static::Db()->quoteIn($ids).')';
-		static::Db()->execute($sql);
-	}
+
 }

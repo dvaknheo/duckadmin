@@ -66,5 +66,20 @@ class RoleModel extends BaseModel
 		$sql="delete from wa_roles where id in (" . static::Db()->quoteIn($ids).')';
 		static::Db()->execute($sql);
 	}
+	public function addRole($data)
+	{
+		$time = date('Y-m-d H:i:s');
+		$data['created_at']=$time;
+		$data['updated_at']=$time;
+		static::Db()->insertData('wa_roles',$data);
+		
+		return static::Db()->lastInsertId();
+	}
+	public function updateRole($id, $data)
+	{
+		$time = date('Y-m-d H:i:s');
+		$data['updated_at'] = $time;
+		return static::Db()->updateData("wa_roles", $id, $data, 'id');
+	}
 
 }

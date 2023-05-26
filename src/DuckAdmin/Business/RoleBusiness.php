@@ -20,7 +20,6 @@ class RoleBusiness extends BaseBusiness
         } else{
 			static::ThrowOn(!in_array($id, $role_ids),'无权限',1);
         }
-		//AdminModel::G()->doSelect($where, $field, $order);
         $query = RoleModel::G()->doSelect($where, $field, $order);
         return $this->doFormat($query, $format, $limit);
 	}
@@ -34,7 +33,7 @@ class RoleBusiness extends BaseBusiness
 		}
 		$this->checkRules($pid, $data['rules'] ?? '');
 
-		$id = $this->doInsert($data);
+		$id = RoleModel::G()->addRole($data);
 	}
 	public function updateRole()
 	{
@@ -47,7 +46,7 @@ class RoleBusiness extends BaseBusiness
 
         $role = RoleModel::G()->getById($id);
 		static::ThrowOn(!$role,'数据不存在',1);
-
+		$role_rules = $role['rules'] ? explode(',', $role['rules']):[];
         $is_supper_role = $role['rules'] === '*';
 
         // 超级角色组不允许更改rules pid 字段
@@ -63,14 +62,15 @@ class RoleBusiness extends BaseBusiness
 				static::ThrowOn(true,'父级超出权限范围',1);
             }
         } else {
-            $pid = $role->pid;
+            $pid = $role['pid'];
         }
 
         if (!$is_supper_role) {
             $this->checkRules($pid, $data['rules'] ?? '');
         }
 
-        $this->doUpdate($id, $data);
+
+        RoleModel::G()->updateRole($id, $data);
 
         // 删除所有子角色组中已经不存在的权限
         if (!$is_supper_role) {
@@ -80,18 +80,19 @@ class RoleBusiness extends BaseBusiness
             $descendant_role_ids = array_column($descendant_roles, 'id');
             $rule_ids = $data['rules'] ? explode(',', $data['rules']) : [];
             foreach ($descendant_role_ids as $role_id) {
-                $tmp_role = Role::find($role_id);
-                $tmp_rule_ids = $role->getRuleIds();  ////////////这里要改
-				static::ThrowOn(true,'这里 role->getRuleIds 要重新实现',1);
+				static::ThrowOn(true,'这里要整合到一个函数',1);
+                $tmp_role = RoleModel::getById($role_id);
+                $tmp_rule_ids = $role_rules;  ////////////这里要改 
                 $tmp_rule_ids = array_intersect($rule_ids, $tmp_rule_ids);
                 $tmp_role->rules = implode(',', $tmp_rule_ids);
                 $tmp_role->save();
             }
         }
 	}
-	public function deleteRole()
+	
+	public function deleteRole($ids)
 	{
-		$ids = $this->deleteInput($request);
+		$ids = $this->deleteInput($request); 
         
         static::ThrowOn(in_array(1, $ids), '无法删除超级管理员角色');
         
@@ -106,6 +107,7 @@ class RoleBusiness extends BaseBusiness
         }
 		RoleModel::G()->deleteByIds($ids);
 	}
+	
 	public function tree($role_id)
 	{
         if (empty($role_id)) {
@@ -129,5 +131,36 @@ class RoleBusiness extends BaseBusiness
         $tree = new Tree($items);
         return [$tree->getTree($include)];
 	}
-	
+    /**
+     * 检查权限字典是否合法
+     * @param int $role_id
+     * @param $rule_ids
+     * @return void
+     * @throws BusinessException
+     */
+    protected function checkRules(int $role_id, $rule_ids)
+    {
+        if (!$rule_ids) {
+			return;
+		}
+		$rule_ids = explode(',', $rule_ids);
+		if (in_array('*', $rule_ids)) {
+			static::ThrowOn(true, '非法数据');
+		}
+		
+		$flag =RuleModel::G()->checkRulesExist($rule_ids);
+		static::ThrowOn(!$flag, '权限不存在');
+		
+		$rule_id_string = RoleModel::getRulesByRoleId($role_id);
+		static::ThrowOn($rule_id_string === '', '数据超出权限范围');
+		
+		if ($rule_id_string === '*') {
+			return;
+		}
+		
+		$legal_rule_ids = explode(',', $rule_id_string);
+		if (array_diff($rule_ids, $legal_rule_ids)) {
+			static::ThrowOn(true, '数据超出权限范围');
+		}
+    }	
 }
