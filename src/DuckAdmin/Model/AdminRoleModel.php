@@ -45,20 +45,23 @@ class AdminRoleModel extends BaseModel
 	public function deleteByAdminIds($ids)
 	{
 		$sql ="delete from wa_admin_roles where admin_id in(".static::Db()->quoteIn($ids).")";
-		static::execute($sql);
+		static::Db()->execute($sql);
+	}
+	public function deleteByAdminId($admin_id,$delete_ids)
+	{
+		$sql ="delete from wa_admin_roles where admin_id = ? and  role_id in(".static::Db()->quoteIn($delete_ids).")";
+		static::Db()->execute($sql,$admin_id);
 	}
 	public function updateAdminRole($admin_id, $exist_role_ids, $role_ids)
 	{
 			// 删除账户角色
 			$delete_ids = array_diff($exist_role_ids, $role_ids);
-			AdminRole::whereIn('role_id', $delete_ids)->where('admin_id', $admin_id)->delete();
+			$this->deleteByAdminId($admin_id,$delete_ids);
 			// 添加账户角色
 			$add_ids = array_diff($role_ids, $exist_role_ids);
 			foreach ($add_ids as $role_id) {
-				$admin_role = new AdminRole;
-				$admin_role->admin_id = $admin_id;
-				$admin_role->role_id = $role_id;
-				$admin_role->save();
+				$sql = "insert into `wa_admin_roles` (`role_id`, `admin_id`) values (?,?)";
+				static::Db()->execute($sql,$role_id,$admin_id);
 			}
 	}
 	public function rolesByAdmin($admin_id)

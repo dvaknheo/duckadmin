@@ -77,6 +77,7 @@ class AdminModel extends BaseModel
             'avatar' => 'avatar',
             'email' => 'email',
             'mobile' => 'mobile',
+			'username' => 'username',
         ];
 
         $update_data = [];
@@ -85,7 +86,7 @@ class AdminModel extends BaseModel
                 $update_data[$column] = $data[$key];
             }
         }
-		static::Db()->updateData($this->table(),$update_data,$admin_id, 'id');
+		static::Db()->updateData($this->table(),$admin_id,$update_data, 'id');
 		return $update_data;
 	}
 	public function checkPassword($admin_id, $password)

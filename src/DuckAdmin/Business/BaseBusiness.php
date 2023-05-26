@@ -234,7 +234,7 @@ class BaseBusiness extends ProjectBusiness
      */
     public function getScopeRoleIds($role_ids,  bool $with_self = false): array
     {
-        $role_ids = $admin['roles'];
+        //$role_ids = $admin['roles'];
 		
         $rules = RoleModel::G()->getRules($role_ids);
         if ($rules && in_array('*', $rules)) {

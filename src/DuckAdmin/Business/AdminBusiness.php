@@ -55,28 +55,32 @@ class AdminBusiness extends BaseBusiness
 		
 		return $admin_id;
 	}
-	public function updateAdmin()
+	public function updateAdmin($op_id,$input)
 	{
 	// 这里要区分操作的 admin_id和得到的 admin_id;
-		$admin_id = $request->post('id');
-		$role_ids = $request->post('roles');
-		[$id, $data] = $this->updateInput($request);
+		$admin_id = $input['id'];
+		$role_ids = $input['roles'];
+		$data = AdminModel::G()->inputFilter($input);
+		
 		static::ThrowOn(!$admin_id,'缺少参数',1);
 		
 		// 不能禁用自己
-		if (isset($data['status']) && $data['status'] == 1 && $id == admin_id()) {
+		if (isset($data['status']) && $data['status'] == 1 && $admin_id == $op_id) {
 			static::ThrowOn(true,'不能禁用自己',1);
 		}
 
 		// 需要更新角色
 		if ($role_ids !== null) {
 			static::ThrowOn(!$role_ids,'至少选择一个角色组',1);
+			
 			$role_ids = explode(',', $role_ids);
-
-			$is_supper_admin = Auth::isSupperAdmin();
 			$exist_role_ids = AdminRoleModel::G()->rolesByAdmin($admin_id);
 			
-			$scope_role_ids = Auth::getScopeRoleIds();
+			$operator = AdminModel::G()->getAdminById($op_id);
+			
+			$scope_role_ids = AdminRoleModel::G()->rolesByAdmin($op_id);
+			
+			$is_supper_admin = $this->isSupperAdmin($op_id);
 			if (!$is_supper_admin && !array_intersect($exist_role_ids, $scope_role_ids)) {
 				static::ThrowOn(true,'无权限更改该记录',1);
 			}
@@ -86,9 +90,8 @@ class AdminBusiness extends BaseBusiness
 
 			AdminRoleModel::G()->updateAdminRole($admin_id, $exist_role_ids, $role_ids);
 		}
-
-		AdminModel::G()->updateAdmin($id, $data);
-		return 0;
+		AdminModel::G()->updateAdmin($admin_id, $data);
+		return;
 	}
 	public function deleteAdmin($op_id, $ids)
 	{

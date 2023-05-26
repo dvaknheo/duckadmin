@@ -82,8 +82,6 @@ class AdminController extends Base
 		if (!C::POST()) {
 			return C::Show([],'admin/update');
 		}
-        C::ThrowOn(true,"No Impelement");
-
 		$post = C::POST();
 		AdminBusiness::G()->updateAdmin($post);
     }
