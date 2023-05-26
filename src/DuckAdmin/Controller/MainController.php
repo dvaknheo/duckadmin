@@ -35,34 +35,10 @@ class MainController extends Base
         if (!$isInstalled) {
 			return C::Show([], 'index/install');
         }
-        $admin =  AdminSession::G()->getCurrentAdmin();
+        $admin = AdminSession::G()->getCurrentAdmin();
         if (!$admin) {
 			return C::Show([], 'account/login');
         }		
         return C::Show([], 'index/index');
     }
-	public function dashboard()
-	{
-		var_dump(DATE(DATE_ATOM));return;
-		$dashboard=[];//AllInOnBusiness::G()->getDashboard();
-		return C::Show($dashboard, 'index/dashboard');
-	}
-	public function test()
-	{
-		$post=[
-			'user' =>'webmanadmin',
-			'password' =>'123456',
-			'database' =>'webman_admin',
-			'host' =>'127.0.0.1',
-			'port' =>3306,
-			'overwrite' =>true,
-			
-		];
-		//InstallBusiness::G()->step1($post);
-		//InstallBusiness::G()->step2('cgb','123456','123456');
-		
-		\DuckAdmin\Business\AccountBusiness::G()->login('cgb', '123456');
-		
-		var_dump(DATE(DATE_ATOM));
-	}
 }

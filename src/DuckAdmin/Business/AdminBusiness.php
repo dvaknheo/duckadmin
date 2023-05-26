@@ -46,7 +46,7 @@ class AdminBusiness extends BaseBusiness
                 }
             }
         }
-		$data = AdminModel::G()->prepareInsert($input);
+		$data = AdminModel::G()->inputFilter($input);
 		$admin_id = AdminModel::G()->addAdmin($data);
 		AdminRoleModel::G()->renew($admin_id,$role_ids);
 		
