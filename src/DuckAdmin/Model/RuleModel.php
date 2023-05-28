@@ -24,9 +24,9 @@ class RuleModel extends BaseModel
 	}
 	public function checkWildRules($rule_ids,$controller,$action)
 	{
-		$str = static::Db()->qouteIn($ruls_ids);
-		$key = static::Db()->qoute($controller);
-		$like = static::Db()->qoute($controller.'@%');
+		$str = static::Db()->quoteIn($ruls_ids);
+		$key = static::Db()->quote($controller);
+		$like = static::Db()->quote($controller.'@%');
 		
 		$sql = "select * from wa_rules where id in $str and (key = $key  or key like $like)";
 		$data = static::Db()->fetchColumn($sql);
@@ -34,9 +34,9 @@ class RuleModel extends BaseModel
 	}
 	public function checkRules($rule_ids,$controller,$action)
 	{
-		$str = static::Db()->qouteIn($ruls_ids);
-		$full = static::Db()->qoute($controller.'@'.$action);
-		$c = static::Db()->qoute($controller);
+		$str = static::Db()->quoteIn($ruls_ids);
+		$full = static::Db()->quote($controller.'@'.$action);
+		$c = static::Db()->quote($controller);
 		
 		$sql = "select * from wa_rules where id in $str and (key = $full  or key = $c)";
 		$data = static::Db()->fetchColumn($sql);
@@ -69,17 +69,15 @@ class RuleModel extends BaseModel
 		return static::Db()->fetch($sql,$key);
 	}
 	///////////////
-    public function dropByIds($delete_ids)
+    public function dropWithChildren($ids)
 	{
+        $delete_ids = $children_ids = $ids;
+        while($children_ids) {
+            $children_ids = RuleModel::G()->get_children_ids($children_ids);
+            $delete_ids = array_merge($delete_ids, $children_ids);
+        }
 		// 这两个要合并
-		$sql= "delete from wa_rules where in (" . static::Db()->quoteIn($delete_ids).')';
-		return static::Db()->execute($sql);
-	}
-	public function deleteByIds($ids)
-	{
-	
-		// 这两个要合并
-		$sql = "delete from wa_rules where id in (" . static::Db()->quoteIn($ids).')';
+		$sql = "delete from wa_rules where id in (" . static::Db()->quoteIn($delete_ids).')';
 		static::Db()->execute($sql);
 	}
 	////////////////////////////////////////////
@@ -124,7 +122,7 @@ class RuleModel extends BaseModel
 	public function get_children_ids($ids)
 	{
 		//这个函数名字要改
-		$sql ="select id from wa_rules where pid in (" .static::Db()->qouteIn($ids) .")";
+		$sql ="select id from wa_rules where pid in (" .static::Db()->quoteIn($ids) .")";
 		$data = static::Db()->fetchAll($sql);
 		return array_column($data,'id');
 	}
@@ -176,39 +174,35 @@ class RuleModel extends BaseModel
 
 	public function getKeysByIds($rules)
 	{
-		$sql ="select `key` from wa_rules where id in (" .static::Db()->qouteIn($rules) .")";
+		$sql ="select `key` from wa_rules where id in (" .static::Db()->quoteIn($rules) .")";
 		$data = static::Db()->fetchAll($sql);
 		return array_column($data,'key');
 	}
 	public function checkRulesExist($rule_ids)
 	{
-		$sql ="select count(*) as c where id in (" .static::Db()->qouteIn($rule_ids) .")";
+		$sql ="select count(*) as c where id in (" .static::Db()->quoteIn($rule_ids) .")";
 		$data = static::Db()->fetchColumn($sql);
 		return (count($rule_exists) === count($rule_ids))?true:false;
 	}
 	public function getAllByKey()
 	{
-		$sql ="select * from wa_rules where `key` like '%\\\\%'";
+		$sql ="select * from `wa_rules` where `key` like '%\\\\\\\\%'"; // 这要8个\ 猜猜看为什么
 		$data = static::Db()->fetchAll($sql);
 		$ret=[];
 		foreach($data as $v){
 			$ret[$v['key']]=$v;
 		}
 		return $ret;
-	}
-	/*
-	$menu = new Rule;
-				$menu->pid = $pid;
-				$menu->key = $name;
-				$menu->title = $title;
-				$menu->type = 2;
-				$menu->save();
-	*/
-	////////////////
-	//						Rule::where('key', $name)->update(['title' => $title]);
-	//
-	
+	}	
 	///////////////////////
+	public function descTable()
+	{
+		$sql ="desc `wa_rules`";
+		$data = static::Db()->fetchAll($sql);
+        $columns = array_column($data, 'Type', 'Field');
+		return $columns;
+	}
+	////////////////
     /**
      * 获取菜单中某个(些)字段的值
      * @param $menu

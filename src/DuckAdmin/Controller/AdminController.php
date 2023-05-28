@@ -49,7 +49,7 @@ class AdminController extends Base
 		$input = C::GET();
 		$dataLimitField = 'id';
 		$dataLimit = 'auth';
-		$admin_id = AdminAction::G()->getCurrentAdmin()['id'];
+		$admin_id = AdminAction::G()->getCurrentAdminId();
 		[$data, $count] = AdminBusiness::G()->showAdmins($admin_id,$input,$dataLimit,$dataLimitField);
         return C::Success($data,$count);
     }
@@ -66,7 +66,7 @@ class AdminController extends Base
 			return C::Show([],'admin/insert');
 		}
 		$input = C::POST();
-		$op_id = AdminAction::G()->getCurrentAdmin()['id'];
+		$admin_id = AdminAction::G()->getCurrentAdminId();
 		$admin_id = AdminBusiness::G()->addAdmin($op_id, $input);
 		return C::Success(['id' => $admin_id]);
     }
@@ -83,6 +83,7 @@ class AdminController extends Base
 			return C::Show([],'admin/update');
 		}
 		$post = C::POST();
+		$admin_id = AdminAction::G()->getCurrentAdminId();
 		AdminBusiness::G()->updateAdmin($post);
     }
 
@@ -94,7 +95,7 @@ class AdminController extends Base
     public function delete()
     {
 		$post = C::POST();
-		$op_id = AdminAction::G()->getCurrentAdmin()['id'];
+		$admin_id = AdminAction::G()->getCurrentAdminId();
 		AdminBusiness::G()->deleteAdmin($op_id, $post['id']);
 		return C::Success();
     }

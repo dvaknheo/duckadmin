@@ -1,4 +1,4 @@
-<?php
+5<?php
 namespace DuckAdmin\Business;
 
 use DuckAdmin\Model\RuleModel;
@@ -9,11 +9,11 @@ use DuckAdmin\Model\RoleModel;
  */
 class RoleBusiness extends BaseBusiness 
 {
-	public function selectRoles($id)
+	public function selectRoles($op_id,$id,$input)
 	{
 		return [['name' => '超级管理员','value'=>1]];
 		//return 
-        [$where, $format, $limit, $field, $order] = $this->selectInput($request);
+        [$where, $format, $limit, $field, $order] = $this->selectInput($input);
         $role_ids = $this->getScopeRoleIds(true);
         if (!$id) {
             $where['id'] = ['in', $role_ids];
@@ -31,15 +31,14 @@ class RoleBusiness extends BaseBusiness
 		if ($this->noRole($admin, $pid, true)) {
 			static::ThrowOn(true,'父级角色组超出权限范围',1);
 		}
-		$this->checkRules($pid, $data['rules'] ?? '');
+		$this->checkRulesInput($pid, $data['rules'] ?? '');
 
 		$id = RoleModel::G()->addRole($data);
 	}
 	public function updateRole()
 	{
 		[$role_id, $data] = $this->updateInput($request);
-       ;
-        $descendant_role_ids = $this->getScopeRoleIds();
+       
         if ($this->noRole($admin, $role_id, true)) {
 			static::ThrowOn(true,'无数据权限',1);
         }
@@ -66,7 +65,7 @@ class RoleBusiness extends BaseBusiness
         }
 
         if (!$is_supper_role) {
-            $this->checkRules($pid, $data['rules'] ?? '');
+            $this->checkRulesInput($pid, $data['rules'] ?? '');
         }
 
 
@@ -74,31 +73,32 @@ class RoleBusiness extends BaseBusiness
 
         // 删除所有子角色组中已经不存在的权限
         if (!$is_supper_role) {
+		
+			// 这里，整合
 			$treedata = RoleModel::G()->getAllIdPid();
             $tree = new Tree($treedata);
             $descendant_roles = $tree->getDescendant([$id]);
             $descendant_role_ids = array_column($descendant_roles, 'id');
+			
+			// 这里要调整？
             $rule_ids = $data['rules'] ? explode(',', $data['rules']) : [];
             foreach ($descendant_role_ids as $role_id) {
-				static::ThrowOn(true,'这里要整合到一个函数',1);
-                $tmp_role = RoleModel::getById($role_id);
-                $tmp_rule_ids = $role_rules;  ////////////这里要改 
-                $tmp_rule_ids = array_intersect($rule_ids, $tmp_rule_ids);
-                $tmp_role->rules = implode(',', $tmp_rule_ids);
-                $tmp_role->save();
+				RoleModel::G()->updateRoleX($role_id,$rule_ids);
             }
         }
 	}
 	
 	public function deleteRole($ids)
 	{
-		$ids = $this->deleteInput($request); 
+		// $ids = $this->deleteInput($request);   // 这里只是权限设置，其实应该入口里改
         
         static::ThrowOn(in_array(1, $ids), '无法删除超级管理员角色');
         
+		//no role 应该包括这个
         if (!$this->isSupperAdmin() && array_diff($ids, $this->getScopeRoleIds())) {
 			static::ThrowOn(true,'无删除权限',1);
         }
+		
 		
         $tree = new Tree(RoleModel::G()->getAll());
         $descendants = $tree->getDescendant($ids);
@@ -110,6 +110,7 @@ class RoleBusiness extends BaseBusiness
 	
 	public function tree($role_id)
 	{
+	
         if (empty($role_id)) {
             return [];
         }
@@ -138,7 +139,7 @@ class RoleBusiness extends BaseBusiness
      * @return void
      * @throws BusinessException
      */
-    protected function checkRules(int $role_id, $rule_ids)
+    protected function checkRulesInput(int $role_id, $rule_ids)
     {
         if (!$rule_ids) {
 			return;
@@ -148,10 +149,10 @@ class RoleBusiness extends BaseBusiness
 			static::ThrowOn(true, '非法数据');
 		}
 		
-		$flag =RuleModel::G()->checkRulesExist($rule_ids);
+		$flag = RuleModel::G()->checkRulesExist($rule_ids);
 		static::ThrowOn(!$flag, '权限不存在');
 		
-		$rule_id_string = RoleModel::getRulesByRoleId($role_id);
+		$rule_id_string = RoleModel::G()->getRulesByRoleId($role_id);
 		static::ThrowOn($rule_id_string === '', '数据超出权限范围');
 		
 		if ($rule_id_string === '*') {
@@ -162,5 +163,24 @@ class RoleBusiness extends BaseBusiness
 		if (array_diff($rule_ids, $legal_rule_ids)) {
 			static::ThrowOn(true, '数据超出权限范围');
 		}
-    }	
+    }
+	/**
+     * 获取权限范围内的所有角色id
+     * @param bool $with_self
+     * @return array
+     */
+    public function getScopeRoleIds($role_ids,  bool $with_self = false): array
+    {
+        //$role_ids = $admin['roles'];
+		
+        $rules = RoleModel::G()->getRules($role_ids);
+        if ($rules && in_array('*', $rules)) {
+            return RoleModel::G()->getAllId();
+        }
+        $roles = RoleModel::G()->getAll();
+		
+        $tree = new Tree($roles);
+        $descendants = $tree->getDescendant($role_ids, $with_self);
+        return array_column($descendants, 'id');
+    }
 }

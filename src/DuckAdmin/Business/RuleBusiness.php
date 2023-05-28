@@ -9,18 +9,7 @@ use DuckAdmin\Model\RoleModel;
  */
 class RuleBusiness extends BaseBusiness 
 {
-	public function getRules($roles)
-	{
-		$rules_strings = RoleModel::G()->getRules($roles);
-		$rules = [];
-        foreach ($rules_strings as $rule_string) {
-            if (!$rule_string) {
-                continue;
-            }
-            $rules = array_merge($rules, explode(',', $rule_string));
-        }
-        return $rules;
-	}
+	
 	public function get($roles,$types)
 	{
 		$rules = RoleModel::G()->getRules($roles);
@@ -98,14 +87,19 @@ class RuleBusiness extends BaseBusiness
     }
 	/////////////////////////////
 	
-	public function selectRules($input)
+	public function selectRules($op_id, $input)
 	{
-		//$login_admin_id,
-		//$this->syncRules(); //暂时不同步
+		$this->syncRules();
+		
+		//这里要提回来，这个 selectInput 太范了
 		[$where, $format, $limit, $field, $order] = $this->selectInput($input, RuleModel::G()->table(), null, null);
         [$data,$total] = RuleModel::G()->doSelect($where, $field, $order);
         return $this->doFormat($data, $total, $format, $limit);
 		
+	}
+	protected function mapClass($class)
+	{
+		return $class; // 把 plugin\xx\controller 改为我们相应的 controller
 	}
 	/**
      * 根据类同步规则到数据库
@@ -113,12 +107,13 @@ class RuleBusiness extends BaseBusiness
      */
     protected function syncRules()
     {
-		static::ThrowOn(true,'未完成');
         $items = RuleModel::G()->getAllByKey();
         $methods_in_db = [];
         $methods_in_files = [];
         foreach ($items as $item) {
-            $class = $item['key'];
+            $class = $this->mapClass($item['key']);
+			
+			//如果有@在内，那就继续
             if (strpos($class, '@')) {
                 $methods_in_db[$class] = $class;
                 continue;
@@ -130,30 +125,26 @@ class RuleBusiness extends BaseBusiness
 			$properties = $reflection->getDefaultProperties();
 			$no_need_auth = array_merge($properties['noNeedLogin'] ?? [], $properties['noNeedAuth'] ?? []);
 			$class = $reflection->getName();
-			$pid = $item->id;
+			$pid = $item['id'];
 			$methods = $reflection->getMethods(\ReflectionMethod::IS_PUBLIC);
 			foreach ($methods as $method) {
 				$method_name = $method->getName();
+				
 				if (strtolower($method_name) === 'index' || strpos($method_name, '__') === 0 || in_array($method_name, $no_need_auth)) {
 					continue;
 				}
 				$name = "$class@$method_name";
-
 				$methods_in_files[$name] = $name;
 				$title = $this->getCommentFirstLine($method->getDocComment()) ?: $method_name;
+				
 				$menu = $items[$name] ?? [];
-				if ($menu) {
-					if ($menu['title'] != $title) {
-						RuleModel::G()->updateTitleByKey($name,$title);
-					}
+				if (!$menu) {
+					RuleModel::G()->addMenu($key,['pid'=>$pid,'key'=>$key,'title'=>$name,'type'=>2,]);
 					continue;
 				}
-				RuleModel::G()->addMenu($key,[
-					'pid'=>$pid,
-					'key'=>$key,
-					'title'=>$name,
-					'type'=>2,
-				]);
+				if ($menu['title'] != $title) {
+					RuleModel::G()->updateTitleByKey($name,$title);
+				}
 			}
             
         }
@@ -167,7 +158,14 @@ class RuleBusiness extends BaseBusiness
 	///////////////////////////////
 	public function permission($roles)
 	{
-		$rules = $this->getRules($roles); // 这里要放到 RoleModel里
+		$rules_strings = RoleModel::G()->getRules($roles);
+		$rules = [];
+        foreach ($rules_strings as $rule_string) {
+            if (!$rule_string) {
+                continue;
+            }
+            $rules = array_merge($rules, explode(',', $rule_string));
+        }
         if (in_array('*', $rules)) {
 			return ['*'];
         }
@@ -183,19 +181,19 @@ class RuleBusiness extends BaseBusiness
         }
 		return $permissions;
 	}
-	
-	public function insertRule($input)
+	public function insertRule($op_id, $input)
 	{
-        $data = $this->insertInput($input);
+		$data = RuleModel::G()->inputFilter($input);
+		
         if (empty($data['type'])) {
             $data['type'] = strpos($data['key'], '\\') ? 1 : 0;
         }
         $data['key'] = str_replace('\\\\', '\\', $data['key']);
-        $key = $data['key'] ?? '';
-        if (RuleModel::G()->findByKey($key)) {
-			static::ThrowOn(true, "菜单标识 $key 已经存在", 1);
-        }
         $data['pid'] = empty($data['pid']) ? 0 : $data['pid'];
+        $key = $data['key'] ?? '';
+        $flag = RuleModel::G()->findByKey($key);
+		static::ThrowOn($flag, "菜单标识 $key 已经存在", 1);
+        
 		RuleModel::G()->addMenu($data['key'],$data);
 	}
 	public function updateRule($input)
@@ -214,21 +212,15 @@ class RuleBusiness extends BaseBusiness
 	}
 	public function deleteRule($ids)
 	{
-		// 子规则一起删除
-        $delete_ids = $children_ids = $ids;
-        while($children_ids) {
-            $children_ids = RuleModel::G()->get_children_ids($children_ids);
-            $delete_ids = array_merge($delete_ids, $children_ids);
-        }
-		RuleModel::G()->deleteByIds($delete_ids);
+		RuleModel::G()->dropWithChildren($ids);
 	}
 	
-	    /**
+	/**
      * 类转换为url path
      * @param $controller_class
      * @return false|string
      */
-    static function controllerToUrlPath($controller_class)
+    public function controllerToUrlPath($controller_class)
     {
         $key = strtolower($controller_class);
         $action = '';

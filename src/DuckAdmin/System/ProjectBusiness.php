@@ -16,6 +16,6 @@ class ProjectBusiness
 {
     use SingletonExTrait; // 单例
     use BusinessHelperTrait; //使用助手函数
-    use ThrowOnableTrait;  //使用 ThrowOn()
+    use ThrowOnableTrait;  //使用 static:: ThrowOn()
     //protected $exception_class = ProjectException::class; 
 }

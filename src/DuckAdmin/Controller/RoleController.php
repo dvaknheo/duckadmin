@@ -37,8 +37,10 @@ class RoleController extends Base
      */
     public function select()
     {
+		$post = C::GET();
 		$id = C::GET('id');
-		$data = RoleBusiness::G()->selectRoles($id);
+		$admin_id = AdminAction::G()->getCurrentAdminId();
+		$data = RoleBusiness::G()->selectRoles($admin_id,$id,$post);
 		return C::Success($data);
     }
 

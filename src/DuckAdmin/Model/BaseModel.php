@@ -32,9 +32,9 @@ class BaseModel
                 } elseif ($value[0] == 'not in') {
 					$sql_where.=" and `$column` not in(". self::Db()->quoteIn($value[1]).")";
                 } elseif ($value[0] == 'null') {
-					$sql_where.=" and `$column`  is_null()";
+					$sql_where.=" and `$column`  is null";
                 } elseif ($value[0] == 'not null') {
-					$sql_where.=" and `$column`  not null()";
+					$sql_where.=" and `$column`  not null";
                 } else {
 					$sql_where.="`$column`  between(".self::Db()->quoteIn($value[1]).")";
                 }

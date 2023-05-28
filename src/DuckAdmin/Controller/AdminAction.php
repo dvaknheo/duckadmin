@@ -14,19 +14,23 @@ class AdminAction extends ProjectAction
 {
 	public function initController($class)
 	{
-		AdminAction::G()->assignExceptionHandler(\Exception::class,[AdminAction::class,'OnException']);
-		if(AdminAction::IsJson()){
+		if(static::IsJson()){
+			$this->assignExceptionHandler(\Exception::class,[static::class,'OnException']);
 		}
 		$controller = $class;
         $action = AdminAction::getRouteCallingMethod();
-		AdminAction::G()->checkAccess($controller,$action);
+		$this->checkAccess($controller,$action);
+	}
+	public function getCurrentAdminId()
+	{
+		return AdminSession::G()->getCurrentAdminId();
 	}
 	/**
 	 * 当前管理员
 	 * @param null|array|string $fields
 	 * @return array|mixed|null
 	 */
-	public function getCurrentAdmin($fields = null)
+	public function getCurrentAdmin()
 	{
 		$this->refresh_admin_session();		
 		return AdminSession::G()->getCurrentAdmin();

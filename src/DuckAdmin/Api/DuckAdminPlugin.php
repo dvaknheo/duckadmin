@@ -63,13 +63,6 @@ class DuckAdminPlugin extends App
     protected function onPluginModeBeforeRun()
     {
 		$this->switchDbManager();
-		
-		/*
-		
-		*/
-	
-		//我们检查一下数据库，如果没配置数据库，
-		
         static::FireEvent([static::class, __FUNCTION__]);
 		//return $this->_onPluginModeBeforeRun();
     }

@@ -41,8 +41,8 @@ class RuleController extends Base
     {
 		$data = C::GET();
 		
-		// 本类的状态也要传过去
-		[$data,$total] = RuleBusiness::G()->selectRules($data); // 结果还是一股脑把参数传进去了
+		$admin_id = AdminAction::G()->getCurrentAdminId();
+		[$data,$total] = RuleBusiness::G()->selectRules($admin_id, $data); // 结果还是一股脑把参数传进去了
 		return C::Success($data,$total);
     }
 
@@ -80,11 +80,12 @@ class RuleController extends Base
      */
     public function insert()
     {
-        if (!C::POST()) {
+		$post = C::POST();
+        if (!$post) {
             return C::Show([], 'rule/insert');
         }
-
-		RuleBusiness::G()->insertRule();
+		$admin_id = AdminAction::G()->getCurrentAdminId();
+		RuleBusiness::G()->insertRule($admin_id, $post);
         return C::Success();
     }
 
@@ -96,11 +97,12 @@ class RuleController extends Base
      */
     public function update()
     {
-		if (!C::POST()) {
-            return C::Show([], 'rule/update');
+		$post = C::POST();
+        if (!$post) {
+			return C::Show([], 'rule/update');
         }
-		
-		RuleBusiness::G()->updateRule();
+		$admin_id = AdminAction::G()->getCurrentAdminId();
+		RuleBusiness::G()->updateRule($admin_id, $post);
         return C::Success();
     }
     
