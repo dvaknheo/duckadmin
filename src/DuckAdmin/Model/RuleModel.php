@@ -131,7 +131,7 @@ class RuleModel extends BaseModel
      * @param $key
      * @return void
      */
-    public static function deleteAll($key)
+    public function deleteAll($key)
     {
         $item = $this->findByKey($key);
         if (!$item) {

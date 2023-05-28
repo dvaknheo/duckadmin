@@ -52,8 +52,10 @@ class DuckAdminPlugin extends App
         $this->plugin_options['plugin_path'] = realpath(__DIR__.'/../').'/'; // 节约性能，不搜索
 		
         $this->plugin_options['plugin_readfile_prefix'] = $this->options['controller_resource_prefix']; // 这里可能要改。
-        $this->plugin_options['plugin_route_options']['controller_base_class'] = $this->options['controller_base_class']; // 拉配置那边的过来。
-		
+        $this->plugin_options['plugin_route_options']['controller_base_class'] = $this->options['controller_base_class'] ?? ''; // 拉配置那边的过来。
+        $this->plugin_options['plugin_route_options']['controller_class_postfix'] = $this->options['controller_class_postfix'] ?? ''; // 拉配置那边的过来。
+		//		'controller_class_postfix' => 'Controller',
+
         $this->plugin_options = array_merge($ext_plugin_options, $this->plugin_options);
 		
 		

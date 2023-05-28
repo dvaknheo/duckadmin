@@ -42,7 +42,6 @@ class ProjectRoute extends Route
 		$baseclass=implode('',$t);
 		array_push($x,$baseclass);
 		$path_class=implode('/',$x);
-		$this->options['controller_class_postfix']='Controller';
 		////]]]]
         $full_class = $this->namespace_prefix.str_replace('/', '\\', $path_class).$this->options['controller_class_postfix'];
         $full_class = ''.ltrim($full_class, '\\');
