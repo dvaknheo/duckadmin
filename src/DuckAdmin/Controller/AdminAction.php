@@ -6,12 +6,20 @@
 
 namespace DuckAdmin\Controller;
 
+use DuckPhp\Foundation\ThrowOnableTrait;
+use DuckPhp\Helper\ControllerHelperTrait;
+use DuckPhp\SingletonEx\SingletonExTrait;
+
 use DuckAdmin\Business\AccountBusiness;
 use DuckAdmin\Controller\AdminSession;
 use DuckAdmin\System\ProjectAction;
 
-class AdminAction extends ProjectAction
+class AdminAction
 {
+    use SingletonExTrait;
+    use ControllerHelperTrait;
+    use ThrowOnableTrait;
+
 	public function initController($class)
 	{
 		if(static::IsJson()){

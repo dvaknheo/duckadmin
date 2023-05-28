@@ -13,7 +13,7 @@ use DuckAdmin\Business\ConfigBusiness;
 /**
  * 系统设置
  */
-class ConfigController extends ProjectController
+class ConfigController extends Base
 {
     /**
      * 不需要验证权限的方法
