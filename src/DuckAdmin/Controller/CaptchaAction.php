@@ -6,8 +6,10 @@
 
 namespace DuckAdmin\Controller;
 
-use DuckAdmin\Controller\AdminSession;
-use DuckAdmin\System\ProjectAction;
+use DuckPhp\Foundation\ThrowOnableTrait;
+use DuckPhp\Helper\ControllerHelperTrait;
+use DuckPhp\SingletonEx\SingletonExTrait;
+
 
 use Gregwar\Captcha\CaptchaBuilder;
 use Gregwar\Captcha\PhraseBuilder;
@@ -16,8 +18,12 @@ use Gregwar\Captcha\PhraseBuilder;
  * 验证码系统，你可以修改你的实现
  * 第三方的东西在这里写
  */
-class CaptchaAction extends ProjectAction
+class CaptchaAction
 {
+    use SingletonExTrait;
+    use ControllerHelperTrait;
+    use ThrowOnableTrait;
+	
     public function __construct()
     {
     }

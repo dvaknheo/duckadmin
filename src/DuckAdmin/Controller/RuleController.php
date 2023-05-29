@@ -57,6 +57,8 @@ class RuleController extends Base
         $types = is_string($types) ? explode(',', $types) : [0, 1];
 		
 		$admin = AdminAction::G()->getCurrentAdmin();
+		$admin_id = AdminAction::G()->getCurrentAdminId();
+
 		$data = RuleBusiness::G()->get($admin['roles'],$types);
 		
 		return C::Success($data);
@@ -113,6 +115,7 @@ class RuleController extends Base
      */
     public function delete()
     {
+		$admin_id = AdminAction::G()->getCurrentAdminId();
 		RuleBusiness::G()->deleteRule();
         return C::Success();
     }

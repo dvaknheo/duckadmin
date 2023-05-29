@@ -88,17 +88,13 @@ class RoleBusiness extends BaseBusiness
         }
 	}
 	
-	public function deleteRole($ids)
+	public function deleteRole($op_id, $ids)
 	{
-		// $ids = $this->deleteInput($request);   // 这里只是权限设置，其实应该入口里改
-        
         static::ThrowOn(in_array(1, $ids), '无法删除超级管理员角色');
         
-		//no role 应该包括这个
-        if (!$this->isSupperAdmin() && array_diff($ids, $this->getScopeRoleIds())) {
-			static::ThrowOn(true,'无删除权限',1);
-        }
-		
+		$flag = $this->noRole($op_id,$ids,) {
+		static::ThrowOn($flag ,'无删除权限',1);
+        
 		
         $tree = new Tree(RoleModel::G()->getAll());
         $descendants = $tree->getDescendant($ids);
@@ -108,17 +104,14 @@ class RoleBusiness extends BaseBusiness
 		RoleModel::G()->deleteByIds($ids);
 	}
 	
-	public function tree($role_id)
+	public function tree($op_id, $role_id)
 	{
-	
         if (empty($role_id)) {
             return [];
         }
-		$admin=$this->getCurrentAdmin();
-		
-        if ($this->noRole($admin, $role_id, true)) {
-            static::ThrowOn(true,'角色组超出权限范围',1);
-        }
+        $flag = $this->noRole($admin_id, $role_id, true)
+        static::ThrowOn($flag,'角色组超出权限范围',1);
+        
 		
         $rule_id_string = RoleModel::getRulesByRoleId($role_id);
         if ($rule_id_string === '') {
@@ -169,7 +162,7 @@ class RoleBusiness extends BaseBusiness
      * @param bool $with_self
      * @return array
      */
-    public function getScopeRoleIds($role_ids,  bool $with_self = false): array
+    protected function getScopeRoleIds($role_ids,  bool $with_self = false): array
     {
         //$role_ids = $admin['roles'];
 		

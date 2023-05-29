@@ -222,7 +222,11 @@ class BaseBusiness
 	protected function noRole($admin_id,$role_id,bool $with_self = false)
 	{
 		$roles = AdminRoleModel::G()->getRoleIds($admin_id);
-		if(!$this->isSupperAdmin($admin_id) && !in_array($role_id, $this->getScopeRoleIds($roles, $with_self))){
+		if(!$this->isSupperAdmin($admin_id)){
+			return false;
+		}
+		$role_id=is_array($role_id)?$role_id:[$role_id];
+		if(array_diff($role_id, $this->getScopeRoleIds($roles, $with_self))){
 			return true;
 		}else{
 			return false;
