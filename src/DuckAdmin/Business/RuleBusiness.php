@@ -14,7 +14,6 @@ class RuleBusiness extends BaseBusiness
 	{
 		$rules = RoleModel::G()->getRules($roles);
         $items = RuleModel::G()->allRules();
-		
 		// 格式化数据
         $formatted_items = [];
         foreach ($items as $item) {
@@ -89,11 +88,11 @@ class RuleBusiness extends BaseBusiness
 	
 	public function selectRules($op_id, $input)
 	{
-		$this->syncRules();
+		//$this->syncRules();
 		
 		//这里要提回来，这个 selectInput 太范了
 		[$where, $format, $limit, $field, $order] = $this->selectInput($input, RuleModel::G()->table(), null, null);
-        [$data,$total] = RuleModel::G()->doSelect($where, $field, $order);
+        [$data,$total] = RuleModel::G()->doSelect($where, $field, $order,1,$limit);
         return $this->doFormat($data, $total, $format, $limit);
 		
 	}

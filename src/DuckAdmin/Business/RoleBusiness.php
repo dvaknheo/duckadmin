@@ -92,7 +92,7 @@ class RoleBusiness extends BaseBusiness
 	{
         static::ThrowOn(in_array(1, $ids), '无法删除超级管理员角色');
         
-		$flag = $this->noRole($op_id,$ids,) {
+		$flag = $this->noRole($op_id,$ids);
 		static::ThrowOn($flag ,'无删除权限',1);
         
 		
@@ -109,7 +109,7 @@ class RoleBusiness extends BaseBusiness
         if (empty($role_id)) {
             return [];
         }
-        $flag = $this->noRole($admin_id, $role_id, true)
+        $flag = $this->noRole($admin_id, $role_id, true);
         static::ThrowOn($flag,'角色组超出权限范围',1);
         
 		
@@ -162,7 +162,7 @@ class RoleBusiness extends BaseBusiness
      * @param bool $with_self
      * @return array
      */
-    protected function getScopeRoleIds($role_ids,  bool $with_self = false): array
+    public function getScopeRoleIds($role_ids,  bool $with_self = false): array
     {
         //$role_ids = $admin['roles'];
 		

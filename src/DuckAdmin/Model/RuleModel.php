@@ -106,7 +106,7 @@ class RuleModel extends BaseModel
 		$sql = "update wa_rules set pid=?, title=?, icon=?, updated_at=? where `key`=?";
 		return static::Db()->execute($sql, $pid, $menu['title'], $menu['icon']??null, $time, $key);
 	}
-	protected function addMenu($key,$menu)
+	public function addMenu($key,$menu)
 	{
 		$menu['`key`']=$menu['key'];  //修复 db 类的 bug
 		unset($menu['key']);
