@@ -195,11 +195,14 @@ class RuleBusiness extends BaseBusiness
         
 		RuleModel::G()->addMenu($data['key'],$data);
 	}
-	public function updateRule($input)
+	public function updateRule($op_id, $input)
 	{
-        [$id, $data] = $this->updateInput($input);
+		$id = $input['id'];
 		$row = RuleModel::G()->findById($id);
+		
 		static::ThrowOn(!$row, '记录不存在',2);
+		$data = RuleModel::G()->inputFilter($input);
+		//[$id, $data] = $this->updateInput($input);
         if (isset($data['pid'])) {
             $data['pid'] = $data['pid'] ?: 0;
             static::ThrowOn($data['pid'] == $row['id'], '不能将自己设置为上级菜单',2);
@@ -207,9 +210,10 @@ class RuleBusiness extends BaseBusiness
         if (isset($data['key'])) {
             $data['key'] = str_replace('\\\\', '\\', $data['key']);
         }
+        
         RuleModel::G()->updateRule($id, $data);
 	}
-	public function deleteRule($ids)
+	public function deleteRule($op_id, $ids)
 	{
 		RuleModel::G()->dropWithChildren($ids);
 	}

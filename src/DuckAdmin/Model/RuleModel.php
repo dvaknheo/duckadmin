@@ -71,9 +71,10 @@ class RuleModel extends BaseModel
 	///////////////
     public function dropWithChildren($ids)
 	{
+		$ids=is_array($ids)?$ids:[$ids];
         $delete_ids = $children_ids = $ids;
         while($children_ids) {
-            $children_ids = RuleModel::G()->get_children_ids($children_ids);
+            $children_ids = $this->get_children_ids($children_ids);
             $delete_ids = array_merge($delete_ids, $children_ids);
         }
 		// 这两个要合并
@@ -90,13 +91,14 @@ class RuleModel extends BaseModel
 	}
 	public function updateRule($id, $data)
 	{
-		if(isset($menu['key'])){
-			$menu['`key`']=$menu['key'];  //修复 db 类的 bug
-			unset($menu['key']);
+		if(isset($data['key'])){
+			$data['`key`']=$data['key'];  //修复 db 类的 bug
+			unset($data['key']);
 		}
 		
 		$time = date('Y-m-d H:i:s');
 		$data['updated_at'] =$time;
+		$data['pid'] = $data['pid']? $data['pid']:0;
 		return static::Db()->updateData("wa_rules", $id, $data, 'id');
 	}
 	protected function updateMenu($key,$menu)
@@ -119,7 +121,7 @@ class RuleModel extends BaseModel
 		return static::Db()->lastInsertId();
 	}
 
-	public function get_children_ids($ids)
+	protected function get_children_ids($ids)
 	{
 		//这个函数名字要改
 		$sql ="select id from wa_rules where pid in (" .static::Db()->quoteIn($ids) .")";

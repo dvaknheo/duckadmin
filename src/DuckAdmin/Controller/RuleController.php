@@ -115,8 +115,10 @@ class RuleController extends Base
      */
     public function delete()
     {
+		$post = C::POST();
+		
 		$admin_id = AdminAction::G()->getCurrentAdminId();
-		RuleBusiness::G()->deleteRule();
+		RuleBusiness::G()->deleteRule($admin_id,$post['id']);
         return C::Success();
     }
 

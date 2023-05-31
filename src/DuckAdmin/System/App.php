@@ -20,7 +20,6 @@ class App extends DuckPhp
     public $options = [
         'error_404' => '_sys/error_404',
         'error_500' => '_sys/error_500',
-        //'controller_base_class' => ProjectController::class,  // 我们固定住控制器基类
         'controller_resource_prefix' => 'res/',  // 资源文件前缀
 		'controller_class_postfix' => 'Controller',
 
