@@ -182,9 +182,10 @@ class RuleModel extends BaseModel
 	}
 	public function checkRulesExist($rule_ids)
 	{
-		$sql ="select count(*) as c where id in (" .static::Db()->quoteIn($rule_ids) .")";
+		$sql ="select count(*) as c from wa_rules  where id in (" .static::Db()->quoteIn($rule_ids) .")";
 		$data = static::Db()->fetchColumn($sql);
-		return (count($rule_exists) === count($rule_ids))?true:false;
+		$data = (int)$data;
+		return ($data === count($rule_ids))?true:false;
 	}
 	public function getAllByKey()
 	{

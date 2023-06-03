@@ -10,6 +10,8 @@ namespace DuckAdmin\Model;
  */
 class RoleModel extends BaseModel
 {
+	public $table_name = 'wa_roles';
+
 	public function getRules($roles)
 	{
 		$sql="select rules from wa_roles where id in (". static::Db()->quoteIn($roles).')';

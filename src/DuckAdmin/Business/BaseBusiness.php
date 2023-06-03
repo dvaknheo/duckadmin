@@ -221,8 +221,8 @@ class BaseBusiness
 	///////////////////////
 	protected function noRole($admin_id,$role_id,bool $with_self = false)
 	{
-		$roles = AdminRoleModel::G()->getRoleIds($admin_id);
-		if(!$this->isSupperAdmin($admin_id)){
+		$roles = AdminRoleModel::G()->getRoles($admin_id);
+		if(!$this->isSupperAdmin((int)$admin_id)){
 			return false;
 		}
 		$role_id=is_array($role_id)?$role_id:[$role_id];

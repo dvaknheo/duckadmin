@@ -40,8 +40,8 @@ class RoleController extends Base
 		$post = C::GET();
 		$id = C::GET('id');
 		$admin_id = AdminAction::G()->getCurrentAdminId();
-		$data = RoleBusiness::G()->selectRoles($admin_id,$id,$post);
-		return C::Success($data);
+		[$data,$total] = RoleBusiness::G()->selectRoles($admin_id,$id,$post);
+		return C::Success($data,$total);
     }
 
     /**
@@ -58,6 +58,7 @@ class RoleController extends Base
 		$post = C::POST();
 		
 		$admin_id = AdminAction::G()->getCurrentAdminId();
+
 		$id = RoleBusiness::G()->insertRole($admin_id, $post);
 		return C::Success(['id' => $id]);
 
@@ -74,11 +75,10 @@ class RoleController extends Base
 		if (!C::POST()) {
 			return C::Show([],'role/update');
 		}
-		C::ThrowOn(true,"No Impelement");
 		$post = C::POST();
 		
 		$admin_id = AdminAction::G()->getCurrentAdminId();
-		$id = RoleBusiness::G()->updateRole($post);
+		$id = RoleBusiness::G()->updateRole($admin_id, $post);
 		return C::Success(['id' => $id]);
     }
 
