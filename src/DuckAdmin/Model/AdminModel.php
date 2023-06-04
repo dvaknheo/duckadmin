@@ -12,6 +12,17 @@ class AdminModel extends BaseModel
 {
 	public $table_name = 'wa_admins';
 	
+    public function selectInput($data): array
+	{
+		// 隔离BaseModel 的调用
+		return parent::selectInput($data);
+	}
+	public function doSelect(array $where, string $field = null, string $order= 'desc' ,$page=1,$page_size=10)
+	{
+		// 隔离BaseModel 的调用
+		return parent::doSelect($where, $field, $order,$page,$page_size);
+	}
+
     public function getAdminByName($username)
     {
 		return static::Db()->fetch("select * from wa_admins where username = ?",$username);
@@ -60,6 +71,8 @@ class AdminModel extends BaseModel
 		static::Db()->insertData($this->table(),$data);
         return 	static::Db()->lastInsertId();
     }
+	
+	// 这和父类不同
 	public function inputFilter(array $data): array
 	{
 		$data = parent::inputFilter($data);

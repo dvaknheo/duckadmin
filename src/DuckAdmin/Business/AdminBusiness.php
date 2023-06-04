@@ -11,7 +11,7 @@ class AdminBusiness extends BaseBusiness
 {
 	public function showAdmins($login_admin_id,$input, $table, $dataLimit=null, $dataLimitField =null)
 	{
-        [$where, $format, $limit, $field, $order] = CommonService::G()->selectInput($input, AdminModel::G()->table(), $dataLimit, $dataLimitField);
+        [$where, $format, $limit, $field, $order] = AdminModel::G()->selectInput($input);
 		
 
         [$items,$total] = AdminModel::G()->doSelect($where, $field, $order);

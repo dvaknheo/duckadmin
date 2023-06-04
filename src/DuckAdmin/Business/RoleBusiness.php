@@ -15,7 +15,7 @@ class RoleBusiness extends BaseBusiness
 		//这里折腾好久
 		//return [['name' => '超级管理员','value'=>1]];
 		//file_put_contents(__DIR__.'/x.log',microtime(true) ."\n",FILE_APPEND);
-        [$where, $format, $limit, $field, $order] = CommonService::G()->selectInput($input, RoleModel::G()->table(), null, null);
+        [$where, $format, $limit, $field, $order] = RoleModel::G()->selectInput($input);
 		$my_ids = AdminRoleModel::G()->getRoles($op_id);
         $role_ids = CommonService::G()->getScopeRoleIds($my_ids, true);
         if (!$id) {

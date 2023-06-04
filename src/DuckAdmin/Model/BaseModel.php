@@ -19,8 +19,44 @@ class BaseModel
         return $this->table_name;
     }
 	
+    /**
+     * 查询前置
+     * @param Request $request
+     * @return array
+     * @throws BusinessException
+     */
+    protected function selectInput($data): array
+    {
+        $where = $data;
+		
+        $field = $data['field'] ??null;;
+        $order = $data['order']??'asc';
+        $format = $data['format']??'normal';
+        $page = $data['page']??0;
+        $limit = $data['limit']??($format === 'tree' ? 1000 : 10);
+		
+		$limit = (int)$limit;
+        $limit = $limit <= 0 ? 10 : $limit;
+        $order = $order === 'asc' ? 'asc' : 'desc';
+        $page = $page > 0 ? $page : 1;
+		//////////////////////////////////
+		
+        $allow_column = $this->getAllowColumns();
+        if (!in_array($field, $allow_column)) {
+            $field = null;
+        }
+		
+        foreach ($where as $column => $value) {
+            if ($value === '' || !isset($allow_column[$column]) ||
+                (is_array($value) && (in_array($value[0], ['', 'undefined']) || in_array($value[1], ['', 'undefined'])))) {
+                unset($where[$column]);
+            }
+        }
+
+        return [$where, $format, $limit, $field, $order, $page];
+    }
 	//这对外
-	public function doSelect(array $where, string $field = null, string $order= 'desc' ,$page=1,$page_size=10)
+	protected function doSelect(array $where, string $field = null, string $order= 'desc' ,$page=1,$page_size=10)
     {
 		$sql_where =' TRUE ';
         foreach ($where as $column => $value) {
@@ -59,12 +95,10 @@ class BaseModel
      * @return array
      * @throws BusinessException
      */
-    public function inputFilter(array $data): array
+    protected function inputFilter(array $data): array
     {
-        $allow_column = self::Db()->fetchAll("desc `".$this->table()."`");
-        if (!$allow_column) {
-            throw new \Exception('表不存在', 2); // 这里应该搞个错误类
-        }
+        $allow_column = $this->getAllowColumns();
+
         $columns = array_column($allow_column, 'Type', 'Field');
         foreach ($data as $col => $item) {
             if (!isset($columns[$col])) {
@@ -87,4 +121,11 @@ class BaseModel
         }
         return $data;
     }
+	protected function getAllowColumns()
+	{
+        $allow_column = self::Db()->fetchAll("desc `".$this->table()."`");
+        $allow_column = array_column($allow_column, 'Field', 'Field');
+		return $allow_column;
+	}
+
 }
