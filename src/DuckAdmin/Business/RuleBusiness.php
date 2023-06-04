@@ -89,11 +89,9 @@ class RuleBusiness extends BaseBusiness
 	public function selectRules($op_id, $input)
 	{
 		//$this->syncRules();
-		
-		//这里要提回来，这个 selectInput 太范了
-		[$where, $format, $limit, $field, $order] = $this->selectInput($input, RuleModel::G()->table(), null, null);
+		[$where, $format, $limit, $field, $order] = CommonService::G()->selectInput($input, RuleModel::G()->table(), null, null);
         [$data,$total] = RuleModel::G()->doSelect($where, $field, $order,1,$limit);
-        return $this->doFormat($data, $total, $format, $limit);
+        return CommonService::G()->doFormat($data, $total, $format, $limit);
 		
 	}
 	protected function mapClass($class)

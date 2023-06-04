@@ -11,7 +11,7 @@ class AdminBusiness extends BaseBusiness
 {
 	public function showAdmins($login_admin_id,$input, $table, $dataLimit=null, $dataLimitField =null)
 	{
-        [$where, $format, $limit, $field, $order] = $this->selectInput($input, AdminModel::G()->table(), $dataLimit, $dataLimitField);
+        [$where, $format, $limit, $field, $order] = CommonService::G()->selectInput($input, AdminModel::G()->table(), $dataLimit, $dataLimitField);
 		
 
         [$items,$total] = AdminModel::G()->doSelect($where, $field, $order);
@@ -37,9 +37,8 @@ class AdminBusiness extends BaseBusiness
 		static::ThrowOn(!$role_ids,'至少选择一个角色组',1);
 		
 		// 这里两个
-		if (false && !Auth::isSupperAdmin() && array_diff($role_ids, Auth::getScopeRoleIds())) {
-			static::ThrowOn(true,'角色超出权限范围',1);
-		}
+		$flag = CommonService::G()->noRole($op_id,$role_ids, false);
+		static::ThrowOn($flag,'角色超出权限范围',1);
 		
 		if (false &&!Auth::isSupperAdmin() && $this->dataLimit) {
             if (!empty($data[$this->dataLimitField])) {

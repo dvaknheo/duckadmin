@@ -30,7 +30,7 @@ class AccountBusiness extends BaseBusiness
             'avatar' => $admin['avatar'],
             'email' => $admin['email'],
             'mobile' => $admin['mobile'],
-            'isSupperAdmin' =>$this->isSupperAdmin($admin['id']),
+            'isSupperAdmin' =>CommonService::G()->isSupperAdmin($admin['id']),
         ];
 		
 		return $info;

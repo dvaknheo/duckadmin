@@ -83,13 +83,15 @@ class RoleModel extends BaseModel
 		$data['updated_at'] = $time;
 		return static::Db()->updateData("wa_roles", $id, $data, 'id');
 	}
-	public function updateRoleX($role_id,$rule_ids)
+	public function updateRoleMore($descendant_role_ids,$rule_ids)
 	{
-		$data = static::Db()->fetch("select * from wa_roles where id = ? ",$role_id);
-		$data['rules'] = implode(',', array_intersect(explode(',',$data['rules']),$rule_ids));
-		$time = date('Y-m-d H:i:s');
-		$data['updated_at'] = $time;
-		return static::Db()->updateData("wa_roles", $id, $data, 'id');
+		foreach ($descendant_role_ids as $role_id) {
+			$data = static::Db()->fetch("select * from wa_roles where id = ? ",$role_id);
+			$data['rules'] = implode(',', array_intersect(explode(',',$data['rules']),$rule_ids));
+			$time = date('Y-m-d H:i:s');
+			$data['updated_at'] = $time;
+			static::Db()->updateData("wa_roles", $id, $data, 'id');
+		}
 	}
 
 }
