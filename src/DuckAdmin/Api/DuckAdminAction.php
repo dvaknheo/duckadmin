@@ -14,21 +14,24 @@ use DuckAdmin\System\AdminAction;
  */
 class DuckAdminAction
 {
-    use SingletonExTrait;    
+    use SingletonExTrait;
+	public function getCurrentAdminId()
+	{
+		//
+	}
+	public function isSuperAdmin($admin_id)
+	{
+		//
+	}
+	public function hasPermission()
+	{
+		//
+	}
     /**
      * 检查权限 你的方法调用这个杜绝外部访问。
      */
     public function checkPermission()
     {
-        return AdminAction::G()->doCheckPermission();
-    }
-    // 调用这个，询问当前是否是超级管理员
-    /**
-     *检查当前是否是超级管理员
-     * @return type
-     */
-    public static function IsSuperAdmin()
-    {
-        return AdminAction::G()->doCheckPermission();
+        //return AdminAction::G()->doCheckPermission();
     }
 }

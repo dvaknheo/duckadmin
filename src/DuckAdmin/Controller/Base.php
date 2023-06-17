@@ -22,6 +22,6 @@ class Base
 
     public function __construct()
     {
-		AdminAction::G()->initController(static::class);	
+		AdminAction::G()->initController();	
     }
 }

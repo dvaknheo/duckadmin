@@ -9,6 +9,7 @@ namespace DuckAdmin\Controller;
 use DuckPhp\Foundation\ThrowOnableTrait;
 use DuckPhp\Helper\ControllerHelperTrait;
 use DuckPhp\SingletonEx\SingletonExTrait;
+use DuckPhp\Core\Route;
 
 use DuckAdmin\Business\AccountBusiness;
 use DuckAdmin\Controller\AdminSession;
@@ -20,13 +21,17 @@ class AdminAction
     use ControllerHelperTrait;
     use ThrowOnableTrait;
 
-	public function initController($class)
+	public static function getRouteCallingClass()
 	{
-		if(static::IsJson()){
+		return Route::G()->getRouteCallingClass();
+	}
+	public function initController()
+	{
+		if(static::IsAjax()){
 			$this->assignExceptionHandler(\Exception::class,[static::class,'OnException']);
 		}
-		$controller = $class;
-        $action = AdminAction::getRouteCallingMethod();
+		$controller = static::getRouteCallingClass();
+        $action = static::getRouteCallingMethod();
 		$this->checkAccess($controller,$action);
 	}
 	public function getCurrentAdminId()
@@ -88,10 +93,6 @@ class AdminAction
 	{
 		return @$_SERVER['REQUEST_METHOD']=='OPTIONS'?true:false;
 	}
-	public static function IsJson()
-	{
-		return @$_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest' ? true : false;
-	}
     public function checkAccess($controller,$action)
     {
         $code = 0;
@@ -106,7 +107,7 @@ class AdminAction
 			return;
 		}
 		
-		if (static::IsJson()) {
+		if (static::IsAjax()) {
 			static::ExitJson(['code' => $code, 'msg' => $msg, 'type' => 'error']);
 		}
 		if($code == 401){

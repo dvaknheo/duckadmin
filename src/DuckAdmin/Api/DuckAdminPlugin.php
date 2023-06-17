@@ -28,15 +28,6 @@ class DuckAdminPlugin extends App
     }
     // 可调的外部设置， 声明
     public $plugin_options = [
-            //'installed' => true,
-            //'duckadmin_resource_url_prefix' => 'res/', //资源前缀
-    ];
-    //////  初始化
-    public function pluginModeInit(array $plugin_options, object $context = null)
-    {
-        // 这里的配置是内部配置
-        $ext_plugin_options = [
-		
             'plugin_path_document' => 'res/',
             'plugin_enable_readfile' =>true,
 			
@@ -47,6 +38,23 @@ class DuckAdminPlugin extends App
 				'menu',
 				'database',
 			],
+    ];
+	
+    /////////////////////////////////////////
+    public static function Action()
+    {
+        return DucckAdminAction::G();
+    }
+    public static function Service()
+    {
+        return DucckAdminService::G();
+    }
+    //////  初始化
+    public function pluginModeInit(array $plugin_options, object $context = null)
+    {
+        // 这里的配置是内部配置
+        $ext_plugin_options = [
+
         ];
         // 这里
         $this->plugin_options['plugin_path'] = realpath(__DIR__.'/../').'/'; // 节约性能，不搜索
@@ -86,14 +94,5 @@ class DuckAdminPlugin extends App
 		}
 	}
     
-    // 后两个是通用的方法，只留一个入口
-    /////////////////////////////////////////
-    public static function Action()
-    {
-        return DucckAdminAction::G();
-    }
-    public static function Service()
-    {
-        return DucckAdminService::G();
-    }
+
 }
