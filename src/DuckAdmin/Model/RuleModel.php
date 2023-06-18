@@ -40,7 +40,7 @@ class RuleModel extends BaseModel
 	}
 	public function checkWildRules($rule_ids,$controller,$action)
 	{
-		$str = static::Db()->quoteIn($ruls_ids);
+		$str = static::Db()->quoteIn($rule_ids);
 		$key = static::Db()->quote($controller);
 		$like = static::Db()->quote($controller.'@%');
 		
