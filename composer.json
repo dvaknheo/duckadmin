@@ -29,5 +29,8 @@
         "gregwar/captcha": "^1.1",
         "dvaknheo/duckphp": "dev-master",
         "dvaknheo/workermanhttpd": "^1.0"
-	}
+	},
+    "require-dev": {
+        "phpstan/phpstan": "0.12.35"
+    }
 }

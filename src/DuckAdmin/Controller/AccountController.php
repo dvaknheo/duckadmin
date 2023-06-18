@@ -70,7 +70,6 @@ class AccountController extends Base
     /**
      * 获取登录信息
      * @param 
-     * @return Response
      */
     public function info()
     {

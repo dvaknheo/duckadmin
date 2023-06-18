@@ -43,11 +43,11 @@ class DuckAdminPlugin extends App
     /////////////////////////////////////////
     public static function Action()
     {
-        return DucckAdminAction::G();
+        return DuckAdminAction::G();
     }
     public static function Service()
     {
-        return DucckAdminService::G();
+        return DuckAdminService::G();
     }
     //////  初始化
     public function pluginModeInit(array $plugin_options, object $context = null)

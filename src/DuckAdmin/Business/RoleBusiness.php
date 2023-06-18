@@ -140,8 +140,6 @@ class RoleBusiness extends BaseBusiness
      * 检查权限字典是否合法
      * @param int $role_id
      * @param $rule_ids
-     * @return void
-     * @throws BusinessException
      */
     protected function checkRulesInput(int $role_id, $rule_ids)
     {
