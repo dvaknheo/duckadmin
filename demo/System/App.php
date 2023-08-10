@@ -24,29 +24,23 @@ class App extends DuckPhp
         // 'path_info_compact_enable' => false,  //如果你的服务器不做 path_info 用这个
         'error_404' => '_sys/error_404',
         'error_500' => '_sys/error_500',
-    ];
-    
-    public function onBeforeRun()
-    {
-        //我们检查安装
-    }
-
-    public function __construct()
-    {
-        parent::__construct();
-        $ext = [
+        'ext' => [
             // 后台管理系统
             \DuckAdmin\Api\DuckAdminPlugin::class => [
-                'plugin_url_prefix' => 'app/admin/', // 访问路径
+                'controller_url_prefix' => 'app/admin/', // 访问路径
             ],
             // 前台用户系统
             \DuckUser\Api\DuckUserPlugin::class => [
-                'plugin_url_prefix' => 'user/', // 访问路径
+                'controller_url_prefix' => 'user/', // 访问路径
             ],
-        ];
-        $this->options['ext']=array_merge($this->options['ext'],$ext);
-   }
-
+        ]
+    ];
+   public function init()
+   {
+        parent::init();
+        //static::Root()::Admin(Admin::G());
+        return $this;
+    }
 
     public function command_run()
     {
