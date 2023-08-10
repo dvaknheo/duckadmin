@@ -6,7 +6,20 @@
 
 namespace DuckUser\Model;
 
-use DuckUser\System\ProjectModel;
-class BaseModel extends ProjectModel
+use DuckPhp\Foundation\SimpleModelTrait;
+use DuckPhp\Helper\ModelHelperTrait;
+use DuckPhp\SingletonEx\SingletonExTrait;
+
+use DuckUser\System\App;
+
+class BaseModel
 {
+    use SingletonExTrait;
+    use SimpleModelTrait;
+    use ModelHelperTrait;
+    
+    public function __construct()
+    {
+        $this->table_prefix = App::G()->options['table_prefix'];
+    }
 }
