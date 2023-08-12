@@ -11,7 +11,7 @@ use DuckPhp\SingletonEx\SingletonExTrait;
  * 你的 Contoller 控制器调用这里的静态方法类。
  * 如果没法满足你的需求，那么请深入相关类
  */
-class Action
+class ActionApi
 {
     use SingletonExTrait;
 	public function getCurrentAdminId()

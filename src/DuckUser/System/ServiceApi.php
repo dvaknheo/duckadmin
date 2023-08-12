@@ -3,11 +3,12 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace DuckUser\Api;
+namespace DuckUser\System;
 
 use DuckPhp\SingletonEx\SingletonExTrait;
+use DuckUser\Business\UserBusiness;
 
-class DuckUserService
+class ServiceAPi
 {
     use SingletonExTrait;
     

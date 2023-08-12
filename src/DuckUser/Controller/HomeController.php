@@ -6,7 +6,7 @@
 namespace DuckUser\Controller;
 
 use DuckUser\Business\UserBusiness;
-use DuckUser\Controller\Base as C;
+use DuckUser\Controller\DefaultAction as C;
 use DuckUser\ControllerEx\SessionManager;
 
 class Home extends Base

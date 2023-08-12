@@ -23,25 +23,25 @@ class App extends DuckPhp
         'controller_resource_prefix' => 'res/',  // 资源文件前缀
 		'controller_class_postfix' => 'Controller',
     ];
-    public function init()
+    public function onInit()
     {
-        parent::init();
-        
-        
-        return $this;
+        //Route 替换。
+        ProjectRoute::G()->init(Route::G()->options,$this);
+        Route::G(ProjectRoute::G());
     }
     /////////
-    public static function Action()
+    public static function ActionApi()
     {
-        return Action::G();
+        return ActionApi::G();
     }
-    public static function Service()
+    public static function ServiceApi()
     {
-        return Service::G();
+        return ServiceApi::G();
     }
     ////////////// 命令行
     public function command_install()
     {
+        // 安装命令。
         echo "welcome to Use DuckAdmin installer  --force  to force install\n";
         $parameters =  static::Parameter();
         if(count($parameters)==1 || ($parameters['help'] ?? null)){
@@ -53,6 +53,7 @@ class App extends DuckPhp
     }
 	protected function switchDbManager()
 	{
+        // 这里旧的数据库配置
 		$old = DbManager::G();
 		$options = $old->options;
 		if(empty($options['database']) || empty($options['database_list'])){
@@ -68,19 +69,6 @@ class App extends DuckPhp
 			}
 		}
 	}
-
 }
 /////////////
-}
-namespace DuckAdmin
-{
-// 专属的一些函数
-    function __res($url)
-    {
-        return \DuckAdmin\System\App::Res($url);
-    }
-    function __url($url)
-    {
-        return \DuckAdmin\System\App::Url($url);
-    }
 }

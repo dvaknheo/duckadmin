@@ -6,8 +6,9 @@
 namespace DuckUser\Api;
 
 use DuckPhp\SingletonEx\SingletonExTrait;
+use DuckUser\Controller\UserBusinessl
 
-class DuckUserAction
+class ActionApi
 {
     use SingletonExTrait;
     public  function getCurrentUser()

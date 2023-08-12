@@ -13,7 +13,7 @@ class App extends DuckPhp
     use InstallableTrait;
     //@override
     public $options = [
-        'controller_base_class' => ProjectController::class, // 限定控制器
+		'controller_class_postfix' => 'Controller',
         
         'table_prefix' => 'duckuser_',   // 表前缀
         'session_prefix' => '',  // Session 前缀
@@ -21,11 +21,7 @@ class App extends DuckPhp
         //// 以下是独有选项
         'home_url' => 'Home/index', 
     ];
-    
-    public function __construct()
-    {
-        parent::__construct();
-    }
+
     protected function onBeforeRun()
     {
         //$this->checkInstall();

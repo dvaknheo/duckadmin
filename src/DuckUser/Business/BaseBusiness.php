@@ -9,11 +9,12 @@ namespace DuckUser\Business;
 use DuckPhp\Foundation\ThrowOnableTrait;
 use DuckPhp\Helper\BusinessHelperTrait;
 use DuckPhp\SingletonEx\SingletonExTrait;
+use DuckUser\System\ProjectException;
 
 class BaseBusiness
 {
     //其他 Business 类，都调用这个类，而不和 DuckUser\System 发生联系
-    
+    // 我们把助手方法都绑到基类里了，偷懒
     use SingletonExTrait;
     use BusinessHelperTrait;
     use ThrowOnableTrait;
