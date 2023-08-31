@@ -9,8 +9,8 @@ use DuckPhp\Core\Route;
 
 class ProjectRoute extends Route
 {
-	protected function pathToClassAndMethod($path_info)
-	{
+    protected function pathToClassAndMethod($path_info)
+    {
         $path_info = ltrim((string)$path_info, '/');
         if (!empty($this->options['controller_path_ext']) && !empty($path_info)) {
             $l = strlen($this->options['controller_path_ext']);
@@ -24,7 +24,7 @@ class ProjectRoute extends Route
         $t = explode('/', $path_info);
         $method = array_pop($t);
         $path_class = implode('/', $t);
-		
+        
         
         $this->calling_path = $path_class?$path_info:$this->welcome_class.'/'.$method;
 
@@ -34,17 +34,17 @@ class ProjectRoute extends Route
             return null;
         }
         $path_class = $path_class ?: $this->welcome_class;
-		////[[[[ 主要是这段改动
-		$x= explode('/', $path_class);
-		$baseclass = array_pop($x);
-		$a=explode('-',$baseclass);
-		$t=array_map(function($s){return ucfirst($s);},$a);
-		$baseclass=implode('',$t);
-		array_push($x,$baseclass);
-		$path_class=implode('/',$x);
-		////]]]]
+        ////[[[[ 主要是这段改动
+        $x= explode('/', $path_class);
+        $baseclass = array_pop($x);
+        $a=explode('-',$baseclass);
+        $t=array_map(function($s){return ucfirst($s);},$a);
+        $baseclass=implode('',$t);
+        array_push($x,$baseclass);
+        $path_class=implode('/',$x);
+        ////]]]]
         $full_class = $this->namespace_prefix.str_replace('/', '\\', $path_class).$this->options['controller_class_postfix'];
         $full_class = ''.ltrim($full_class, '\\');
-		return [$full_class,$method];
-	}
+        return [$full_class,$method];
+    }
 }
