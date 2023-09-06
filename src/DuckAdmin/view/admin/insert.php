@@ -3,8 +3,8 @@
     <head>
         <meta charset="UTF-8">
         <title>新增页面</title>
-        <link rel="stylesheet" href="<?=\DuckAdmin\__res('')?>component/pear/css/pear.css" />
-        <link rel="stylesheet" href="<?=\DuckAdmin\__res('')?>admin/css/reset.css" />
+        <link rel="stylesheet" href="<?=__res('')?>component/pear/css/pear.css" />
+        <link rel="stylesheet" href="<?=__res('')?>admin/css/reset.css" />
     </head>
     <body>
 
@@ -45,7 +45,7 @@
                         <label class="layui-form-label">头像</label>
                         <div class="layui-input-block">
                             <img class="img-3" src=""/>
-                            <input type="text" style="display:none" name="avatar" value="<?=\DuckAdmin\__res('')?>avatar.png" />
+                            <input type="text" style="display:none" name="avatar" value="<?=__res('')?>avatar.png" />
                             <button type="button" class="pear-btn pear-btn-primary pear-btn-sm" id="avatar">
                                 <i class="layui-icon layui-icon-upload"></i>上传图片
                             </button>
@@ -86,13 +86,13 @@
             
         </form>
 
-        <script src="<?=\DuckAdmin\__res('')?>component/layui/layui.js"></script>
-        <script src="<?=\DuckAdmin\__res('')?>component/pear/pear.js"></script>
-        <script src="<?=\DuckAdmin\__res('')?>admin/js/permission.js"></script>
+        <script src="<?=__res('')?>component/layui/layui.js"></script>
+        <script src="<?=__res('')?>component/pear/pear.js"></script>
+        <script src="<?=__res('')?>admin/js/permission.js"></script>
         <script>
 
             // 相关接口
-            const INSERT_API = "<?=\DuckAdmin\__url('admin/insert')?>";
+            const INSERT_API = "<?=__url('admin/insert')?>";
             
             // 字段 头像 avatar
             layui.use(["upload", "layer"], function() {
@@ -102,7 +102,7 @@
                     parent.layer.open({
                         type: 2,
                         title: "选择附件",
-                        content: "<?=\DuckAdmin\__url('upload/attachment?ext=jpg,jpeg,png,gif,bmp')?>",
+                        content: "<?=__url('upload/attachment?ext=jpg,jpeg,png,gif,bmp')?>",
                         area: ["95%", "90%"],
                         success: function (layero, index) {
                             parent.layui.$("#layui-layer" + index).data("callback", function (data) {
@@ -113,8 +113,8 @@
                 });
                 layui.upload.render({
                     elem: "#avatar",
-                    url: "<?=\DuckAdmin\__url('upload/avatar')?>",
-                    value: "<?=\DuckAdmin\__res('')?>avatar.png",
+                    url: "<?=__url('upload/avatar')?>",
+                    value: "<?=__res('')?>avatar.png",
                     acceptMime: "image/gif,image/jpeg,image/jpg,image/png",
                     field: "__file__",
                     done: function (res) {
@@ -127,7 +127,7 @@
             // 字段 角色 roles
             layui.use(["jquery", "xmSelect", "popup"], function() {
                 layui.$.ajax({
-                    url: "<?=\DuckAdmin\__url('role/select?format=tree')?>",
+                    url: "<?=__url('role/select?format=tree')?>",
                     dataType: "json",
                     success: function (res) {
                         let value = layui.$("#roles").attr("value");

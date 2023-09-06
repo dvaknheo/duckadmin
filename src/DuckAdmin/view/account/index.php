@@ -3,9 +3,9 @@
     <head>
         <meta charset="UTF-8">
         <title></title>
-        <link rel="stylesheet" href="<?=\DuckAdmin\__res('')?>component/layui/css/layui.css" />
-        <link rel="stylesheet" href="<?=\DuckAdmin\__res('')?>component/pear/css/pear.css" />
-        <link rel="stylesheet" href="<?=\DuckAdmin\__res('')?>admin/css/reset.css" />
+        <link rel="stylesheet" href="<?=__res('')?>component/layui/css/layui.css" />
+        <link rel="stylesheet" href="<?=__res('')?>component/pear/css/pear.css" />
+        <link rel="stylesheet" href="<?=__res('')?>admin/css/reset.css" />
     </head>
     <body class="pear-container">
         <style>
@@ -102,16 +102,16 @@
         </div>
 
 
-        <script src="<?=\DuckAdmin\__res('')?>component/layui/layui.js"></script>
-        <script src="<?=\DuckAdmin\__res('')?>component/pear/pear.js"></script>
-        <script src="<?=\DuckAdmin\__res('')?>admin/js/permission.js"></script>
+        <script src="<?=__res('')?>component/layui/layui.js"></script>
+        <script src="<?=__res('')?>component/pear/pear.js"></script>
+        <script src="<?=__res('')?>admin/js/permission.js"></script>
         <script>
 
             layui.use(["form", "popup"], function () {
                 let form = layui.form;
                 let $ = layui.$;
                 $.ajax({
-                    url: "<?=\DuckAdmin\__url('account/info')?>",
+                    url: "<?=__url('account/info')?>",
                     dataType: "json",
                     success: function (res) {
                         form.val("baseInfo", res.data);
@@ -120,7 +120,7 @@
 
                 form.on("submit(saveBaseInfo)", function(data){
                     $.ajax({
-                        url: "<?=\DuckAdmin\__url('account/update')?>",
+                        url: "<?=__url('account/update')?>",
                         dataType: "json",
                         type: "POST",
                         data: data.field,
@@ -136,7 +136,7 @@
 
                 form.on("submit(savePassword)", function(data){
                     $.ajax({
-                        url: "<?=\DuckAdmin\__url('account/password')?>",
+                        url: "<?=__url('account/password')?>",
                         dataType: "json",
                         type: "POST",
                         data: data.field,

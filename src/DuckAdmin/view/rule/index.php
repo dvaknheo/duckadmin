@@ -4,8 +4,8 @@
     <head>
         <meta charset="utf-8">
         <title></title>
-        <link rel="stylesheet" href="<?=\DuckAdmin\__res('')?>component/pear/css/pear.css" />
-        <link rel="stylesheet" href="<?=\DuckAdmin\__res('')?>admin/css/reset.css" />
+        <link rel="stylesheet" href="<?=__res('')?>component/pear/css/pear.css" />
+        <link rel="stylesheet" href="<?=__res('')?>admin/css/reset.css" />
     </head>
     <body class="pear-container">
 
@@ -32,21 +32,21 @@
             <button class="pear-btn pear-btn-xs tool-btn" lay-event="remove" permission="app.admin.rule.delete">删除</button>
         </script>
 
-        <script src="<?=\DuckAdmin\__res('')?>component/layui/layui.js"></script>
-        <script src="<?=\DuckAdmin\__res('')?>component/pear/pear.js"></script>
-        <script src="<?=\DuckAdmin\__res('')?>admin/js/permission.js"></script>
-        <script src="<?=\DuckAdmin\__res('')?>admin/js/common.js"></script>
+        <script src="<?=__res('')?>component/layui/layui.js"></script>
+        <script src="<?=__res('')?>component/pear/pear.js"></script>
+        <script src="<?=__res('')?>admin/js/permission.js"></script>
+        <script src="<?=__res('')?>admin/js/common.js"></script>
 
         <script>
 
             // 相关常量
             const PRIMARY_KEY = "id";
-            const SELECT_API = "<?=\DuckAdmin\__url('rule/select?limit=5000')?>";
-            const DELETE_API = "<?=\DuckAdmin\__url('rule/delete')?>";
-            const UPDATE_API = "<?=\DuckAdmin\__url('rule/update')?>";
-            const INSERT_URL = "<?=\DuckAdmin\__url('rule/insert')?>";
-            const UPDATE_URL = "<?=\DuckAdmin\__url('rule/update')?>";
-            const SELECT_TREE_API = "<?=\DuckAdmin\__url('rule/select?format=tree&type=0,1')?>";
+            const SELECT_API = "<?=__url('rule/select?limit=5000')?>";
+            const DELETE_API = "<?=__url('rule/delete')?>";
+            const UPDATE_API = "<?=__url('rule/update')?>";
+            const INSERT_URL = "<?=__url('rule/insert')?>";
+            const UPDATE_URL = "<?=__url('rule/update')?>";
+            const SELECT_TREE_API = "<?=__url('rule/select?format=tree&type=0,1')?>";
             // 表格渲染
             layui.use(["table", "treetable", "form", "common", "popup", "util"], function() {
                 let table = layui.table;

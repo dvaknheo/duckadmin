@@ -1,28 +1,32 @@
 <?php declare(strict_types=1);
 /**
- * ，这里我们做一下
+ * 这里我们做一下
  */
-
-namespace DuckAdmin\System
-{
+namespace DuckAdmin\System;
 
 use DuckPhp\DuckPhp;
 
-use DuckPhp\Ext\InstallableTrait;
+use DuckPhp\Core\Route;
 
 /**
  * 入口类
  */
 class App extends DuckPhp
 {
-    use InstallableTrait;
     //@override
     public $options = [
+        'is_debug' => true,
         'error_404' => '_sys/error_404',
         'error_500' => '_sys/error_500',
         'controller_class_postfix' => 'Controller', // 控制器后缀
-        'controller_resource_prefix' => 'res/',  // 资源文件前缀
+        'controller_resource_prefix' => '/res/',  // 资源文件前缀
+        //'path' => dirname(__DIR__),
     ];
+    public function __construct()
+    {
+        $this->options['path']=dirname(__DIR__).'/';
+        parent::__construct();
+    }
     public function onInit()
     {
         //替换掉默认的路由，这里牺牲了点效率

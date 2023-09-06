@@ -3,8 +3,8 @@
     <head>
         <meta charset="UTF-8">
         <title>更新页面</title>
-        <link rel="stylesheet" href="<?=\DuckAdmin\__res('')?>component/pear/css/pear.css" />
-        <link rel="stylesheet" href="<?=\DuckAdmin\__res('')?>admin/css/reset.css" />
+        <link rel="stylesheet" href="<?=__res('')?>component/pear/css/pear.css" />
+        <link rel="stylesheet" href="<?=__res('')?>admin/css/reset.css" />
     </head>
     <body>
 
@@ -50,16 +50,16 @@
             
         </form>
 
-        <script src="<?=\DuckAdmin\__res('')?>component/layui/layui.js"></script>
-        <script src="<?=\DuckAdmin\__res('')?>component/pear/pear.js"></script>
-        <script src="<?=\DuckAdmin\__res('')?>admin/js/permission.js"></script>
+        <script src="<?=__res('')?>component/layui/layui.js"></script>
+        <script src="<?=__res('')?>component/pear/pear.js"></script>
+        <script src="<?=__res('')?>admin/js/permission.js"></script>
         
         <script>
 
             // 相关接口
             const PRIMARY_KEY = "id";
-            const SELECT_API = "<?=\DuckAdmin\__url('role/select')?>" + location.search;
-            const UPDATE_API = "<?=\DuckAdmin\__url('role/update')?>";
+            const SELECT_API = "<?=__url('role/select')?>" + location.search;
+            const UPDATE_API = "<?=__url('role/update')?>";
 
             // 获取数据库记录
             layui.use(["form", "util", "popup"], function () {
@@ -87,7 +87,7 @@
                         // 字段 权限 rules
                         layui.use(["jquery", "xmSelect", "popup"], function() {
                             layui.$.ajax({
-                                url: "<?=\DuckAdmin\__url('role/rules?id=')?>" + res.data[0].pid,
+                                url: "<?=__url('role/rules?id=')?>" + res.data[0].pid,
                                 dataType: "json",
                                 success: function (res) {
                                     let value = layui.$("#rules").attr("value");
@@ -110,7 +110,7 @@
                         // 字段 父级角色组 pid
                         layui.use(["jquery", "xmSelect", "popup"], function() {
                             layui.$.ajax({
-                                url: "<?=\DuckAdmin\__url('role/select?format=tree')?>",
+                                url: "<?=__url('role/select?format=tree')?>",
                                 dataType: "json",
                                 success: function (res) {
                                     let value = layui.$("#pid").attr("value");
@@ -131,7 +131,7 @@
                                             let id = data.arr[0] ? data.arr[0].value : "";
                                             if (!id) return;
                                             layui.$.ajax({
-                                                url: '<?=\DuckAdmin\__url('role/rules?id=')?>' + id,
+                                                url: '<?=__url('role/rules?id=')?>' + id,
                                                 dataType: 'json',
                                                 success: function (res) {
                                                     if (res.code) {

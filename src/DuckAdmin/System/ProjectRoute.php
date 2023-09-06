@@ -16,7 +16,7 @@ class ProjectRoute extends Route
             $l = strlen($this->options['controller_path_ext']);
             if (substr($path_info, -$l) !== $this->options['controller_path_ext']) {
                 $this->route_error = "path_extention error";
-                return [null];
+                return [null, null];
             }
             $path_info = substr($path_info, 0, -$l);
         }
@@ -25,15 +25,15 @@ class ProjectRoute extends Route
         $method = array_pop($t);
         $path_class = implode('/', $t);
         
+        $welcome_class = $this->options['controller_welcome_class'];
+        $this->calling_path = $path_class?$path_info:$welcome_class.'/'.$method;
         
-        $this->calling_path = $path_class?$path_info:$this->welcome_class.'/'.$method;
-
-        
-        if ($this->options['controller_hide_boot_class'] && $path_class === $this->welcome_class) {
-            $this->route_error = "controller_hide_boot_class! {$this->welcome_class} ";
-            return null;
+        if ($this->options['controller_hide_boot_class'] && $path_class === $welcome_class) {
+            $this->route_error = "controller_hide_boot_class! {$welcome_class}; ";
+            return [null, null];
         }
-        $path_class = $path_class ?: $this->welcome_class;
+        $path_class = $path_class ?: $welcome_class;
+        
         ////[[[[ 主要是这段改动
         $x= explode('/', $path_class);
         $baseclass = array_pop($x);

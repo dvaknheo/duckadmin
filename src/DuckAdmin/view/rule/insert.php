@@ -4,8 +4,8 @@
     <head>
         <meta charset="UTF-8">
         <title>新增页面</title>
-        <link rel="stylesheet" href="<?=\DuckAdmin\__res('')?>component/pear/css/pear.css" />
-        <link rel="stylesheet" href="<?=\DuckAdmin\__res('')?>admin/css/reset.css" />
+        <link rel="stylesheet" href="<?=__res('')?>component/pear/css/pear.css" />
+        <link rel="stylesheet" href="<?=__res('')?>admin/css/reset.css" />
         <style>
             .layui-iconpicker .layui-anim {
                 bottom: 42px !important;
@@ -85,13 +85,13 @@
             </div>
         </form>
 
-        <script src="<?=\DuckAdmin\__res('')?>component/layui/layui.js"></script>
-        <script src="<?=\DuckAdmin\__res('')?>component/pear/pear.js"></script>
-        <script src="<?=\DuckAdmin\__res('')?>admin/js/permission.js"></script>
+        <script src="<?=__res('')?>component/layui/layui.js"></script>
+        <script src="<?=__res('')?>component/pear/pear.js"></script>
+        <script src="<?=__res('')?>admin/js/permission.js"></script>
         <script>
 
             // 接口
-            const INSERT_URL = "<?=\DuckAdmin\__url('rule/insert')?>";
+            const INSERT_URL = "<?=__url('rule/insert')?>";
 
             // 图标选择
             layui.use(["iconPicker"], function() {
@@ -105,7 +105,7 @@
             // 上级菜单
             layui.use(["jquery", "xmSelect", "popup"], function() {
                 layui.$.ajax({
-                    url: "<?=\DuckAdmin\__url('rule/select?format=tree&type=0,1')?>",
+                    url: "<?=__url('rule/select?format=tree&type=0,1')?>",
                     dataType: "json",
                     success: function (res) {
                         let value = layui.$("#pid").attr("value");

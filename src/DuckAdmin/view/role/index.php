@@ -4,8 +4,8 @@
     <head>
         <meta charset="utf-8">
         <title>浏览页面</title>
-        <link rel="stylesheet" href="<?=\DuckAdmin\__res('')?>component/pear/css/pear.css" />
-        <link rel="stylesheet" href="<?=\DuckAdmin\__res('')?>admin/css/reset.css" />
+        <link rel="stylesheet" href="<?=__res('')?>component/pear/css/pear.css" />
+        <link rel="stylesheet" href="<?=__res('')?>admin/css/reset.css" />
     </head>
     <body class="pear-container">
     
@@ -37,20 +37,20 @@
             {{# } }}
         </script>
 
-        <script src="<?=\DuckAdmin\__res('')?>component/layui/layui.js"></script>
-        <script src="<?=\DuckAdmin\__res('')?>component/pear/pear.js"></script>
-        <script src="<?=\DuckAdmin\__res('')?>admin/js/permission.js"></script>
-        <script src="<?=\DuckAdmin\__res('')?>admin/js/common.js"></script>
+        <script src="<?=__res('')?>component/layui/layui.js"></script>
+        <script src="<?=__res('')?>component/pear/pear.js"></script>
+        <script src="<?=__res('')?>admin/js/permission.js"></script>
+        <script src="<?=__res('')?>admin/js/common.js"></script>
         
         <script>
 
             // 相关常量
             const PRIMARY_KEY = "id";
-            const SELECT_API = "<?=\DuckAdmin\__url('role/select')?>";
-            const UPDATE_API = "<?=\DuckAdmin\__url('role/update')?>";
-            const DELETE_API = "<?=\DuckAdmin\__url('role/delete')?>";
-            const INSERT_URL = "<?=\DuckAdmin\__url('role/insert')?>";
-            const UPDATE_URL = "<?=\DuckAdmin\__url('role/update')?>";
+            const SELECT_API = "<?=__url('role/select')?>";
+            const UPDATE_API = "<?=__url('role/update')?>";
+            const DELETE_API = "<?=__url('role/delete')?>";
+            const INSERT_URL = "<?=__url('role/insert')?>";
+            const UPDATE_URL = "<?=__url('role/update')?>";
             
             // 表格渲染
             layui.use(["table", "treetable", "form", "common", "popup", "util"], function() {
@@ -136,8 +136,8 @@
 				
 				// 获取表格中下拉或树形组件数据
 				let apis = [];
-				apis.push(["rules", "<?=\DuckAdmin\__url('rule/get?type=0,1,2')?>"]);
-				apis.push(["pid", "<?=\DuckAdmin\__url('role/select?format=tree')?>"]);
+				apis.push(["rules", "<?=__url('rule/get?type=0,1,2')?>"]);
+				apis.push(["pid", "<?=__url('role/select?format=tree')?>"]);
 				let apiResults = {};
 				apiResults["rules"] = [];
 				apiResults["pid"] = [];

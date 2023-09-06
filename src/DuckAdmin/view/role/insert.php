@@ -3,8 +3,8 @@
     <head>
         <meta charset="UTF-8">
         <title>新增页面</title>
-        <link rel="stylesheet" href="<?=\DuckAdmin\__res('')?>component/pear/css/pear.css" />
-        <link rel="stylesheet" href="<?=\DuckAdmin\__res('')?>admin/css/reset.css" />
+        <link rel="stylesheet" href="<?=__res('')?>component/pear/css/pear.css" />
+        <link rel="stylesheet" href="<?=__res('')?>admin/css/reset.css" />
     </head>
     <body>
 
@@ -51,19 +51,19 @@
             
         </form>
 
-        <script src="<?=\DuckAdmin\__res('')?>component/layui/layui.js"></script>
-        <script src="<?=\DuckAdmin\__res('')?>component/pear/pear.js"></script>
-        <script src="<?=\DuckAdmin\__res('')?>admin/js/permission.js"></script>
+        <script src="<?=__res('')?>component/layui/layui.js"></script>
+        <script src="<?=__res('')?>component/pear/pear.js"></script>
+        <script src="<?=__res('')?>admin/js/permission.js"></script>
         
         <script>
 
             // 相关接口
-            const INSERT_API = "<?=\DuckAdmin\__url('role/insert')?>";
+            const INSERT_API = "<?=__url('role/insert')?>";
             
             // 字段 权限 rules
             layui.use(["jquery", "xmSelect", "popup"], function() {
                 layui.$.ajax({
-                    url: "<?=\DuckAdmin\__url('role/rules?id=1')?>",
+                    url: "<?=__url('role/rules?id=1')?>",
                     dataType: "json",
                     success: function (res) {
                         let value = layui.$("#rules").attr("value");
@@ -83,7 +83,7 @@
             // 字段 父级 pid
             layui.use(["jquery", "xmSelect", "popup"], function() {
                 layui.$.ajax({
-                    url: "<?=\DuckAdmin\__url('role/select?format=tree')?>",
+                    url: "<?=__url('role/select?format=tree')?>",
                     dataType: "json",
                     success: function (res) {
                         let value = layui.$("#pid").attr("value");
@@ -103,7 +103,7 @@
                                 let id = data.arr[0] ? data.arr[0].value : "";
                                 if (!id) return;
                                 layui.$.ajax({
-                                    url: '<?=\DuckAdmin\__url('role/rules?id=')?>' + id,
+                                    url: '<?=__url('role/rules?id=')?>' + id,
                                     dataType: 'json',
                                     success: function (res) {
                                         if (res.code) {

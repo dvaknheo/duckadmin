@@ -3,9 +3,9 @@
     <head>
         <meta charset="UTF-8">
         <title></title>
-        <link rel="stylesheet" href="<?=\DuckAdmin\__res('')?>component/layui/css/layui.css" />
-        <link rel="stylesheet" href="<?=\DuckAdmin\__res('')?>component/pear/css/pear.css" />
-        <link rel="stylesheet" href="<?=\DuckAdmin\__res('')?>admin/css/reset.css" />
+        <link rel="stylesheet" href="<?=__res('')?>component/layui/css/layui.css" />
+        <link rel="stylesheet" href="<?=__res('')?>component/pear/css/pear.css" />
+        <link rel="stylesheet" href="<?=__res('')?>admin/css/reset.css" />
     </head>
     <body class="pear-container">
         <style>
@@ -39,7 +39,7 @@
                                 <label class="layui-form-label">网站Logo</label>
                                 <div class="layui-input-block">
                                     <img class="img-3" src=""/>
-                                    <input type="text" style="display:none" name="image" value="<?=\DuckAdmin\__res('')?>avatar.png" />
+                                    <input type="text" style="display:none" name="image" value="<?=__res('')?>avatar.png" />
                                     <button type="button" class="pear-btn pear-btn-primary pear-btn-sm" id="image" permission="app.admin.upload.avatar">
                                         <i class="layui-icon layui-icon-upload"></i>上传图片
                                     </button>
@@ -174,9 +174,9 @@
         </div>
 
 
-        <script src="<?=\DuckAdmin\__res('')?>component/layui/layui.js"></script>
-        <script src="<?=\DuckAdmin\__res('')?>component/pear/pear.js"></script>
-        <script src="<?=\DuckAdmin\__res('')?>admin/js/permission.js"></script>
+        <script src="<?=__res('')?>component/layui/layui.js"></script>
+        <script src="<?=__res('')?>component/pear/pear.js"></script>
+        <script src="<?=__res('')?>admin/js/permission.js"></script>
         <script>
 
             // 基础设置
@@ -191,7 +191,7 @@
                     parent.layer.open({
                         type: 2,
                         title: "选择附件",
-                        content: "<?=\DuckAdmin\__url('upload/attachment?ext=jpg,jpeg,png,gif,bmp')?>",
+                        content: "<?=__url('upload/attachment?ext=jpg,jpeg,png,gif,bmp')?>",
                         area: ["95%", "90%"],
                         success: function (layero, index) {
                             parent.layui.$("#layui-layer" + index).data("callback", function (data) {
@@ -202,7 +202,7 @@
                 });
                 layui.upload.render({
                     elem: "#image",
-                    url: "<?=\DuckAdmin\__url('upload/avatar')?>",
+                    url: "<?=__url('upload/avatar')?>",
                     acceptMime: "image/gif,image/jpeg,image/jpg,image/png",
                     done: function (res) {
                         if (res.code) {
@@ -215,7 +215,7 @@
                 // 提交
                 form.on("submit(saveBaseInfo)", function(data){
                     $.ajax({
-                        url: "<?=\DuckAdmin\__url('config/update')?>",
+                        url: "<?=__url('config/update')?>",
                         dataType: "json",
                         type: "POST",
                         data: {logo: data.field},
@@ -237,7 +237,7 @@
                 // 提交
                 form.on("submit(saveMenuInfo)", function(data){
                     $.ajax({
-                        url: "<?=\DuckAdmin\__url('config/update')?>",
+                        url: "<?=__url('config/update')?>",
                         dataType: "json",
                         type: "POST",
                         data: {menu: data.field},
@@ -266,7 +266,7 @@
                     };
                     delete data.field;
                     $.ajax({
-                        url: "<?=\DuckAdmin\__url('config/update')?>",
+                        url: "<?=__url('config/update')?>",
                         dataType: "json",
                         type: "POST",
                         data: {tab: field},
@@ -287,7 +287,7 @@
                 let form = layui.form;
                 let $ = layui.$;
                 $.ajax({
-                    url: "<?=\DuckAdmin\__url('config/get')?>",
+                    url: "<?=__url('config/get')?>",
                     dataType: "json",
                     success: function (res) {
                         if (res.code) {

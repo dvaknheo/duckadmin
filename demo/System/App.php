@@ -20,13 +20,14 @@ class App extends DuckPhp
     use InstallableTrait;
     //@override
     public $options = [
-        'use_env_file'=>true,
+         'is_debug' => true,
+        //'use_env_file'=>true,
         // 'path_info_compact_enable' => false,  //如果你的服务器不做 path_info 用这个
         'error_404' => '_sys/error_404',
         'error_500' => '_sys/error_500',
         'ext' => [
             // 后台管理系统
-            \DuckAdmin\Api\DuckAdminPlugin::class => [
+            \DuckAdmin\System\App::class => [
                 'controller_url_prefix' => 'app/admin/', // 访问路径
             ],
             // 前台用户系统
@@ -35,11 +36,8 @@ class App extends DuckPhp
             ],
         ]
     ];
-   public function init()
+   public function onInit()
    {
-        parent::init();
-        //static::Root()::Admin(Admin::G());
-        return $this;
     }
 
     public function command_run()

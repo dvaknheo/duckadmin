@@ -3,8 +3,8 @@
     <head>
         <meta charset="UTF-8">
         <title>更新页面</title>
-        <link rel="stylesheet" href="<?=\DuckAdmin\__res('')?>component/pear/css/pear.css" />
-        <link rel="stylesheet" href="<?=\DuckAdmin\__res('')?>admin/css/reset.css" />
+        <link rel="stylesheet" href="<?=__res('')?>component/pear/css/pear.css" />
+        <link rel="stylesheet" href="<?=__res('')?>admin/css/reset.css" />
     </head>
     <body>
 
@@ -85,15 +85,15 @@
             
         </form>
 
-        <script src="<?=\DuckAdmin\__res('')?>component/layui/layui.js"></script>
-        <script src="<?=\DuckAdmin\__res('')?>component/pear/pear.js"></script>
-        <script src="<?=\DuckAdmin\__res('')?>admin/js/permission.js"></script>
+        <script src="<?=__res('')?>component/layui/layui.js"></script>
+        <script src="<?=__res('')?>component/pear/pear.js"></script>
+        <script src="<?=__res('')?>admin/js/permission.js"></script>
         <script>
 
             // 相关接口
             const PRIMARY_KEY = "id";
-            const SELECT_API = "<?=\DuckAdmin\__url('admin/select')?>" + location.search;
-            const UPDATE_API = "<?=\DuckAdmin\__url('admin/update')?>";
+            const SELECT_API = "<?=__url('admin/select')?>" + location.search;
+            const UPDATE_API = "<?=__url('admin/update')?>";
 
             // 获取数据库记录
             layui.use(["form", "util", "popup"], function () {
@@ -126,7 +126,7 @@
                                 parent.layer.open({
                                     type: 2,
                                     title: "选择附件",
-                                    content: "<?=\DuckAdmin\__url('upload/attachment?ext=jpg,jpeg,png,gif,bmp')?>",
+                                    content: "<?=__url('upload/attachment?ext=jpg,jpeg,png,gif,bmp')?>",
                                     area: ["95%", "90%"],
                                     success: function (layero, index) {
                                         parent.layui.$("#layui-layer" + index).data("callback", function (data) {
@@ -137,7 +137,7 @@
                             });
                             layui.upload.render({
                                 elem: "#avatar",
-                                url: "<?=\DuckAdmin\__url('upload/avatar')?>",
+                                url: "<?=__url('upload/avatar')?>",
                                 acceptMime: "image/gif,image/jpeg,image/jpg,image/png",
                                 field: "__file__",
                                 done: function (res) {
@@ -150,7 +150,7 @@
                         // 字段 角色 roles
                         layui.use(["jquery", "xmSelect"], function() {
                             layui.$.ajax({
-                                url: "<?=\DuckAdmin\__url('role/select?format=tree')?>",
+                                url: "<?=__url('role/select?format=tree')?>",
                                 dataType: "json",
                                 success: function (res) {
                                     let value = layui.$("#roles").attr("value");

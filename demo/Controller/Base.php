@@ -6,15 +6,9 @@
 
 namespace DuckAdminDemo\Controller;
 
-use DuckAdminDemo\System\ProjectController;
-use DuckAdminDemo\System\App;
+use DuckPhp\Helper\ControllerHelperTrait;
 
-class Base extends ProjectController
+class Base
 {
-    public function __construct()
-    {
-        self::CheckRunningController(self::class,static::class);
-
-        parent::__construct();
-    }
+    use ControllerHelperTrait;
 }

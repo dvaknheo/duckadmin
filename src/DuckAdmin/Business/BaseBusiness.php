@@ -10,7 +10,7 @@ use DuckAdmin\Model\AdminRoleModel;
 use DuckAdmin\Model\RoleModel;
 use DuckAdmin\Model\RuleModel;
 
-use DuckPhp\Foundation\ThrowOnableTrait;
+use DuckPhp\ThrowOn\ThrowOnableTrait;
 use DuckPhp\Helper\BusinessHelperTrait;
 use DuckPhp\SingletonEx\SingletonExTrait;
 /**

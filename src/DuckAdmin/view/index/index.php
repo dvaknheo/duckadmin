@@ -5,13 +5,13 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
         <title>主页</title>
         <!-- 依 赖 样 式 -->
-        <link rel="stylesheet" href="<?=\DuckAdmin\__res('')?>component/pear/css/pear.css" />
+        <link rel="stylesheet" href="<?=__res('')?>component/pear/css/pear.css" />
         <!-- 加 载 样 式 -->
-        <link rel="stylesheet" href="<?=\DuckAdmin\__res('')?>admin/css/loader.css" />
+        <link rel="stylesheet" href="<?=__res('')?>admin/css/loader.css" />
         <!-- 布 局 样 式 -->
-        <link rel="stylesheet" href="<?=\DuckAdmin\__res('')?>admin/css/admin.css" />
+        <link rel="stylesheet" href="<?=__res('')?>admin/css/admin.css" />
         <!-- 重置样式 -->
-        <link rel="stylesheet" href="<?=\DuckAdmin\__res('')?>admin/css/reset.css" />
+        <link rel="stylesheet" href="<?=__res('')?>admin/css/reset.css" />
     </head>
     <!-- 结 构 代 码 -->
     <body class="layui-layout-body pear-admin">
@@ -43,7 +43,7 @@
                         <a class="layui-icon layui-icon-username" href="javascript:;"></a>
                         <!-- 功 能 菜 单 -->
                         <dl class="layui-nav-child">
-                            <dd><a user-menu-url="<?=\DuckAdmin\__url('account/index')?>" user-menu-id="10" user-menu-title="基本资料">基本资料</a></dd>
+                            <dd><a user-menu-url="<?=__url('account/index')?>" user-menu-id="10" user-menu-title="基本资料">基本资料</a></dd>
                             <dd><a href="javascript:void(0);" class="logout">注销登录</a></dd>
                         </dl>
                     </li>
@@ -90,8 +90,8 @@
             <a href="#" class="layui-icon layui-icon-shrink-right"></a>
         </div>
         <!-- 依 赖 脚 本 -->
-        <script src="<?=\DuckAdmin\__res('')?>component/layui/layui.js"></script>
-        <script src="<?=\DuckAdmin\__res('')?>component/pear/pear.js"></script>
+        <script src="<?=__res('')?>component/layui/layui.js"></script>
+        <script src="<?=__res('')?>component/pear/pear.js"></script>
         <!-- 框 架 初 始 化 -->
         <script>
 
@@ -106,14 +106,14 @@
                 var popup = layui.popup;
 
                 admin.setConfigType("json");
-                admin.setConfigPath("<?=\DuckAdmin\__url('config/get')?>");
+                admin.setConfigPath("<?=__url('config/get')?>");
 
                 admin.render();
 
                 // 登出逻辑
                 admin.logout(function(){
                     $.ajax({
-                        url: "<?=\DuckAdmin\__url('account/logout')?>",
+                        url: "<?=__url('account/logout')?>",
                         dataType: "json",
                         success: function (res) {
                             if (res.code) {
@@ -128,7 +128,7 @@
                 })
 
                 $.ajax({
-                    url: "<?=\DuckAdmin\__url('account/info')?>",
+                    url: "<?=__url('account/info')?>",
                     dataType: 'json',
                     success: function (res) {
                         window.Admin.Account = res.data;

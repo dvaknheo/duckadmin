@@ -5,11 +5,11 @@
  */
 namespace DuckAdmin\Controller;
 
-use DuckPhp\Foundation\Session;
+use DuckPhp\Component\SessionBase;
 /**
  * 会话处理
  */
-class AdminSession extends Session
+class AdminSession extends SessionBase
 {
     public function getCurrentAdmin()
     {

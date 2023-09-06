@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8">
     <title>DuckAdmin 安装</title>
-    <link rel="stylesheet" href="<?=\DuckAdmin\__res('')?>component/pear/css/pear.css" />
-    <link rel="stylesheet" href="<?=\DuckAdmin\__res('')?>admin/css/reset.css" />
+    <link rel="stylesheet" href="<?=__res('')?>component/pear/css/pear.css" />
+    <link rel="stylesheet" href="<?=__res('')?>admin/css/reset.css" />
 </head>
 <body class="pear-container">
 <div class="layui-row layui-col-space10">
@@ -125,8 +125,8 @@
     }
 </script>
 
-<script src="<?=\DuckAdmin\__res('')?>component/layui/layui.js"></script>
-<script src="<?=\DuckAdmin\__res('')?>component/pear/pear.js"></script>
+<script src="<?=__res('')?>component/layui/layui.js"></script>
+<script src="<?=__res('')?>component/pear/pear.js"></script>
 
 <script>
     layui.use(["form", "step","code","element", "popup"], function() {
@@ -154,7 +154,7 @@
         form.on("submit(formStep)", function(data) {
             let loading = layer.load();
             $.ajax({
-                url: "<?=\DuckAdmin\__url('install/step1')?>",
+                url: "<?=__url('install/step1')?>",
                 type: "POST",
                 dataType: "json",
                 data: data.field,
@@ -176,7 +176,7 @@
         form.on("submit(formStep2)", function(data) {
             let loading = layer.load();
             $.ajax({
-                url: "<?=\DuckAdmin\__url('install/step2')?>",
+                url: "<?=__url('install/step2')?>",
                 type: "POST",
                 dataType: "json",
                 data: data.field,

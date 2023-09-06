@@ -4,8 +4,8 @@
     <head>
         <meta charset="utf-8">
         <title>浏览页面</title>
-        <link rel="stylesheet" href="<?=\DuckAdmin\__res('')?>component/pear/css/pear.css" />
-        <link rel="stylesheet" href="<?=\DuckAdmin\__res('')?>admin/css/reset.css" />
+        <link rel="stylesheet" href="<?=__res('')?>component/pear/css/pear.css" />
+        <link rel="stylesheet" href="<?=__res('')?>admin/css/reset.css" />
     </head>
     <body class="pear-container">
     
@@ -95,19 +95,19 @@
             {{# } }}
         </script>
 
-        <script src="<?=\DuckAdmin\__res('')?>component/layui/layui.js"></script>
-        <script src="<?=\DuckAdmin\__res('')?>component/pear/pear.js"></script>
-        <script src="<?=\DuckAdmin\__res('')?>admin/js/permission.js"></script>
-        <script src="<?=\DuckAdmin\__res('')?>admin/js/common.js"></script>
+        <script src="<?=__res('')?>component/layui/layui.js"></script>
+        <script src="<?=__res('')?>component/pear/pear.js"></script>
+        <script src="<?=__res('')?>admin/js/permission.js"></script>
+        <script src="<?=__res('')?>admin/js/common.js"></script>
         <script>
 
             // 相关常量
             const PRIMARY_KEY = "id";
-            const SELECT_API = "<?=\DuckAdmin\__url('admin/select')?>";
-            const UPDATE_API = "<?=\DuckAdmin\__url('admin/update')?>";
-            const DELETE_API = "<?=\DuckAdmin\__url('admin/delete')?>";
-            const INSERT_URL = "<?=\DuckAdmin\__url('admin/insert')?>";
-            const UPDATE_URL = "<?=\DuckAdmin\__url('admin/update')?>";
+            const SELECT_API = "<?=__url('admin/select')?>";
+            const UPDATE_API = "<?=__url('admin/update')?>";
+            const DELETE_API = "<?=__url('admin/delete')?>";
+            const INSERT_URL = "<?=__url('admin/insert')?>";
+            const UPDATE_URL = "<?=__url('admin/update')?>";
             
             // 字段 创建时间 created_at
             layui.use(["laydate"], function() {
@@ -242,7 +242,7 @@
 				
 				// 获取表格中下拉或树形组件数据
 				let apis = [];
-				apis.push(["roles", "<?=\DuckAdmin\__url('role/select?format=select')?>"]);
+				apis.push(["roles", "<?=__url('role/select?format=select')?>"]);
 				let apiResults = {};
 				apiResults["roles"] = [];
 				let count = apis.length;
