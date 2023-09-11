@@ -6,7 +6,6 @@
 
 namespace DuckAdminDemo\Controller;
 
-use DuckAdminDemo\Business\DemoBusiness;
 use DuckAdminDemo\Controller\Base as C;
 
 class Main
