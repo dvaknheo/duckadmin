@@ -57,7 +57,7 @@ class App extends DuckPhp
         //echo $this->install($parameters); // 一些安装动作，这里还没想好
         echo "Done \n";
     }
-    protected function install()
+    protected function _install()
     {
         //安装和强制安装的逻辑
     }

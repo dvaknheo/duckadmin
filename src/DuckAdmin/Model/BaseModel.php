@@ -6,7 +6,7 @@
 
 namespace DuckAdmin\Model;
 
-use DuckPhp\Foundation\SimpleModelTrait;
+use DuckPhp\Component\SimpleModelTrait;
 use DuckPhp\Helper\ModelHelperTrait;
 
 class BaseModel

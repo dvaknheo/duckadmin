@@ -6,7 +6,7 @@
 
 namespace DuckAdmin\Controller;
 
-use DuckPhp\Foundation\ThrowOnableTrait;
+use DuckPhp\ThrowOn\ThrowOnableTrait;
 use DuckPhp\Helper\ControllerHelperTrait;
 use DuckPhp\SingletonEx\SingletonExTrait;
 

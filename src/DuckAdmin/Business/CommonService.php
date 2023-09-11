@@ -1,8 +1,6 @@
 <?php
 namespace DuckAdmin\Business;
 
-use DuckPhp\Core\App;
-
 use DuckAdmin\Model\AdminRoleModel;
 use DuckAdmin\Model\RuleModel;
 use DuckAdmin\Model\RoleModel;

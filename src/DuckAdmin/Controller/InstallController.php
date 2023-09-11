@@ -11,7 +11,7 @@ use DuckAdmin\Controller\AdminAction as C;
 /**
  * 主入口
  */
-class Install extends Base
+class InstallController extends Base
 {
     /**
      * 无需登录的方法
