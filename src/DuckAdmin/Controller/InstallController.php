@@ -40,9 +40,9 @@ class InstallController extends Base
 		try{
 			InstallBusiness::G()->step1($post);
 		}catch(\Exception $ex){
-			return C::ExitJson([$ex->getCode(),$ex->getMessage()]);
+			return C::ExitJson(['code' => $ex->getCode(), 'msg' => $ex->getMessage(), 'type' => 'error']);
 		}
-		return C::ExitJson(0);
+		return C::ExitJson(['code' =>0, 'data' => [] , 'msg' => '',]);
     }
 
     /**
@@ -51,15 +51,15 @@ class InstallController extends Base
      */
     public function step2()
     {
-		$user = C::POST('user');
+		$username = C::POST('username');
         $password = C::POST('password');
         $password_confirm = C::POST('password_confirm');
 		try{
 			InstallBusiness::G()->step2($username,$password,$password_confirm);
 		}catch(\Exception $ex){
-			return C::ExitJson([$ex->getCode(),$ex->getMessage()]);
+			return C::ExitJson(['code' => $ex->getCode(), 'msg' => $ex->getMessage(), 'type' => 'error']);
 		}
-		return C::ExitJson(0);
+		return C::ExitJson(['code' =>0, 'data' => [] , 'msg' => '',]);
     }
 
 }

@@ -4,9 +4,9 @@
  */
 namespace DuckAdmin\System;
 
-use DuckPhp\DuckPhp;
-
+use DuckPhp\Component\DbManager;
 use DuckPhp\Core\Route;
+use DuckPhp\DuckPhp;
 
 /**
  * 入口类
@@ -20,6 +20,7 @@ class App extends DuckPhp
         'error_500' => '_sys/error_500',
         'controller_class_postfix' => 'Controller', // 控制器后缀
         'controller_resource_prefix' => '/res/',  // 资源文件前缀
+        'ext_options_from_config' => true,
         //'path' => dirname(__DIR__),
     ];
     public function __construct()
@@ -32,6 +33,7 @@ class App extends DuckPhp
         //替换掉默认的路由，这里牺牲了点效率
         ProjectRoute::G()->init(Route::G()->options,$this);
         Route::G(ProjectRoute::G());
+        $this->switchDbManager();
     }
     /////////
     public static function ActionApi()
@@ -63,19 +65,14 @@ class App extends DuckPhp
     }
     protected function switchDbManager()
     {
-        // 这里旧的数据库配置
-        $old = DbManager::G();
-        $options = $old->options;
+        $options = DbManager::G()->options;
         if(empty($options['database']) || empty($options['database_list'])){
-            $connections = static::Config('connections',[],'database');
-            $post = $connections['mysql']??null;
+            $post = $this->options['database'] ?? null;
             if(!empty($post)){
-                DbManager::G()->options['database']=[
-                    'dsn'=>"mysql:host={$post['host']};port={$post['port']};dbname={$post['database']};charset=utf8mb4;",
-                    'username'=>$post['username'],	
-                    'password'=>$post['password'],
-                ];
-                DbManager::G()->init(DbManager::G()->options, DuckPhpCoreApp::G());
+                DbManager::G()->options['database']=$post;
+                DbManager::G()->options['force']=true;
+
+                DbManager::G( )->init(DbManager::G()->options, static::Root());
             }
         }
     }
