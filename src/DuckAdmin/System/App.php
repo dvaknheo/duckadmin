@@ -5,6 +5,7 @@
 namespace DuckAdmin\System;
 
 use DuckPhp\Component\DbManager;
+use DuckPhp\Component\RouteHookResource;
 use DuckPhp\Core\Route;
 use DuckPhp\DuckPhp;
 
@@ -19,7 +20,7 @@ class App extends DuckPhp
         'error_404' => '_sys/error_404',
         'error_500' => '_sys/error_500',
         'controller_class_postfix' => 'Controller', // 控制器后缀
-        'controller_resource_prefix' => '/res/',  // 资源文件前缀
+        //'controller_resource_prefix' => '/app/admin/',  // 资源文件前缀
         'ext_options_from_config' => true,
     ];
     public function __construct()
@@ -29,16 +30,25 @@ class App extends DuckPhp
     }
     public function onInit()
     {
+header('X-Accel-Buffering: no');
+
         //替换掉默认的路由，这里牺牲了点效率
         ProjectRoute::G()->init(Route::G()->options,$this);
         Route::G(ProjectRoute::G());
-
         // 设置 admin 为  admin 对象
         static::Root()::Admin($this->createPhaseProxy(ActionApi::class));
         static::Admin(ActionApi::G());
         
         if (!$this->isInstalled()) {
-            //TODO 如果没安装，暂时使用虚拟的 res
+            Route::G()->options['controller_resource_prefix']='for_install/';
+            RouteHookResource::G()->init([
+                'path' => $this->options['path_override_from'],
+                'path_resource' => 'res',
+                'controller_resource_prefix' => '/app/admin/for_install/',
+            ], $this);
+            //Route::G()->addRouteH   
+        }else{
+            
         }
         
         //如果主控程序没设置数据，用自己的

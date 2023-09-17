@@ -33,12 +33,14 @@ class MainController extends Base
     {
 		$isInstalled = InstallBusiness::G()->IsInstalled();
         if (!$isInstalled) {
-			return C::Show([], 'index/install');
+            C::Show([], 'index/install');
+            return;
         }
         $admin = AdminSession::G()->getCurrentAdmin();
         if (!$admin) {
-			return C::Show([], 'account/login');
-        }		
-        return C::Show([], 'index/index');
+            C::Show([], 'account/login');
+            return;
+        }
+        C::Show([], 'index/index');
     }
 }
