@@ -17,42 +17,22 @@ class InstallBusiness extends BaseBusiness
     }
     protected function getConfigFile($file)
     {
-        clearstatcache();
-        $path = DuckAdmin::G()->getPath('config');
-        $full_file = $path.$file;
-        if(is_file($full_file)){
-            return $full_file;
-        }
-        if (!isset(DuckAdmin::G()->options['path_config_override_from'])) {
-            return null;
-        }
-        $path = DuckAdmin::G()->options['path_config_override_from'];
-        $full_file = $path.$file;
-        if(is_file($full_file)){
-            return $full_file;
-        }
-        return null;
+        return DuckAdmin::G()->getFileFromSubComponent('config', $file);
     }
     protected function checkDatabase()
     {
-        $options = DbManager::G()->options;
-        if(empty($options['database']) || empty($options['database_list'])){
-            $post = DuckAdmin::G()->options['database']?? false;
-            if (!$post) {
-                return false;
-            }
-        }
-        return true;
+        return DuckAdmin::G()->checkDatabase();
     }
     protected function checkInstallLogFile()
     {
+        // no need
         return false;
     }
     protected function writeDbConfigFile($post)
     {
         $options = [];
         $options['database'] = [
-            'dsn'=>"mysql:host={$post['host']};port={$post['port']};dbname={$post['database']};charset=utf8;",
+            'dsn'=>"mysql:host={$post['host']};port={$post['port']};dbname={$post['database']};charset=utf8mb4;",
             'username' => $post['user'],	
             'password' => $post['password'],
         ];

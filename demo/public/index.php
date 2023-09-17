@@ -17,4 +17,26 @@ if(is_file(__DIR__.'/../../../DNMVCS/autoload.php')){
     spl_autoload_register($t);
 }
 ////]]]]
-DuckAdminDemo\System\App::RunQuickly();
+
+$options = [
+    'namespace_controller' => '\\',
+    'controller_class_postfix' => 'Controller',
+    'ext' => [
+        // 后台管理系统
+        \DuckAdmin\System\App::class => [
+            'controller_url_prefix' => 'app/admin/', // 访问路径
+            'controller_resource_prefix' => '/res/',  // 资源文件前缀
+        ],
+    ]
+];
+$options['path'] = dirname(__DIR__).'/';
+
+DuckPhp\DuckPhp::RunQuickly($options);
+
+class MainController
+{
+    public function index()
+    {
+        DuckPhp\DuckPhp::Show(get_defined_vars(), 'main');
+    }
+}
