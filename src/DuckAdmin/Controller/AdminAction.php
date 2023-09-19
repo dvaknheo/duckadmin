@@ -140,6 +140,9 @@ EOF;
 		$code = $ex->getCode();
 		$msg = $ex->getMessage();
 		if(!$code){$code = -1;}
-		return static::ExitJson(['code' => $code, 'msg' => $msg, 'type' => 'error']);
+        if(is_a($ex, \WorkermanHttpd\ExitException::class)){
+            return true;
+        }
+		return static::ExitJson(['code' => $code, 'msg' => $msg, 'type' => 'error'],false);
 	}
 }

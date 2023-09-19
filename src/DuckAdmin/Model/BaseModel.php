@@ -97,9 +97,9 @@ class BaseModel
      */
     protected function inputFilter(array $data): array
     {
-        $allow_column = $this->getAllowColumns();
+        $columns = $this->getAllowColumns();
 
-        $columns = array_column($allow_column, 'Type', 'Field');
+        //$columns = array_column($allow_column, 'Type', 'Field');
         foreach ($data as $col => $item) {
             if (!isset($columns[$col])) {
                 unset($data[$col]);
@@ -125,6 +125,7 @@ class BaseModel
 	{
         $allow_column = self::Db()->fetchAll("desc `".$this->table()."`");
         $allow_column = array_column($allow_column, 'Field', 'Field');
+
 		return $allow_column;
 	}
 

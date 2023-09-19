@@ -35,7 +35,9 @@ function worker()
     ];
     $options['path'] = __DIR__.'/';
 
-    DuckPhp\DuckPhp::RunQuickly($options);
+    DuckPhp\DuckPhp::RunQuickly($options, function(){
+        DuckPhp\DuckPhp::system_wrapper_replace(\WorkermanHttpd\WorkermanHttpd::system_wrapper_get_providers());
+    });
 
 
         return true;

@@ -67,7 +67,7 @@ class AdminController extends Base
 		}
 		$input = C::POST();
 		$admin_id = AdminAction::G()->getCurrentAdminId();
-		$admin_id = AdminBusiness::G()->addAdmin($op_id, $input);
+		$admin_id = AdminBusiness::G()->addAdmin($admin_id, $input);
 		return C::Success(['id' => $admin_id]);
     }
 
