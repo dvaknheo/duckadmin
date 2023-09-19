@@ -3,9 +3,9 @@
     <head>
         <meta charset="UTF-8">
         <title></title>
-        <link rel="stylesheet" href="<?=__res('')?>component/layui/css/layui.css" />
-        <link rel="stylesheet" href="<?=__res('')?>component/pear/css/pear.css" />
-        <link rel="stylesheet" href="<?=__res('')?>admin/css/reset.css" />
+        <link rel="stylesheet" href="<?=__res('component/layui/css/layui.css')?>" />
+        <link rel="stylesheet" href="<?=__res('component/pear/css/pear.css')?>" />
+        <link rel="stylesheet" href="<?=__res('admin/css/reset.css')?>" />
     </head>
     <body class="pear-container">
         <style>
@@ -39,7 +39,7 @@
                                 <label class="layui-form-label">网站Logo</label>
                                 <div class="layui-input-block">
                                     <img class="img-3" src=""/>
-                                    <input type="text" style="display:none" name="image" value="<?=__res('')?>avatar.png" />
+                                    <input type="text" style="display:none" name="image" value="<?=__res('avatar.png')?>" />
                                     <button type="button" class="pear-btn pear-btn-primary pear-btn-sm" id="image" permission="app.admin.upload.avatar">
                                         <i class="layui-icon layui-icon-upload"></i>上传图片
                                     </button>
@@ -174,9 +174,9 @@
         </div>
 
 
-        <script src="<?=__res('')?>component/layui/layui.js"></script>
-        <script src="<?=__res('')?>component/pear/pear.js"></script>
-        <script src="<?=__res('')?>admin/js/permission.js"></script>
+        <script src="<?=__res('component/layui/layui.js')?>"></script>
+        <script src="<?=__res('component/pear/pear.js')?>"></script>
+        <script src="<?=__res('admin/js/permission.js')?>"></script>
         <script>
 
             // 基础设置

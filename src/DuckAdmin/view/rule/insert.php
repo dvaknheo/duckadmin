@@ -4,8 +4,8 @@
     <head>
         <meta charset="UTF-8">
         <title>新增页面</title>
-        <link rel="stylesheet" href="<?=__res('')?>component/pear/css/pear.css" />
-        <link rel="stylesheet" href="<?=__res('')?>admin/css/reset.css" />
+        <link rel="stylesheet" href="<?=__res('component/pear/css/pear.css')?>" />
+        <link rel="stylesheet" href="<?=__res('admin/css/reset.css')?>" />
         <style>
             .layui-iconpicker .layui-anim {
                 bottom: 42px !important;
@@ -85,9 +85,9 @@
             </div>
         </form>
 
-        <script src="<?=__res('')?>component/layui/layui.js"></script>
-        <script src="<?=__res('')?>component/pear/pear.js"></script>
-        <script src="<?=__res('')?>admin/js/permission.js"></script>
+        <script src="<?=__res('component/layui/layui.js')?>"></script>
+        <script src="<?=__res('component/pear/pear.js')?>"></script>
+        <script src="<?=__res('admin/js/permission.js')?>"></script>
         <script>
 
             // 接口

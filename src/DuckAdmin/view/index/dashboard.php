@@ -6,8 +6,8 @@
 		<meta name="renderer" content="webkit">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-		<link rel="stylesheet" href="<?=__res('')?>component/pear/css/pear.css" />
-		<link rel="stylesheet" href="<?=__res('')?>demos/css/console1.css" />
+		<link rel="stylesheet" href="<?=__res('component/pear/css/pear.css')?>" />
+		<link rel="stylesheet" href="<?=__res('demos/css/console1.css')?>" />
 	</head>
 	<body class="pear-container">
 		<div>
@@ -197,8 +197,8 @@
 			</div>
 		</div>
 		<!--</div>-->
-		<script src="<?=__res('')?>component/layui/layui.js"></script>
-		<script src="<?=__res('')?>component/pear/pear.js"></script>
+		<script src="<?=__res('component/layui/layui.js')?>"></script>
+		<script src="<?=__res('component/pear/pear.js')?>"></script>
 		<script>
 			layui.use(['layer', 'echarts', 'element', 'count'], function() {
 				var $ = layui.jquery,

@@ -3,9 +3,9 @@
     <head>
         <meta charset="UTF-8">
         <title></title>
-        <link rel="stylesheet" href="<?=__res('')?>component/layui/css/layui.css" />
-        <link rel="stylesheet" href="<?=__res('')?>component/pear/css/pear.css" />
-        <link rel="stylesheet" href="<?=__res('')?>admin/css/reset.css" />
+        <link rel="stylesheet" href="<?=__res('component/layui/css/layui.css')?>" />
+        <link rel="stylesheet" href="<?=__res('component/pear/css/pear.css')?>" />
+        <link rel="stylesheet" href="<?=__res('admin/css/reset.css')?>" />
     </head>
     <body class="pear-container">
         <style>
@@ -102,9 +102,9 @@
         </div>
 
 
-        <script src="<?=__res('')?>component/layui/layui.js"></script>
-        <script src="<?=__res('')?>component/pear/pear.js"></script>
-        <script src="<?=__res('')?>admin/js/permission.js"></script>
+        <script src="<?=__res('component/layui/layui.js')?>"></script>
+        <script src="<?=__res('component/pear/pear.js')?>"></script>
+        <script src="<?=__res('admin/js/permission.js')?>"></script>
         <script>
 
             layui.use(["form", "popup"], function () {

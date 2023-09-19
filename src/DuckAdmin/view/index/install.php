@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8">
     <title>DuckAdmin 安装</title>
-    <link rel="stylesheet" href="<?=__res('')?>component/pear/css/pear.css" />
-    <link rel="stylesheet" href="<?=__res('')?>admin/css/reset.css" />
+    <link rel="stylesheet" href="<?=__res('component/pear/css/pear.css')?>" />
+    <link rel="stylesheet" href="<?=__res('admin/css/reset.css')?>" />
 </head>
 <body class="pear-container">
 <div class="layui-row layui-col-space10">
@@ -125,8 +125,8 @@
     }
 </script>
 
-<script src="<?=__res('')?>component/layui/layui.js"></script>
-<script src="<?=__res('')?>component/pear/pear.js"></script>
+<script src="<?=__res('component/layui/layui.js')?>"></script>
+<script src="<?=__res('component/pear/pear.js')?>"></script>
 
 <script>
     layui.use(["form", "step","code","element", "popup"], function() {

@@ -3,8 +3,8 @@
     <head>
         <meta charset="UTF-8">
         <title>新增页面</title>
-        <link rel="stylesheet" href="<?=__res('')?>component/pear/css/pear.css" />
-        <link rel="stylesheet" href="<?=__res('')?>admin/css/reset.css" />
+        <link rel="stylesheet" href="<?=__res('component/pear/css/pear.css')?>" />
+        <link rel="stylesheet" href="<?=__res('admin/css/reset.css')?>" />
     </head>
     <body>
 
@@ -45,7 +45,7 @@
                         <label class="layui-form-label">头像</label>
                         <div class="layui-input-block">
                             <img class="img-3" src=""/>
-                            <input type="text" style="display:none" name="avatar" value="<?=__res('')?>avatar.png" />
+                            <input type="text" style="display:none" name="avatar" value="<?=__res('avatar.png')?>" />
                             <button type="button" class="pear-btn pear-btn-primary pear-btn-sm" id="avatar">
                                 <i class="layui-icon layui-icon-upload"></i>上传图片
                             </button>
@@ -86,9 +86,9 @@
             
         </form>
 
-        <script src="<?=__res('')?>component/layui/layui.js"></script>
-        <script src="<?=__res('')?>component/pear/pear.js"></script>
-        <script src="<?=__res('')?>admin/js/permission.js"></script>
+        <script src="<?=__res('component/layui/layui.js')?>"></script>
+        <script src="<?=__res('component/pear/pear.js')?>"></script>
+        <script src="<?=__res('admin/js/permission.js')?>"></script>
         <script>
 
             // 相关接口
@@ -114,7 +114,7 @@
                 layui.upload.render({
                     elem: "#avatar",
                     url: "<?=__url('upload/avatar')?>",
-                    value: "<?=__res('')?>avatar.png",
+                    value: "<?=__res('avatar.png')?>",
                     acceptMime: "image/gif,image/jpeg,image/jpg,image/png",
                     field: "__file__",
                     done: function (res) {

@@ -6,13 +6,13 @@
         <title>登录</title>
         <!-- 样 式 文 件 -->
         <link rel="stylesheet" href="<?=__res('component/pear/css/pear.css')?>" />
-        <link rel="stylesheet" href="<?=__res('')?>admin/css/pages/login.css" />
+        <link rel="stylesheet" href="<?=__res('admin/css/pages/login.css')?>" />
     </head>
     <!-- 代 码 结 构 -->
-    <body background="<?=__res('')?>admin/images/background.svg" style="background-size: cover;">
+    <body background="<?=__res('admin/images/background.svg')?>" style="background-size: cover;">
         <form class="layui-form">
             <div class="layui-form-item">
-                <img class="logo" src="<?=__res('')?>admin/images/logo.png" />
+                <img class="logo" src="<?=__res('admin/images/logo.png')?>" />
                 <div class="title pear-text">webman admin</div>
             </div>
             <div class="layui-form-item">
@@ -40,8 +40,8 @@
             }
         </script>
         <!-- 资 源 引 入 -->
-        <script src="<?=__res('')?>component/layui/layui.js"></script>
-        <script src="<?=__res('')?>component/pear/pear.js"></script>
+        <script src="<?=__res('component/layui/layui.js')?>"></script>
+        <script src="<?=__res('component/pear/pear.js')?>"></script>
         <script>
             layui.use(['form', 'button', 'popup', 'layer', 'theme', 'admin'], function() {
 
