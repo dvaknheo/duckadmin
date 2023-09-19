@@ -34,7 +34,7 @@ class RuleModel extends BaseModel
 	}
 	public function allRules()
 	{
-		$sql= "select * from wa_rules order by weight desc";
+		$sql = "select * from wa_rules order by weight desc";
 		$data = static::Db()->fetchAll($sql);
 		return $data;
 	}
@@ -107,10 +107,12 @@ class RuleModel extends BaseModel
 	}
 	public function updateRule($id, $data)
 	{
+        /*
 		if(isset($data['key'])){
 			$data['`key`']=$data['key'];  //修复 db 类的 bug
 			unset($data['key']);
 		}
+        //*/
 		
 		$time = date('Y-m-d H:i:s');
 		$data['updated_at'] =$time;
@@ -126,8 +128,8 @@ class RuleModel extends BaseModel
 	}
 	public function addMenu($key,$menu)
 	{
-		$menu['`key`']=$menu['key'];  //修复 db 类的 bug
-		unset($menu['key']);
+		//$menu['`key`']=$menu['key'];  //修复 db 类的 bug
+		//unset($menu['key']);
 		
 		$time = date('Y-m-d H:i:s');
 		$menu['created_at']=$time;

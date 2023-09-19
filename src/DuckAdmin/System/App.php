@@ -30,12 +30,11 @@ class App extends DuckPhp
     }
     public function onInit()
     {
-header('X-Accel-Buffering: no');
-
-        //替换掉默认的路由，这里牺牲了点效率
+        //为了满足 webman admin 的路由 替换掉默认的路由，这里牺牲了点效率
         ProjectRoute::G()->init(Route::G()->options,$this);
         Route::G(ProjectRoute::G());
-        // 设置 admin 为  admin 对象
+        
+        // 设置 Admin 为  admin 对象 ，让其他应用也能调 static::Root()::Admin()->isSuper
         static::Root()::Admin($this->createPhaseProxy(ActionApi::class));
         static::Admin(ActionApi::G());
         
@@ -46,31 +45,14 @@ header('X-Accel-Buffering: no');
                 'path_resource' => 'res',
                 'controller_resource_prefix' => '/app/admin/for_install/',
             ], $this);
-            //Route::G()->addRouteH   
-        }else{
-            
         }
-        
-        //如果主控程序没设置数据，用自己的
+        //如果根应用没设置数据，用自己的
         $this->switchDbManager();
     }
     public function install($options)
     {
         $this->installWithExtOptions($options);
-        //接着复制 res 文件
-    }
-    ////////////// 命令行
-    public function command_install()
-    {
-        // 安装命令。
-        echo "welcome to Use DuckAdmin installer  --force  to force install\n";
-        $parameters =  static::Parameter();
-        if(count($parameters)==1 || ($parameters['help'] ?? null)){
-            // echo "--force  to force install ;";
-            //return;
-        }
-        //echo $this->install($parameters); // 一些安装动作，这里还没想好
-        echo "Done \n";
+        //TODO 接着复制 res 文件
     }
     protected function switchDbManager()
     {
@@ -86,8 +68,8 @@ header('X-Accel-Buffering: no');
         $options['force']=true;
         
         DbManager::G( )->init($options, static::Root());
-    
     }
+    // 这是给 外面提供的
     public function checkDatabase()
     {
         $options = DbManager::G()->options;
@@ -101,6 +83,7 @@ header('X-Accel-Buffering: no');
     }
 
     //////////////////
+    // 这个要整合到系统里
     public function getFileFromSubComponent($subkey,$file)
     {
         clearstatcache();
@@ -122,7 +105,7 @@ header('X-Accel-Buffering: no');
         }
         return null;
     }
-    
+    // 这段是复制文件用的。
     public function dumpDir($source, $dest, $force = false, &$info ='')
     {
         $source = rtrim(''.realpath($source), DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;

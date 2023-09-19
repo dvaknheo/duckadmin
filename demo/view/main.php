@@ -41,9 +41,10 @@ duckadmindemo 这个 工程，演示了如何使用第三方的 duckphp 工程�
 
 
 
-<a href="<?=__url('app/admin/index')?>">管理后台入口在这里（管理员用户名【admin】，密码为【123456】）</a>
+<a href="<?=__url('app/admin/index')?>">管理后台入口在这里</a>
 
 <a href="<?=__url('user/')?>">用户基本注册登录页面在这里</a>
+<a href="<?=__url('app/admin/user')?>">用户管理系统在这里</a>
 
 <a href="<?=__url('merchant/')?>">商家入口在这里。</a>
 
@@ -55,6 +56,7 @@ duckadmindemo 这个 工程，演示了如何使用第三方的 duckphp 工程�
 <div class="layui-footer" style ="background-color:#FAFAFA;padding:1em;text-align:center;">
 感谢 <a href="https://www.layui.com/"> LayUI </a> 前端支持，为我这个不懂得好看的能勉强做出来
 感谢 pearadmin  让我可以 copy  idea.
+感谢 webman admin 这个版本的从 webman admin 改出来的
 </div>
 	</body>
 </html>
