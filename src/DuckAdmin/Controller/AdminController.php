@@ -14,21 +14,6 @@ class AdminController extends Base
      */
     protected $noNeedAuth = ['select'];
 
-
-
-
-    /**
-     * 开启auth数据限制
-     * @var string
-     */
-    //protected $dataLimit = 'auth';
-
-    /**
-     * 以id为数据限制字段
-     * @var string
-     */
-    //protected $dataLimitField = 'id';
-
     /**
      * 浏览
      * @return Response
@@ -95,7 +80,7 @@ class AdminController extends Base
     public function delete()
     {
 		$post = C::POST();
-		$admin_id = AdminAction::G()->getCurrentAdminId();
+		$op_id = AdminAction::G()->getCurrentAdminId();
 		AdminBusiness::G()->deleteAdmin($op_id, $post['id']);
 		return C::Success();
     }

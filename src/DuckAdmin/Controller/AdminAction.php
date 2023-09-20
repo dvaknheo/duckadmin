@@ -140,9 +140,7 @@ EOF;
 		$code = $ex->getCode();
 		$msg = $ex->getMessage();
 		if(!$code){$code = -1;}
-        if(is_a($ex, \WorkermanHttpd\ExitException::class)){
-            return true;
-        }
+        
 		return static::ExitJson(['code' => $code, 'msg' => $msg, 'type' => 'error'],false);
 	}
 }

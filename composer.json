@@ -31,6 +31,10 @@
         "dvaknheo/workermanhttpd": "^1.0"
 	},
     "require-dev": {
-        "phpstan/phpstan": "0.12.35"
+        "phpstan/phpstan": "0.12.35",
+        "phpunit/php-code-coverage": "8.0.2",
+        "phpunit/phpunit": "^9.2",
+        "dvaknheo/libcoverage": "^1.0",
+        "friendsofphp/php-cs-fixer": "^2.18"
     }
 }

@@ -23,7 +23,10 @@ class CaptchaAction
     use SingletonExTrait;
     use ControllerHelperTrait;
     use ThrowOnableTrait;
-	
+	public $options = [
+        'setter' => null,
+        'getter' => null,
+    ];
     public function __construct()
     {
     }
