@@ -19,8 +19,6 @@ if(is_file(__DIR__.'/../../DNMVCS/autoload.php')){
 ////]]]]
 function worker()
 {
-
-
     $options = [
         'namespace_controller' => '\\',
         'controller_class_postfix' => 'Controller',
@@ -28,7 +26,7 @@ function worker()
             // 后台管理系统
             \DuckAdmin\System\App::class => [
                 'controller_url_prefix' => 'app/admin/', // 访问路径
-                'controller_resource_prefix' => 'http://admin.demo.local/res/',  // 资源文件前缀
+                'controller_resource_prefix' => 'http://admin.demo.local/res/',  // 资源文件前缀，这里可以修改一下
             ],
         ],
         'cli_enable'=>false,
@@ -47,7 +45,7 @@ $options =[
     'http_handler_root' => '',
     'with_http_handler_file' => true,
 ];
-\WorkermanHttpd\WorkermanHttpd::RunQuickly($options);
+\WorkermanHttpd\WorkermanHttpd::RunQuickly($options); // 我们需要热修一下，以及除了 宏改变导致的问题
 class MainController
 {
     public function index()

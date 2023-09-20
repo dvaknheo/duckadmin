@@ -11,40 +11,15 @@ class ProjectRoute extends Route
 {
     protected function pathToClassAndMethod($path_info)
     {
-        $path_info = ltrim((string)$path_info, '/');
-        if (!empty($this->options['controller_path_ext']) && !empty($path_info)) {
-            $l = strlen($this->options['controller_path_ext']);
-            if (substr($path_info, -$l) !== $this->options['controller_path_ext']) {
-                $this->route_error = "path_extention error";
-                return [null, null];
-            }
-            $path_info = substr($path_info, 0, -$l);
-        }
+        list($full_class, $method) = parent::pathToClassAndMethod($path_info);
+        if($full_class===null){ return [$class, $method];}
         
-        $t = explode('/', $path_info);
-        $method = array_pop($t);
-        $path_class = implode('/', $t);
-        
-        $welcome_class = $this->options['controller_welcome_class'];
-        $this->calling_path = $path_class?$path_info:$welcome_class.'/'.$method;
-        
-        if ($this->options['controller_hide_boot_class'] && $path_class === $welcome_class) {
-            $this->route_error = "controller_hide_boot_class! {$welcome_class}; ";
-            return [null, null];
-        }
-        $path_class = $path_class ?: $welcome_class;
-        
-        ////[[[[ 主要是这段改动
-        $x= explode('/', $path_class);
-        $baseclass = array_pop($x);
-        $a=explode('-',$baseclass);
-        $t=array_map(function($s){return ucfirst($s);},$a);
-        $baseclass=implode('',$t);
-        array_push($x,$baseclass);
-        $path_class=implode('/',$x);
-        ////]]]]
-        $full_class = $this->namespace_prefix.str_replace('/', '\\', $path_class).$this->options['controller_class_postfix'];
-        $full_class = ''.ltrim($full_class, '\\');
+        // 因为 webman-admin 的控制器命名方式和我们的有所不同 :(
+        //DuckAdmin\Controller\aa-bbController => DuckAdmin\Controller\AaBbController
+        $full_class = preg_replace_callback("/\\\\([^\\\\]+)$/", function($m){
+            return '\\'.ucfirst(preg_replace_callback('/-([a-z])/',function($m){return ucfirst($m[1]);},$m[1]));
+            },
+            $full_class);
         return [$full_class,$method];
-    }
+    }    
 }
