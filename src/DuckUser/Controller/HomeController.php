@@ -6,8 +6,8 @@
 namespace DuckUser\Controller;
 
 use DuckUser\Business\UserBusiness;
-use DuckUser\Controller\DefaultAction as C;
-use DuckUser\ControllerEx\SessionManager;
+use DuckUser\Controller\Helper as C;
+use DuckUser\Controller\Session;
 
 class Home extends Base
 {
@@ -15,13 +15,13 @@ class Home extends Base
    {
         parent::__construct();
         
-        SessionManager::G()->checkCsrf();
-        C::assignExceptionHandler(SessionManager::ExceptionClass(), [static::class, 'OnSessionException']);
+        Session::G()->checkCsrf();
+        C::assignExceptionHandler(Session::ExceptionClass(), [static::class, 'OnSessionException']);
 
-        $csrf_token = SessionManager::G()->csrf_token();
-        $csrf_field = SessionManager::G()->csrf_field();
+        $csrf_token = Session::G()->csrf_token();
+        $csrf_field = Session::G()->csrf_field();
          
-        $user = SessionManager::G()->getCurrentUser();
+        $user = Session::G()->getCurrentUser();
         $user_name = $user['username'] ?? '';
 
         C::setViewHeadFoot('home/inc-head','home/inc-foot');
@@ -35,7 +35,7 @@ class Home extends Base
         }
         $code = $ex->getCode();
         __logger()->warning(''.(get_class($ex)).'('.$ex->getCode().'): '.$ex->getMessage());
-        if (SessionManager::G()->isCsrfException($ex) && __is_debug()) {
+        if (Session::G()->isCsrfException($ex) && __is_debug()) {
             C::exit(0);
         }
         C::ExitRouteTo('login');
@@ -55,7 +55,7 @@ class Home extends Base
     {
         $error = '';
         try {
-            $uid = SessionManager::G()->getCurrentUid();
+            $uid = Session::G()->getCurrentUid();
             $old_pass = C::POST('oldpassword','');
             $new_pass = C::POST('newpassword','');
             $confirm_pass = C::POST('newpassword_confirm','');

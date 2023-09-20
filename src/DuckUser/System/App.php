@@ -10,7 +10,6 @@ use DuckPhp\Ext\InstallableTrait;
 
 class App extends DuckPhp
 {
-    use InstallableTrait;
     //@override
     public $options = [
 		'controller_class_postfix' => 'Controller',
@@ -22,20 +21,8 @@ class App extends DuckPhp
         'home_url' => 'Home/index', 
     ];
 
-    protected function onBeforeRun()
+    protected function onInit()
     {
         //$this->checkInstall();
-    }
-    //////////////////////
-    public function command_install()
-    {
-        echo "welcome to Use DuckUser installer  --force  to force install\n";
-        $parameters =  static::Parameter();
-        if(count($parameters)==1 || ($parameters['help'] ?? null)){
-            // echo "--force  to force install ;";
-            //return;
-        }
-        echo $this->install($parameters);
-        echo "Done \n";
     }
 }

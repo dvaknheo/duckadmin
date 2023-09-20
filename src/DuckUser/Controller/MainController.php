@@ -9,7 +9,7 @@ use DuckUser\Business\UserBusiness;
 use DuckUser\Controller\Base as C;
 use DuckUser\ControllerEx\SessionManager;
 
-class Main extends Base
+class Main
 {
     public function index()
     {

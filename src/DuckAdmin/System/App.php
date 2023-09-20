@@ -83,28 +83,7 @@ class App extends DuckPhp
     }
 
     //////////////////
-    // 这个要整合到系统里
-    public function getFileFromSubComponent($subkey,$file)
-    {
-        clearstatcache();
-        //$this->options['path'];
-        $path = $this->options['path_'.$subkey];
-        $full_file = $path.$file;
-        
-        if(is_file($full_file)){
-            return $full_file;
-        }
-        $path = $this->options['path_'.$subkey.'_override_from'] ?? null;
-        if (!isset($path)) {
-            return null;
-        }
-        $full_file = $path.$file;
-        
-        if(is_file($full_file)){
-            return $full_file;
-        }
-        return null;
-    }
+
     // 这段是复制文件用的。
     public function dumpDir($source, $dest, $force = false, &$info ='')
     {

@@ -6,11 +6,11 @@
 
 namespace DuckUser\Model;
 
-use DuckPhp\Foundation\SimpleModelTrait;
+use DuckPhp\Component\SimpleModelTrait;
 use DuckPhp\Helper\ModelHelperTrait;
 use DuckPhp\SingletonEx\SingletonExTrait;
 
-use DuckUser\System\App;
+use DuckUser\System\App as DuckUser;
 
 class BaseModel
 {
@@ -20,6 +20,6 @@ class BaseModel
     
     public function __construct()
     {
-        $this->table_prefix = App::G()->options['table_prefix'];
+        $this->table_prefix = DuckUser::G()->options['table_prefix'];
     }
 }

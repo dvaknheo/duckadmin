@@ -6,7 +6,7 @@
 
 namespace DuckUser\Business;
 
-use DuckPhp\Foundation\ThrowOnableTrait;
+use DuckPhp\ThrowOn\ThrowOnableTrait;
 use DuckPhp\Helper\BusinessHelperTrait;
 use DuckPhp\SingletonEx\SingletonExTrait;
 use DuckUser\System\ProjectException;
