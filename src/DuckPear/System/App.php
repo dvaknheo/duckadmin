@@ -19,12 +19,9 @@ class App extends DuckPhp
     use InstallableTrait;
     //@override
     public $options = [
-        'error_404' => '_sys/error_404',
-        'error_500' => '_sys/error_500',
-        'controller_base_class' => ProjectController::class,  // 我们固定住控制器基类
+        'controller_class_postfix' => 'Controller', // 控制器后缀
         'controller_resource_prefix' => 'res/',  // 资源文件前缀
         //////////////////
-        
         'table_prefix' => '',   // 表前缀
         'session_prefix' => '',  // Session 前缀         
     ];

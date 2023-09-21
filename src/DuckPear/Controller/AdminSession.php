@@ -3,13 +3,13 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace DuckPear\ControllerEx;
+namespace DuckPear\Controller;
 
-use DuckPear\System\ProjectSession;
+use DuckPhp\Component\SessionBase;
 /**
  * 会话处理
  */
-class AdminSession extends ProjectSession
+class AdminSession extends SessionBase
 {
     public function getCurrentAdmin()
     {

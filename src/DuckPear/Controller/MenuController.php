@@ -11,7 +11,7 @@ use DuckPear\Business\AdminBusiness;
 /**
  * 菜单管理
  */
-class Menu extends Base
+class MenuController extends Base
 {
     /**
      * 管理员

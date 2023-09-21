@@ -8,12 +8,12 @@ namespace DuckPear\Controller;
 
 use DuckPear\Business\AdminBusiness;
 use DuckPear\Controller\Base as C;
-use DuckPear\ControllerEx\AdminSession;
-use DuckPear\ControllerEx\CaptchaAction;
+use DuckPear\Controller\AdminSession;
+use DuckPear\Controller\CaptchaAction;
 /**
  * 主入口
  */
-class Main extends Base
+class MainController extends Base
 {
     public function __construct()
     {

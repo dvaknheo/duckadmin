@@ -7,7 +7,7 @@
 namespace DuckPear\Controller;
 use DuckPear\Controller\Base as C;
 
-class Profile extends Base
+class ProfileController extends Base
 {
     public function __construct()
     {

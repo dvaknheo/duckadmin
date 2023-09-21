@@ -4,10 +4,13 @@
  * From this time, you never be alone~
  */
 
-namespace DuckPear\ControllerEx;
+namespace DuckPear\Controller;
 
-use DuckPear\ControllerEx\AdminSession;
-use DuckPear\System\ProjectAction;
+use DuckPear\Controller\AdminSession;
+
+use DuckPhp\ThrowOn\ThrowOnableTrait;
+use DuckPhp\Helper\ControllerHelperTrait;
+use DuckPhp\SingletonEx\SingletonExTrait;
 
 use Gregwar\Captcha\CaptchaBuilder;
 use Gregwar\Captcha\PhraseBuilder;
@@ -18,6 +21,10 @@ use Gregwar\Captcha\PhraseBuilder;
  */
 class CaptchaAction extends ProjectAction
 {
+    use SingletonExTrait;
+    use ControllerHelperTrait;
+    use ThrowOnableTrait;
+    
     public function __construct()
     {
     }

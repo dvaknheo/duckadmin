@@ -6,7 +6,7 @@
 
 namespace DuckPear\Controller;
 
-class Permission extends Base
+class PermissionController extends Base
 {
     /**
      * 权限

@@ -6,10 +6,14 @@
 
 namespace DuckPear\Model;
 
-use DuckPear\System\ProjectModel;
+use DuckPhp\Component\SimpleModelTrait;
+use DuckPhp\Helper\ModelHelperTrait;
 
-class BaseModel extends ProjectModel
-{    
+class BaseModel
+{
+    use SimpleModelTrait;
+    use ModelHelperTrait;
+    
     public function table()
     {
         if(!isset($this->table_name)){

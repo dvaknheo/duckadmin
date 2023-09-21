@@ -7,7 +7,7 @@
 namespace DuckPear\Controller;
 use DuckPear\Controller\Base as C;
 
-class Role extends Base
+class RoleController extends Base
 {
     /**
      * 角色

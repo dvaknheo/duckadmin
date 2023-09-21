@@ -4,14 +4,20 @@
  * From this time, you never be alone~
  */
 
-namespace DuckPear\ControllerEx;
+namespace DuckPear\Controller;
 
 use DuckPear\Business\AdminBusiness;
-use DuckPear\ControllerEx\AdminSession;
-use DuckPear\System\ProjectAction;
+use DuckPear\Controller\AdminSession;
+use DuckPhp\ThrowOn\ThrowOnableTrait;
+use DuckPhp\Helper\ControllerHelperTrait;
+use DuckPhp\SingletonEx\SingletonExTrait;
 
-class AdminAction extends ProjectAction
+class AdminAction
 {
+    use SingletonExTrait;
+    use ControllerHelperTrait;
+    use ThrowOnableTrait;
+    
     public function doCheckPermission()
     {
         $admin = AdminSession::G()->getCurrentAdmin();

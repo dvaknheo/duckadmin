@@ -11,7 +11,7 @@ use DuckPear\Business\AdminBusiness;
 /**
  * 管理员管理系列页面
  */
-class Admin extends Base
+class AdminController extends Base
 {
     /**
      * 管理员列表
