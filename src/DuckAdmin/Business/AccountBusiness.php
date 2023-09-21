@@ -10,19 +10,19 @@ use DuckAdmin\Model\RuleModel;
  */
 class AccountBusiness extends BaseBusiness 
 {
-	public function getAdmin($admin_id)
-	{
-		$admin = AdminModel::G()->getAdminById($admin_id); 
-		
-		if (!$admin || $admin['status'] != 0) {
-			return null;
-		}
-		$admin['roles'] = AdminRoleModel::G()->getRoles($admin_id);
-		return $admin;
-	}
-	/////////////
-	public function getAccountInfo($admin)
-	{
+    public function getAdmin($admin_id)
+    {
+        $admin = AdminModel::G()->getAdminById($admin_id); 
+        
+        if (!$admin || $admin['status'] != 0) {
+            return null;
+        }
+        $admin['roles'] = AdminRoleModel::G()->getRoles($admin_id);
+        return $admin;
+    }
+    /////////////
+    public function getAccountInfo($admin)
+    {
         $info = [
             'id' => $admin['id'],
             'username' => $admin['username'],
@@ -32,30 +32,29 @@ class AccountBusiness extends BaseBusiness
             'mobile' => $admin['mobile'],
             'isSupperAdmin' =>CommonService::G()->isSupperAdmin($admin['id']),
         ];
-		
-		return $info;
-	}
+        
+        return $info;
+    }
 
-	public function login($username,$password)
-	{
+    public function login($username,$password)
+    {
         static::ThrowOn(!$username, '用户名不能为空',1);
-		
+        
         //$this->checkLoginLimit($username);
         $admin = AdminModel::G()->getAdminByName($username);
-		static::ThrowOn(!$admin,'账户不存在或密码错误');
-		$flag = AdminModel::G()->passwordVerify($password, $admin['password']);
-		static::ThrowOn(!$flag,'账户不存在或密码错误');
-		static::ThrowOn($admin['status'] != 0, '当前账户暂时无法登录',1);
-		//////////////////////////////////////////
-		unset($admin['password']);
-		AdminModel::G()->updateLoginAt($admin['id']);
+        static::ThrowOn(!$admin,'账户不存在或密码错误');
+        $flag = AdminModel::G()->checkPasswordByAdmin($admin, $password);
+        static::ThrowOn(!$flag,'账户不存在或密码错误');
+        static::ThrowOn($admin['status'] != 0, '当前账户暂时无法登录',1);
+        //////////////////////////////////////////
+        unset($admin['password']);
+        AdminModel::G()->updateLoginAt($admin['id']);
         
-		
         //$this->removeLoginLimit($username);
         static::FireEvent([static::class,__METHOD__], $admin);
 
-		return $admin;
-	}
+        return $admin;
+    }
     /**
      * 检查登录频率限制
      * @param $username
@@ -103,8 +102,8 @@ class AccountBusiness extends BaseBusiness
             unlink($limit_file);
         }
     }
-	
-	/**
+    
+    /**
      * 判断是否有权限
      * @param string $controller
      * @param string $action
@@ -113,8 +112,8 @@ class AccountBusiness extends BaseBusiness
      * @return bool
      * @throws \ReflectionException|BusinessException
      */
-	public function canAccess($admin, string $controller, string $action, int &$code = 0, string &$msg = ''): bool
-	{
+    public function canAccess($admin, string $controller, string $action, int &$code = 0, string &$msg = ''): bool
+    {
         // 获取控制器鉴权信息
         $class = new \ReflectionClass($controller);
         $properties = $class->getDefaultProperties();
@@ -125,65 +124,66 @@ class AccountBusiness extends BaseBusiness
         if (in_array($action, $noNeedLogin)) {
             return true;
         }
-		
-		static::ThrowOn(!$admin, $msg = '请登录', 401);
+        
+        static::ThrowOn(!$admin, $msg = '请登录', 401);
         // 无控制器信息说明是函数调用，函数不属于任何控制器，鉴权操作应该在函数内部完成。
-		if (!$controller) {
+        if (!$controller) {
             return true;
         }
-		try{
-			// 不需要鉴权
-			if (in_array($action, $noNeedAuth)) {
-				return true;
-			}
-			// 当前管理员无角色
-			$roles = $admin['roles'];
-			static::ThrowOn(!$roles,  '无权限', 2);
+        try{
+            // 不需要鉴权
+            if (in_array($action, $noNeedAuth)) {
+                return true;
+            }
+            // 当前管理员无角色
+            $roles = $admin['roles'];
+            static::ThrowOn(!$roles,  '无权限', 2);
 
-			// 角色没有规则
-			$rule_ids = RoleModel::G()->getRules($roles);
-			static::ThrowOn(!$rule_ids,  '无权限', 2);
-			
-			// 超级管理员
-			if (in_array('*', $rule_ids)){
-				return true;
-			}
+            // 角色没有规则
+            $rule_ids = RoleModel::G()->getRules($roles);
+            static::ThrowOn(!$rule_ids,  '无权限', 2);
+            
+            // 超级管理员
+            if (in_array('*', $rule_ids)){
+                return true;
+            }
 
-			// 如果action为index，规则里有任意一个以$controller开头的权限即可
-			if (strtolower($action) === 'index') {
-				$rule = RuleModel::G()->checkWildRules($rule_ids,$controller,$action);
-				static::ThrowOn(!$rule, '无权限', 2);
-				return true;
-			}else{
-				// 查询是否有当前控制器的规则
-				$rule = RuleModel::G()->checkRules($rule_ids,$controller,$action);
-				static::ThrowOn(!$rule, '无权限', 2);
-				return true;
-			}
-		}catch(\Exception $ex){
-			$code = $ex->getCode();
-			$msg = $ex->getMessage();
-			return false;
-			
-		}
-		return true;
+            // 如果action为index，规则里有任意一个以$controller开头的权限即可
+            if (strtolower($action) === 'index') {
+                $rule = RuleModel::G()->checkWildRules($rule_ids,$controller,$action);
+                static::ThrowOn(!$rule, '无权限', 2);
+                return true;
+            }else{
+                // 查询是否有当前控制器的规则
+                $rule = RuleModel::G()->checkRules($rule_ids,$controller,$action);
+                static::ThrowOn(!$rule, '无权限', 2);
+                return true;
+            }
+        }catch(\Exception $ex){
+            $code = $ex->getCode();
+            $msg = $ex->getMessage();
+            //调试用
+            return false;
+            
+        }
+        return true;
     }
-	public function update($admin_id, $data)
-	{
-		$update_data = AdminModel::G()->updateAdmin($admin_id,$data);
-		
+    public function update($admin_id, $data)
+    {
+        $update_data = AdminModel::G()->updateAdmin($admin_id,$data);
+        
         foreach ($update_data as $key => $value) {
             $admin[$key] = $value;
         }
-		return $admin;
-	}
-	public function changePassword($admin_id, $old_password, $password, $password_cofirm)
-	{
-		static::ThrowOn(!$password, '密码不能为空',2);
-		static::ThrowOn($password !== $password_cofirm, '两次密码输入不一致',3);
-		
-		$flag = AdminModel::G()->checkPasword($old_password);
-		static::ThrowOn(!$flag, '原始密码不正确', 1);
+        return $admin;
+    }
+    public function changePassword($admin_id, $old_password, $password, $password_cofirm)
+    {
+        static::ThrowOn(!$password, '密码不能为空',2);
+        static::ThrowOn($password !== $password_cofirm, '两次密码输入不一致',3);
+        
+        $flag = AdminModel::G()->checkPasword($admin_id, $old_password);
+        static::ThrowOn(!$flag, '原始密码不正确', 1);
         AdminModel::G()->updateAdminPassword($admin_id, $password);
-	}
+    }
 }

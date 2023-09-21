@@ -10,54 +10,54 @@ use DuckAdmin\Model\AdminRoleModel;
  */
 class RoleBusiness extends BaseBusiness 
 {
-	public function selectRoles($op_id,$id,$input)
-	{
-		//这里折腾好久
-		//return [['name' => '超级管理员','value'=>1]];
-		//file_put_contents(__DIR__.'/x.log',microtime(true) ."\n",FILE_APPEND);
+    public function selectRoles($op_id,$id,$input)
+    {
+        //这里折腾好久
+        //return [['name' => '超级管理员','value'=>1]];
+        //file_put_contents(__DIR__.'/x.log',microtime(true) ."\n",FILE_APPEND);
         [$where, $format, $limit, $field, $order] = RoleModel::G()->selectInput($input);
-		$my_ids = AdminRoleModel::G()->getRoles($op_id);
+        $my_ids = AdminRoleModel::G()->getRoles($op_id);
         $role_ids = CommonService::G()->getScopeRoleIds($my_ids, true);
         if (!$id) {
             $where['id'] = ['in', $role_ids];
         } else{
-			static::ThrowOn(!in_array($id, $role_ids),'无权限',1);
+            static::ThrowOn(!in_array($id, $role_ids),'无权限',1);
         }
-		[$data,$total]  = RoleModel::G()->doSelect($where, $field, $order,1,$limit);
+        [$data,$total]  = RoleModel::G()->doSelect($where, $field, $order,1,$limit);
         $data = CommonService::G()->doFormat($data, $total, $format, $limit);
-		//file_put_contents(__DIR__.'/x.log',microtime(true) ."\n",FILE_APPEND);
-		return $data;
-		
-	}
-	public function insertRole($op_id, $data)
-	{
-		$pid = $data['pid'] ?? null;
-		static::ThrowOn(!$pid,'请选择父级角色组',1);
-		if (CommonService::G()->noRole($op_id, $pid, true)) {
-			static::ThrowOn(true,'父级角色组超出权限范围',1);
-		}
+        //file_put_contents(__DIR__.'/x.log',microtime(true) ."\n",FILE_APPEND);
+        return $data;
+        
+    }
+    public function insertRole($op_id, $data)
+    {
+        $pid = $data['pid'] ?? null;
+        static::ThrowOn(!$pid,'请选择父级角色组',1);
+        if (CommonService::G()->noRole($op_id, $pid, true)) {
+            static::ThrowOn(true,'父级角色组超出权限范围',1);
+        }
 
-		$this->checkRulesInput($pid, $data['rules'] ?? '');
+        $this->checkRulesInput($pid, $data['rules'] ?? '');
 
-		$id = RoleModel::G()->addRole($data);
-		return $id;
-	}
-	////[[[[
+        $id = RoleModel::G()->addRole($data);
+        return $id;
+    }
+    ////[[[[
 
-	////////]]]]
-	public function updateRole($op_id, $input)
-	{
-		$role_id = $input['id'];
-		$id = $role_id;
-		$data = RoleModel::G()->inputFilter($input);
+    ////////]]]]
+    public function updateRole($op_id, $input)
+    {
+        $role_id = $input['id'];
+        $id = $role_id;
+        $data = RoleModel::G()->inputFilter($input);
        
         if (CommonService::G()->noRole($op_id, $role_id, true)) {
-			static::ThrowOn(true,'无数据权限',1);
+            static::ThrowOn(true,'无数据权限',1);
         }
 
         $role = RoleModel::G()->getById($id);
-		static::ThrowOn(!$role,'数据不存在',1);
-		$role_rules = $role['rules'] ? explode(',', $role['rules']):[];
+        static::ThrowOn(!$role,'数据不存在',1);
+        $role_rules = $role['rules'] ? explode(',', $role['rules']):[];
         $is_supper_role = $role['rules'] === '*';
 
         // 超级角色组不允许更改rules pid 字段
@@ -67,10 +67,10 @@ class RoleBusiness extends BaseBusiness
 
         if (key_exists('pid', $data)) {
             $pid = $data['pid'];
-			static::ThrowOn(!$pid,'请选择父级角色组',1);
-			static::ThrowOn($pid == $id,'父级不能是自己',1);
+            static::ThrowOn(!$pid,'请选择父级角色组',1);
+            static::ThrowOn($pid == $id,'父级不能是自己',1);
             if (CommonService::G()->noRole($op_id, $role_id, true)) {
-				static::ThrowOn(true,'父级超出权限范围',1);
+                static::ThrowOn(true,'父级超出权限范围',1);
             }
         } else {
             $pid = $role['pid'];
@@ -85,26 +85,26 @@ class RoleBusiness extends BaseBusiness
 
         // 删除所有子角色组中已经不存在的权限
         if (!$is_supper_role) {
-		
-			// 这里，整合
-			$treedata = RoleModel::G()->getAllIdPid();
+        
+            // 这里，整合
+            $treedata = RoleModel::G()->getAllIdPid();
             $tree = new Tree($treedata);
             $descendant_roles = $tree->getDescendant([$id]);
             $descendant_role_ids = array_column($descendant_roles, 'id');
-			
+            
             $rule_ids = $data['rules'] ? explode(',', $data['rules']) : [];
-			RoleModel::G()->updateRoleMore($descendant_role_ids,$rule_ids);
+            RoleModel::G()->updateRoleMore($descendant_role_ids,$rule_ids);
         }
-		return $id;
-	}
-	
-	public function deleteRole($op_id, $ids)
-	{
-		$ids=is_array($ids)?$ids:[$ids];
+        return $id;
+    }
+    
+    public function deleteRole($op_id, $ids)
+    {
+        $ids=is_array($ids)?$ids:[$ids];
         static::ThrowOn(in_array(1, $ids), '无法删除超级管理员角色');
         
-		$flag = CommonService::G()->noRole($op_id,$ids);
-		static::ThrowOn($flag ,'无删除权限',1);
+        $flag = CommonService::G()->noRole($op_id,$ids);
+        static::ThrowOn($flag ,'无删除权限',1);
         
         $tree = new Tree(RoleModel::G()->getAll());
         $descendants = $tree->getDescendant($ids);
@@ -112,30 +112,30 @@ class RoleBusiness extends BaseBusiness
             $ids = array_merge($ids, array_column($descendants, 'id'));
         }
 
-		RoleModel::G()->deleteByIds($ids);
-	}
-	
-	public function tree($op_id, $role_id)
-	{
+        RoleModel::G()->deleteByIds($ids);
+    }
+    
+    public function tree($op_id, $role_id)
+    {
         if (empty($role_id)) {
             return [];
         }
         $flag = CommonService::G()->noRole($op_id, $role_id, true);
         static::ThrowOn($flag,'角色组超出权限范围',1);
         
-		
+        
         $rule_id_string = RoleModel::G()->getRulesByRoleId($role_id);
         if ($rule_id_string === '') {
             return [];
         }
         
-		$include =($rule_id_string !== '*') ? explode(',', $rule_id_string) : [];
+        $include =($rule_id_string !== '*') ? explode(',', $rule_id_string) : [];
         
-		
+        
         $items = RuleModel::G()->allRulesForTree();		
         $tree = new Tree($items);
         return $tree->getTree($include);
-	}
+    }
     /**
      * 检查权限字典是否合法
      * @param int $role_id
@@ -144,26 +144,26 @@ class RoleBusiness extends BaseBusiness
     protected function checkRulesInput(int $role_id, $rule_ids)
     {
         if (!$rule_ids) {
-			return;
-		}
-		$rule_ids = explode(',', $rule_ids);
-		if (in_array('*', $rule_ids)) {
-			static::ThrowOn(true, '非法数据');
-		}
-		$flag = RuleModel::G()->checkRulesExist($rule_ids);
+            return;
+        }
+        $rule_ids = explode(',', $rule_ids);
+        if (in_array('*', $rule_ids)) {
+            static::ThrowOn(true, '非法数据');
+        }
+        $flag = RuleModel::G()->checkRulesExist($rule_ids);
 
-		static::ThrowOn(!$flag, '权限不存在');
+        static::ThrowOn(!$flag, '权限不存在');
 
-		$rule_id_string = RoleModel::G()->getRulesByRoleId($role_id);
-		static::ThrowOn($rule_id_string === '', '数据超出权限范围');
-		
-		if ($rule_id_string === '*') {
-			return;
-		}
-		
-		$legal_rule_ids = explode(',', $rule_id_string);
-		if (array_diff($rule_ids, $legal_rule_ids)) {
-			static::ThrowOn(true, '数据超出权限范围');
-		}
+        $rule_id_string = RoleModel::G()->getRulesByRoleId($role_id);
+        static::ThrowOn($rule_id_string === '', '数据超出权限范围');
+        
+        if ($rule_id_string === '*') {
+            return;
+        }
+        
+        $legal_rule_ids = explode(',', $rule_id_string);
+        if (array_diff($rule_ids, $legal_rule_ids)) {
+            static::ThrowOn(true, '数据超出权限范围');
+        }
     }
 }

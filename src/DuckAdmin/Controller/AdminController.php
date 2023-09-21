@@ -32,10 +32,8 @@ class AdminController extends Base
     public function select()
     {
 		$input = C::GET();
-		$dataLimitField = 'id';
-		$dataLimit = 'auth';
 		$admin_id = AdminAction::G()->getCurrentAdminId();
-		[$data, $count] = AdminBusiness::G()->showAdmins($admin_id,$input,$dataLimit,$dataLimitField);
+		[$data, $count] = AdminBusiness::G()->showAdmins($admin_id,$input);
         return C::Success($data,$count);
     }
 

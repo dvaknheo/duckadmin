@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <title>DuckAdmin 后台系统</title>
-        <link href="<?=\DuckAdmin\__res("layui/css/layui.css")?>" rel="stylesheet" />
+        <link href="<?=__res("layui/css/layui.css")?>" rel="stylesheet" />
     </head>
     <body>
     
@@ -26,7 +26,7 @@
 DuckAdmin 是用来给 DuckPhp 项目做二次开发用的。
 你应该在调整选项
 <pre class="layui-code">
-$options['ext'][\DuckAdmin\Api\DuckAdminPlugin::class] = [
+$options['ext'][Api\DuckAdminPlugin::class] = [
     // 你要添加的选项
 ];
 </pre>
@@ -49,7 +49,7 @@ class MyController
 {
     public function __contruct()
     {
-        \DuckAdmin\Api\DuckAdminAction::CheckPermission();
+        Api\DuckAdminAction::CheckPermission();
         // 这使得你的控制器必须有权限才能访问。
     }
 }
@@ -58,7 +58,7 @@ class MyController
 <pre class="layui-code">
 class MyBusiness
 {
-    \DuckAdmin\Api\DuckAdminService::Foo();
+    Api\DuckAdminService::Foo();
 }
 </pre>
 
@@ -81,8 +81,8 @@ class App
 {
     public function onInit()
     {
-        \DuckAdmin\Controller\Profile::G(MyProfile::G());
-        \DuckAdmin\Service\ProfileService::G(MyProfileService::G());
+        Controller\Profile::G(MyProfile::G());
+        Service\ProfileService::G(MyProfileService::G());
     }
 }
 </pre>
@@ -101,7 +101,7 @@ class App
             </div>
             <div class="layui-form-item">
                 <input placeholder="验证码 : " type="text" maxlength="4" name="captcha" hover class="code layui-input layui-input-inline"/>
-                <a href="javascript:;" onclick="refresh_captcha()"><img id="codeimg" class="codeImage" src="<?=\DuckAdmin\__url('captcha')?>" /></a>
+                <a href="javascript:;" onclick="refresh_captcha()"><img id="codeimg" class="codeImage" src="<?=__url('captcha')?>" /></a>
                 <script>
                 function refresh_captcha(){
                     document.getElementById('codeimg').src=document.getElementById('codeimg').src

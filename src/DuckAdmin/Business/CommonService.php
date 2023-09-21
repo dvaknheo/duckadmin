@@ -10,8 +10,8 @@ use DuckAdmin\Model\RoleModel;
  */
 class CommonService extends BaseBusiness 
 {
-	//////////////////////
-	/**
+    //////////////////////
+    /**
      * 格式化数据
      * @param $query
      * @param $format
@@ -29,8 +29,8 @@ class CommonService extends BaseBusiness
         $format_function = $methods[$format] ?? 'formatNormal';
         return call_user_func([$this, $format_function], $items, $total);
     }
-	
-	/**
+    
+    /**
      * 格式化树
      * @param $items
      * @return Response
@@ -47,7 +47,7 @@ class CommonService extends BaseBusiness
             ];
         }
         $tree = new Tree($format_items);
-		
+        
         return [$tree->getTree(),null];
     }
 
@@ -88,29 +88,29 @@ class CommonService extends BaseBusiness
     {
         return [$items, $total];
     }
-	/////////////////////////////////////////////////////
-	public function noRole($admin_id,$role_id,bool $with_self = false)
-	{
-		if(!$this->isSupperAdmin((int)$admin_id)){
-			return false;
-		}
-		$roles = AdminRoleModel::G()->getRoles($admin_id);
-
-		$role_id=is_array($role_id)?$role_id:[$role_id];
-		if(array_diff($role_id, $this->getScopeRoleIds($roles, $with_self))){
-			return true;
-		}else{
-			return false;
-		}
-	}
-	public function isSupperAdmin(int $admin_id = 0): bool
+    /////////////////////////////////////////////////////
+    public function noRole($admin_id,$role_id,bool $with_self = false)
     {
-		static::ThrowOn($admin_id==0,'参数错误，请指定管理员');
-		$roles = AdminRoleModel::G()->getRoles($admin_id);
+        if(!$this->isSupperAdmin((int)$admin_id)){
+            return false;
+        }
+        $roles = AdminRoleModel::G()->getRoles($admin_id);
+
+        $role_id=is_array($role_id)?$role_id:[$role_id];
+        if(array_diff($role_id, $this->getScopeRoleIds($roles, $with_self))){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    public function isSupperAdmin(int $admin_id = 0): bool
+    {
+        static::ThrowOn($admin_id==0,'参数错误，请指定管理员');
+        $roles = AdminRoleModel::G()->getRoles($admin_id);
         $rules = RoleModel::G()->getRules($roles);
         return RuleModel::G()->isSuper($rules); 
     }
-	/**
+    /**
      * 获取权限范围内的所有角色id
      * @param bool $with_self
      * @return array
@@ -118,13 +118,13 @@ class CommonService extends BaseBusiness
     public function getScopeRoleIds($role_ids,  bool $with_self = false): array
     {
         //$role_ids = $admin['roles'];
-		
+        
         $rules = RoleModel::G()->getRules($role_ids);
         if (RuleModel::G()->isSuper($rules)) {
             return RoleModel::G()->getAllId();
         }
         $roles = RoleModel::G()->getAll();
-		
+        
         $tree = new Tree($roles);
         $descendants = $tree->getDescendant($role_ids, $with_self);
         return array_column($descendants, 'id');

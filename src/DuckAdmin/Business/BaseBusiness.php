@@ -16,10 +16,10 @@ class BaseBusiness
     use SingletonExTrait; // 单例
     use BusinessHelperTrait; //使用助手函数
     use ThrowOnableTrait;  //使用 static:: ThrowOn()
-	
-	public function __construct()
-	{
-		$this->exception_class = BusinessException::class;
-	}
-	///////////////////////
+    
+    public function __construct()
+    {
+        $this->exception_class = BusinessException::class;
+    }
+    ///////////////////////
 }

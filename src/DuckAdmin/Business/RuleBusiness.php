@@ -9,12 +9,12 @@ use DuckAdmin\Model\RoleModel;
  */
 class RuleBusiness extends BaseBusiness 
 {
-	
-	public function get($roles,$types)
-	{
-		$rules = RoleModel::G()->getRules($roles);
+    
+    public function get($roles,$types)
+    {
+        $rules = RoleModel::G()->getRules($roles);
         $items = RuleModel::G()->allRules();
-		// 格式化数据
+        // 格式化数据
         $formatted_items = [];
         foreach ($items as $item) {
             $item['pid'] = (int)$item['pid'];
@@ -31,9 +31,9 @@ class RuleBusiness extends BaseBusiness
             $this->removeNotContain($tree_items, 'id', $rules);
         }
         $this->removeNotContain($tree_items, 'type', $types);
-		
+        
         return Tree::arrayValues($tree_items);
-	}
+    }
 ///////////////////////////////////
     /**
      * 移除不包含某些数据的数组
@@ -84,21 +84,21 @@ class RuleBusiness extends BaseBusiness
         }
         return false;
     }
-	/////////////////////////////
-	
-	public function selectRules($op_id, $input)
-	{
-		//$this->syncRules();
-		[$where, $format, $limit, $field, $order] = RuleModel::G()->selectInput($input);
+    /////////////////////////////
+    
+    public function selectRules($op_id, $input)
+    {
+        //$this->syncRules();
+        [$where, $format, $limit, $field, $order] = RuleModel::G()->selectInput($input);
         [$data,$total] = RuleModel::G()->doSelect($where, $field, $order,1,$limit);
         return CommonService::G()->doFormat($data, $total, $format, $limit);
-		
-	}
-	protected function mapClass($class)
-	{
-		return $class; // 把 plugin\xx\controller 改为我们相应的 controller
-	}
-	/**
+        
+    }
+    protected function mapClass($class)
+    {
+        return $class; // 把 plugin\xx\controller 改为我们相应的 controller
+    }
+    /**
      * 根据类同步规则到数据库
      * @return void
      */
@@ -109,40 +109,40 @@ class RuleBusiness extends BaseBusiness
         $methods_in_files = [];
         foreach ($items as $item) {
             $class = $this->mapClass($item['key']);
-			
-			//如果有@在内，那就继续
+            
+            //如果有@在内，那就继续
             if (strpos($class, '@')) {
                 $methods_in_db[$class] = $class;
                 continue;
             }
             if (!class_exists($class)) {
-				continue;
-			}
-			$reflection = new \ReflectionClass($class);
-			$properties = $reflection->getDefaultProperties();
-			$no_need_auth = array_merge($properties['noNeedLogin'] ?? [], $properties['noNeedAuth'] ?? []);
-			$class = $reflection->getName();
-			$pid = $item['id'];
-			$methods = $reflection->getMethods(\ReflectionMethod::IS_PUBLIC);
-			foreach ($methods as $method) {
-				$method_name = $method->getName();
-				
-				if (strtolower($method_name) === 'index' || strpos($method_name, '__') === 0 || in_array($method_name, $no_need_auth)) {
-					continue;
-				}
-				$name = "$class@$method_name";
-				$methods_in_files[$name] = $name;
-				$title = $this->getCommentFirstLine($method->getDocComment()) ?: $method_name;
-				
-				$menu = $items[$name] ?? [];
-				if (!$menu) {
-					RuleModel::G()->addMenu($key,['pid'=>$pid,'key'=>$key,'title'=>$name,'type'=>2,]);
-					continue;
-				}
-				if ($menu['title'] != $title) {
-					RuleModel::G()->updateTitleByKey($name,$title);
-				}
-			}
+                continue;
+            }
+            $reflection = new \ReflectionClass($class);
+            $properties = $reflection->getDefaultProperties();
+            $no_need_auth = array_merge($properties['noNeedLogin'] ?? [], $properties['noNeedAuth'] ?? []);
+            $class = $reflection->getName();
+            $pid = $item['id'];
+            $methods = $reflection->getMethods(\ReflectionMethod::IS_PUBLIC);
+            foreach ($methods as $method) {
+                $method_name = $method->getName();
+                
+                if (strtolower($method_name) === 'index' || strpos($method_name, '__') === 0 || in_array($method_name, $no_need_auth)) {
+                    continue;
+                }
+                $name = "$class@$method_name";
+                $methods_in_files[$name] = $name;
+                $title = $this->getCommentFirstLine($method->getDocComment()) ?: $method_name;
+                
+                $menu = $items[$name] ?? [];
+                if (!$menu) {
+                    RuleModel::G()->addMenu($key,['pid'=>$pid,'key'=>$key,'title'=>$name,'type'=>2,]);
+                    continue;
+                }
+                if ($menu['title'] != $title) {
+                    RuleModel::G()->updateTitleByKey($name,$title);
+                }
+            }
             
         }
         // 从数据库中删除已经不存在的方法
@@ -151,12 +151,12 @@ class RuleBusiness extends BaseBusiness
             //RuleModel::whereIn('key', $menu_names_to_del)->delete();
         }
     }
-	
-	///////////////////////////////
-	public function permission($roles)
-	{
-		$rules_strings = RoleModel::G()->getRules($roles);
-		$rules = [];
+    
+    ///////////////////////////////
+    public function permission($roles)
+    {
+        $rules_strings = RoleModel::G()->getRules($roles);
+        $rules = [];
         foreach ($rules_strings as $rule_string) {
             if (!$rule_string) {
                 continue;
@@ -164,9 +164,9 @@ class RuleBusiness extends BaseBusiness
             $rules = array_merge($rules, explode(',', $rule_string));
         }
         if (in_array('*', $rules)) {
-			return ['*'];
+            return ['*'];
         }
-		
+        
         $keys = RuleModel::G()->getKeysByIds($rules);
         $permissions = [];
         foreach ($keys as $key) {
@@ -176,12 +176,12 @@ class RuleBusiness extends BaseBusiness
             $code = str_replace('/', '.', trim($key, '/'));
             $permissions[] = $code;
         }
-		return $permissions;
-	}
-	public function insertRule($op_id, $input)
-	{
-		$data = RuleModel::G()->inputFilter($input);
-		
+        return $permissions;
+    }
+    public function insertRule($op_id, $input)
+    {
+        $data = RuleModel::G()->inputFilter($input);
+        
         if (empty($data['type'])) {
             $data['type'] = strpos($data['key'], '\\') ? 1 : 0;
         }
@@ -189,18 +189,18 @@ class RuleBusiness extends BaseBusiness
         $data['pid'] = empty($data['pid']) ? 0 : $data['pid'];
         $key = $data['key'] ?? '';
         $flag = RuleModel::G()->findByKey($key);
-		static::ThrowOn($flag, "菜单标识 $key 已经存在", 1);
+        static::ThrowOn($flag, "菜单标识 $key 已经存在", 1);
         
-		RuleModel::G()->addMenu($data['key'],$data);
-	}
-	public function updateRule($op_id, $input)
-	{
-		$id = $input['id'];
-		$row = RuleModel::G()->findById($id);
-		
-		static::ThrowOn(!$row, '记录不存在',2);
-		$data = RuleModel::G()->inputFilter($input);
-		//[$id, $data] = $this->updateInput($input);
+        RuleModel::G()->addMenu($data['key'],$data);
+    }
+    public function updateRule($op_id, $input)
+    {
+        $id = $input['id'];
+        $row = RuleModel::G()->findById($id);
+        
+        static::ThrowOn(!$row, '记录不存在',2);
+        $data = RuleModel::G()->inputFilter($input);
+        //[$id, $data] = $this->updateInput($input);
         if (isset($data['pid'])) {
             $data['pid'] = $data['pid'] ?: 0;
             static::ThrowOn($data['pid'] == $row['id'], '不能将自己设置为上级菜单',2);
@@ -210,13 +210,13 @@ class RuleBusiness extends BaseBusiness
         }
         
         RuleModel::G()->updateRule($id, $data);
-	}
-	public function deleteRule($op_id, $ids)
-	{
-		RuleModel::G()->dropWithChildren($ids);
-	}
-	
-	/**
+    }
+    public function deleteRule($op_id, $ids)
+    {
+        RuleModel::G()->dropWithChildren($ids);
+    }
+    
+    /**
      * 类转换为url path
      * @param $controller_class
      * @return false|string

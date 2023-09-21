@@ -7,17 +7,17 @@ use DuckAdmin\Model\OptionModel;
  */
 class ConfigBusiness extends BaseBusiness 
 {
-	public function getDefaultConfig()
-	{
-		$config = OptionModel::G()->GetSystemConfig(); 
-		if (empty($config)) {
-			$config = static::Config(null,[],'pear_config');
-			OptionModel::G()->setSystemConfig($config);
-		}
-		return $config;
-	}
-	public function updateConfig($post)
-	{
+    public function getDefaultConfig()
+    {
+        $config = OptionModel::G()->GetSystemConfig(); 
+        if (empty($config)) {
+            $config = static::Config(null,[],'pear_config');
+            OptionModel::G()->setSystemConfig($config);
+        }
+        return $config;
+    }
+    public function updateConfig($post)
+    {
         $config = $this->getDefaultConfig();
         $data = [];
         foreach ($post as $section => $items) {
@@ -71,9 +71,9 @@ class ConfigBusiness extends BaseBusiness
             }
         }
         $config = array_merge($config, $data);
-		
-		OptionModel::G()->setSystemConfig($config);
-	}
+        
+        OptionModel::G()->setSystemConfig($config);
+    }
     /**
      * 颜色检查
      * @param string $color
