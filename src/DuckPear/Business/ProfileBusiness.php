@@ -1,5 +1,5 @@
 <?php
-namespace DuckAdmin\Business;
+namespace DuckPear\Business;
 
 /**
  * 个人资料业务

@@ -4,14 +4,14 @@
  * From this time, you never be alone~
  */
 
-namespace DuckAdmin\System;
+namespace DuckPear\System;
 
 use DuckPhp\Foundation\SimpleControllerTrait;
 use DuckPhp\Helper\ControllerHelperTrait;
 
-use DuckAdmin\ControllerEx\AdminSession;
-use DuckAdmin\ControllerEx\AdminAction;
-use DuckAdmin\Business\AdminBusiness;
+use DuckPear\ControllerEx\AdminSession;
+use DuckPear\ControllerEx\AdminAction;
+use DuckPear\Business\AdminBusiness;
 
 /**
  * 这是充当 Helper 助手的 控制器基类

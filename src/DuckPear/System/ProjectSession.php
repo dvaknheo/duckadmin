@@ -3,7 +3,7 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace DuckAdmin\System;
+namespace DuckPear\System;
 
 use DuckPhp\Foundation\Session;
 use DuckPhp\Foundation\ThrowOnableTrait;

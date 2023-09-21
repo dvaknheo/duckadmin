@@ -4,10 +4,10 @@
  * From this time, you never be alone~
  */
 
-namespace DuckAdmin\ControllerEx;
+namespace DuckPear\ControllerEx;
 
-use DuckAdmin\ControllerEx\AdminSession;
-use DuckAdmin\System\ProjectAction;
+use DuckPear\ControllerEx\AdminSession;
+use DuckPear\System\ProjectAction;
 
 use Gregwar\Captcha\CaptchaBuilder;
 use Gregwar\Captcha\PhraseBuilder;

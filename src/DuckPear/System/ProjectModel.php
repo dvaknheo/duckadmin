@@ -4,7 +4,7 @@
  * From this time, you never be alone~
  */
 
-namespace DuckAdmin\System;
+namespace DuckPear\System;
 
 use DuckPhp\Foundation\SimpleModelTrait;
 use DuckPhp\Helper\ModelHelperTrait;

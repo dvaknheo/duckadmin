@@ -4,9 +4,9 @@
  * From this time, you never be alone~
  */
 
-namespace DuckAdmin\Business;
+namespace DuckPear\Business;
 
-use DuckAdmin\System\ProjectBusiness;
+use DuckPear\System\ProjectBusiness;
 /**
  * 业务基本类，业务程序员的公用代码放在这里
  */

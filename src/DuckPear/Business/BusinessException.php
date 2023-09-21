@@ -4,9 +4,9 @@
  * From this time, you never be alone~
  */
 
-namespace DuckAdmin\Business;
+namespace DuckPear\Business;
 
-use DuckAdmin\System\ProjectException;
+use DuckPear\System\ProjectException;
 /**
  * 业务异常基类
  */

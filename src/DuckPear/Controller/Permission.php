@@ -4,7 +4,7 @@
  * From this time, you never be alone~
  */
 
-namespace DuckAdmin\Controller;
+namespace DuckPear\Controller;
 
 class Permission extends Base
 {

@@ -4,9 +4,9 @@
  * From this time, you never be alone~
  */
 
-namespace DuckAdmin\Controller;
+namespace DuckPear\Controller;
 
-use DuckAdmin\System\ProjectController;
+use DuckPear\System\ProjectController;
 
 /**
  * 我们这里只是偷懒一下啦。 放空类在这，省得 use .

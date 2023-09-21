@@ -3,9 +3,9 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace DuckAdmin\ControllerEx;
+namespace DuckPear\ControllerEx;
 
-use DuckAdmin\System\ProjectSession;
+use DuckPear\System\ProjectSession;
 /**
  * 会话处理
  */

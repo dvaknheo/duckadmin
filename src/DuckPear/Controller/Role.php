@@ -4,8 +4,8 @@
  * From this time, you never be alone~
  */
 
-namespace DuckAdmin\Controller;
-use DuckAdmin\Controller\Base as C;
+namespace DuckPear\Controller;
+use DuckPear\Controller\Base as C;
 
 class Role extends Base
 {

@@ -4,9 +4,9 @@
  * From this time, you never be alone~
  */
 
-namespace DuckAdmin\Model;
+namespace DuckPear\Model;
 
-use DuckAdmin\System\ProjectModel;
+use DuckPear\System\ProjectModel;
 
 class BaseModel extends ProjectModel
 {    

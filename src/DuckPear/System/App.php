@@ -4,7 +4,7 @@
  * From this time, you never be alone~
  */
 
-namespace DuckAdmin\System
+namespace DuckPear\System
 {
 
 use DuckPhp\DuckPhp;
@@ -32,7 +32,7 @@ class App extends DuckPhp
     ////////////// 命令行
     public function command_install()
     {
-        echo "welcome to Use DuckAdmin installer  --force  to force install\n";
+        echo "welcome to use DuckPear installer  --force  to force install\n";
         $parameters =  static::Parameter();
         if(count($parameters)==1 || ($parameters['help'] ?? null)){
             // echo "--force  to force install ;";
@@ -44,7 +44,7 @@ class App extends DuckPhp
 }
 /////////////
 }
-namespace DuckAdmin
+namespace DuckPear
 {
 // 专属的一些函数
     function __res($url)

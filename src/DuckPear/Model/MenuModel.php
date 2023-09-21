@@ -4,7 +4,7 @@
  * From this time, you never be alone~
  */
 
-namespace DuckAdmin\Model;
+namespace DuckPear\Model;
 /**
  * 菜单模型
  */

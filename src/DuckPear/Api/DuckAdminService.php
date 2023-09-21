@@ -4,7 +4,7 @@
  * From this time, you never be alone~
  */
 
-namespace DuckAdmin\App;
+namespace DuckPear\App;
 
 use DuckPhp\SingletonEx\SingletonExTrait;
 /**

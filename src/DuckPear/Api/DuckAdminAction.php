@@ -4,10 +4,10 @@
  * From this time, you never be alone~
  */
 
-namespace DuckAdmin\Api;
+namespace DuckPear\Api;
 use DuckPhp\SingletonEx\SingletonExTrait;
 
-use DuckAdmin\System\AdminAction;
+use DuckPear\System\AdminAction;
 /**
  * 你的 Contoller 控制器调用这里的静态方法类。
  * 如果没法满足你的需求，那么请深入相关类

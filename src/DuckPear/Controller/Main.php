@@ -4,12 +4,12 @@
  * From this time, you never be alone~
  */
 
-namespace DuckAdmin\Controller;
+namespace DuckPear\Controller;
 
-use DuckAdmin\Business\AdminBusiness;
-use DuckAdmin\Controller\Base as C;
-use DuckAdmin\ControllerEx\AdminSession;
-use DuckAdmin\ControllerEx\CaptchaAction;
+use DuckPear\Business\AdminBusiness;
+use DuckPear\Controller\Base as C;
+use DuckPear\ControllerEx\AdminSession;
+use DuckPear\ControllerEx\CaptchaAction;
 /**
  * 主入口
  */

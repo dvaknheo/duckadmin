@@ -4,10 +4,10 @@
  * From this time, you never be alone~
  */
 
-namespace DuckAdmin\Controller;
+namespace DuckPear\Controller;
 
-use DuckAdmin\Controller\Base as C;
-use DuckAdmin\Business\AdminBusiness;
+use DuckPear\Controller\Base as C;
+use DuckPear\Business\AdminBusiness;
 /**
  * 菜单管理
  */

@@ -1,8 +1,8 @@
 <?php
-namespace DuckAdmin\Business;
+namespace DuckPear\Business;
 
-use DuckAdmin\Model\AdminModel;
-use DuckAdmin\Model\RoleModel;
+use DuckPear\Model\AdminModel;
+use DuckPear\Model\RoleModel;
 /**
  * 管理员业务
  */

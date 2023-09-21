@@ -4,11 +4,11 @@
  * From this time, you never be alone~
  */
 
-namespace DuckAdmin\ControllerEx;
+namespace DuckPear\ControllerEx;
 
-use DuckAdmin\Business\AdminBusiness;
-use DuckAdmin\ControllerEx\AdminSession;
-use DuckAdmin\System\ProjectAction;
+use DuckPear\Business\AdminBusiness;
+use DuckPear\ControllerEx\AdminSession;
+use DuckPear\System\ProjectAction;
 
 class AdminAction extends ProjectAction
 {
