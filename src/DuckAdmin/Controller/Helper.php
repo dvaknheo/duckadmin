@@ -15,6 +15,9 @@ use DuckAdmin\Controller\AdminSession;
 
 class Helper
 {
+    use ControllerHelperTrait;
+    use SingletonExTrait;
+    use ThrowOnableTrait;
     public static function AdminId()
     {
         return AdminSession::G()->getCurrentAdminId();

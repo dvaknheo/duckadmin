@@ -7,6 +7,7 @@
 namespace DuckAdmin\Controller;
 
 use DuckPhp\Core\App;
+use DuckPhp\Core\ComponentBase;
 use DuckPhp\SingletonEx\SingletonExTrait;
 
 
@@ -17,14 +18,12 @@ use Gregwar\Captcha\PhraseBuilder;
  * 验证码系统，你可以修改你的实现
  * 第三方的东西在这里写
  */
-class CaptchaAction
+class CaptchaAction extends ComponentBase
 {
-    use SingletonExTrait;
-    use ControllerHelperTrait;
     
 	public $options = [
         'set_phrase_handler' => null,
-        'set_phrase_handler' => null,
+        'get_phrase_handler' => null,
     ];
     public function __construct()
     {

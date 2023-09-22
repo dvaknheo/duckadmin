@@ -35,7 +35,7 @@ class App extends DuckPhp
         Route::G(ProjectRoute::G());
         
         // 设置 Admin 为  admin 对象 ，让其他应用也能调 static::Root()::Admin()->isSuper
-        $this->bumpAdmin(ActionApi::class));
+        $this->bumpAdmin(ActionApi::class);
         static::Admin(ActionApi::G());
         
         if (!$this->isInstalled()) {

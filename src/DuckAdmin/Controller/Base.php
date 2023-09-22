@@ -27,7 +27,7 @@ class Base
 	protected function initController()
 	{
 		if(Helper::IsAjax()){
-			$this->assignExceptionHandler(\Exception::class,[Helper::class,'ShowException']);
+			Helper::assignExceptionHandler(\Exception::class,[Helper::class,'ShowException']);
 		}
 		$controller = Helper::getRouteCallingClass();
         $action = Helper::getRouteCallingMethod();

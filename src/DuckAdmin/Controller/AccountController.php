@@ -46,16 +46,17 @@ class AccountController extends Base
         $password = Helper::Post('password', '');
         $captcha = Helper::Post('captcha');
 		
+        //*
 		$flag = CaptchaAction::G()->init([
             'set_phrase_handler'=>[AdminSession::G(),'setPhrase'],
             'get_phrase_handler'=>[AdminSession::G(),'getPhrase'],
         ])->doCheckCaptcha($captcha);
 		Helper::ThrowOn(!$flag, '验证码错误',1);
+        //*/
 		
 		$admin = AccountBusiness::G()->login($username, $password);
 		AdminSession::G()->setCurrentAdmin($admin);
-		
-		return Helper::Success($admin);  // 这里有问题 //'登录成功' 是message 里的，这是个非标准的
+		return Helper::Success($admin);
 	}
 
     /**
