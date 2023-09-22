@@ -162,7 +162,6 @@ class AccountBusiness extends BaseBusiness
         }catch(\Exception $ex){
             $code = $ex->getCode();
             $msg = $ex->getMessage();
-            //调试用
             return false;
             
         }

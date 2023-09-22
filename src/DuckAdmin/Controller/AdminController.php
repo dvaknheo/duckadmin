@@ -32,8 +32,8 @@ class AdminController extends Base
     public function select()
     {
 		$input = C::GET();
-		$admin_id = AdminAction::G()->getCurrentAdminId();
-		[$data, $count] = AdminBusiness::G()->showAdmins($admin_id,$input);
+		$op_id = AdminAction::G()->getCurrentAdminId();
+		[$data, $count] = AdminBusiness::G()->showAdmins($op_id,$input);
         return C::Success($data,$count);
     }
 
@@ -49,8 +49,8 @@ class AdminController extends Base
 			return C::Show([],'admin/insert');
 		}
 		$input = C::POST();
-		$admin_id = AdminAction::G()->getCurrentAdminId();
-		$admin_id = AdminBusiness::G()->addAdmin($admin_id, $input);
+		$op_id = AdminAction::G()->getCurrentAdminId();
+		$admin_id = AdminBusiness::G()->addAdmin($op_id, $input);
 		return C::Success(['id' => $admin_id]);
     }
 
@@ -66,8 +66,8 @@ class AdminController extends Base
 			return C::Show([],'admin/update');
 		}
 		$post = C::POST();
-		$admin_id = AdminAction::G()->getCurrentAdminId();
-		AdminBusiness::G()->updateAdmin($post);
+		$op_id = AdminAction::G()->getCurrentAdminId();
+		AdminBusiness::G()->updateAdmin($op_id, $post);
     }
 
     /**

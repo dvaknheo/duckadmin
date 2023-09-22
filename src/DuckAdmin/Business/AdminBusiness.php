@@ -9,7 +9,7 @@ use DuckAdmin\Model\AdminRoleModel;
  */
 class AdminBusiness extends BaseBusiness
 {
-    public function showAdmins($login_admin_id,$input, $table)
+    public function showAdmins($op_id,$input)
     {
         [$where, $format, $limit, $field, $order] = AdminModel::G()->selectInput($input);
         
@@ -24,7 +24,7 @@ class AdminBusiness extends BaseBusiness
         foreach ($items as $index => $item) {
             $admin_id = $item['id'];
             $items[$index]['roles'] = isset($roles_map[$admin_id]) ? implode(',', $roles_map[$admin_id]) : '';
-            $items[$index]['show_toolbar'] = $admin_id != $login_admin_id;
+            $items[$index]['show_toolbar'] = $admin_id != $op_id;
         }
         return [$items,$total];
     }
@@ -94,9 +94,10 @@ class AdminBusiness extends BaseBusiness
         }
         $ids = (array)$ids;
         static::ThrowOn(in_array($op_id, $ids),'不能删除自己',1);
-        $is_supper_admin = $this->isSupperAdmin($op_id);
+        $is_supper_admin = CommonService::G()->isSupperAdmin($op_id);
         if (!$is_supper_admin){
-            if (false && array_diff($ids, Auth::getScopeAdminIds())) { // 这里，Auth getScropAdminIds ?
+            $scope_role_ids = AdminRoleModel::G()->rolesByAdmin($op_id);
+            if (array_diff($ids, $scope_role_ids)) {
                 static::ThrowOn(true,'无数据权限',1);
             }
         }
