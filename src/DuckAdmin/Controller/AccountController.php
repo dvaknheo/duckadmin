@@ -7,7 +7,6 @@
 namespace DuckAdmin\Controller;
 
 use DuckAdmin\Business\AccountBusiness;
-use DuckAdmin\Controller\AdminAction as C;
 
 /**
  * 系统设置
@@ -32,7 +31,7 @@ class AccountController extends Base
      */
     public function index()
     {
-		return C::Show([],'account/index');
+		return Helper::Show([],'account/index');
     }
 
     /**
@@ -43,17 +42,20 @@ class AccountController extends Base
      */
     public function login()
     {
-        $username = C::Post('username', '');
-        $password = C::Post('password', '');
-        $captcha = C::Post('captcha');
+        $username = Helper::Post('username', '');
+        $password = Helper::Post('password', '');
+        $captcha = Helper::Post('captcha');
 		
-		$flag = CaptchaAction::G()->doCheckCaptcha($captcha);
-		C::ThrowOn(!$flag, '验证码错误',1);
+		$flag = CaptchaAction::G()->init([
+            'set_phrase_handler'=>[AdminSession::G(),'setPhrase'],
+            'get_phrase_handler'=>[AdminSession::G(),'getPhrase'],
+        ])->doCheckCaptcha($captcha);
+		Helper::ThrowOn(!$flag, '验证码错误',1);
 		
 		$admin = AccountBusiness::G()->login($username, $password);
 		AdminSession::G()->setCurrentAdmin($admin);
 		
-		return C::Success($admin);  // 这里有问题 //'登录成功' 是message 里的，这是个非标准的
+		return Helper::Success($admin);  // 这里有问题 //'登录成功' 是message 里的，这是个非标准的
 	}
 
     /**
@@ -64,7 +66,7 @@ class AccountController extends Base
     public function logout()
     {
 		AdminSession::G()->setCurrentAdmin([]);
-        return C::Success(0);
+        return Helper::Success(0);
     }
 
     /**
@@ -77,7 +79,7 @@ class AccountController extends Base
 		$data = AccountBusiness::G()->getAccountInfo($admin);
 		//$data['token'] = 'TODO TOKEN';////AdminSession::G()->SessionId();
 		
-		return C::Success($data);
+		return Helper::Success($data);
     }
 
     /**
@@ -87,12 +89,12 @@ class AccountController extends Base
      */
     public function update()
     {
-        $data = C::POST();
+        $data = Helper::POST();
 		
 		$admin = AccountBusiness::G()->update($data);
         AdminSession::G()->setCurrentAdmin($admin);
 		
-        C::Sucess();
+        Helper::Sucess();
     }
 
     /**
@@ -102,12 +104,12 @@ class AccountController extends Base
      */
     public function password()
     {
-        $password = C::POST('password');
-		$password_confirm = C::POST('password_confirm');
-		$old_password = C::POST('old_password');
+        $password = Helper::POST('password');
+		$password_confirm = Helper::POST('password_confirm');
+		$old_password = Helper::POST('old_password');
 		
 		AccountBusiness::G()->changePassword($old_password, $password, $password_confirm );
-		C::Sucess();
+		Helper::Sucess();
     }
     /**
      * 验证码
@@ -117,6 +119,9 @@ class AccountController extends Base
      */
     public function captcha()
     {
-		CaptchaAction::G()->doShowCaptcha();
+		CaptchaAction::G()->init([
+            'set_phrase_handler'=>[AdminSession::G(),'setPhrase'],
+            'get_phrase_handler'=>[AdminSession::G(),'getPhrase'],
+        ])->doShowCaptcha();
     }
 }

@@ -6,8 +6,6 @@
 
 namespace DuckAdmin\Controller;
 
-use DuckAdmin\System\ProjectController;
-use DuckAdmin\Controller\AdminAction as C;
 use DuckAdmin\Business\ConfigBusiness;
 
 /**
@@ -27,7 +25,7 @@ class ConfigController extends Base
      */
     public function index()
     {
-		return C::Show([],'config/index');
+		return Helper::Show([],'config/index');
     }
 
     /**
@@ -37,7 +35,7 @@ class ConfigController extends Base
     public function get()
     {
 		$data = ConfigBusiness::G()->getDefaultConfig();
-		return C::ExitJson($data); //注意这里不能用 success
+		return Helper::ExitJson($data); //注意这里不能用 success
     }
  
     /**
@@ -48,8 +46,7 @@ class ConfigController extends Base
      */
     public function update()
     {
-        $post = C::POST();
+        $post = Helper::POST();
 		ConfigBusiness::G()->updateConfig($post);
-		C::ThrowOn(true,"返回值我得看看");
     }
 }

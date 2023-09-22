@@ -6,7 +6,6 @@
 
 namespace DuckAdmin\Controller;
 
-use DuckAdmin\Controller\AdminAction as C;
 use DuckAdmin\Business\RuleBusiness;
 
 /**
@@ -28,7 +27,7 @@ class RuleController extends Base
      */
     public function index()
     {
-        return C::Show([], 'rule/index');
+        return Helper::Show([], 'rule/index');
     }
 
     /**
@@ -39,11 +38,10 @@ class RuleController extends Base
      */
     public function select()
     {
-		$data = C::GET();
+		$data = Helper::GET();
 		
-		$admin_id = AdminAction::G()->getCurrentAdminId();
-		[$data,$total] = RuleBusiness::G()->selectRules($admin_id, $data); // 结果还是一股脑把参数传进去了
-		return C::Success($data,$total);
+		[$data,$total] = RuleBusiness::G()->selectRules(Helper::AdminId(), $data); // 结果还是一股脑把参数传进去了
+		return Helper::Success($data,$total);
     }
 
     /**
@@ -53,13 +51,13 @@ class RuleController extends Base
      */
     public function get()
     {
-		$types = C::GET('type', '0,1');
+		$types = Helper::GET('type', '0,1');
         $types = is_string($types) ? explode(',', $types) : [0, 1];
 		
 		$admin = AdminAction::G()->getCurrentAdmin();
 		$data = RuleBusiness::G()->get($admin['roles'],$types);
 		
-		return C::Success($data);
+		return Helper::Success($data);
     }
     /**
      * 获取权限
@@ -70,7 +68,7 @@ class RuleController extends Base
     {
 		$admin = AdminAction::G()->getCurrentAdmin();
         $permissions = RuleBusiness::G()->permission($admin['roles']);
-        return C::Success($permissions);
+        return Helper::Success($permissions);
 	}
     /**
      * 添加
@@ -80,13 +78,12 @@ class RuleController extends Base
      */
     public function insert()
     {
-		$post = C::POST();
+		$post = Helper::POST();
         if (!$post) {
-            return C::Show([], 'rule/insert');
+            return Helper::Show([], 'rule/insert');
         }
-		$admin_id = AdminAction::G()->getCurrentAdminId();
-		RuleBusiness::G()->insertRule($admin_id, $post);
-        return C::Success();
+		RuleBusiness::G()->insertRule(Helper::AdminId(), $post);
+        return Helper::Success();
     }
 
     /**
@@ -97,13 +94,12 @@ class RuleController extends Base
      */
     public function update()
     {
-		$post = C::POST();
+		$post = Helper::POST();
         if (!$post) {
-			return C::Show([], 'rule/update');
+			return Helper::Show([], 'rule/update');
         }
-		$admin_id = AdminAction::G()->getCurrentAdminId();
-		RuleBusiness::G()->updateRule($admin_id, $post);
-        return C::Success();
+		RuleBusiness::G()->updateRule(Helper::AdminId(), $post);
+        return Helper::Success();
     }
     
     /**
@@ -113,11 +109,9 @@ class RuleController extends Base
      */
     public function delete()
     {
-		$post = C::POST();
-		
-		$admin_id = AdminAction::G()->getCurrentAdminId();
-		RuleBusiness::G()->deleteRule($admin_id,$post['id']);
-        return C::Success();
+		$post = Helper::POST();
+		RuleBusiness::G()->deleteRule(Helper::AdminId(),$post['id']);
+        return Helper::Success();
     }
 
 }

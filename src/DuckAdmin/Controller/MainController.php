@@ -7,7 +7,6 @@
 namespace DuckAdmin\Controller;
 
 use DuckAdmin\Business\InstallBusiness;
-use DuckAdmin\Controller\AdminAction as C;
 
 /**
  * 主入口
@@ -33,14 +32,14 @@ class MainController extends Base
     {
 		$isInstalled = InstallBusiness::G()->IsInstalled();
         if (!$isInstalled) {
-            C::Show([], 'index/install');
+            Helper::Show([], 'index/install');
             return;
         }
         $admin = AdminSession::G()->getCurrentAdmin();
         if (!$admin) {
-            C::Show([], 'account/login');
+            Helper::Show([], 'account/login');
             return;
         }
-        C::Show([], 'index/index');
+        Helper::Show([], 'index/index');
     }
 }

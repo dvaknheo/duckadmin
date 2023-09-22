@@ -6,8 +6,7 @@
 
 namespace DuckAdmin\Controller;
 
-use DuckPhp\ThrowOn\ThrowOnableTrait;
-use DuckPhp\Helper\ControllerHelperTrait;
+use DuckPhp\Core\App;
 use DuckPhp\SingletonEx\SingletonExTrait;
 
 
@@ -22,10 +21,10 @@ class CaptchaAction
 {
     use SingletonExTrait;
     use ControllerHelperTrait;
-    use ThrowOnableTrait;
+    
 	public $options = [
-        'setter' => null,
-        'getter' => null,
+        'set_phrase_handler' => null,
+        'set_phrase_handler' => null,
     ];
     public function __construct()
     {
@@ -46,16 +45,17 @@ class CaptchaAction
         $builder->build();
         
         $phrase = $builder->getPhrase();
-        AdminSession::G()->setPhrase($phrase);  // 这个 想处理掉，难受。
         
-        static::header('Content-type: image/jpeg');
-        static::header('Cache-Control: no-cache, no-store, max-age=0, must-revalidate');
+        ($this->options['set_phrase_handler'])($phrase);
+        
+        App::header('Content-type: image/jpeg');
+        App::header('Cache-Control: no-cache, no-store, max-age=0, must-revalidate');
         $builder->output();
     }
 
     public function doCheckCaptcha($captcha)
     {
-        $phrase = AdminSession::G()->getPhrase(); // 这个 关联也想处理掉。
+        $phrase = ($this->options['set_phrase_handler'])($phrase);
         
         $flag = PhraseBuilder::comparePhrases($phrase, $captcha);
         return $flag;

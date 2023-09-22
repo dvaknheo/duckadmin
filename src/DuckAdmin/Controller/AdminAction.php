@@ -6,38 +6,19 @@
 
 namespace DuckAdmin\Controller;
 
-use DuckPhp\ThrowOn\ThrowOnableTrait;
 use DuckPhp\Helper\ControllerHelperTrait;
 use DuckPhp\SingletonEx\SingletonExTrait;
-use DuckPhp\Core\Route;
+use DuckPhp\ThrowOn\ThrowOnableTrait;
 
 use DuckAdmin\Business\AccountBusiness;
 use DuckAdmin\Controller\AdminSession;
-use DuckAdmin\System\ProjectAction;
 
 class AdminAction
 {
     use SingletonExTrait;
     use ControllerHelperTrait;
     use ThrowOnableTrait;
-
-	public static function getRouteCallingClass()
-	{
-		return Route::G()->getRouteCallingClass();
-	}
-	public function initController()
-	{
-		if(static::IsAjax()){
-			$this->assignExceptionHandler(\Exception::class,[static::class,'OnException']);
-		}
-		$controller = static::getRouteCallingClass();
-        $action = static::getRouteCallingMethod();
-		$this->checkAccess($controller,$action);
-	}
-	public function getCurrentAdminId()
-	{
-		return AdminSession::G()->getCurrentAdminId();
-	}
+    
 	/**
 	 * 当前管理员
 	 * @param null|array|string $fields
@@ -78,21 +59,6 @@ class AdminAction
 		AdminSession::G()->setCurrentAdmin($admin);	
 	}
     ////////////////
-	
-
-	public static function Success($data = [],$count = null)
-	{
-		if(is_null($count)){
-			static::ExitJson(['code' => 0, 'data' => $data, 'msg' => 'ok']);
-		}else{
-			static::ExitJson(['code' => 0, 'msg' => 'ok', 'count' => $count, 'data' => $data]);
-		}
-	}
-	
-	protected function isOptionsMethod()
-	{
-		return @$_SERVER['REQUEST_METHOD']=='OPTIONS'?true:false;
-	}
     public function checkAccess($controller,$action)
     {
         $code = 0;
@@ -102,13 +68,13 @@ class AdminAction
 		if($flag){
 			$flag = $this->isOptionsMethod();
 			if($flag){
-				return static::Exit('');
+				return Helper::Exit('');
 			}
 			return;
 		}
 		
-		if (static::IsAjax()) {
-			static::ExitJson(['code' => $code, 'msg' => $msg, 'type' => 'error']);
+		if (Helper::IsAjax()) {
+			Helper::ExitJson(['code' => $code, 'msg' => $msg, 'type' => 'error']);
 		}
 		if($code == 401){
 			return $this->exit401();
@@ -116,6 +82,10 @@ class AdminAction
 			return $this->exit403();
 		}		
     }
+	protected function isOptionsMethod()
+	{
+		return @$_SERVER['REQUEST_METHOD']=='OPTIONS'?true:false;
+	}
 	protected function exit401()
 	{
 		$response = <<<EOF
@@ -125,22 +95,15 @@ if (self !== top) {
 }
 </script>
 EOF;
-		static::Header(403);
+		Helper::Header(403);
 		echo $response;
-		static::Exit();
+		Helper::Exit();
 	}
 	protected function exit403()
 	{
-		static::Header(403);
-		static::Show('_sys/403');
-		static::Exit();
+		Helper::Header(403);
+		Helper::Show('_sys/403');
+		Helper::Exit();
 	}
-	public static function OnException($ex)
-	{
-		$code = $ex->getCode();
-		$msg = $ex->getMessage();
-		if(!$code){$code = -1;}
-        
-		return static::ExitJson(['code' => $code, 'msg' => $msg, 'type' => 'error'],false);
-	}
+
 }

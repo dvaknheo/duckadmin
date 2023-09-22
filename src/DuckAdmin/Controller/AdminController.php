@@ -1,6 +1,6 @@
 <?php
 namespace DuckAdmin\Controller;
-use DuckAdmin\Controller\AdminAction as C;
+
 use DuckAdmin\Business\AdminBusiness;
 
 /**
@@ -20,7 +20,7 @@ class AdminController extends Base
      */
     public function index()
     {
-        return C::Show([],'admin/index');
+        return Helper::Show([],'admin/index');
     }
 
     /**
@@ -31,10 +31,9 @@ class AdminController extends Base
      */
     public function select()
     {
-		$input = C::GET();
-		$op_id = AdminAction::G()->getCurrentAdminId();
-		[$data, $count] = AdminBusiness::G()->showAdmins($op_id,$input);
-        return C::Success($data,$count);
+		$input = Helper::GET();
+		[$data, $count] = AdminBusiness::G()->showAdmins(Helper::AdminId(),$input);
+        return Helper::Success($data,$count);
     }
 
     /**
@@ -45,13 +44,12 @@ class AdminController extends Base
      */
     public function insert()
     {
-        if (!C::POST()) {
-			return C::Show([],'admin/insert');
+        if (!Helper::POST()) {
+			return Helper::Show([],'admin/insert');
 		}
-		$input = C::POST();
-		$op_id = AdminAction::G()->getCurrentAdminId();
-		$admin_id = AdminBusiness::G()->addAdmin($op_id, $input);
-		return C::Success(['id' => $admin_id]);
+		$input = Helper::POST();
+		$admin_id = AdminBusiness::G()->addAdmin(Helper::AdminId(), $input);
+		return Helper::Success(['id' => $admin_id]);
     }
 
     /**
@@ -62,12 +60,11 @@ class AdminController extends Base
     */
     public function update()
     {
-		if (!C::POST()) {
-			return C::Show([],'admin/update');
+		if (!Helper::POST()) {
+			return Helper::Show([],'admin/update');
 		}
-		$post = C::POST();
-		$op_id = AdminAction::G()->getCurrentAdminId();
-		AdminBusiness::G()->updateAdmin($op_id, $post);
+		$post = Helper::POST();
+		AdminBusiness::G()->updateAdmin(Helper::AdminId(), $post);
     }
 
     /**
@@ -77,10 +74,9 @@ class AdminController extends Base
      */
     public function delete()
     {
-		$post = C::POST();
-		$op_id = AdminAction::G()->getCurrentAdminId();
-		AdminBusiness::G()->deleteAdmin($op_id, $post['id']);
-		return C::Success();
+		$post = Helper::POST();
+		AdminBusiness::G()->deleteAdmin(Helper::AdminId(), $post['id']);
+		return Helper::Success();
     }
 
 }

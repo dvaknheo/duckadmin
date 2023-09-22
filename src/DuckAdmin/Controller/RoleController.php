@@ -6,7 +6,6 @@
 
 namespace DuckAdmin\Controller;
 
-use DuckAdmin\Controller\AdminAction as C;
 use DuckAdmin\Business\RoleBusiness;
 
 /**
@@ -26,7 +25,7 @@ class RoleController extends Base
      */
     public function index()
     {
-        return C::Show([],'role/index');
+        return Helper::Show([],'role/index');
     }
 
     /**
@@ -37,11 +36,10 @@ class RoleController extends Base
      */
     public function select()
     {
-		$post = C::GET();
-		$id = C::GET('id');
-		$admin_id = AdminAction::G()->getCurrentAdminId();
-		[$data,$total] = RoleBusiness::G()->selectRoles($admin_id,$id,$post);
-		return C::Success($data,$total);
+		$post = Helper::GET();
+		$id = Helper::GET('id');
+		[$data,$total] = RoleBusiness::G()->selectRoles(Helper::AdminId(), $id, $post);
+		return Helper::Success($data,$total);
     }
 
     /**
@@ -52,15 +50,13 @@ class RoleController extends Base
      */
     public function insert()
     {
-		if (!C::POST()) {
-			return C::Show([],'role/insert');
+		if (!Helper::POST()) {
+			return Helper::Show([],'role/insert');
 		}
-		$post = C::POST();
+		$post = Helper::POST();
 		
-		$admin_id = AdminAction::G()->getCurrentAdminId();
-
-		$id = RoleBusiness::G()->insertRole($admin_id, $post);
-		return C::Success(['id' => $id]);
+		$id = RoleBusiness::G()->insertRole(Helper::AdminId(), $post);
+		return Helper::Success(['id' => $id]);
 
     }
 
@@ -72,14 +68,13 @@ class RoleController extends Base
      */
     public function update()
     {
-		if (!C::POST()) {
-			return C::Show([],'role/update');
+		if (!Helper::POST()) {
+			return Helper::Show([],'role/update');
 		}
-		$post = C::POST();
+		$post = Helper::POST();
 		
-		$admin_id = AdminAction::G()->getCurrentAdminId();
-		$id = RoleBusiness::G()->updateRole($admin_id, $post);
-		return C::Success(['id' => $id]);
+		$id = RoleBusiness::G()->updateRole(Helper::AdminId(), $post);
+		return Helper::Success(['id' => $id]);
     }
 
     /**
@@ -90,10 +85,9 @@ class RoleController extends Base
      */
     public function delete()
     {
-		$post = C::POST();
-		$admin_id = AdminAction::G()->getCurrentAdminId();
-		$id = RoleBusiness::G()->deleteRole($admin_id,$post['id']);
-        return  C::Success();
+		$post = Helper::POST();
+		$id = RoleBusiness::G()->deleteRole(Helper::AdminId(), $post['id']);
+        return  Helper::Success();
     }
 
     /**
@@ -103,10 +97,9 @@ class RoleController extends Base
      */
     public function rules()
     {
-		$role_id = C::GET('id');
+		$role_id = Helper::GET('id');
 		
-		$admin_id = AdminAction::G()->getCurrentAdminId();
-		$tree = RoleBusiness::G()->tree($admin_id, $role_id);
-        return C::Success($tree);
+		$tree = RoleBusiness::G()->tree(Helper::AdminId(), $role_id);
+        return Helper::Success($tree);
     }
 }

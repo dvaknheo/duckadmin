@@ -14,11 +14,11 @@ use DuckPhp\SingletonEx\SingletonExTrait;
 class ActionApi
 {
     use SingletonExTrait;
-	public function getCurrentAdminId()
+	public function id()
 	{
 		//
 	}
-	public function isSuperAdmin($admin_id)
+	public function isSuper($admin_id)
 	{
 		//
 	}

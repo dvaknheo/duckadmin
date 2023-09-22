@@ -22,6 +22,16 @@ class Base
 
     public function __construct()
     {
-		AdminAction::G()->initController();	
+		$this->initController();	
     }
+	protected function initController()
+	{
+		if(Helper::IsAjax()){
+			$this->assignExceptionHandler(\Exception::class,[Helper::class,'ShowException']);
+		}
+		$controller = Helper::getRouteCallingClass();
+        $action = Helper::getRouteCallingMethod();
+        
+		AdminAction::G()->checkAccess($controller,$action);
+	}
 }

@@ -35,14 +35,16 @@ class App extends DuckPhp
         Route::G(ProjectRoute::G());
         
         // 设置 Admin 为  admin 对象 ，让其他应用也能调 static::Root()::Admin()->isSuper
-        static::Root()::Admin($this->createPhaseProxy(ActionApi::class));
+        $this->bumpAdmin(ActionApi::class));
         static::Admin(ActionApi::G());
         
         if (!$this->isInstalled()) {
+            //这里临时客串一下虚拟资源
             Route::G()->options['controller_resource_prefix']='for_install/';
             RouteHookResource::G()->init([
                 'path' => $this->options['path_override_from'],
                 'path_resource' => 'res',
+                'controller_url_prefix' => Route::G()->options['controller_url_prefix'],
                 'controller_resource_prefix' => '/app/admin/for_install/',
             ], $this);
         }

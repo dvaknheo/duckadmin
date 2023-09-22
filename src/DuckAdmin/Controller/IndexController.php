@@ -7,7 +7,6 @@
 namespace DuckAdmin\Controller;
 
 use DuckAdmin\Business\InstallBusiness;
-use DuckAdmin\Controller\AdminAction as C;
 
 /**
  * 主入口
@@ -31,6 +30,6 @@ class IndexController extends Base
 	{
 		var_dump(DATE(DATE_ATOM));return;
 		$dashboard=[];//AllInOnBusiness::G()->getDashboard();
-		return C::Show($dashboard, 'index/dashboard');
+		return Helper::Show($dashboard, 'index/dashboard');
 	}
 }

@@ -6,7 +6,6 @@
 namespace DuckAdmin\Controller;
 
 use DuckAdmin\Business\InstallBusiness;
-use DuckAdmin\Controller\AdminAction as C;
 
 /**
  * 主入口
@@ -30,19 +29,19 @@ class InstallController extends Base
     public function step1()
     {
 		$post = [];
-		$post['user'] = C::POST('user');
-        $post['password'] = C::POST('password');
-        $post['database'] = C::POST('database');
-        $post['host'] = C::POST('host');
-        $post['port'] = (int)C::POST('port') ?: 3306;
-        $post['overwrite'] = C::POST('overwrite');	
+		$post['user'] = Helper::POST('user');
+        $post['password'] = Helper::POST('password');
+        $post['database'] = Helper::POST('database');
+        $post['host'] = Helper::POST('host');
+        $post['port'] = (int)Helper::POST('port') ?: 3306;
+        $post['overwrite'] = Helper::POST('overwrite');	
 		
 		try{
 			InstallBusiness::G()->step1($post);
 		}catch(\Exception $ex){
-			return C::ExitJson(['code' => $ex->getCode(), 'msg' => $ex->getMessage(), 'type' => 'error']);
+			return Helper::ExitJson(['code' => $ex->getCode(), 'msg' => $ex->getMessage(), 'type' => 'error']);
 		}
-		return C::ExitJson(['code' =>0, 'data' => [] , 'msg' => '',]);
+		return Helper::ExitJson(['code' =>0, 'data' => [] , 'msg' => '',]);
     }
 
     /**
@@ -51,15 +50,15 @@ class InstallController extends Base
      */
     public function step2()
     {
-		$username = C::POST('username');
-        $password = C::POST('password');
-        $password_confirm = C::POST('password_confirm');
+		$username = Helper::POST('username');
+        $password = Helper::POST('password');
+        $password_confirm = Helper::POST('password_confirm');
 		try{
 			InstallBusiness::G()->step2($username,$password,$password_confirm);
 		}catch(\Exception $ex){
-			return C::ExitJson(['code' => $ex->getCode(), 'msg' => $ex->getMessage(), 'type' => 'error']);
+			return Helper::ExitJson(['code' => $ex->getCode(), 'msg' => $ex->getMessage(), 'type' => 'error']);
 		}
-		return C::ExitJson(['code' =>0, 'data' => [] , 'msg' => '',]);
+		return Helper::ExitJson(['code' =>0, 'data' => [] , 'msg' => '',]);
     }
 
 }
