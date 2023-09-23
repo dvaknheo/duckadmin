@@ -27,7 +27,8 @@ class RuleController extends Base
      */
     public function index()
     {
-        return Helper::Show([], 'rule/index');
+        //Helper::Show([], 'rule/index');
+        \DuckPhp\Core\View::G()->_Display('rule/index', []);
     }
 
     /**
@@ -39,8 +40,9 @@ class RuleController extends Base
     public function select()
     {
 		$data = Helper::GET();
-		
+
 		[$data,$total] = RuleBusiness::G()->selectRules(Helper::AdminId(), $data); // 结果还是一股脑把参数传进去了
+
 		return Helper::Success($data,$total);
     }
 

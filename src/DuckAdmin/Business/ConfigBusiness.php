@@ -93,7 +93,7 @@ class ConfigBusiness extends BaseBusiness
      * @return mixed
      * @throws BusinessException
      */
-    public static function filterNum($var)
+    protected static function filterNum($var)
     {
         $vars = (array)$var;
         array_walk_recursive($vars, function ($item) {
@@ -110,7 +110,7 @@ class ConfigBusiness extends BaseBusiness
      * @return string
      * @throws BusinessException
      */
-    public static function filterUrlPath($var): string
+    protected static function filterUrlPath($var): string
     {
         if (!is_string($var) || !preg_match('/^[a-zA-Z0-9_\-\/&?.]+$/', $var)) {
             throw new BusinessException('参数不合法');
