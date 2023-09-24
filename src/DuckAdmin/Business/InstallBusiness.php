@@ -124,7 +124,7 @@ class InstallBusiness extends BaseBusiness
         $this->checkTableOverwrite($tables,$overwrite);
         $this->initSql();
         // 导入菜单
-        $menus =  static::Config(null,[],'menu');
+        $menus =  static::Config('menu',null,[]);
         RuleModel::G()->importMenu($menus);
         
         $this->writeDbConfigFile($post);

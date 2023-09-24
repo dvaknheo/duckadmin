@@ -11,7 +11,7 @@ class ConfigBusiness extends BaseBusiness
     {
         $config = OptionModel::G()->GetSystemConfig(); 
         if (empty($config)) {
-            $config = static::Config(null,[],'pear_config');
+            $config = static::Config('pear_config',null,[]);
             OptionModel::G()->setSystemConfig($config);
         }
         return $config;
