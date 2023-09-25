@@ -17,11 +17,16 @@ class InstallBusiness extends BaseBusiness
     }
     protected function getConfigFile($file)
     {
+        //TODO 放到 Helper 里
         return DuckAdmin::G()->getFileFromSubComponent(DuckAdmin::G()->options, 'config', $file);
     }
     protected function checkDatabase()
     {
-        return DuckAdmin::G()->checkDatabase();
+        $options = DbManager::G()->options;
+        if (!empty($options['database']) || !empty($options['database_list'])){
+            return true;
+        }
+        return false;
     }
     protected function checkInstallLogFile()
     {

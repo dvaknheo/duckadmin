@@ -8,8 +8,7 @@ namespace DuckAdmin\System;
 use DuckPhp\SingletonEx\SingletonExTrait;
 
 /**
- * 你的 Contoller 控制器调用这里的静态方法类。
- * 如果没法满足你的需求，那么请深入相关类
+ * 这里的集合只是抽调给外部用
  */
 class ActionApi
 {
@@ -22,15 +21,16 @@ class ActionApi
 	{
 		//
 	}
-	public function hasPermission()
+    public function canAccessPath($path)
+    {
+        //
+    }
+	public function canAccessAction($controller,$method)
 	{
 		//
 	}
-    /**
-     * 检查权限 你的方法调用这个杜绝外部访问。
-     */
-    public function checkPermission()
+    public function isMyException(\Exception $ex)
     {
-        //return AdminAction::G()->doCheckPermission();
+        //
     }
 }
