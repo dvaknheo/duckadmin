@@ -9,16 +9,16 @@ class ConfigBusiness extends BaseBusiness
 {
     public function getDefaultConfig()
     {
-        $config = OptionModel::G()->GetSystemConfig(); 
+        $config = OptionModel::G()->getSystemConfig();
         if (empty($config)) {
             $config = static::Config('pear_config',null,[]);
-            OptionModel::G()->setSystemConfig($config);
+            $config = $this->updateConfig($config);
         }
         return $config;
     }
     public function updateConfig($post)
     {
-        $config = $this->getDefaultConfig();
+        $config = static::Config('pear_config',null,[]); //$this->getDefaultConfig();
         $data = [];
         foreach ($post as $section => $items) {
             if (!isset($config[$section])) {
@@ -73,6 +73,7 @@ class ConfigBusiness extends BaseBusiness
         $config = array_merge($config, $data);
         
         OptionModel::G()->setSystemConfig($config);
+        return $config;
     }
     /**
      * 颜色检查
@@ -82,8 +83,8 @@ class ConfigBusiness extends BaseBusiness
      */
     protected function filterColor(string $color): string
     {
-        if (!preg_match('/\#[a-zA-Z]6/', $color)) {
-            throw new BusinessException('参数错误');
+        if (!preg_match('/\#[a-zA-Z]{0,6}/', $color)) {
+            throw new BusinessException('参数错误'); // 这个正则写错了
         }
         return $color;
     }
@@ -112,11 +113,17 @@ class ConfigBusiness extends BaseBusiness
      */
     protected static function filterUrlPath($var): string
     {
-        if (!is_string($var) || !preg_match('/^[a-zA-Z0-9_\-\/&?.]+$/', $var)) {
+        if (!is_string($var) || !preg_match('/^[@\~a-zA-Z0-9_\-\/&?.]+$/', $var)) {
             throw new BusinessException('参数不合法');
         }
         ////[[[[ 这里加上相对路径的处理
-            //
+        if(substr($var,0,2)==='@/'){
+            $var = __res(substr($var,2));
+        }
+        if(preg_match('/^(https?:\/)?\//', $var)){
+            return $var;
+        }
+        return __url($var);
         ////]]]]
         return $var;
     }

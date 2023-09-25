@@ -48,5 +48,6 @@ class ConfigController extends Base
     {
         $post = Helper::POST();
 		ConfigBusiness::G()->updateConfig($post);
+        return Helper::ExitJson(0);
     }
 }

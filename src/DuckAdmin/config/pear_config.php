@@ -2,12 +2,12 @@
 array (
   'logo' => 
   array (
-    'title' => 'Webman Admin',
-    'image' => '/app/admin/admin/images/logo.png',
+    'title' => 'DuckPhp Admin',
+    'image' => '@/logo.png',
   ),
   'menu' => 
   array (
-    'data' => '/app/admin/rule/get',
+    'data' => 'rule/get',
     'method' => 'GET',
     'accordion' => true,
     'collapse' => false,
@@ -26,7 +26,7 @@ array (
     'index' => 
     array (
       'id' => '0',
-      'href' => '/app/admin/index/dashboard',
+      'href' => 'index/dashboard',
       'title' => '仪表盘',
     ),
   ),
