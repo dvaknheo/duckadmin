@@ -17,7 +17,7 @@ class InstallBusiness extends BaseBusiness
     }
     protected function getConfigFile($file)
     {
-        return DuckAdmin::G()->getFileFromSubComponent('config', $file);
+        return DuckAdmin::G()->getFileFromSubComponent(DuckAdmin::G()->options, 'config', $file);
     }
     protected function checkDatabase()
     {
@@ -111,14 +111,14 @@ class InstallBusiness extends BaseBusiness
         $overwrite = $post['overwrite'];
         
         $flag = $this->isInstalled();
-        static::ThrowOn($flag ,'管理后台已经安装！如需重新安装，请删除该插件数据库配置文件并重启',1);
+        static::ThrowOn(!$overwrite && $flag ,'管理后台已经安装！如需重新安装，请删除该插件数据库配置文件并重启',1);
 
         try {
             $tables = $this->createDatabase($post); // 这段是系统程序员的活了
         } catch (\Throwable $e) {
-            static::ThrowOn(stripos($e, 'Access denied for user'), '数据库用户名或密码错误');
-            static::ThrowOn(stripos($e, 'Connection refused'), 'Connection refused. 请确认数据库IP端口是否正确，数据库已经启动');
-            static::ThrowOn(stripos($e, 'timed out'), '数据库连接超时，请确认数据库IP端口是否正确，安全组及防火墙已经放行端口');
+            static::ThrowOn(stripos($e, 'Access denied for user'), '数据库用户名或密码错误',2);
+            static::ThrowOn(stripos($e, 'Connection refused'), 'Connection refused. 请确认数据库IP端口是否正确，数据库已经启动',1);
+            static::ThrowOn(stripos($e, 'timed out'), '数据库连接超时，请确认数据库IP端口是否正确，安全组及防火墙已经放行端口',1);
             throw $e;
         }
         $this->checkTableOverwrite($tables,$overwrite);
@@ -202,7 +202,6 @@ class InstallBusiness extends BaseBusiness
         static::ThrowOn($password !== $password_confirm, '两次密码不一致');
         $flag = $this->checkDataBase();
         static::ThrowOn(!$flag, '请先完成第一步数据库配置', 1);
-        
         $flag = AdminModel::G()->hasAdmins();
         static::ThrowOn($flag, '后台已经安装完毕，无法通过此页面创建管理员');
         

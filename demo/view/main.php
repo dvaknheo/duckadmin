@@ -46,8 +46,6 @@ duckadmindemo 这个 工程，演示了如何使用第三方的 duckphp 工程�
 <a href="<?=__url('user/')?>">用户基本注册登录页面在这里</a>
 <a href="<?=__url('app/admin/user')?>">用户管理系统在这里</a>
 
-<a href="<?=__url('merchant/')?>">商家入口在这里。</a>
-
 你可以只使用这一小部分，并在这上面改
 </pre>
 

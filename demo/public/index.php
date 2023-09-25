@@ -17,6 +17,8 @@ if(is_file(__DIR__.'/../../../DNMVCS/autoload.php')){
     spl_autoload_register($t);
 }
 ////]]]]
+////////////////
+
 
 $options = [
     'namespace_controller' => '\\',
@@ -25,7 +27,7 @@ $options = [
         // 后台管理系统
         \DuckAdmin\System\App::class => [
             'controller_url_prefix' => 'app/admin/', // 访问路径
-            //'controller_resource_prefix' => '/res/',  // 资源文件前缀
+            'controller_resource_prefix' => 'res/',  // 资源文件前缀
         ],
     ]
 ];
@@ -40,3 +42,4 @@ class MainController
         DuckPhp\DuckPhp::Show(get_defined_vars(), 'main');
     }
 }
+//DuckAdmin\System\App::RunSelf('app/admin');

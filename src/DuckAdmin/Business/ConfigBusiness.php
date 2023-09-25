@@ -115,6 +115,9 @@ class ConfigBusiness extends BaseBusiness
         if (!is_string($var) || !preg_match('/^[a-zA-Z0-9_\-\/&?.]+$/', $var)) {
             throw new BusinessException('参数不合法');
         }
+        ////[[[[ 这里加上相对路径的处理
+            //
+        ////]]]]
         return $var;
     }
 }

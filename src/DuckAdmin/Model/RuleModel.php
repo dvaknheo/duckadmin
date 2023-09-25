@@ -128,8 +128,8 @@ class RuleModel extends BaseModel
 	}
 	public function addMenu($key,$menu)
 	{
-		//$menu['`key`']=$menu['key'];  //修复 db 类的 bug
-		//unset($menu['key']);
+		$menu['`key`']=$menu['key'];  //修复 db 类的 bug(等待 DuckPhp 修复)
+		unset($menu['key']);
 		
 		$time = date('Y-m-d H:i:s');
 		$menu['created_at']=$time;

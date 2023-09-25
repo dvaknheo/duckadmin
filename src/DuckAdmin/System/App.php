@@ -87,9 +87,14 @@ class App extends DuckPhp
     // 这是给 外面提供的
     public function checkDatabase()
     {
+        
+        $ext = $this->get_all_ext_config();
+        $master = array_merge($this->options,$ext);
+        $this->options = $master;
+        $this->switchDbManager();
         $options = DbManager::G()->options;
         if(empty($options['database']) || empty($options['database_list'])){
-            $post = $this->options['database']?? false;
+            $post = $master['database']?? false;
             if (!$post) {
                 return false;
             }
