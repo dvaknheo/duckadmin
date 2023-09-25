@@ -20,34 +20,28 @@ class App extends DuckPhp
         'error_404' => '_sys/error_404',
         'error_500' => '_sys/error_500',
         'controller_class_postfix' => 'Controller', // 控制器后缀
-        //'controller_resource_prefix' => '/app/admin/',  // 资源文件前缀
+        'controller_resource_prefix' => 'res/',  // 资源文件前缀
         'ext_options_from_config' => true,
+        'ext' =>[RouteHookResource::class => true],
     ];
     public function __construct()
     {
-        $this->options['path']=dirname(__DIR__).'/';
+        $this->options['path'] = dirname(__DIR__).'/';
         parent::__construct();
     }
     public function onInit()
     {
         //为了满足 webman admin 的路由 替换掉默认的路由，这里牺牲了点效率
         ProjectRoute::G()->init(Route::G()->options,$this);
+        ProjectRoute::G()->pre_run_hook_list = Route::G()->pre_run_hook_list;
+        ProjectRoute::G()->post_run_hook_list = Route::G()->post_run_hook_list;
         Route::G(ProjectRoute::G());
+        //ProjectRoute::DelegateRoute();
         
         // 设置 Admin 为  admin 对象 ，让其他应用也能调 static::Root()::Admin()->isSuper
         $this->bumpAdmin(ActionApi::class);
         static::Admin(ActionApi::G());
         
-        if (!$this->isInstalled()) {
-            //这里临时客串一下虚拟资源
-            Route::G()->options['controller_resource_prefix']='for_install/';
-            RouteHookResource::G()->init([
-                'path' => $this->options['path_override_from'],
-                'path_resource' => 'res',
-                'controller_url_prefix' => Route::G()->options['controller_url_prefix'],
-                'controller_resource_prefix' => '/app/admin/for_install/',
-            ], $this);
-        }
         //如果根应用没设置数据，用自己的
         $this->switchDbManager();
     }

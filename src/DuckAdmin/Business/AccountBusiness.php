@@ -125,7 +125,7 @@ class AccountBusiness extends BaseBusiness
             return true;
         }
         
-        static::ThrowOn(!$admin, $msg = '请登录', 401);
+        
         // 无控制器信息说明是函数调用，函数不属于任何控制器，鉴权操作应该在函数内部完成。
         if (!$controller) {
             return true;
@@ -135,6 +135,7 @@ class AccountBusiness extends BaseBusiness
             if (in_array($action, $noNeedAuth)) {
                 return true;
             }
+            static::ThrowOn(!$admin, $msg = '请登录', 401);
             // 当前管理员无角色
             $roles = $admin['roles'];
             static::ThrowOn(!$roles,  '无权限', 2);
@@ -163,7 +164,6 @@ class AccountBusiness extends BaseBusiness
             $code = $ex->getCode();
             $msg = $ex->getMessage();
             return false;
-            
         }
         return true;
     }

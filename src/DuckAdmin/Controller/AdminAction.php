@@ -63,7 +63,7 @@ class AdminAction
     {
         $code = 0;
         $msg = '';
-		$admin = $this->getCurrentAdmin();	
+		$admin = $this->getCurrentAdmin();
 		$flag = AccountBusiness::G()->canAccess($admin, $controller, $action, $code, $msg);
 		if($flag){
 			$flag = $this->isOptionsMethod();
@@ -95,15 +95,15 @@ if (self !== top) {
 }
 </script>
 EOF;
-		Helper::Header(403);
+		Helper::header('',true,401);
 		echo $response;
-		Helper::Exit();
+		Helper::exit();
 	}
 	protected function exit403()
 	{
-		Helper::Header(403);
+		Helper::header('',true,403);
 		Helper::Show('_sys/403');
-		Helper::Exit();
+		Helper::exit();
 	}
 
 }

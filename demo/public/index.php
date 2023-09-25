@@ -25,7 +25,7 @@ $options = [
         // 后台管理系统
         \DuckAdmin\System\App::class => [
             'controller_url_prefix' => 'app/admin/', // 访问路径
-            'controller_resource_prefix' => '/res/',  // 资源文件前缀
+            //'controller_resource_prefix' => '/res/',  // 资源文件前缀
         ],
     ]
 ];

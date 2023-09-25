@@ -54,7 +54,7 @@ class CaptchaAction extends ComponentBase
 
     public function doCheckCaptcha($captcha)
     {
-        $phrase = ($this->options['set_phrase_handler'])($phrase);
+        $phrase = ($this->options['get_phrase_handler'])();
         
         $flag = PhraseBuilder::comparePhrases($phrase, $captcha);
         return $flag;
