@@ -11,21 +11,21 @@ return [
             [
                 'title' => '账户管理',
                 'key' => 'DuckAdmin\\Controller\\AdminController',
-                'href' => '/app/admin/admin/index',
+                'href' => 'admin/index',
                 'type' => 1,
                 'weight' => 1000,
             ],
             [
                 'title' => '角色管理',
                 'key' => 'DuckAdmin\\Controller\\RoleController',
-                'href' => '/app/admin/role/index',
+                'href' => 'role/index',
                 'type' => 1,
                 'weight' => 900,
             ],
             [
                 'title' => '菜单管理',
                 'key' => 'DuckAdmin\\Controller\\RuleController',
-                'href' => '/app/admin/rule/index',
+                'href' => 'rule/index',
                 'type' => 1,
                 'weight' => 800,
             ],
@@ -41,7 +41,7 @@ return [
             [
                 'title' => '用户',
                 'key' => 'DuckAdmin\\Controller\\UserController',
-                'href' => '/app/admin/user/index',
+                'href' => 'user/index',
                 'type' => 1,
                 'weight' => 800,
             ]
@@ -57,14 +57,14 @@ return [
             [
                 'title' => '个人资料',
                 'key' => 'DuckAdmin\\Controller\\AccountController',
-                'href' => '/app/admin/account/index',
+                'href' => 'account/index',
                 'type' => 1,
                 'weight' => 800,
             ],
             [
                 'title' => '系统设置',
                 'key' => 'DuckAdmin\\Controller\\ConfigController',
-                'href' => '/app/admin/config/index',
+                'href' => 'config/index',
                 'type' => 1,
                 'weight' => 500,
             ],

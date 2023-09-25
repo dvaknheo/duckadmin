@@ -57,7 +57,7 @@ class RuleController extends Base
         $types = is_string($types) ? explode(',', $types) : [0, 1];
 		
 		$admin = AdminAction::G()->getCurrentAdmin();
-		$data = RuleBusiness::G()->get($admin['roles'],$types);
+		$data = RuleBusiness::G()->get($admin['roles']??[],$types);
 		
 		return Helper::Success($data);
     }

@@ -21,6 +21,9 @@ class RuleBusiness extends BaseBusiness
             $item['name'] = $item['title'];
             $item['value'] = $item['id'];
             $item['icon'] = $item['icon'] ? "layui-icon {$item['icon']}" : '';
+            $item['href'] =(preg_match('/^(https?:\/)?\//', $item['href']))? $item['href'] : __url($item['href']);
+            unset($item['created_at']);
+            unset($item['updated_at']);
             $formatted_items[] = $item;
         }
 
