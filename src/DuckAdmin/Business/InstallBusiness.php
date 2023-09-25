@@ -47,7 +47,7 @@ class InstallBusiness extends BaseBusiness
     protected function initSql()
     {
         $sql_file = $this->getConfigFile('install.sql');
-        static::ThrowOn( !isset($sql_file),  '数据库SQL文件不存在');
+        static::ThrowOn( !isset($sql_file),  '数据库SQL文件不存在',1);
         $sql_query = file_get_contents($sql_file);
         
         $sql_query = $this->removeComments($sql_query);
@@ -76,7 +76,7 @@ class InstallBusiness extends BaseBusiness
         }
         $tables_conflict = array_intersect($tables_to_install, $tables_exist);
         if (!$overwrite) {
-            static::ThrowOn( $tables_conflict, '以下表' . implode(',', $tables_conflict) . '已经存在，如需覆盖请选择强制覆盖');
+            static::ThrowOn( $tables_conflict, '以下表' . implode(',', $tables_conflict) . '已经存在，如需覆盖请选择强制覆盖',1);
         } else {
             foreach ($tables_conflict as $table) {
                 DbManager::Db()->execute("DROP TABLE `$table`");
@@ -128,6 +128,9 @@ class InstallBusiness extends BaseBusiness
         }
         $this->checkTableOverwrite($tables,$overwrite);
         $this->initSql();
+        
+        // FirstRole，第一个角色我们要从 initSQL 中抽取出来。
+        
         // 导入菜单
         $menus =  static::Config('menu',null,[]);
         RuleModel::G()->importMenu($menus);
@@ -204,11 +207,11 @@ class InstallBusiness extends BaseBusiness
      */
     public function step2($username,$password,$password_confirm)
     {
-        static::ThrowOn($password !== $password_confirm, '两次密码不一致');
+        static::ThrowOn($password !== $password_confirm, '两次密码不一致',1);
         $flag = $this->checkDataBase();
         static::ThrowOn(!$flag, '请先完成第一步数据库配置', 1);
         $flag = AdminModel::G()->hasAdmins();
-        static::ThrowOn($flag, '后台已经安装完毕，无法通过此页面创建管理员');
+        static::ThrowOn($flag, '后台已经安装完毕，无法通过此页面创建管理员',1);
         
         try{
         $admin_id = AdminModel::G()->addFirstAdmin($username, $password);
