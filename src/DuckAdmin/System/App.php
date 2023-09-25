@@ -48,7 +48,26 @@ class App extends DuckPhp
     public function install($options)
     {
         $this->installWithExtOptions($options);
-        //TODO 接着复制 res 文件
+        
+        $flag = preg_match('/^(https?:\/)?\//', $this->options['controller_resource_prefix'] ?? '');
+        if($flag){ return; }
+        
+        $source = realpath(dirname(__DIR__).'/res/') .'/';
+        $dest = $this->getDestDir($_SERVER['DOCUMENT_ROOT'], $this->options['controller_url_prefix']. $this->options['controller_resource_prefix']);
+        $this->dumpDir($source, $dest,true,$info);
+        //echo $info;
+    }
+    function getDestDir($path_parent,$path )
+    {
+        $new_dir = $path_parent;
+        $b = explode('/',$path);
+        
+        foreach($b as $v){
+            $new_dir .= '/'.$v;
+            if(is_dir($new_dir)){ continue;}
+            mkdir($new_dir);
+        }
+        return $new_dir;
     }
     protected function switchDbManager()
     {
@@ -96,14 +115,14 @@ class App extends DuckPhp
         }
         
         if (!$force) {
-            $flag = $this->check_files_exist($source, $dest, $files);
+            $flag = $this->check_files_exist($source, $dest, $files, $info);
             if (!$flag) {
                 return; // @codeCoverageIgnore
             }
         }
         $info.= "Copying file...\n";
         
-        $flag = $this->create_directories($dest, $files);
+        $flag = $this->create_directories($dest, $files, $info);
         if (!$flag) {
             return; // @codeCoverageIgnore
         }
@@ -112,7 +131,6 @@ class App extends DuckPhp
         foreach ($files as $file => $short_file_name) {
             $dest_file = $dest.$short_file_name;
             $data = file_get_contents(''.$file);
-            $data = $this->filteText($data, $is_in_full, $short_file_name);
             $flag = file_put_contents($dest_file, $data);
             
             $info.= $dest_file."\n";
@@ -120,7 +138,7 @@ class App extends DuckPhp
         }
         //echo  "\nDone.\n";
     }
-    protected function check_files_exist($source, $dest, $files, $info)
+    protected function check_files_exist($source, $dest, $files, &$info)
     {
         foreach ($files as $file => $short_file_name) {
             $dest_file = $dest.$short_file_name;
@@ -131,7 +149,7 @@ class App extends DuckPhp
         }
         return true;
     }
-    protected function create_directories($dest, $files)
+    protected function create_directories($dest, $files, &$info)
     {
         foreach ($files as $file => $short_file_name) {
             // mkdir.
@@ -141,9 +159,10 @@ class App extends DuckPhp
             foreach ($blocks as $t) {
                 $full_dir .= DIRECTORY_SEPARATOR.$t;
                 if (!is_dir($full_dir)) {
-                    $flag = mkdir($full_dir);
-                    if (!$flag) {                               // @codeCoverageIgnore
-                        //echo "create file failed: $full_dir \n";// @codeCoverageIgnore
+                    try{
+                        $flag = mkdir($full_dir);
+                    }catch(\Throwable $ex) {                               // @codeCoverageIgnore
+                        $info .= "create file failed: $full_dir \n";// @codeCoverageIgnore
                         return false;   // @codeCoverageIgnore
                     }
                 }

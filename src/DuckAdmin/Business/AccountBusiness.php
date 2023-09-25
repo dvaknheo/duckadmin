@@ -124,17 +124,17 @@ class AccountBusiness extends BaseBusiness
         if (in_array($action, $noNeedLogin)) {
             return true;
         }
-        
+        // 不需要鉴权
+        if (in_array($action, $noNeedAuth)) {
+            return true;
+        }        
         
         // 无控制器信息说明是函数调用，函数不属于任何控制器，鉴权操作应该在函数内部完成。
         if (!$controller) {
             return true;
         }
         try{
-            // 不需要鉴权
-            if (in_array($action, $noNeedAuth)) {
-                return true;
-            }
+
             static::ThrowOn(!$admin, $msg = '请登录', 401);
             // 当前管理员无角色
             $roles = $admin['roles'];
