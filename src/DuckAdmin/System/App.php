@@ -53,7 +53,9 @@ class App extends DuckPhp
         if($flag){ return; }
         
         $source = realpath(dirname(__DIR__).'/res/') .'/';
-        $dest = $this->getDestDir($_SERVER['DOCUMENT_ROOT'], $this->options['controller_url_prefix']. $this->options['controller_resource_prefix']);
+        $path = $this->options['controller_resource_prefix'];
+        $path = (substr($path,0,1)==='/')? $path : $this->options['controller_url_prefix'].$path;
+        $dest = $this->getDestDir($_SERVER['DOCUMENT_ROOT'], $path);
         $this->dumpDir($source, $dest,true,$info);
         //echo $info;
     }
