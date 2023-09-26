@@ -5,9 +5,14 @@
  */
 namespace DuckUser\Model;
 
-class UserModel extends BaseModel
+use DuckPhp\Lazy\ModelTrait;
+
+class UserModel
 {
+    use ModelTrait;
+    
     protected $table_name = 'users';
+    //$this->table_prefix = DuckUser::G()->options['table_prefix'];
     public function exsits($name)
     {
         $sql = "select count(*) as c from 'TABLE' where username=?";
@@ -20,20 +25,20 @@ class UserModel extends BaseModel
         $data = [];
         $data['username'] = $username;
         $data['password'] = $this->hash($password);
-        $id = BaseModel::Db()->insertData($this->table(), $data);
+        $id = $this->add($data);
         return $id;
     }
     public function getUserById($id)
     {
         $sql = "select * from 'TABLE' where id=?";
-        $user = BaseModel::Db()->fetch($this->prepare($sql), $id);
+        $user = $this->fetch($sql, $id);
         
         return $user;
     }
     public function getUserByUsername($username)
     {
         $sql = "select * from 'TABLE' where username=?";
-        $user = BaseModel::Db()->fetch($this->prepare($sql), $username);
+        $user = $this->fetch($sql, $username);
         
         return $user;
     }
@@ -50,7 +55,7 @@ class UserModel extends BaseModel
     {
         $password = $this->hash($password);
         $sql = "update 'TABLE' set password=? where id=? limit 1";
-        $ret = BaseModel::Db()->execute($this->prepare($sql), $password, $uid);
+        $ret = $this->execute($sql, $password, $uid);
         return $ret;
     }
     /////

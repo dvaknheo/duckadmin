@@ -5,10 +5,25 @@
  */
 namespace DuckUser\Business;
 
-use DuckUser\Model\UserModel;
+use DuckPhp\Lazy\BusinessTrait;
 
-class UserBusiness extends BaseBusiness
+use DuckUser\Business\UserBusiness as Helper;
+use DuckUser\Model\UserModel;
+use DuckUser\System\ProjectException;
+
+/**
+ * 我们偷懒，把 BusinessHelper 集成进这里,基类我们也不要了，毕竟只有一个
+ * 绑定异常，偷懒
+ */
+class UserBusiness
 {
+    use BusinessTrait;
+    
+    public function __construct()
+    {
+        // 绑定 ThrowOn 的异常类
+        $this->exception_class = $this->exception_class ?? ProjectException::class;
+    }
     public function register($form)
     {
         $form['password'] = $form['password'] ?? '';
@@ -28,7 +43,7 @@ class UserBusiness extends BaseBusiness
         
         $user = UserModel::G()->getUserById($uid);
         $user = UserModel::G()->unloadPassword($user);
-        BaseBusiness::FireEvent([self::class, __METHOD__],$user);
+        Helper::FireEvent([self::class, __METHOD__],$user);
         return $user;
     }
     public function login($form)
@@ -43,7 +58,7 @@ class UserBusiness extends BaseBusiness
         static::ThrowOn(!$flag, "密码错误");
         
         $user = UserModel::G()->unloadPassword($user);
-        BaseBusiness::FireEvent([self::class, __METHOD__],$user);
+        Helper::FireEvent([self::class, __METHOD__],$user);
         return $user;
     }
     public function changePassword($uid, $password, $new_password)

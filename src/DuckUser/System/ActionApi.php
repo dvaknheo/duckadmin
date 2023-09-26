@@ -6,7 +6,7 @@
 namespace DuckUser\Api;
 
 use DuckPhp\SingletonEx\SingletonExTrait;
-use DuckUser\Controller\UserBusinessl
+use DuckUser\Controller\UserBusiness;
 
 class ActionApi
 {

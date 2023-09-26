@@ -3,26 +3,19 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace DuckUser\ControllerEx;
+namespace DuckUser\System;
 
-use DuckUser\System\App;
-use ThrowOnableTrait;
+use DuckPhp\Component\SessionBase;
 
-    
-class SessionManager extends Session
+/**
+ * Session 本质上和 Model 一样不做逻辑运算，不抛异常
+ */
+class Session extends SessionBase
 {
-    public function __construct()
-    {
-        parent::__construct();
-        $this->options['session_prefix'] = App::G()->options['session_prefix'];
-        $this->exception_class = ProjectException::class;
-    }
-
     /////////////////////////////////////
     public function getCurrentUser()
     {
         $ret = $this->get('user',[]);
-        static::ThrowOn(empty($ret), '请重新登录');
         return $ret;
     }
     
@@ -36,42 +29,28 @@ class SessionManager extends Session
     {
         $this->set('user',$user);
     }
-    public function logout()
+    public function unsetCurrentUser()
     {
-        $this->set('user',[]);
+        $this->setCurrentUser('user',[]);
+    }
+    public function getToken()
+    {
+        return $this->get('_token');
     }
 
     ////////////////////////////////////////////////////////////////////////
-    public function csrf_token()
+    public function csrfToken()
     {
         $token = $this->get('_token');
-        if (true || !isset($token)) {
+        if (!isset($token)) {
             $token = $this->randomString(40);
             $this->set('_token', $token);
         }
         return $token;
     }
-    
-    public function checkCsrf()
+    public function csrfField()
     {
-        if( empty(App::POST()) ){ return ;}
-        $referer = App::SERVER('HTTP_REFERER','');
-        $domain = App::Domain(true).'/';
-            
-        if (substr($referer, 0, strlen($domain)) !== $domain) {
-            static::ThrowOn(true, "CRSF", 419);
-        }
-        $token = App::Post('_token');
-        $session_token =  $this->get('_token');
-        //static::ThrowOn($token !== $session_token, "csrf_token 失败[$token !== $session_token]", 419);
-    }
-    public function isCsrfException($ex)
-    {
-        return is_a($ex,SessionException::class) && $ex->getCode=419;
-    }
-    public function csrf_field()
-    {
-        return '<input type="hidden" name="_token" value="'.$this->csrf_token().'">';
+        return '<input type="hidden" name="_token" value="'.$this->csrfToken().'">';
     }
     ////////////////////////////////////////////////
     protected function randomString($length = 16)

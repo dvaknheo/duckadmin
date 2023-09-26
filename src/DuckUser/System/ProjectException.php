@@ -5,9 +5,9 @@
  */
 namespace DuckUser\System;
 
-use DuckPhp\ThrowOn\ThrowOnTrait;
+use DuckPhp\ThrowOn\ThrowOnException;
 
-class ProjectException extends \Exception
+class ProjectException extends ThrowOnException
 {
-    use ThrowOnTrait;
+    //
 }

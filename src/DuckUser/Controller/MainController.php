@@ -6,64 +6,63 @@
 namespace DuckUser\Controller;
 
 use DuckUser\Business\UserBusiness;
-use DuckUser\Controller\Base as C;
-use DuckUser\ControllerEx\SessionManager;
+use DuckUser\Controller\UserAction;
+use DuckUser\Controller\UserAction as Helper;
 
-class Main
+
+class MainController
 {
     public function index()
     {
         $url_reg = __url('register');
         $url_login = __url('login');
         
-        C::Show(get_defined_vars(), 'main');
+        Helper::Show(get_defined_vars(), 'main');
     }
     public function register()
     {
-        $csrf_field = SessionManager::G()->csrf_field();
+        $csrf_field = Session::G()->csrfField();
         $url_register = __url('register');
         
-        C::Show(get_defined_vars(), 'register');
+        Helper::Show(get_defined_vars(), 'register');
     }
     public function login()
     {
-        $csrf_field = SessionManager::G()->csrf_field();
+        $csrf_field = Session::G()->csrfField();
         $url_login = __url('login');
         
-        C::Show(get_defined_vars(),'login');
+        Helper::Show(get_defined_vars(),'login');
     }
     public function logout()
     {
-        SessionManager::G()->logout();
+        UserAction::G()->logout();
         
-        C::ExitRouteTo('index');
+        Helper::ExitRouteTo('index');
     }
     ////////////////////////////////////////////
     public function do_register()
     {
-        $post = C::POST();
+        $post = Helper::POST();
         try {
-            $user = UserBusiness::G()->register($post);
-            SessionManager::G()->setCurrentUser($user);
-            C::GoHome();
+            $user = UserAction::G()->register($user);
+            Helper::GoHome();
         } catch (\Exception $ex) {
             $error = $ex->getMessage();
-            $name = C::POST('name', '');
-            C::Show(get_defined_vars(), 'register');
+            $name = Helper::POST('name', '');
+            Helper::Show(get_defined_vars(), 'register');
             return;
         }
     }
     public function do_login()
     {
-        $post = C::POST();
+        $post = Helper::POST();
         try {
-            $user = UserBusiness::G()->login($post);
-            SessionManager::G()->setCurrentUser($user);
-            C::GoHome();
+            UserAction::G()->login($post);
+            Helper::GoHome();
         } catch (\Exception $ex) {
             $error = $ex->getMessage();
-            $name =  __h( C::POST('name', ''));
-            C::Show(get_defined_vars(), 'login');
+            $name =  __h( Helper::POST('name', ''));
+            Helper::Show(get_defined_vars(), 'login');
             return;
         }
     }

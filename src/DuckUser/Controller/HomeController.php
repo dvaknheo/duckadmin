@@ -5,69 +5,58 @@
  */
 namespace DuckUser\Controller;
 
+use DuckPhp\Component\FakeControllerSingletonEx;
 use DuckUser\Business\UserBusiness;
-use DuckUser\Controller\Helper as C;
-use DuckUser\Controller\Session;
+use DuckUser\Controller\UserAction as Helper;
 
-class Home extends Base
+class Home
 {
+    use FakeControllerSingletonEx;
+    
     public function __construct()
-   {
-        parent::__construct();
-        
-        Session::G()->checkCsrf();
-        C::assignExceptionHandler(Session::ExceptionClass(), [static::class, 'OnSessionException']);
-
-        $csrf_token = Session::G()->csrf_token();
-        $csrf_field = Session::G()->csrf_field();
-         
-        $user = Session::G()->getCurrentUser();
-        $user_name = $user['username'] ?? '';
-
-        C::setViewHeadFoot('home/inc-head','home/inc-foot');
-        C::assignViewData(get_defined_vars());
+    {        
+        Helper::G()->initController(static::class);
     }
     public static function OnSessionException($ex = null)
     {
         if(!isset($ex)){
-            C::Exit404();
+            Helper::Exit404();
             return;
         }
         $code = $ex->getCode();
         __logger()->warning(''.(get_class($ex)).'('.$ex->getCode().'): '.$ex->getMessage());
         if (Session::G()->isCsrfException($ex) && __is_debug()) {
-            C::exit(0);
+            Helper::exit(0);
         }
-        C::ExitRouteTo('login');
+        Helper::ExitRouteTo('login');
     }
 
     public function index()
     {
         $url_logout = __url('logout');
-        C::Show(get_defined_vars());
+        Helper::Show(get_defined_vars());
     }
     public function password()
     {
-        C::Show(get_defined_vars());
+        Helper::Show(get_defined_vars());
     }
     //////////////////////////
     public function do_password()
     {
         $error = '';
         try {
-            $uid = Session::G()->getCurrentUid();
-            $old_pass = C::POST('oldpassword','');
-            $new_pass = C::POST('newpassword','');
-            $confirm_pass = C::POST('newpassword_confirm','');
+            $uid = Helper::UserId();
+            $old_pass = Helper::POST('oldpassword','');
+            $new_pass = Helper::POST('newpassword','');
+            $confirm_pass = Helper::POST('newpassword_confirm','');
             
-            if($new_pass !== $confirm_pass) {
-                throw new \Exception('重复密码不一致');
-            }
+            Helper::ThrowOn($new_pass !== $confirm_pass, '重复密码不一致');
             UserBusiness::G()->changePassword($uid, $old_pass, $new_pass);
-            $error = "密码修改完毕";            
+            
+            $error = "密码修改完毕"; 
         } catch (\Exception $ex) {
             $error = $ex->getMessage();
         }
-        C::Show(get_defined_vars());
+        Helper::Show(get_defined_vars());
     }
 }
