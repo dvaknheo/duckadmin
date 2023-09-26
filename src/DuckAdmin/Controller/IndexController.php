@@ -29,7 +29,7 @@ class IndexController extends Base
 	public function dashboard()
 	{
 		var_dump(DATE(DATE_ATOM));return;
-		$dashboard=[];//AllInOnBusiness::G()->getDashboard();
+		$dashboard=[];//AllInOnBusiness::_()->getDashboard();
 		return Helper::Show($dashboard, 'index/dashboard');
 	}
 }

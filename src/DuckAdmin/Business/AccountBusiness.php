@@ -12,12 +12,12 @@ class AccountBusiness extends BaseBusiness
 {
     public function getAdmin($admin_id)
     {
-        $admin = AdminModel::G()->getAdminById($admin_id); 
+        $admin = AdminModel::_()->getAdminById($admin_id); 
         
         if (!$admin || $admin['status'] != 0) {
             return null;
         }
-        $admin['roles'] = AdminRoleModel::G()->getRoles($admin_id);
+        $admin['roles'] = AdminRoleModel::_()->getRoles($admin_id);
         return $admin;
     }
     /////////////
@@ -30,7 +30,7 @@ class AccountBusiness extends BaseBusiness
             'avatar' => $admin['avatar'],
             'email' => $admin['email'],
             'mobile' => $admin['mobile'],
-            'isSupperAdmin' =>CommonService::G()->isSupperAdmin($admin['id']),
+            'isSupperAdmin' =>CommonService::_()->isSupperAdmin($admin['id']),
         ];
         
         return $info;
@@ -41,14 +41,14 @@ class AccountBusiness extends BaseBusiness
         static::ThrowOn(!$username, '用户名不能为空',1);
         
         //$this->checkLoginLimit($username);
-        $admin = AdminModel::G()->getAdminByName($username);
+        $admin = AdminModel::_()->getAdminByName($username);
         static::ThrowOn(!$admin,'账户不存在或密码错误');
-        $flag = AdminModel::G()->checkPasswordByAdmin($admin, $password);
+        $flag = AdminModel::_()->checkPasswordByAdmin($admin, $password);
         static::ThrowOn(!$flag,'账户不存在或密码错误');
         static::ThrowOn($admin['status'] != 0, '当前账户暂时无法登录',1);
         //////////////////////////////////////////
         unset($admin['password']);
-        AdminModel::G()->updateLoginAt($admin['id']);
+        AdminModel::_()->updateLoginAt($admin['id']);
         
         //$this->removeLoginLimit($username);
         static::FireEvent([static::class,__METHOD__], $admin);
@@ -141,7 +141,7 @@ class AccountBusiness extends BaseBusiness
             static::ThrowOn(!$roles,  '无权限', 2);
 
             // 角色没有规则
-            $rule_ids = RoleModel::G()->getRules($roles);
+            $rule_ids = RoleModel::_()->getRules($roles);
             static::ThrowOn(!$rule_ids,  '无权限', 2);
             
             // 超级管理员
@@ -151,12 +151,12 @@ class AccountBusiness extends BaseBusiness
 
             // 如果action为index，规则里有任意一个以$controller开头的权限即可
             if (strtolower($action) === 'index') {
-                $rule = RuleModel::G()->checkWildRules($rule_ids,$controller,$action);
+                $rule = RuleModel::_()->checkWildRules($rule_ids,$controller,$action);
                 static::ThrowOn(!$rule, '无权限', 2);
                 return true;
             }else{
                 // 查询是否有当前控制器的规则
-                $rule = RuleModel::G()->checkRules($rule_ids,$controller,$action);
+                $rule = RuleModel::_()->checkRules($rule_ids,$controller,$action);
                 static::ThrowOn(!$rule, '无权限', 2);
                 return true;
             }
@@ -169,7 +169,7 @@ class AccountBusiness extends BaseBusiness
     }
     public function update($admin_id, $data)
     {
-        $update_data = AdminModel::G()->updateAdmin($admin_id,$data);
+        $update_data = AdminModel::_()->updateAdmin($admin_id,$data);
         
         foreach ($update_data as $key => $value) {
             $admin[$key] = $value;
@@ -181,8 +181,8 @@ class AccountBusiness extends BaseBusiness
         static::ThrowOn(!$password, '密码不能为空',2);
         static::ThrowOn($password !== $password_cofirm, '两次密码输入不一致',3);
         
-        $flag = AdminModel::G()->checkPasword($admin_id, $old_password);
+        $flag = AdminModel::_()->checkPasword($admin_id, $old_password);
         static::ThrowOn(!$flag, '原始密码不正确', 1);
-        AdminModel::G()->updateAdminPassword($admin_id, $password);
+        AdminModel::_()->updateAdminPassword($admin_id, $password);
     }
 }

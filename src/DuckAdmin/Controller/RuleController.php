@@ -40,7 +40,7 @@ class RuleController extends Base
     {
 		$data = Helper::GET();
 
-		[$data,$total] = RuleBusiness::G()->selectRules(Helper::AdminId(), $data); // 结果还是一股脑把参数传进去了
+		[$data,$total] = RuleBusiness::_()->selectRules(Helper::AdminId(), $data); // 结果还是一股脑把参数传进去了
 
 		return Helper::Success($data,$total);
     }
@@ -55,8 +55,8 @@ class RuleController extends Base
 		$types = Helper::GET('type', '0,1');
         $types = is_string($types) ? explode(',', $types) : [0, 1];
 		
-		$admin = AdminAction::G()->getCurrentAdmin();
-		$data = RuleBusiness::G()->get($admin['roles']??[],$types);
+		$admin = AdminAction::_()->getCurrentAdmin();
+		$data = RuleBusiness::_()->get($admin['roles']??[],$types);
 		
 		return Helper::Success($data);
     }
@@ -67,8 +67,8 @@ class RuleController extends Base
      */
     public function permission()
     {
-		$admin = AdminAction::G()->getCurrentAdmin();
-        $permissions = RuleBusiness::G()->permission($admin['roles']);
+		$admin = AdminAction::_()->getCurrentAdmin();
+        $permissions = RuleBusiness::_()->permission($admin['roles']);
         return Helper::Success($permissions);
 	}
     /**
@@ -83,7 +83,7 @@ class RuleController extends Base
         if (!$post) {
             return Helper::Show([], 'rule/insert');
         }
-		RuleBusiness::G()->insertRule(Helper::AdminId(), $post);
+		RuleBusiness::_()->insertRule(Helper::AdminId(), $post);
         return Helper::Success();
     }
 
@@ -99,7 +99,7 @@ class RuleController extends Base
         if (!$post) {
 			return Helper::Show([], 'rule/update');
         }
-		RuleBusiness::G()->updateRule(Helper::AdminId(), $post);
+		RuleBusiness::_()->updateRule(Helper::AdminId(), $post);
         return Helper::Success();
     }
     
@@ -111,7 +111,7 @@ class RuleController extends Base
     public function delete()
     {
 		$post = Helper::POST();
-		RuleBusiness::G()->deleteRule(Helper::AdminId(),$post['id']);
+		RuleBusiness::_()->deleteRule(Helper::AdminId(),$post['id']);
         return Helper::Success();
     }
 

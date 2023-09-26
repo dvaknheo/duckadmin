@@ -11,6 +11,10 @@ use DuckPhp\Component\SessionBase;
  */
 class AdminSession extends SessionBase
 {
+    public static function _($object = null)
+    {
+        return static::G($object);
+    }
     public function getCurrentAdmin()
     {
         $ret = $this->get('admin', []);

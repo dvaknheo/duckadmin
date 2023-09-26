@@ -15,6 +15,10 @@ use DuckAdmin\Controller\AdminSession;
  */
 class App extends DuckPhp
 {
+    public static function _($object = null)
+    {
+        return static::G($object);
+    }
     //@override
     public $options = [
         'is_debug' => true,

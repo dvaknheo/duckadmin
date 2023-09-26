@@ -37,7 +37,7 @@ class InstallController extends Base
         $post['overwrite'] = Helper::POST('overwrite');	
 		
 		try{
-			InstallBusiness::G()->step1($post);
+			InstallBusiness::_()->step1($post);
 		}catch(\Exception $ex){
 			return Helper::ExitJson(['code' => $ex->getCode(), 'msg' => $ex->getMessage(), 'type' => 'error']);
 		}
@@ -54,7 +54,7 @@ class InstallController extends Base
         $password = Helper::POST('password');
         $password_confirm = Helper::POST('password_confirm');
 		try{
-			InstallBusiness::G()->step2($username,$password,$password_confirm);
+			InstallBusiness::_()->step2($username,$password,$password_confirm);
 		}catch(\Exception $ex){
 			return Helper::ExitJson(['code' => $ex->getCode(), 'msg' => $ex->getMessage(), 'type' => 'error']);
 		}

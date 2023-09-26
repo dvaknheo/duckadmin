@@ -19,7 +19,7 @@ class Helper
     
     public static function AdminId()
     {
-        return AdminSession::G()->getCurrentAdminId();
+        return AdminSession::_()->getCurrentAdminId();
     }
     
     public static function Success($data = [],$count = null)

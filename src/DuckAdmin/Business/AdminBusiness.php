@@ -11,16 +11,16 @@ class AdminBusiness extends BaseBusiness
 {
     public function showAdmins($op_id,$input)
     {
-        [$where, $format, $limit, $field, $order] = AdminModel::G()->selectInput($input);
+        [$where, $format, $limit, $field, $order] = AdminModel::_()->selectInput($input);
         
-        [$items,$total] = AdminModel::G()->doSelect($where, $field, $order);
+        [$items,$total] = AdminModel::_()->doSelect($where, $field, $order);
         
         if ('select' ===  ($input['format']??null)) {
             return $this->formatSelect($items,$format,$limit);
         }
         
         // 后处理
-        $roles_map = AdminRoleModel::G()->getAdminRoles(array_column($items, 'id'));
+        $roles_map = AdminRoleModel::_()->getAdminRoles(array_column($items, 'id'));
         foreach ($items as $index => $item) {
             $admin_id = $item['id'];
             $items[$index]['roles'] = isset($roles_map[$admin_id]) ? implode(',', $roles_map[$admin_id]) : '';
@@ -36,7 +36,7 @@ class AdminBusiness extends BaseBusiness
         static::ThrowOn(!$role_ids,'至少选择一个角色组',1);
         
         // 这里两个
-        $flag = CommonService::G()->noRole($op_id,$role_ids, false);
+        $flag = CommonService::_()->noRole($op_id,$role_ids, false);
         static::ThrowOn($flag,'角色超出权限范围',1);
         
         //$is_supper_admin = $this->isSupperAdmin($op_id);
@@ -48,9 +48,9 @@ class AdminBusiness extends BaseBusiness
                 }
             }
         }
-        $data = AdminModel::G()->inputFilter($input);
-        $admin_id = AdminModel::G()->addAdmin($data);
-        AdminRoleModel::G()->renew($admin_id,$role_ids);
+        $data = AdminModel::_()->inputFilter($input);
+        $admin_id = AdminModel::_()->addAdmin($data);
+        AdminRoleModel::_()->renew($admin_id,$role_ids);
         
         return $admin_id;
     }
@@ -58,7 +58,7 @@ class AdminBusiness extends BaseBusiness
     {
         $admin_id = $input['id'];
         $role_ids = $input['roles'];
-        $data = AdminModel::G()->inputFilter($input);
+        $data = AdminModel::_()->inputFilter($input);
         static::ThrowOn(!$admin_id,'缺少参数',1);
         
         if (isset($data['status']) && $data['status'] == 1 && $admin_id === $op_id) {
@@ -70,10 +70,10 @@ class AdminBusiness extends BaseBusiness
             static::ThrowOn(!$role_ids,'至少选择一个角色组',1);
             
             $role_ids = explode(',', $role_ids);
-            $exist_role_ids = AdminRoleModel::G()->rolesByAdmin($admin_id);
-            $scope_role_ids = AdminRoleModel::G()->rolesByAdmin($op_id);
+            $exist_role_ids = AdminRoleModel::_()->rolesByAdmin($admin_id);
+            $scope_role_ids = AdminRoleModel::_()->rolesByAdmin($op_id);
             
-            $is_supper_admin = CommonService::G()->isSupperAdmin($op_id);
+            $is_supper_admin = CommonService::_()->isSupperAdmin($op_id);
             if (!$is_supper_admin){
                 if(!array_intersect($exist_role_ids, $scope_role_ids)) {
                     static::ThrowOn(true,'无权限更改该记录',1);
@@ -82,9 +82,9 @@ class AdminBusiness extends BaseBusiness
                     static::ThrowOn(true,'角色超出权限范围',1);
                 }
             }
-            AdminRoleModel::G()->updateAdminRole($admin_id, $exist_role_ids, $role_ids);
+            AdminRoleModel::_()->updateAdminRole($admin_id, $exist_role_ids, $role_ids);
         }
-        AdminModel::G()->updateAdmin($admin_id, $data);
+        AdminModel::_()->updateAdmin($admin_id, $data);
         return;
     }
     public function deleteAdmin($op_id, $ids)
@@ -94,16 +94,16 @@ class AdminBusiness extends BaseBusiness
         }
         $ids = (array)$ids;
         static::ThrowOn(in_array($op_id, $ids),'不能删除自己',1);
-        $is_supper_admin = CommonService::G()->isSupperAdmin($op_id);
+        $is_supper_admin = CommonService::_()->isSupperAdmin($op_id);
         if (!$is_supper_admin){
-            $scope_role_ids = AdminRoleModel::G()->rolesByAdmin($op_id);
+            $scope_role_ids = AdminRoleModel::_()->rolesByAdmin($op_id);
             if (array_diff($ids, $scope_role_ids)) {
                 static::ThrowOn(true,'无数据权限',1);
             }
         }
         
-        AdminModel::G()->deleteByIds($ids);
-        AdminRoleModel::G()->deleteByAdminIds($ids);
+        AdminModel::_()->deleteByIds($ids);
+        AdminRoleModel::_()->deleteByAdminIds($ids);
         
         return true;
     }

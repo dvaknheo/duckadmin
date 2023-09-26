@@ -32,7 +32,7 @@ class AdminController extends Base
     public function select()
     {
 		$input = Helper::GET();
-		[$data, $count] = AdminBusiness::G()->showAdmins(Helper::AdminId(),$input);
+		[$data, $count] = AdminBusiness::_()->showAdmins(Helper::AdminId(),$input);
         return Helper::Success($data,$count);
     }
 
@@ -48,7 +48,7 @@ class AdminController extends Base
 			return Helper::Show([],'admin/insert');
 		}
 		$input = Helper::POST();
-		$admin_id = AdminBusiness::G()->addAdmin(Helper::AdminId(), $input);
+		$admin_id = AdminBusiness::_()->addAdmin(Helper::AdminId(), $input);
 		return Helper::Success(['id' => $admin_id]);
     }
 
@@ -64,7 +64,7 @@ class AdminController extends Base
 			return Helper::Show([],'admin/update');
 		}
 		$post = Helper::POST();
-		AdminBusiness::G()->updateAdmin(Helper::AdminId(), $post);
+		AdminBusiness::_()->updateAdmin(Helper::AdminId(), $post);
     }
 
     /**
@@ -75,7 +75,7 @@ class AdminController extends Base
     public function delete()
     {
 		$post = Helper::POST();
-		AdminBusiness::G()->deleteAdmin(Helper::AdminId(), $post['id']);
+		AdminBusiness::_()->deleteAdmin(Helper::AdminId(), $post['id']);
 		return Helper::Success();
     }
 

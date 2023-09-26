@@ -25,7 +25,7 @@ class SystemInstallBusiness
     {
         // 删除菜单
         foreach (static::getMenus() as $menu) {
-            RuleModel::G()->deleteAll($menu['name']);
+            RuleModel::_()->deleteAll($menu['name']);
         }
     }
 
@@ -84,7 +84,7 @@ class SystemInstallBusiness
     {
         $menus_to_remove = array_diff(RuleModel::column($previous_menus, 'name'), RuleModel::column(static::getMenus(), 'name'));
         foreach ($menus_to_remove as $name) {
-            RuleModel::G()->deleteAll($name);
+            RuleModel::_()->deleteAll($name);
         }
     }
 

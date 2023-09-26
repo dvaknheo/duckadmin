@@ -20,7 +20,10 @@ use Gregwar\Captcha\PhraseBuilder;
  */
 class CaptchaAction extends ComponentBase
 {
-    
+    public static function _($object = null)
+    {
+        return static::G($object);
+    }
 	public $options = [
         'set_phrase_handler' => null,
         'get_phrase_handler' => null,
@@ -31,11 +34,11 @@ class CaptchaAction extends ComponentBase
     //////// 验证码部分 ////////
     public static function ShowCaptcha()
     {
-        return static::G()->doShowCaptcha();
+        return static::_()->doShowCaptcha();
     }
     public static function CheckCaptcha($captcha)
     {
-        return static::G()->doCheckCaptcha($captcha);
+        return static::_()->doCheckCaptcha($captcha);
     }
     public function doShowCaptcha()
     {

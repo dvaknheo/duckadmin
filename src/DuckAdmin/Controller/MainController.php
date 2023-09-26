@@ -30,12 +30,12 @@ class MainController extends Base
      */
     public function index()
     {
-		$isInstalled = InstallBusiness::G()->IsInstalled();
+		$isInstalled = InstallBusiness::_()->IsInstalled();
         if (!$isInstalled) {
             Helper::Show([], 'index/install');
             return;
         }
-        $admin = AdminAction::G()->getCurrentAdmin();
+        $admin = AdminAction::_()->getCurrentAdmin();
         if (!$admin) {
             Helper::Show([], 'account/login');
             return;

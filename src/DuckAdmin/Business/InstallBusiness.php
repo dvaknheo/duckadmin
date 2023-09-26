@@ -13,16 +13,16 @@ class InstallBusiness extends BaseBusiness
 {
     public function isInstalled()
     {
-        return DuckAdmin::G()->isInstalled();
+        return DuckAdmin::_()->isInstalled();
     }
     protected function getConfigFile($file)
     {
         //TODO 放到 Helper 里
-        return DuckAdmin::G()->getFileFromSubComponent(DuckAdmin::G()->options, 'config', $file);
+        return DuckAdmin::_()->getFileFromSubComponent(DuckAdmin::_()->options, 'config', $file);
     }
     protected function checkDatabase()
     {
-        $options = DbManager::G()->options;
+        $options = DbManager::_()->options;
         if (!empty($options['database']) || !empty($options['database_list'])){
             return true;
         }
@@ -41,7 +41,7 @@ class InstallBusiness extends BaseBusiness
             'username' => $post['user'],	
             'password' => $post['password'],
         ];
-        DuckAdmin::G()->install($options);
+        DuckAdmin::_()->install($options);
     }
     ///////////////////////////
     protected function initSql()
@@ -133,7 +133,7 @@ class InstallBusiness extends BaseBusiness
         
         // 导入菜单
         $menus =  static::Config('menu',null,[]);
-        RuleModel::G()->importMenu($menus);
+        RuleModel::_()->importMenu($menus);
         
         $this->writeDbConfigFile($post);
     }
@@ -210,12 +210,12 @@ class InstallBusiness extends BaseBusiness
         static::ThrowOn($password !== $password_confirm, '两次密码不一致',1);
         $flag = $this->checkDataBase();
         static::ThrowOn(!$flag, '请先完成第一步数据库配置', 1);
-        $flag = AdminModel::G()->hasAdmins();
+        $flag = AdminModel::_()->hasAdmins();
         static::ThrowOn($flag, '后台已经安装完毕，无法通过此页面创建管理员',1);
         
         try{
-        $admin_id = AdminModel::G()->addFirstAdmin($username, $password);
-        AdminRoleModel::G()->addFirstRole($admin_id);
+        $admin_id = AdminModel::_()->addFirstAdmin($username, $password);
+        AdminRoleModel::_()->addFirstRole($admin_id);
         }catch(\Throwable $ex){
             var_dump($ex);
         }

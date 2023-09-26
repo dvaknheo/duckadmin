@@ -16,7 +16,10 @@ class AdminAction
 {
     use SingletonExTrait;
     use ControllerHelperTrait;
-    
+    public static function _($object = null)
+    {
+        return static::G($object);
+    }    
 	/**
 	 * 当前管理员
 	 * @param null|array|string $fields
@@ -25,7 +28,7 @@ class AdminAction
 	public function getCurrentAdmin()
 	{
 		$this->refresh_admin_session();		
-		return AdminSession::G()->getCurrentAdmin();
+		return AdminSession::_()->getCurrentAdmin();
 	}
 
 	/**
@@ -37,7 +40,7 @@ class AdminAction
 	{
 		$time_now = time();
 		$session_ttl = 2;
-		$admin = AdminSession::G()->getCurrentAdmin();
+		$admin = AdminSession::_()->getCurrentAdmin();
 		
 		if(!$admin){
 			return null;
@@ -47,14 +50,14 @@ class AdminAction
 		if (!$force && $time_now - $session_last_update_time < $session_ttl) {
 			return null;
 		}
-		$admin = AccountBusiness::G()->getAdmin($admin['id']);
+		$admin = AccountBusiness::_()->getAdmin($admin['id']);
 		if(!$admin){
 			return null;
 		}
 		
 		unset($admin['password']);
 		$admin['session_last_update_time'] = $time_now;
-		AdminSession::G()->setCurrentAdmin($admin);	
+		AdminSession::_()->setCurrentAdmin($admin);	
 	}
     ////////////////
     public function checkAccess($controller,$action)
@@ -62,7 +65,7 @@ class AdminAction
         $code = 0;
         $msg = '';
 		$admin = $this->getCurrentAdmin();
-		$flag = AccountBusiness::G()->canAccess($admin, $controller, $action, $code, $msg);
+		$flag = AccountBusiness::_()->canAccess($admin, $controller, $action, $code, $msg);
 		if($flag){
 			$flag = $this->isOptionsMethod();
 			if($flag){
@@ -105,14 +108,14 @@ EOF;
 	}
     public function doShowCaptcha()
     {
-        return CaptchaAction::G()->init([
+        return CaptchaAction::_()->init([
             'set_phrase_handler'=>[AdminSession::G(),'setPhrase'],
             'get_phrase_handler'=>[AdminSession::G(),'getPhrase'],
         ])->doShowCaptcha();
     }
     public function doCheckCaptcha($captcha)
     {
-        return CaptchaAction::G()->init([
+        return CaptchaAction::_()->init([
             'set_phrase_handler'=>[AdminSession::G(),'setPhrase'],
             'get_phrase_handler'=>[AdminSession::G(),'getPhrase'],
         ])->doCheckCaptcha($captcha);

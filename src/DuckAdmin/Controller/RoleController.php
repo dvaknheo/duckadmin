@@ -38,7 +38,7 @@ class RoleController extends Base
     {
 		$post = Helper::GET();
 		$id = Helper::GET('id');
-		[$data,$total] = RoleBusiness::G()->selectRoles(Helper::AdminId(), $id, $post);
+		[$data,$total] = RoleBusiness::_()->selectRoles(Helper::AdminId(), $id, $post);
 		return Helper::Success($data,$total);
     }
 
@@ -55,7 +55,7 @@ class RoleController extends Base
 		}
 		$post = Helper::POST();
 		
-		$id = RoleBusiness::G()->insertRole(Helper::AdminId(), $post);
+		$id = RoleBusiness::_()->insertRole(Helper::AdminId(), $post);
 		return Helper::Success(['id' => $id]);
 
     }
@@ -73,7 +73,7 @@ class RoleController extends Base
 		}
 		$post = Helper::POST();
 		
-		$id = RoleBusiness::G()->updateRole(Helper::AdminId(), $post);
+		$id = RoleBusiness::_()->updateRole(Helper::AdminId(), $post);
 		return Helper::Success(['id' => $id]);
     }
 
@@ -86,7 +86,7 @@ class RoleController extends Base
     public function delete()
     {
 		$post = Helper::POST();
-		$id = RoleBusiness::G()->deleteRole(Helper::AdminId(), $post['id']);
+		$id = RoleBusiness::_()->deleteRole(Helper::AdminId(), $post['id']);
         return  Helper::Success();
     }
 
@@ -99,7 +99,7 @@ class RoleController extends Base
     {
 		$role_id = Helper::GET('id');
 		
-		$tree = RoleBusiness::G()->tree(Helper::AdminId(), $role_id);
+		$tree = RoleBusiness::_()->tree(Helper::AdminId(), $role_id);
         return Helper::Success($tree);
     }
 }

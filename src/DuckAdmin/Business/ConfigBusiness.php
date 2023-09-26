@@ -9,7 +9,7 @@ class ConfigBusiness extends BaseBusiness
 {
     public function getDefaultConfig()
     {
-        $config = OptionModel::G()->getSystemConfig();
+        $config = OptionModel::_()->getSystemConfig();
         if (empty($config)) {
             $config = static::Config('pear_config',null,[]);
             $config = $this->updateConfig($config);
@@ -72,7 +72,7 @@ class ConfigBusiness extends BaseBusiness
         }
         $config = array_merge($config, $data);
         
-        OptionModel::G()->setSystemConfig($config);
+        OptionModel::_()->setSystemConfig($config);
         return $config;
     }
     /**

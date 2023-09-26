@@ -12,8 +12,8 @@ class RuleBusiness extends BaseBusiness
     
     public function get($roles,$types)
     {
-        $rules = RoleModel::G()->getRules($roles);
-        $items = RuleModel::G()->allRules();
+        $rules = RoleModel::_()->getRules($roles);
+        $items = RuleModel::_()->allRules();
         // 格式化数据
         $formatted_items = [];
         foreach ($items as $item) {
@@ -92,9 +92,9 @@ class RuleBusiness extends BaseBusiness
     public function selectRules($op_id, $input)
     {
         //$this->syncRules();
-        [$where, $format, $limit, $field, $order] = RuleModel::G()->selectInput($input);
-        [$data,$total] = RuleModel::G()->doSelect($where, $field, $order,1,$limit);
-        return CommonService::G()->doFormat($data, $total, $format, $limit);
+        [$where, $format, $limit, $field, $order] = RuleModel::_()->selectInput($input);
+        [$data,$total] = RuleModel::_()->doSelect($where, $field, $order,1,$limit);
+        return CommonService::_()->doFormat($data, $total, $format, $limit);
         
     }
     protected function mapClass($class)
@@ -107,7 +107,7 @@ class RuleBusiness extends BaseBusiness
      */
     protected function syncRules()
     {
-        $items = RuleModel::G()->getAllByKey();
+        $items = RuleModel::_()->getAllByKey();
         $methods_in_db = [];
         $methods_in_files = [];
         foreach ($items as $item) {
@@ -139,11 +139,11 @@ class RuleBusiness extends BaseBusiness
                 
                 $menu = $items[$name] ?? [];
                 if (!$menu) {
-                    RuleModel::G()->addMenu($key,['pid'=>$pid,'key'=>$key,'title'=>$name,'type'=>2,]);
+                    RuleModel::_()->addMenu($key,['pid'=>$pid,'key'=>$key,'title'=>$name,'type'=>2,]);
                     continue;
                 }
                 if ($menu['title'] != $title) {
-                    RuleModel::G()->updateTitleByKey($name,$title);
+                    RuleModel::_()->updateTitleByKey($name,$title);
                 }
             }
             
@@ -158,7 +158,7 @@ class RuleBusiness extends BaseBusiness
     ///////////////////////////////
     public function permission($roles)
     {
-        $rules_strings = RoleModel::G()->getRules($roles);
+        $rules_strings = RoleModel::_()->getRules($roles);
         $rules = [];
         foreach ($rules_strings as $rule_string) {
             if (!$rule_string) {
@@ -170,7 +170,7 @@ class RuleBusiness extends BaseBusiness
             return ['*'];
         }
         
-        $keys = RuleModel::G()->getKeysByIds($rules);
+        $keys = RuleModel::_()->getKeysByIds($rules);
         $permissions = [];
         foreach ($keys as $key) {
             if (!$key = $this->controllerToUrlPath($key)) {
@@ -183,7 +183,7 @@ class RuleBusiness extends BaseBusiness
     }
     public function insertRule($op_id, $input)
     {
-        $data = RuleModel::G()->inputFilter($input);
+        $data = RuleModel::_()->inputFilter($input);
         
         if (empty($data['type'])) {
             $data['type'] = strpos($data['key'], '\\') ? 1 : 0;
@@ -191,18 +191,18 @@ class RuleBusiness extends BaseBusiness
         $data['key'] = str_replace('\\\\', '\\', $data['key']);
         $data['pid'] = empty($data['pid']) ? 0 : $data['pid'];
         $key = $data['key'] ?? '';
-        $flag = RuleModel::G()->findByKey($key);
+        $flag = RuleModel::_()->findByKey($key);
         static::ThrowOn($flag, "菜单标识 $key 已经存在", 1);
         
-        RuleModel::G()->addMenu($data['key'],$data);
+        RuleModel::_()->addMenu($data['key'],$data);
     }
     public function updateRule($op_id, $input)
     {
         $id = $input['id'];
-        $row = RuleModel::G()->findById($id);
+        $row = RuleModel::_()->findById($id);
         
         static::ThrowOn(!$row, '记录不存在',2);
-        $data = RuleModel::G()->inputFilter($input);
+        $data = RuleModel::_()->inputFilter($input);
         //[$id, $data] = $this->updateInput($input);
         if (isset($data['pid'])) {
             $data['pid'] = $data['pid'] ?: 0;
@@ -212,11 +212,11 @@ class RuleBusiness extends BaseBusiness
             $data['key'] = str_replace('\\\\', '\\', $data['key']);
         }
         
-        RuleModel::G()->updateRule($id, $data);
+        RuleModel::_()->updateRule($id, $data);
     }
     public function deleteRule($op_id, $ids)
     {
-        RuleModel::G()->dropWithChildren($ids);
+        RuleModel::_()->dropWithChildren($ids);
     }
     
     /**

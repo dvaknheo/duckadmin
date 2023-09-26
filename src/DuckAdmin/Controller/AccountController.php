@@ -46,11 +46,11 @@ class AccountController extends Base
         $password = Helper::Post('password', '');
         $captcha = Helper::Post('captcha');
 		
-		$flag = AdminAction::G()->doCheckCaptcha($captcha);
+		$flag = AdminAction::_()->doCheckCaptcha($captcha);
 		Helper::ThrowOn(!$flag, '验证码错误',1);
 		
-		$admin = AccountBusiness::G()->login($username, $password);
-		AdminSession::G()->setCurrentAdmin($admin);
+		$admin = AccountBusiness::_()->login($username, $password);
+		AdminSession::_()->setCurrentAdmin($admin);
 		return Helper::Success($admin);
 	}
 
@@ -61,7 +61,7 @@ class AccountController extends Base
      */
     public function logout()
     {
-		AdminSession::G()->setCurrentAdmin([]);
+		AdminSession::_()->setCurrentAdmin([]);
         return Helper::Success(0);
     }
 
@@ -71,9 +71,9 @@ class AccountController extends Base
      */
     public function info()
     {
-		$admin = AdminSession::G()->getCurrentAdmin();
-		$data = AccountBusiness::G()->getAccountInfo($admin);
-		//$data['token'] = 'TODO TOKEN';////AdminSession::G()->SessionId();
+		$admin = AdminSession::_()->getCurrentAdmin();
+		$data = AccountBusiness::_()->getAccountInfo($admin);
+		//$data['token'] = 'TODO TOKEN';////AdminSession::_()->SessionId();
 		
 		return Helper::Success($data);
     }
@@ -87,8 +87,8 @@ class AccountController extends Base
     {
         $data = Helper::POST();
 		
-		$admin = AccountBusiness::G()->update($data);
-        AdminSession::G()->setCurrentAdmin($admin);
+		$admin = AccountBusiness::_()->update($data);
+        AdminSession::_()->setCurrentAdmin($admin);
 		
         Helper::Sucess();
     }
@@ -104,7 +104,7 @@ class AccountController extends Base
 		$password_confirm = Helper::POST('password_confirm');
 		$old_password = Helper::POST('old_password');
 		
-		AccountBusiness::G()->changePassword($old_password, $password, $password_confirm );
+		AccountBusiness::_()->changePassword($old_password, $password, $password_confirm );
 		Helper::Sucess();
     }
     /**
@@ -115,6 +115,6 @@ class AccountController extends Base
      */
     public function captcha()
     {
-		AdminAction::G()->doShowCaptcha();
+		AdminAction::_()->doShowCaptcha();
     }
 }
