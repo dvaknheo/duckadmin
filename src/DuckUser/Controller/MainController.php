@@ -5,6 +5,8 @@
  */
 namespace DuckUser\Controller;
 
+use DuckPhp\Component\SimpleControllerTrait;
+
 use DuckUser\Business\UserBusiness;
 use DuckUser\Controller\UserAction;
 use DuckUser\Controller\UserAction as Helper;
@@ -12,6 +14,8 @@ use DuckUser\Controller\UserAction as Helper;
 
 class MainController
 {
+    use SimpleControllerTrait;
+    
     public function index()
     {
         $url_reg = __url('register');

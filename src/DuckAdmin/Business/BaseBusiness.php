@@ -5,7 +5,6 @@
  */
 namespace DuckAdmin\Business;
 
-use DuckPhp\ThrowOn\ThrowOnableTrait;
 use DuckPhp\Helper\BusinessHelperTrait;
 use DuckPhp\SingletonEx\SingletonExTrait;
 /**
@@ -15,6 +14,7 @@ class BaseBusiness
 {
     use SingletonExTrait; // 单例
     use BusinessHelperTrait; //使用助手函数
+    
     public static function _($object = null)
     {
         return static::G($object);

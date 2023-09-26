@@ -5,14 +5,15 @@
  */
 namespace DuckUser\Model;
 
-use DuckPhp\Lazy\ModelTrait;
+use DuckPhp\Component\SimpleModelTrait;
+use DuckPhp\Helper\ModelHelperTrait;
 
 class UserModel
 {
-    use ModelTrait;
+    use SimpleModelTrait;
+    use ModelHelperTrait;
     
     protected $table_name = 'users';
-    //$this->table_prefix = DuckUser::G()->options['table_prefix'];
     public function exsits($name)
     {
         $sql = "select count(*) as c from 'TABLE' where username=?";

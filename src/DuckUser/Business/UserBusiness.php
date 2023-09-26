@@ -5,11 +5,11 @@
  */
 namespace DuckUser\Business;
 
-use DuckPhp\Lazy\BusinessTrait;
+use DuckPhp\Component\SimpleBusinessTrait;
+use DuckPhp\Helper\BusinessHelperTrait;
 
 use DuckUser\Business\UserBusiness as Helper;
 use DuckUser\Model\UserModel;
-use DuckUser\System\ProjectException;
 
 /**
  * 我们偷懒，把 BusinessHelper 集成进这里,基类我们也不要了，毕竟只有一个
@@ -17,12 +17,11 @@ use DuckUser\System\ProjectException;
  */
 class UserBusiness
 {
-    use BusinessTrait;
+    use SimpleBusinessTrait; // 单例
+    use BusinessHelperTrait; //使用助手函数
     
     public function __construct()
     {
-        // 绑定 ThrowOn 的异常类
-        $this->exception_class = $this->exception_class ?? ProjectException::class;
     }
     public function register($form)
     {

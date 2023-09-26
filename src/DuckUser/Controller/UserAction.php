@@ -5,14 +5,14 @@
  */
 namespace DuckUser\Controller;
 
-use DuckPhp\Lazy\ActionTrait;
 use DuckUser\Business\UserBusiness;
-use DuckUser\Controller\Session;
 use DuckUser\System\App;
+use DuckUser\System\Session;
 
 class UserAction
 {
-    use ActionTrait;
+    use SingletonExTrait;
+    use ControllerHelperTrait;
     
     public function id()
     {

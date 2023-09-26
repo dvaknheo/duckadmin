@@ -5,13 +5,14 @@
  */
 namespace DuckUser\Controller;
 
-use DuckPhp\Component\FakeControllerSingletonEx;
+use DuckPhp\Component\SimpleControllerTrait;
+
 use DuckUser\Business\UserBusiness;
 use DuckUser\Controller\UserAction as Helper;
 
 class Home
 {
-    use FakeControllerSingletonEx;
+    use SimpleControllerTrait;
     
     public function __construct()
     {        
