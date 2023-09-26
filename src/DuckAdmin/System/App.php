@@ -46,21 +46,16 @@ class App extends DuckPhp
     }
     public function onInit()
     {
-        //为了满足 webman admin 的路由 替换掉默认的路由，这里牺牲了点效率
-        ProjectRoute::G()->init(Route::G()->options, $this);
-        ProjectRoute::G()->pre_run_hook_list = Route::G()->pre_run_hook_list;
-        ProjectRoute::G()->post_run_hook_list = Route::G()->post_run_hook_list;
-        Route::G(ProjectRoute::G());
-        //ProjectRoute::DelegateRoute(); //下次改成这个
-        
-        // 设置 Admin 为  admin 对象 ，让其他应用也能调 static::Root()::Admin()->isSuper();Admin()->canAccessPath(),canAccessAction
-        $this->bumpAdmin(ActionApi::class);
-        static::Admin(ActionApi::G());
-        
-        //如果根应用没设置数据，用自己的
+        // 默认的路由没满足我们
+        $this->switchRoute(ProjectRoute::class);
+        //如果根应用没设置数据库，用自己的
         $this->switchDbManager();
+        
+        // 设置 Admin 为  admin 对象 ，让其他应用也能调
+        $this->bumpAdmin(ActionApi::class);
+        //本应用的 Admin 也切换过来
+        static::Admin(ActionApi::G());
     }
-    
     protected function switchDbManager()
     {
         $options = DbManager::G()->options;
@@ -76,5 +71,13 @@ class App extends DuckPhp
         $options['force']=true;// DbManager 只会初始化一次，所以强制初始化。
         
         DbManager::G( )->init($options, static::Root());
+    }
+    protected function switchRoute($class)
+    {
+         //为了满足 webman admin 的路由 替换掉默认的路由，这里牺牲了点效率
+        $class::G()->init(Route::G()->options, $this);
+        $class::G()->pre_run_hook_list = Route::G()->pre_run_hook_list;
+        $class::G()->post_run_hook_list = Route::G()->post_run_hook_list;
+        Route::G($class::G());
     }
 }

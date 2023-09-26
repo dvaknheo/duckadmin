@@ -27,8 +27,7 @@ class RuleController extends Base
      */
     public function index()
     {
-        //Helper::Show([], 'rule/index');
-        \DuckPhp\Core\View::G()->_Display('rule/index', []);
+        Helper::Show([], 'rule/index');
     }
 
     /**
