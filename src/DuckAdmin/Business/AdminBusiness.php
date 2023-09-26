@@ -1,6 +1,9 @@
 <?php
 namespace DuckAdmin\Business;
 
+use DuckAdmin\Business\BaseBusiness;
+use DuckAdmin\Business\BaseBusiness as Helper;
+
 use DuckAdmin\Model\AdminModel;
 use DuckAdmin\Model\RoleModel;
 use DuckAdmin\Model\AdminRoleModel;
@@ -33,11 +36,11 @@ class AdminBusiness extends BaseBusiness
         $role_ids=$input['roles'];
         // 这里要区分操作的 admin_id和得到的 admin_id;
         $role_ids = $role_ids ? explode(',', $role_ids) : [];
-        static::ThrowOn(!$role_ids,'至少选择一个角色组',1);
+        Helper::ThrowOn(!$role_ids,'至少选择一个角色组',1);
         
         // 这里两个
         $flag = CommonService::_()->noRole($op_id,$role_ids, false);
-        static::ThrowOn($flag,'角色超出权限范围',1);
+        Helper::ThrowOn($flag,'角色超出权限范围',1);
         
         //$is_supper_admin = $this->isSupperAdmin($op_id);
         if (false &&!Auth::isSupperAdmin() && $this->dataLimit) {
@@ -59,15 +62,15 @@ class AdminBusiness extends BaseBusiness
         $admin_id = $input['id'];
         $role_ids = $input['roles'];
         $data = AdminModel::_()->inputFilter($input);
-        static::ThrowOn(!$admin_id,'缺少参数',1);
+        Helper::ThrowOn(!$admin_id,'缺少参数',1);
         
         if (isset($data['status']) && $data['status'] == 1 && $admin_id === $op_id) {
-            static::ThrowOn(true,'不能禁用自己',1);
+            Helper::ThrowOn(true,'不能禁用自己',1);
         }
 
         // 需要更新角色
         if ($role_ids !== null) {
-            static::ThrowOn(!$role_ids,'至少选择一个角色组',1);
+            Helper::ThrowOn(!$role_ids,'至少选择一个角色组',1);
             
             $role_ids = explode(',', $role_ids);
             $exist_role_ids = AdminRoleModel::_()->rolesByAdmin($admin_id);
@@ -76,10 +79,10 @@ class AdminBusiness extends BaseBusiness
             $is_supper_admin = CommonService::_()->isSupperAdmin($op_id);
             if (!$is_supper_admin){
                 if(!array_intersect($exist_role_ids, $scope_role_ids)) {
-                    static::ThrowOn(true,'无权限更改该记录',1);
+                    Helper::ThrowOn(true,'无权限更改该记录',1);
                 }
                 if (array_diff($role_ids, $scope_role_ids)) {
-                    static::ThrowOn(true,'角色超出权限范围',1);
+                    Helper::ThrowOn(true,'角色超出权限范围',1);
                 }
             }
             AdminRoleModel::_()->updateAdminRole($admin_id, $exist_role_ids, $role_ids);
@@ -93,12 +96,12 @@ class AdminBusiness extends BaseBusiness
             return true;
         }
         $ids = (array)$ids;
-        static::ThrowOn(in_array($op_id, $ids),'不能删除自己',1);
+        Helper::ThrowOn(in_array($op_id, $ids),'不能删除自己',1);
         $is_supper_admin = CommonService::_()->isSupperAdmin($op_id);
         if (!$is_supper_admin){
             $scope_role_ids = AdminRoleModel::_()->rolesByAdmin($op_id);
             if (array_diff($ids, $scope_role_ids)) {
-                static::ThrowOn(true,'无数据权限',1);
+                Helper::ThrowOn(true,'无数据权限',1);
             }
         }
         

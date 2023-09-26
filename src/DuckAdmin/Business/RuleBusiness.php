@@ -1,11 +1,14 @@
 <?php
 namespace DuckAdmin\Business;
 
+use DuckAdmin\Business\BaseBusiness;
+use DuckAdmin\Business\BaseBusiness as Helper;
+
 use DuckAdmin\Model\RuleModel;
 use DuckAdmin\Model\RoleModel;
 
 /**
- * 个人资料业务
+ * 菜单相关
  */
 class RuleBusiness extends BaseBusiness 
 {
@@ -192,7 +195,7 @@ class RuleBusiness extends BaseBusiness
         $data['pid'] = empty($data['pid']) ? 0 : $data['pid'];
         $key = $data['key'] ?? '';
         $flag = RuleModel::_()->findByKey($key);
-        static::ThrowOn($flag, "菜单标识 $key 已经存在", 1);
+        Helper::ThrowOn($flag, "菜单标识 $key 已经存在", 1);
         
         RuleModel::_()->addMenu($data['key'],$data);
     }
@@ -201,12 +204,12 @@ class RuleBusiness extends BaseBusiness
         $id = $input['id'];
         $row = RuleModel::_()->findById($id);
         
-        static::ThrowOn(!$row, '记录不存在',2);
+        Helper::ThrowOn(!$row, '记录不存在',2);
         $data = RuleModel::_()->inputFilter($input);
         //[$id, $data] = $this->updateInput($input);
         if (isset($data['pid'])) {
             $data['pid'] = $data['pid'] ?: 0;
-            static::ThrowOn($data['pid'] == $row['id'], '不能将自己设置为上级菜单',2);
+            Helper::ThrowOn($data['pid'] == $row['id'], '不能将自己设置为上级菜单',2);
         }
         if (isset($data['key'])) {
             $data['key'] = str_replace('\\\\', '\\', $data['key']);

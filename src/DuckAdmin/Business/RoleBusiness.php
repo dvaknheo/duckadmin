@@ -1,6 +1,9 @@
 <?php
 namespace DuckAdmin\Business;
 
+use DuckAdmin\Business\BaseBusiness;
+use DuckAdmin\Business\BaseBusiness as Helper;
+
 use DuckAdmin\Model\RuleModel;
 use DuckAdmin\Model\RoleModel;
 use DuckAdmin\Model\AdminRoleModel;
@@ -21,7 +24,7 @@ class RoleBusiness extends BaseBusiness
         if (!$id) {
             $where['id'] = ['in', $role_ids];
         } else{
-            static::ThrowOn(!in_array($id, $role_ids),'无权限',1);
+            Helper::ThrowOn(!in_array($id, $role_ids),'无权限',1);
         }
         [$data,$total]  = RoleModel::_()->doSelect($where, $field, $order,1,$limit);
         $data = CommonService::_()->doFormat($data, $total, $format, $limit);
@@ -32,9 +35,9 @@ class RoleBusiness extends BaseBusiness
     public function insertRole($op_id, $data)
     {
         $pid = $data['pid'] ?? null;
-        static::ThrowOn(!$pid,'请选择父级角色组',1);
+        Helper::ThrowOn(!$pid,'请选择父级角色组',1);
         if (CommonService::_()->noRole($op_id, $pid, true)) {
-            static::ThrowOn(true,'父级角色组超出权限范围',1);
+            Helper::ThrowOn(true,'父级角色组超出权限范围',1);
         }
 
         $this->checkRulesInput($pid, $data['rules'] ?? '');
@@ -52,11 +55,11 @@ class RoleBusiness extends BaseBusiness
         $data = RoleModel::_()->inputFilter($input);
        
         if (CommonService::_()->noRole($op_id, $role_id, true)) {
-            static::ThrowOn(true,'无数据权限',1);
+            Helper::ThrowOn(true,'无数据权限',1);
         }
 
         $role = RoleModel::_()->getById($id);
-        static::ThrowOn(!$role,'数据不存在',1);
+        Helper::ThrowOn(!$role,'数据不存在',1);
         $role_rules = $role['rules'] ? explode(',', $role['rules']):[];
         $is_supper_role = $role['rules'] === '*';
 
@@ -67,10 +70,10 @@ class RoleBusiness extends BaseBusiness
 
         if (key_exists('pid', $data)) {
             $pid = $data['pid'];
-            static::ThrowOn(!$pid,'请选择父级角色组',1);
-            static::ThrowOn($pid == $id,'父级不能是自己',1);
+            Helper::ThrowOn(!$pid,'请选择父级角色组',1);
+            Helper::ThrowOn($pid == $id,'父级不能是自己',1);
             if (CommonService::_()->noRole($op_id, $role_id, true)) {
-                static::ThrowOn(true,'父级超出权限范围',1);
+                Helper::ThrowOn(true,'父级超出权限范围',1);
             }
         } else {
             $pid = $role['pid'];
@@ -101,10 +104,10 @@ class RoleBusiness extends BaseBusiness
     public function deleteRole($op_id, $ids)
     {
         $ids=is_array($ids)?$ids:[$ids];
-        static::ThrowOn(in_array(1, $ids), '无法删除超级管理员角色');
+        Helper::ThrowOn(in_array(1, $ids), '无法删除超级管理员角色');
         
         $flag = CommonService::_()->noRole($op_id,$ids);
-        static::ThrowOn($flag ,'无删除权限',1);
+        Helper::ThrowOn($flag ,'无删除权限',1);
         
         $tree = new Tree(RoleModel::_()->getAll());
         $descendants = $tree->getDescendant($ids);
@@ -121,7 +124,7 @@ class RoleBusiness extends BaseBusiness
             return [];
         }
         $flag = CommonService::_()->noRole($op_id, $role_id, true);
-        static::ThrowOn($flag,'角色组超出权限范围',1);
+        Helper::ThrowOn($flag,'角色组超出权限范围',1);
         
         
         $rule_id_string = RoleModel::_()->getRulesByRoleId($role_id);
@@ -148,14 +151,14 @@ class RoleBusiness extends BaseBusiness
         }
         $rule_ids = explode(',', $rule_ids);
         if (in_array('*', $rule_ids)) {
-            static::ThrowOn(true, '非法数据');
+            Helper::ThrowOn(true, '非法数据');
         }
         $flag = RuleModel::_()->checkRulesExist($rule_ids);
 
-        static::ThrowOn(!$flag, '权限不存在');
+        Helper::ThrowOn(!$flag, '权限不存在');
 
         $rule_id_string = RoleModel::_()->getRulesByRoleId($role_id);
-        static::ThrowOn($rule_id_string === '', '数据超出权限范围');
+        Helper::ThrowOn($rule_id_string === '', '数据超出权限范围');
         
         if ($rule_id_string === '*') {
             return;
@@ -163,7 +166,7 @@ class RoleBusiness extends BaseBusiness
         
         $legal_rule_ids = explode(',', $rule_id_string);
         if (array_diff($rule_ids, $legal_rule_ids)) {
-            static::ThrowOn(true, '数据超出权限范围');
+            Helper::ThrowOn(true, '数据超出权限范围');
         }
     }
 }

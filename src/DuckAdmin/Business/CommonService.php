@@ -1,6 +1,9 @@
 <?php
 namespace DuckAdmin\Business;
 
+use DuckAdmin\Business\BaseBusiness;
+use DuckAdmin\Business\BaseBusiness as Helper;
+
 use DuckAdmin\Model\AdminRoleModel;
 use DuckAdmin\Model\RuleModel;
 use DuckAdmin\Model\RoleModel;
@@ -105,7 +108,7 @@ class CommonService extends BaseBusiness
     }
     public function isSupperAdmin(int $admin_id = 0): bool
     {
-        static::ThrowOn($admin_id==0,'参数错误，请指定管理员');
+        Helper::ThrowOn($admin_id==0,'参数错误，请指定管理员');
         $roles = AdminRoleModel::_()->getRoles($admin_id);
         $rules = RoleModel::_()->getRules($roles);
         return RuleModel::_()->isSuper($rules); 
