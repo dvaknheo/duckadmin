@@ -35,7 +35,7 @@ class MainController extends Base
             Helper::Show([], 'index/install');
             return;
         }
-        $admin = AdminSession::G()->getCurrentAdmin();
+        $admin = AdminAction::G()->getCurrentAdmin();
         if (!$admin) {
             Helper::Show([], 'account/login');
             return;

@@ -6,7 +6,8 @@
 namespace DuckUser\System;
 
 use DuckPhp\DuckPhp;
-use DuckUser\Controller\Session;
+use DuckUser\System\ActionApi;
+use DuckUser\System\Session;
 
 class App extends DuckPhp
 {
@@ -16,12 +17,20 @@ class App extends DuckPhp
         
         'table_prefix' => 'duckuser_',   // 表前缀
         'session_prefix' => '',  // Session 前缀
-        'home_url' => 'Home/index', 
+        
+        'class_session' => Session::class,
+        'class_user' => ActionApi::class,
+        'exception_project' => ProjectException::class,
+        'exception_business' => ProjectException::class,
+        'exception_controller' => ProjectException::class,
+        
+        'home_url' => 'Home/index',
     ];
     public function install($options)
     {
         $this->installWithExtOptions($options);
-        $this->switchDbManager(); // 切换数据库
+        $this->switchDbManager(); // 如果默认没设置数据库切换数据库
+        
     }
     protected function switchDbManager()
     {
@@ -38,9 +47,5 @@ class App extends DuckPhp
         $options['force']=true;// DbManager 只会初始化一次，所以强制初始化。
         
         DbManager::G( )->init($options, static::Root());
-    }
-    protected function onInit()
-    {
-        Session::G()->init($this->options, $this);
     }
 }

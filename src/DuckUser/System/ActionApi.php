@@ -6,21 +6,17 @@
 namespace DuckUser\Api;
 
 use DuckPhp\SingletonEx\SingletonExTrait;
-use DuckUser\Controller\UserBusiness;
 
 class ActionApi
 {
     use SingletonExTrait;
-    public  function getCurrentUser()
+    //
+    public function id()
     {
-        return SessionManager::G()->getCurrentUser();
+        return UserAction::G()->id();
     }
-    public function login($form)
+    public function data()
     {
-        //return 
-    }
-    public function logout()
-    {
-        //
+        return UserAction::G()->data();
     }
 }

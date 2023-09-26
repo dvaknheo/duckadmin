@@ -8,7 +8,6 @@ namespace DuckAdmin\Controller;
 
 use DuckPhp\Helper\ControllerHelperTrait;
 use DuckPhp\SingletonEx\SingletonExTrait;
-use DuckPhp\ThrowOn\ThrowOnableTrait;
 
 use DuckAdmin\Business\AccountBusiness;
 use DuckAdmin\Controller\AdminSession;
@@ -17,7 +16,6 @@ class AdminAction
 {
     use SingletonExTrait;
     use ControllerHelperTrait;
-    use ThrowOnableTrait;
     
 	/**
 	 * 当前管理员
@@ -105,5 +103,18 @@ EOF;
 		Helper::Show('_sys/403');
 		Helper::exit();
 	}
-
+    public function doShowCaptcha()
+    {
+        return CaptchaAction::G()->init([
+            'set_phrase_handler'=>[AdminSession::G(),'setPhrase'],
+            'get_phrase_handler'=>[AdminSession::G(),'getPhrase'],
+        ])->doShowCaptcha();
+    }
+    public function doCheckCaptcha($captcha)
+    {
+        return CaptchaAction::G()->init([
+            'set_phrase_handler'=>[AdminSession::G(),'setPhrase'],
+            'get_phrase_handler'=>[AdminSession::G(),'getPhrase'],
+        ])->doCheckCaptcha($captcha);
+    }
 }

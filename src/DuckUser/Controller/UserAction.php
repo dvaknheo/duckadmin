@@ -20,6 +20,10 @@ class UserAction
         static::ThrowOn(!$user, '请登录');
         return $user['id'];
     }
+    public function data()
+    {
+        return Session::G()->getCurrentUser();
+    }
     public function register()
     {
         $user = UserBusiness::G()->register($post);
@@ -74,7 +78,7 @@ class UserAction
     {
         Session::G()->checkCsrf();
         
-        //异常的处理问题
+        //异常的处理问题，要不，我们成立个异常伪控制器
         Helper::assignExceptionHandler(Session::ExceptionClass(), [$class, 'OnSessionException']);
 
         $csrf_token = Session::G()->csrfToken();

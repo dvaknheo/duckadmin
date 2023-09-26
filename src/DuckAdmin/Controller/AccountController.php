@@ -46,13 +46,8 @@ class AccountController extends Base
         $password = Helper::Post('password', '');
         $captcha = Helper::Post('captcha');
 		
-        //*
-		$flag = CaptchaAction::G()->init([
-            'set_phrase_handler'=>[AdminSession::G(),'setPhrase'],
-            'get_phrase_handler'=>[AdminSession::G(),'getPhrase'],
-        ])->doCheckCaptcha($captcha);
+		$flag = AdminAction::G()->doCheckCaptcha($captcha);
 		Helper::ThrowOn(!$flag, '验证码错误',1);
-        //*/
 		
 		$admin = AccountBusiness::G()->login($username, $password);
 		AdminSession::G()->setCurrentAdmin($admin);
@@ -120,9 +115,6 @@ class AccountController extends Base
      */
     public function captcha()
     {
-		CaptchaAction::G()->init([
-            'set_phrase_handler'=>[AdminSession::G(),'setPhrase'],
-            'get_phrase_handler'=>[AdminSession::G(),'getPhrase'],
-        ])->doShowCaptcha();
+		AdminAction::G()->doShowCaptcha();
     }
 }

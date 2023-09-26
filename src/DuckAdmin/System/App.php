@@ -8,6 +8,7 @@ use DuckPhp\Component\DbManager;
 use DuckPhp\Component\RouteHookResource;
 use DuckPhp\Core\Route;
 use DuckPhp\DuckPhp;
+use DuckAdmin\Controller\AdminSession;
 
 /**
  * 入口类
@@ -23,6 +24,12 @@ class App extends DuckPhp
         'controller_resource_prefix' => 'res/',  // 资源文件前缀
         'ext_options_from_config' => true,
         'ext' =>[RouteHookResource::class => true],
+        
+        'class_session'=> AdminSession::class,
+        'class_admin'=> ActionApi::class,
+        'exception_project'=> ProjectException::class,
+        'exception_business'=> ProjectException::class,
+        'exception_controller'=> ProjectException::class,
     ];
     public function __construct()
     {
@@ -34,30 +41,30 @@ class App extends DuckPhp
         $this->installWithExtOptions($options);
         $this->switchDbManager(); // 切换数据库
         
-        //复制资源文件
+        //复制资源文件 //这段 后面应该内嵌入 RouteHookResource 里
         $flag = preg_match('/^(https?:\/)?\//', $this->options['controller_resource_prefix'] ?? '');
         if($flag){ return; }
-        
         $source = realpath(dirname(__DIR__).'/res/') .'/';
         $path = $this->options['controller_resource_prefix'];
         $path = (substr($path,0,1)==='/')? substr($path,1) : $this->options['controller_url_prefix'].$path;
         FileHelper::G()->copyDir($source,$_SERVER['DOCUMENT_ROOT'], $path,true,$info);
         //__debug_log($info);
     }
+    public function onPrepare()
+    {
+        //Route::G(ProjectRoute::G); 为什么用这个而不用 switchRoute 会发生错误？
+    }
     public function onInit()
     {
-        // 默认的路由没满足我们
+        // 切换路由，这步如果在 onPrepare 中进行，则不需要这么复杂
         $this->switchRoute(ProjectRoute::class);
+        
         //如果根应用没设置数据库，用自己的
         $this->switchDbManager();
-        
-        // 设置 Admin 为  admin 对象 ，让其他应用也能调
-        $this->bumpAdmin(ActionApi::class);
-        //本应用的 Admin 也切换过来
-        static::Admin(ActionApi::G());
     }
     protected function switchDbManager()
     {
+        // 合并回 install 里？
         $options = DbManager::G()->options;
         if (!empty($options['database']) || !empty($options['database_list'])){
             return;
@@ -76,6 +83,8 @@ class App extends DuckPhp
     {
          //为了满足 webman admin 的路由 替换掉默认的路由，这里牺牲了点效率
         $class::G()->init(Route::G()->options, $this);
+        
+        //切换路由之后，路由钩子会重置
         $class::G()->pre_run_hook_list = Route::G()->pre_run_hook_list;
         $class::G()->post_run_hook_list = Route::G()->post_run_hook_list;
         Route::G($class::G());
