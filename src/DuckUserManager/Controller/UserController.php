@@ -6,7 +6,7 @@ use DuckUserManager\Business\UserBusiness;
 /**
  * 管理员列表 
  */
-class UserController extends Base
+class UserController
 {
     /**
      * 不需要鉴权的方法
@@ -21,6 +21,10 @@ class UserController extends Base
     public function index()
     {
         return Helper::Show([],'user/index');
+    }
+    public function __construct()
+    {
+        //
     }
 
     /**

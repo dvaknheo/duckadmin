@@ -6,9 +6,14 @@ namespace DuckUserManager\System;
 
 use DuckPhp\Component\DbManager;
 use DuckPhp\Component\RouteHookResource;
-
 use DuckPhp\Core\Route;
 use DuckPhp\DuckPhp;
+
+use DuckAdmin\System\App as DuckAdmin;
+use DuckAdmin\System\AdminApi;
+use DuckAdmin\System\ProjectException;
+use DuckAdmin\System\ProjectRoute;
+
 
 /**
  * 入口类
@@ -17,16 +22,13 @@ class App extends DuckPhp
 {
     //@override
     public $options = [
-        'is_debug' => true,
         'controller_class_postfix' => 'Controller', // 控制器后缀
         'controller_resource_prefix' => 'res/',  // 资源文件前缀
-        'ext_options_from_config' => true,
         'ext' =>[
-            //RouteHookResource::class => true
+            RouteHookResource::class => true
         ],
         
-        'class_session'=> Session::class,
-        'class_user'=> ActionApi::class,
+        'class_admin'=> AdminApi::class,
         
         'exception_project'=> ProjectException::class,
         'exception_business'=> ProjectException::class,
@@ -39,11 +41,12 @@ class App extends DuckPhp
     }
     public function onInit()
     {
-        // 切换路由
-        $this->switchRoute(ProjectRoute::class);
         
-        //如果根应用没设置数据库，用自己的
-        $this->switchDbManager();
+        // 我们一种模式是作为 route map 过去，这里不用。 切到场景去，然后回来
+        // 不然还要处理  __url ,__res 还是很折腾
+        // 切换路由
+        //DuckAdmin::Service()->switchRoute(ProjectRoute::class);
+        //->switchRoute(ProjectRoute::class);
     }
     protected function switchRoute($class)
     {

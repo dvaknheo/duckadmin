@@ -10,7 +10,7 @@ use DuckPhp\Foundation\SimpleApiTrait;
 /**
  * 这里的集合只是抽调给外部用
  */
-class ActionApi
+class AdminApi
 {
     use SimpleApiTrait;
 	public function id()

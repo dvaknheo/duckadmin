@@ -6,6 +6,7 @@
 namespace DuckAdmin\System;
 
 use DuckPhp\Core\Route;
+use DuckPhp\Core\App;
 
 class ProjectRoute extends Route
 {
@@ -21,5 +22,9 @@ class ProjectRoute extends Route
             },
             $full_class);
         return [$full_class,$method];
-    }    
+    }
+    public function urlFromObject($class, $method,...$args)
+    {
+        //我们要完成这个逆函数,并放到 Core/Route 里
+    }
 }

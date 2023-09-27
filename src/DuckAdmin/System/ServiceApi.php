@@ -6,7 +6,7 @@
 
 namespace DuckAdmin\System;
 
-use DuckPhp\Foundation\SimpleActionTrait;
+use DuckPhp\Foundation\SimpleApiTrait;
 /**
  * 这里是给外部调用的 服务类，一般是用于
  * 这里调用各种业务服务，你的 Business 业务层调用这里的静态方法
@@ -14,7 +14,7 @@ use DuckPhp\Foundation\SimpleActionTrait;
  */
 class ServiceApi
 {
-    use SimpleActionTrait;
+    use SimpleApiTrait;
     /**
      * 管理员登录
      */
