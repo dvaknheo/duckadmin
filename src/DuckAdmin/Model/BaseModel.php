@@ -6,13 +6,11 @@
 
 namespace DuckAdmin\Model;
 
-use DuckPhp\SingletonEx\SingletonExTrait;
-use DuckPhp\Component\SimpleModelTrait;
+use DuckPhp\Foundation\SimpleModelTrait;
 use DuckPhp\Helper\ModelHelperTrait;
 
 class BaseModel
 {
-    use SingletonExTrait;
     use SimpleModelTrait;
     use ModelHelperTrait;
     

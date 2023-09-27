@@ -6,15 +6,15 @@
 
 namespace DuckAdmin\Controller;
 
+use DuckPhp\Foundation\SimpleActionTrait;
 use DuckPhp\Helper\ControllerHelperTrait;
-use DuckPhp\SingletonEx\SingletonExTrait;
 
 use DuckAdmin\Business\AccountBusiness;
 use DuckAdmin\Controller\AdminSession;
 
 class AdminAction
 {
-    use SingletonExTrait;
+    use SimpleActionTrait;
     use ControllerHelperTrait;
     public static function _($object = null)
     {

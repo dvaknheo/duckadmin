@@ -5,14 +5,14 @@
  */
 
 namespace DuckAdmin\System;
-use DuckPhp\SingletonEx\SingletonExTrait;
+use DuckPhp\Foundation\SimpleActionTrait;
 
 /**
  * 这里的集合只是抽调给外部用
  */
 class ActionApi
 {
-    use SingletonExTrait;
+    use SimpleActionTrait;
 	public function id()
 	{
 		//

@@ -8,8 +8,6 @@ namespace DuckAdmin\Controller;
 
 use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
-use DuckPhp\SingletonEx\SingletonExTrait;
-
 
 use Gregwar\Captcha\CaptchaBuilder;
 use Gregwar\Captcha\PhraseBuilder;

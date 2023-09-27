@@ -19,7 +19,7 @@ class AdminBusiness extends BaseBusiness
         [$items,$total] = AdminModel::_()->doSelect($where, $field, $order);
         
         if ('select' ===  ($input['format']??null)) {
-            return $this->formatSelect($items,$format,$limit);
+            return CommonService::_()->formatSelect($items,$format,$limit);
         }
         
         // 后处理

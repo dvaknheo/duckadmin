@@ -7,14 +7,14 @@
 namespace DuckAdmin\Controller;
 
 use DuckPhp\Helper\ControllerHelperTrait;
-use DuckPhp\SingletonEx\SingletonExTrait;
+use DuckPhp\Foundation\SimpleHelperTrait;
 
 use DuckAdmin\Business\AccountBusiness;
 use DuckAdmin\Controller\AdminSession;
 
 class Helper
 {
-    use SingletonExTrait;
+    use SimpleHelperTrait;
     use ControllerHelperTrait;
     
     public static function AdminId()
