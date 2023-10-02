@@ -15,21 +15,18 @@ use DuckAdmin\Controller\AdminSession;
  */
 class App extends DuckPhp
 {
-    public static function _($object = null)
-    {
-        return static::G($object);
-    }
+
     //@override
     public $options = [
-        //'is_debug' =>true, //TODO 这里不继承根应用的，还得调试
+        'is_debug' =>true, //TODO 这里不继承根应用的，还得调试
         'controller_class_postfix' => 'Controller', // 控制器后缀
         'controller_resource_prefix' => 'res/',  // 资源文件前缀
         
-        'ext_options_from_config' => true,
-        'ext' =>[RouteHookResource::class => true],
+        'ext_options_from_config' => true,  //使用额外的选项
+        'ext' =>[RouteHookResource::class => true], //  资源配置
         
         
-        'class_admin'=> ActionApi::class,
+        'class_admin'=> AdminApi::class,
         
         'exception_project'=> ProjectException::class,
         'exception_business'=> ProjectException::class,
@@ -37,13 +34,11 @@ class App extends DuckPhp
     ];
     public function Action()
     {
-        ActionApi::$AppClass = static::class;
-        return ActionApi::G();
+        return ActionApi::InstanceInPhase(static::class);
     }
     public function Service()
     {
-        ServiceApi::$AppClass = static::class;
-        return ServiceApi::G();
+        return ServiceApi::InstanceInPhase(static::class);
     }
     public function __construct()
     {
@@ -53,16 +48,19 @@ class App extends DuckPhp
     
     public function install($options)
     {
+        //安装
         $this->installWithExtOptions($options);
-        $this->switchDbManager(); // 切换数据库
+        
+        //切换数据库配置
+        $this->switchDbManager();
         
         // 资源文件修正
         RouteHookResource::G()->init($this->options, $this)->replaceResource();
     }
     public function onPrepare()
     {
-        //TODO 这里出错会变空白，没进入错误处理程序
-        Route::G(ProjectRoute::G());
+        //默认的路由不符合我们这次的路由，还过
+        Route::_(ProjectRoute::_());
     }
     public function onInit()
     {
@@ -71,7 +69,7 @@ class App extends DuckPhp
     }
     protected function switchDbManager()
     {
-        $options = DbManager::G()->options;
+        $options = DbManager::_()->options;
         if (!empty($options['database']) || !empty($options['database_list'])){
             return;
         }
@@ -80,9 +78,11 @@ class App extends DuckPhp
         if (empty($data)) {
             return;
         }
-        $options['database'] = $data;
-        $options['force'] = true; // DbManager 只会初始化一次，所以强制初始化。
         
-        DbManager::G( )->init($options, static::Root());
+        // DbManager 只会初始化一次，所以强制初始化。
+        $options['force'] = true; 
+        $options['database'] = $data;
+        
+        DbManager::_()->init($options, static::Root());
     }
 }

@@ -33,6 +33,8 @@ class App extends DuckPhp
         'exception_project'=> ProjectException::class,
         'exception_business'=> ProjectException::class,
         'exception_controller'=> ProjectException::class,
+        
+        'mode' = 'route'
     ];
     public function __construct()
     {
@@ -41,21 +43,24 @@ class App extends DuckPhp
     }
     public function onInit()
     {
+        // 两种模式 1 自己的相位空间里全干
+        // 2 作为 在 duckadmin 路由插件的相位搞
+        if($this->options['mode']==='route'){
+            // 我们要切换到旧空间，外挂
+            //App::Phase(App
+            //userXX::G()
+            //'user/*'=> UserController
+        }else{
+        }
         
-        // 我们一种模式是作为 route map 过去，这里不用。 切到场景去，然后回来
-        // 不然还要处理  __url ,__res 还是很折腾
-        // 切换路由
-        //DuckAdmin::Service()->switchRoute(ProjectRoute::class);
-        //->switchRoute(ProjectRoute::class);
     }
-    protected function switchRoute($class)
+    public function run()
     {
-         //为了满足 webman admin 的路由 替换掉默认的路由，这里牺牲了点效率
-        $class::G()->init(Route::G()->options, $this);
+        if($this->options['mode']==='route'){
+            return false;
         
-        //切换路由之后，路由钩子会重置
-        $class::G()->pre_run_hook_list = Route::G()->pre_run_hook_list;
-        $class::G()->post_run_hook_list = Route::G()->post_run_hook_list;
-        Route::G($class::G());
+        }
+        return parent::run();
     }
+
 }

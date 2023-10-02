@@ -7,7 +7,7 @@
 namespace DuckAdmin\Controller;
 
 use DuckPhp\Helper\ControllerHelperTrait;
-use DuckPhp\Foundation\SimpleHelperTrait;
+use DuckPhp\Foundation\SimpleActionTrait;
 
 use DuckAdmin\Business\AccountBusiness;
 use DuckAdmin\Controller\AdminSession;
