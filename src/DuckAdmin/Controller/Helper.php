@@ -6,15 +6,15 @@
 
 namespace DuckAdmin\Controller;
 
-use DuckPhp\Helper\ControllerHelperTrait;
 use DuckPhp\Foundation\SimpleActionTrait;
+use DuckPhp\Helper\ControllerHelperTrait;
 
 use DuckAdmin\Business\AccountBusiness;
 use DuckAdmin\Controller\AdminSession;
 
 class Helper
 {
-    use SimpleHelperTrait;
+    use SimpleActionTrait;
     use ControllerHelperTrait;
     
     public static function AdminId()

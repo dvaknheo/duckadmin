@@ -18,9 +18,10 @@ class ProjectRoute extends Route
         // 因为 webman-admin 的控制器命名方式和我们的有所不同 :(
         //DuckAdmin\Controller\aa-bbController => DuckAdmin\Controller\AaBbController
         $prefix = "DuckAdmin\\Controller\\";
-        if(substr($full_class,strlen($prefix))===$prefix){
+        if(substr($full_class,0,strlen($prefix))===$prefix){
             $class = substr($full_class,strlen($prefix));
-            $class = ucfirst(preg_replace_callback('/-([a-z])/',function($m){return ucfirst($m[1]);},$m[1]));
+            $class = ucfirst(preg_replace_callback('/-([a-z])/',function($m){return ucfirst($m[1]);},$class));
+            
             $full_class = $prefix.$class;
         }
         return [$full_class,$method];

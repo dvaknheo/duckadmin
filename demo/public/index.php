@@ -25,18 +25,21 @@ $options = [
     'controller_class_postfix' => 'Controller',
     'ext' => [
         // 后台管理系统
-        \DuckAdmin\System\DuckPhp::class => [
+        \DuckAdmin\System\DuckAdmin::class => [
             'controller_url_prefix' => 'app/admin/', // 访问路径
             'controller_resource_prefix' => 'res/',  // 资源文件前缀
         ],
+//*/
         \DuckUser\System\DuckUser::class => [
             'controller_url_prefix' => 'user/', // 访问路径
             'controller_resource_prefix' => 'res/',  // 资源文件前缀
         ],
+//*/
         \DuckUserManager\System\DuckUserManager::class => [
             'controller_url_prefix' => 'app/admin/', // 访问路径
             'controller_resource_prefix' => 'res/',  // 资源文件前缀
         ],
+//*/
     ]
 ];
 $options['path'] = dirname(__DIR__).'/';
