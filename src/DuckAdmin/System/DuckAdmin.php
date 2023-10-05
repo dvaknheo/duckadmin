@@ -13,7 +13,7 @@ use DuckAdmin\Controller\AdminSession;
 /**
  * 入口类
  */
-class App extends DuckPhp
+class DuckAdmin extends DuckPhp
 {
 
     //@override

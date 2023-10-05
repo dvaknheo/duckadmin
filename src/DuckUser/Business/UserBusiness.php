@@ -5,7 +5,7 @@
  */
 namespace DuckUser\Business;
 
-use DuckPhp\Component\SimpleBusinessTrait;
+use DuckPhp\Foundation\SimpleBusinessTrait;
 use DuckPhp\Helper\BusinessHelperTrait;
 
 use DuckUser\Business\UserBusiness as Helper;

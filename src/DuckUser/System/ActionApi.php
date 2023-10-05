@@ -3,13 +3,14 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace DuckUser\Api;
+namespace DuckUser\System;
 
-use DuckPhp\SingletonEx\SingletonExTrait;
+use DuckPhp\Foundation\SimpleApiTrait;
+use DuckPhp\Controller\UserAction;
 
 class ActionApi
 {
-    use SingletonExTrait;
+    use SimpleApiTrait;
     //
     public function id()
     {

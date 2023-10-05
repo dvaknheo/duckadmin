@@ -6,16 +6,20 @@
 namespace DuckUser\System;
 
 use DuckPhp\DuckPhp;
+use DuckPhp\Component\DbManager;
 use DuckUser\System\ActionApi;
 use DuckUser\System\Session;
 
-class App extends DuckPhp
+class DuckUser extends DuckPhp
 {
     //@override
     public $options = [
-		'controller_class_postfix' => 'Controller',
+        'is_debug'=>true,
         
-        'table_prefix' => 'duckuser_',   // 表前缀
+        'ext_options_from_config' => true,  //使用额外的选项
+        'controller_class_postfix' => 'Controller', // 控制器后缀
+        
+        'table_prefix' => '',   // 表前缀
         'session_prefix' => '',  // Session 前缀
         
         'class_session' => Session::class,
@@ -33,9 +37,14 @@ class App extends DuckPhp
         $this->installWithExtOptions($options);
         $this->switchDbManager(); 
     }
+    protected function onInit()
+    {
+        $this->switchDbManager(); 
+    }
     protected function switchDbManager()
     {
         $options = DbManager::G()->options;
+        
         if (!empty($options['database']) || !empty($options['database_list'])){
             return;
         }

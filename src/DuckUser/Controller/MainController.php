@@ -5,7 +5,7 @@
  */
 namespace DuckUser\Controller;
 
-use DuckPhp\Component\SimpleControllerTrait;
+use DuckPhp\Foundation\SimpleControllerTrait;
 
 use DuckUser\Business\UserBusiness;
 use DuckUser\Controller\UserAction;
@@ -25,14 +25,14 @@ class MainController
     }
     public function register()
     {
-        $csrf_field = Session::G()->csrfField();
+        $csrf_field = Helper::_()->csrfField();
         $url_register = __url('register');
         
         Helper::Show(get_defined_vars(), 'register');
     }
     public function login()
     {
-        $csrf_field = Session::G()->csrfField();
+        $csrf_field = Helper::_()->csrfField();
         $url_login = __url('login');
         
         Helper::Show(get_defined_vars(),'login');
@@ -48,7 +48,7 @@ class MainController
     {
         $post = Helper::POST();
         try {
-            $user = UserAction::G()->register($user);
+            $user = UserAction::G()->register($post);
             Helper::GoHome();
         } catch (\Exception $ex) {
             $error = $ex->getMessage();

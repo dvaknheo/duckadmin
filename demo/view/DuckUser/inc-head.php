@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <title>前台系统</title>
-        <link href="<?=\DuckAdmin\__res("layui/css/layui.css")?>" rel="stylesheet" />
+        <link href="<?=__res("layui/css/layui.css")?>" rel="stylesheet" />
     </head>
     <body>
     

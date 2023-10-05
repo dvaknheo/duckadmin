@@ -9,7 +9,7 @@ use DuckAdmin\Business\BaseBusiness as Helper;
 use DuckAdmin\Model\RuleModel;
 use DuckAdmin\Model\AdminModel;
 use DuckAdmin\Model\AdminRoleModel;
-use DuckAdmin\System\App as DuckAdmin;
+use DuckAdmin\System\DuckAdmin;
 
 
 /**

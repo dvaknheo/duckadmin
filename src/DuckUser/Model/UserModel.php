@@ -5,7 +5,7 @@
  */
 namespace DuckUser\Model;
 
-use DuckPhp\Component\SimpleModelTrait;
+use DuckPhp\Foundation\SimpleModelTrait;
 use DuckPhp\Helper\ModelHelperTrait;
 
 class UserModel
@@ -13,7 +13,25 @@ class UserModel
     use SimpleModelTrait;
     use ModelHelperTrait;
     
-    protected $table_name = 'users';
+    
+    public function __construct()
+    {
+        $this->table_name = 'users';
+    }
+    public function install()
+    {
+        $sql = "CREATE TABLE `'TABLE'` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(32) COLLATE utf8_bin NOT NULL,
+  `password` varchar(64) COLLATE utf8_bin NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `username` (`username`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT=\'用户表\'";
+        $ret = $this->execute($sql, $password, $uid);
+    }
     public function exsits($name)
     {
         $sql = "select count(*) as c from 'TABLE' where username=?";

@@ -9,7 +9,7 @@ use DuckPhp\Foundation\SimpleActionTrait;
 use DuckPhp\Helper\ControllerHelperTrait;
 
 use DuckUser\Business\UserBusiness;
-use DuckUser\System\App;
+use DuckUser\System\DuckUser;
 use DuckUser\System\Session;
 use DuckUser\System\ProjectException;
 //use DuckUser\System\BusinessException;
@@ -30,7 +30,7 @@ class UserAction
     {
         return Session::G()->getCurrentUser();
     }
-    public function register()
+    public function register($post)
     {
         $user = UserBusiness::G()->register($post);
         Session::G()->setCurrentUser($user);
@@ -51,12 +51,16 @@ class UserAction
     }
     protected function _GoHome()
     {
-        static::ExitRouteTo(App::G()->options['home_url']);
+        static::ExitRouteTo(DuckUser::G()->options['home_url']);
     }
     ////////////
+    public static function UserId()
+    {
+        return static::_()->id();
+    }
     public function csrfToken()
     {
-        return Session::G()->csrToken();
+        return Session::G()->csrfToken();
     }
     
     public function checkCsrf()
@@ -69,7 +73,7 @@ class UserAction
         static::ThrowOn((substr($referer, 0, strlen($domain)) !== $domain), "CRSF", 419);
         
         $session_token =  Session::G()->getToken();
-        static::ThrowOn($token !== $session_token, "csrf_token 失败[$token !== $session_token]", 419);
+        //static::ThrowOn($token !== $session_token, "csrf_token 失败[$token !== $session_token]", 419);
     }
     public function isCsrfException($ex)
     {
@@ -82,16 +86,16 @@ class UserAction
     /////////////
     public function initController($class)
     {
-        Helper::assignExceptionHandler(ProjectException::class, [ExceptionReporter::class, 'OnException']);
+        static::assignExceptionHandler(ProjectException::class, [ExceptionReporter::class, 'OnException']);
         //Helper::assignExceptionHandler(BusinessException::class, [ExceptionReporter::class, 'OnException']);
         //Helper::assignExceptionHandler(CotrollerException::class, [ExceptionReporter::class, 'OnException']);
         
-        Session::G()->checkCsrf();
+        $this->checkCsrf();
         
-        $csrf_token = Session::G()->csrfToken();
-        $csrf_field = Session::G()->csrfField();
+        $csrf_token = $this->csrfToken();
+        $csrf_field = $this->csrfField();
          
-        $user = static::User();
+        $user = $this->data();
         $user_name = $user['username'] ?? '';
         static::setViewHeadFoot('home/inc-head','home/inc-foot');
         static::assignViewData(get_defined_vars());

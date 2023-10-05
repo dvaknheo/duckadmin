@@ -5,12 +5,12 @@
  */
 namespace DuckUser\Controller;
 
-use DuckPhp\Component\SimpleControllerTrait;
+use DuckPhp\Foundation\SimpleControllerTrait;
 
 use DuckUser\Business\UserBusiness;
 use DuckUser\Controller\UserAction as Helper;
 
-class Home
+class HomeController
 {
     use SimpleControllerTrait;
     
@@ -18,20 +18,6 @@ class Home
     {        
         Helper::G()->initController(static::class);
     }
-    public static function OnSessionException($ex = null)
-    {
-        if(!isset($ex)){
-            Helper::Exit404();
-            return;
-        }
-        $code = $ex->getCode();
-        __logger()->warning(''.(get_class($ex)).'('.$ex->getCode().'): '.$ex->getMessage());
-        if (Session::G()->isCsrfException($ex) && __is_debug()) {
-            Helper::exit(0);
-        }
-        Helper::ExitRouteTo('login');
-    }
-
     public function index()
     {
         $url_logout = __url('logout');
