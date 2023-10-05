@@ -103,11 +103,11 @@
 
             // 相关常量
             const PRIMARY_KEY = "id";
-            const SELECT_API = "<?=__url('admin/select')?>";
-            const UPDATE_API = "<?=__url('admin/update')?>";
-            const DELETE_API = "<?=__url('admin/delete')?>";
-            const INSERT_URL = "<?=__url('admin/insert')?>";
-            const UPDATE_URL = "<?=__url('admin/update')?>";
+            const SELECT_API = "<?=__url('user/select')?>";
+            const UPDATE_API = "<?=__url('user/update')?>";
+            const DELETE_API = "<?=__url('user/delete')?>";
+            const INSERT_URL = "<?=__url('user/insert')?>";
+            const UPDATE_URL = "<?=__url('user/update')?>";
             
             // 字段 创建时间 created_at
             layui.use(["laydate"], function() {

@@ -18,7 +18,7 @@
         "psr-4": {
             "DuckAdminDemo\\": "demo/",
             "DuckAdmin\\": "src/DuckAdmin",
-            "DuckMerchant\\": "src/DuckMerchant",
+            "DuckUserManager\\": "src/DuckUserManager",
             "DuckUser\\": "src/DuckUser"
         }
     },

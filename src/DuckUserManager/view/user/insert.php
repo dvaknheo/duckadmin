@@ -92,7 +92,7 @@
         <script>
 
             // 相关接口
-            const INSERT_API = "<?=__url('admin/insert')?>";
+            const INSERT_API = "<?=__url('user/insert')?>";
             
             // 字段 头像 avatar
             layui.use(["upload", "layer"], function() {

@@ -68,7 +68,7 @@ class RuleController extends Base
     public function permission()
     {
 		$admin = AdminAction::_()->getCurrentAdmin();
-        $permissions = RuleBusiness::_()->permission($admin['roles']);
+        $permissions = RuleBusiness::_()->permission($admin['roles']??[]);
         return Helper::Success($permissions);
 	}
     /**

@@ -2,6 +2,7 @@
 namespace DuckUserManager\Controller;
 
 use DuckUserManager\Business\UserBusiness;
+use DuckAdmin\Controller\Helper;
 
 /**
  * 管理员列表 
