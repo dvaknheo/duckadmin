@@ -17,14 +17,20 @@ class ProjectRoute extends Route
         
         // 因为 webman-admin 的控制器命名方式和我们的有所不同 :(
         //DuckAdmin\Controller\aa-bbController => DuckAdmin\Controller\AaBbController
-        $full_class = preg_replace_callback("/\\\\([^\\\\]+)$/", function($m){
-            return '\\'.ucfirst(preg_replace_callback('/-([a-z])/',function($m){return ucfirst($m[1]);},$m[1]));
-            },
-            $full_class);
+        $prefix = "DuckAdmin\\Controller\\";
+        if(substr($full_class,strlen($prefix))===$prefix){
+            $class = substr($full_class,strlen($prefix));
+            $class = ucfirst(preg_replace_callback('/-([a-z])/',function($m){return ucfirst($m[1]);},$m[1]));
+            $full_class = $prefix.$class;
+        }
         return [$full_class,$method];
     }
-    public function urlFromObject($class, $method,...$args)
+    public function pathFromClassAndMethod($full_class, $method,...$args)
     {
         //我们要完成这个逆函数,并放到 Core/Route 里
+        $prefix = $this->getControllerNamespacePrefix();
+        $class = substr($full_class,$prefix);
+        $path = $class .'/'. $method;
+        return $path;
     }
 }

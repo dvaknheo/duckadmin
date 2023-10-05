@@ -35,6 +35,7 @@
         "phpunit/php-code-coverage": "8.0.2",
         "phpunit/phpunit": "^9.2",
         "dvaknheo/libcoverage": "^1.0",
-        "friendsofphp/php-cs-fixer": "^2.18"
+        "friendsofphp/php-cs-fixer": "^2.18",
+        "codeception/codeception": "^4.2"
     }
 }

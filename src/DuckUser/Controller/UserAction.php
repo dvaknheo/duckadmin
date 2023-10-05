@@ -5,13 +5,19 @@
  */
 namespace DuckUser\Controller;
 
+use DuckPhp\Foundation\SimpleActionTrait;
+use DuckPhp\Helper\ControllerHelperTrait;
+
 use DuckUser\Business\UserBusiness;
 use DuckUser\System\App;
 use DuckUser\System\Session;
+use DuckUser\System\ProjectException;
+//use DuckUser\System\BusinessException;
+//use DuckUser\System\ControllerException;
 
 class UserAction
 {
-    use SingletonExTrait;
+    use SimpleActionTrait;
     use ControllerHelperTrait;
     
     public function id()
@@ -76,11 +82,12 @@ class UserAction
     /////////////
     public function initController($class)
     {
+        Helper::assignExceptionHandler(ProjectException::class, [ExceptionReporter::class, 'OnException']);
+        //Helper::assignExceptionHandler(BusinessException::class, [ExceptionReporter::class, 'OnException']);
+        //Helper::assignExceptionHandler(CotrollerException::class, [ExceptionReporter::class, 'OnException']);
+        
         Session::G()->checkCsrf();
         
-        //异常的处理问题，要不，我们成立个异常伪控制器
-        Helper::assignExceptionHandler(Session::ExceptionClass(), [$class, 'OnSessionException']);
-
         $csrf_token = Session::G()->csrfToken();
         $csrf_field = Session::G()->csrfField();
          

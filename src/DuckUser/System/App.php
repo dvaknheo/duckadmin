@@ -28,9 +28,10 @@ class App extends DuckPhp
     ];
     public function install($options)
     {
-        $this->installWithExtOptions($options);
-        $this->switchDbManager(); // 如果默认没设置数据库切换数据库
+        // 如果默认没设置数据库切换数据库
         
+        $this->installWithExtOptions($options);
+        $this->switchDbManager(); 
     }
     protected function switchDbManager()
     {
@@ -44,7 +45,7 @@ class App extends DuckPhp
             return;
         }
         $options['database']=$post;
-        $options['force']=true;// DbManager 只会初始化一次，所以强制初始化。
+        $options['force'] = true; // DbManager 只会初始化一次，所以强制初始化。
         
         DbManager::G( )->init($options, static::Root());
     }
