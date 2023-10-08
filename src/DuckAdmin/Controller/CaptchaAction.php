@@ -18,10 +18,6 @@ use Gregwar\Captcha\PhraseBuilder;
  */
 class CaptchaAction extends ComponentBase
 {
-    public static function _($object = null)
-    {
-        return static::G($object);
-    }
 	public $options = [
         'set_phrase_handler' => null,
         'get_phrase_handler' => null,

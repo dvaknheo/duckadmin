@@ -15,11 +15,6 @@ class BaseBusiness
     use SimpleBusinessTrait; // 单例
     use BusinessHelperTrait; //使用助手函数
     
-    public static function _($object = null)
-    {
-        return static::G($object);
-    }
-    
     public function __construct()
     {
     }

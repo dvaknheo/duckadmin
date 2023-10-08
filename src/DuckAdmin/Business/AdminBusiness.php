@@ -34,7 +34,6 @@ class AdminBusiness extends BaseBusiness
     public function addAdmin($op_id, $input)
     {
         $role_ids=$input['roles'];
-        // 这里要区分操作的 admin_id和得到的 admin_id;
         $role_ids = $role_ids ? explode(',', $role_ids) : [];
         Helper::ThrowOn(!$role_ids,'至少选择一个角色组',1);
         
@@ -43,6 +42,7 @@ class AdminBusiness extends BaseBusiness
         Helper::ThrowOn($flag,'角色超出权限范围',1);
         
         //$is_supper_admin = $this->isSupperAdmin($op_id);
+        // 这里要调整权限
         if (false &&!Auth::isSupperAdmin() && $this->dataLimit) {
             if (!empty($data[$this->dataLimitField])) {
                 $admin_id = $data[$this->dataLimitField];

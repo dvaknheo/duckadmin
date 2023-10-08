@@ -16,10 +16,7 @@ class AdminAction
 {
     use SimpleActionTrait;
     use ControllerHelperTrait;
-    public static function _($object = null)
-    {
-        return static::G($object);
-    }    
+    
 	/**
 	 * 当前管理员
 	 * @param null|array|string $fields

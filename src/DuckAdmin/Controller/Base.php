@@ -8,10 +8,6 @@ namespace DuckAdmin\Controller;
 
 class Base
 {
-    public static function _($object = null)
-    {
-        return static::G($object);
-    }
     /**
      * 无需登录及鉴权的方法
      * @var array

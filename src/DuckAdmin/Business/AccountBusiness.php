@@ -34,7 +34,7 @@ class AccountBusiness extends BaseBusiness
             'avatar' => $admin['avatar'],
             'email' => $admin['email'],
             'mobile' => $admin['mobile'],
-            'isSupperAdmin' =>CommonService::_()->isSupperAdmin($admin['id']),
+            'isSupperAdmin' =>CommonService::_()->isSupperAdmin($admin['id']), //TODO
         ];
         
         return $info;
@@ -67,6 +67,7 @@ class AccountBusiness extends BaseBusiness
      */
     protected function checkLoginLimit($username)
     {
+        //TODO
         $limit_log_path = runtime_path() . '/login';
         if (!is_dir($limit_log_path)) {
             mkdir($limit_log_path, 0777, true);

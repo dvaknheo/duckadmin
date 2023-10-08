@@ -14,10 +14,6 @@ class BaseModel
     use SimpleModelTrait;
     use ModelHelperTrait;
     
-    public static function _($object = null)
-    {
-        return static::G($object);
-    }
     public function table()
     {
         return $this->table_name;
