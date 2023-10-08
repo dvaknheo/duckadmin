@@ -8,7 +8,7 @@ namespace DuckAdmin\Model;
 /**
  * 菜单模型
  */
-class OptionModel extends BaseModel
+class OptionModel extends Base
 {
     public function getSystemConfig()
     {

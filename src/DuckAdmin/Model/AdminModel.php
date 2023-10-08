@@ -8,7 +8,7 @@ namespace DuckAdmin\Model;
 /**
  * 菜单模型
  */
-class AdminModel extends BaseModel
+class AdminModel extends Base
 {
     public $table_name = 'wa_admins';
     

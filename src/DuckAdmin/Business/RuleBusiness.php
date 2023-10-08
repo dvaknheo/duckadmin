@@ -10,7 +10,7 @@ use DuckAdmin\Model\RoleModel;
 /**
  * 菜单相关
  */
-class RuleBusiness extends BaseBusiness 
+class RuleBusiness extends Base
 {
     
     public function get($roles,$types)

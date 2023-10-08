@@ -8,7 +8,7 @@ namespace DuckAdmin\Model;
 /**
  * 菜单模型
  */
-class RoleModel extends BaseModel
+class RoleModel extends Base
 {
 	public $table_name = 'wa_roles';
     public function selectInput($data): array

@@ -10,7 +10,7 @@ use DuckAdmin\Model\AdminRoleModel;
 /**
  * 管理员业务
  */
-class AdminBusiness extends BaseBusiness
+class AdminBusiness extends Base
 {
     public function showAdmins($op_id,$input)
     {

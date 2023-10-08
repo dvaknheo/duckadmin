@@ -5,7 +5,7 @@ use DuckAdmin\Model\OptionModel;
 /**
  * 个人资料业务
  */
-class ConfigBusiness extends BaseBusiness 
+class ConfigBusiness extends Base
 {
     public function getDefaultConfig()
     {

@@ -11,7 +11,7 @@ use DuckAdmin\Model\RoleModel;
 /**
  * 给各业务做的一些服务
  */
-class CommonService extends BaseBusiness 
+class CommonService extends Base
 {
     //////////////////////
     /**

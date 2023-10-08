@@ -11,7 +11,7 @@ use DuckAdmin\Model\AdminRoleModel;
 /**
  * 个人资料业务
  */
-class RoleBusiness extends BaseBusiness 
+class RoleBusiness extends Base
 {
     public function selectRoles($op_id,$id,$input)
     {

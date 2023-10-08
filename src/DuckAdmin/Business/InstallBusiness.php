@@ -15,7 +15,7 @@ use DuckAdmin\System\DuckAdmin;
 /**
  * 个人资料业务
  */
-class InstallBusiness extends BaseBusiness 
+class InstallBusiness extends Base
 {
     public function isInstalled()
     {

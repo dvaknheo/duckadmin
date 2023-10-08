@@ -12,7 +12,7 @@ use DuckAdmin\Model\RuleModel;
 /**
  * 个人资料业务
  */
-class AccountBusiness extends BaseBusiness 
+class AccountBusiness extends Base
 {
     public function getAdmin($admin_id)
     {
