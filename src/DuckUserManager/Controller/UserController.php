@@ -37,7 +37,7 @@ class UserController
     public function select()
     {
 		$input = Helper::GET();
-		[$data, $count] = UserBusiness::_()->showUsers(Helper::UserId(),$input);
+		[$data, $count] = UserBusiness::_()->showUsers($input);
         return Helper::Success($data,$count);
     }
 

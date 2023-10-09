@@ -16,19 +16,19 @@ class HomeController
     
     public function __construct()
     {        
-        Helper::G()->initController(static::class);
+        Helper::_()->initController(static::class);
     }
-    public function index()
+    public function action_index()
     {
         $url_logout = __url('logout');
         Helper::Show(get_defined_vars());
     }
-    public function password()
+    public function action_password()
     {
         Helper::Show(get_defined_vars());
     }
     //////////////////////////
-    public function do_password()
+    public function action_do_password()
     {
         $error = '';
         try {

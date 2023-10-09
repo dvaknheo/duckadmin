@@ -16,39 +16,25 @@ class MainController
 {
     use SimpleControllerTrait;
     
-    public function index()
+    public function action_index()
     {
         $url_reg = __url('register');
         $url_login = __url('login');
         
         Helper::Show(get_defined_vars(), 'main');
     }
-    public function register()
-    {
-        $csrf_field = Helper::_()->csrfField();
-        $url_register = __url('register');
-        
-        Helper::Show(get_defined_vars(), 'register');
-    }
-    public function login()
-    {
-        $csrf_field = Helper::_()->csrfField();
-        $url_login = __url('login');
-        
-        Helper::Show(get_defined_vars(),'login');
-    }
-    public function logout()
-    {
-        UserAction::G()->logout();
-        
-        Helper::ExitRouteTo('index');
-    }
-    ////////////////////////////////////////////
-    public function do_register()
+    public function action_register()
     {
         $post = Helper::POST();
+        if (!$post) {
+            $csrf_field = Helper::_()->csrfField();
+            $url_register = __url('register');
+            
+            Helper::Show(get_defined_vars(), 'register');
+            return;
+        }
         try {
-            $user = UserAction::G()->register($post);
+            $user = UserAction::_()->register($post);
             Helper::GoHome();
         } catch (\Exception $ex) {
             $error = $ex->getMessage();
@@ -56,12 +42,20 @@ class MainController
             Helper::Show(get_defined_vars(), 'register');
             return;
         }
+
     }
-    public function do_login()
+    public function action_login()
     {
         $post = Helper::POST();
+        if (!$post) {
+            $csrf_field = UserAction::_()->csrfField();
+            $url_login = __url('login');
+            
+            Helper::Show(get_defined_vars(),'login');
+            return;
+        }
         try {
-            UserAction::G()->login($post);
+            UserAction::_()->login($post);
             Helper::GoHome();
         } catch (\Exception $ex) {
             $error = $ex->getMessage();
@@ -70,4 +64,11 @@ class MainController
             return;
         }
     }
+    public function action_logout()
+    {
+        UserAction::_()->logout();
+        
+        Helper::ExitRouteTo('index');
+    }
+    ////////////////////////////////////////////
 }
