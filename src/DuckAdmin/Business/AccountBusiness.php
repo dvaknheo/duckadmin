@@ -1,8 +1,8 @@
 <?php
 namespace DuckAdmin\Business;
 
-use DuckAdmin\Business\BaseBusiness;
-use DuckAdmin\Business\BaseBusiness as Helper;
+use DuckAdmin\Business\Base;
+use DuckAdmin\Business\Base as Helper;
 
 use DuckAdmin\Model\AdminModel;
 use DuckAdmin\Model\AdminRoleModel;

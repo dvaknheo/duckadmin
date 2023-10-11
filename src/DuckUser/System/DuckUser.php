@@ -58,4 +58,12 @@ class DuckUser extends DuckPhp
         
         DbManager::G( )->init($options, static::Root());
     }
+    public static function DefaultService()
+    {
+        return ServiceApi::CallWith(static::class);
+    }
+    public static function DefaultAction()
+    {
+        return AcctionApi::CallWith(static::class);
+    }
 }

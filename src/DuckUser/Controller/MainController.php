@@ -48,7 +48,7 @@ class MainController
     {
         $post = Helper::POST();
         if (!$post) {
-            $csrf_field = UserAction::_()->csrfField();
+            $csrf_field = Helper::_()->csrfField();
             $url_login = __url('login');
             
             Helper::Show(get_defined_vars(),'login');

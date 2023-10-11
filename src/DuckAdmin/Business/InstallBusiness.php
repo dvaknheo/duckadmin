@@ -3,8 +3,8 @@ namespace DuckAdmin\Business;
 
 use DuckPhp\Component\DbManager;
 
-use DuckAdmin\Business\BaseBusiness;
-use DuckAdmin\Business\BaseBusiness as Helper;
+use DuckAdmin\Business\Base;
+use DuckAdmin\Business\Base as Helper;
 
 use DuckAdmin\Model\RuleModel;
 use DuckAdmin\Model\AdminModel;
