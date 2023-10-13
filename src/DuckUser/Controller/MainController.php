@@ -6,16 +6,19 @@
 namespace DuckUser\Controller;
 
 use DuckPhp\Foundation\SimpleControllerTrait;
+use DuckPhp\Helper\ControllerHelper as Helper;
 
 use DuckUser\Business\UserBusiness;
 use DuckUser\Controller\UserAction;
-use DuckUser\Controller\UserAction as Helper;
 
 
 class MainController
 {
     use SimpleControllerTrait;
-    
+    public function __construct()
+    {
+        // this override for skip auth
+    }
     public function action_index()
     {
         $url_reg = __url('register');
@@ -56,7 +59,7 @@ class MainController
         }
         try {
             UserAction::_()->login($post);
-            Helper::GoHome();
+            Helper::_()->goHome();
         } catch (\Exception $ex) {
             $error = $ex->getMessage();
             $name =  __h( Helper::POST('name', ''));

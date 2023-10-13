@@ -11,6 +11,7 @@ class ExceptionReport
     {
         $class = get_class($ex);
         $class = basename(str_replace("\\","/",$class));
+        //这里还要有命名空间前缀的问题
         return ([static::class,$method])();
     }
     

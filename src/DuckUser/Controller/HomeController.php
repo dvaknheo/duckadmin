@@ -14,10 +14,6 @@ class HomeController
 {
     use SimpleControllerTrait;
     
-    public function __construct()
-    {        
-        Helper::_()->initController(static::class);
-    }
     public function action_index()
     {
         $url_logout = __url('logout');

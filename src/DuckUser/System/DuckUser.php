@@ -22,8 +22,7 @@ class DuckUser extends DuckPhp
         'table_prefix' => '',   // 表前缀
         'session_prefix' => '',  // Session 前缀
         
-        'class_session' => Session::class,
-        'class_user' => ActionApi::class,
+        'class_user' => UserApi::class,
         'exception_project' => ProjectException::class,
         'exception_business' => ProjectException::class,
         'exception_controller' => ProjectException::class,
@@ -60,10 +59,10 @@ class DuckUser extends DuckPhp
     }
     public static function DefaultService()
     {
-        return ServiceApi::CallWith(static::class);
+        return ServiceApi::ServiceWith(static::class);
     }
     public static function DefaultAction()
     {
-        return AcctionApi::CallWith(static::class);
+        return AcctionApi::ServiceWith(static::class);
     }
 }

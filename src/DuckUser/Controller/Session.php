@@ -3,7 +3,7 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace DuckUser\System;
+namespace DuckUser\Controller;
 
 use DuckPhp\Component\SessionBase;
 
