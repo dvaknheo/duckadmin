@@ -18,15 +18,15 @@ class DuckUser extends DuckPhp
         
         'ext_options_from_config' => true,  //使用额外的选项
         'controller_class_postfix' => 'Controller', // 控制器后缀
+        'controller_method_prefix' => 'action_', // 方法后缀
         
-        'table_prefix' => '',   // 表前缀
-        'session_prefix' => '',  // Session 前缀
+        'exception_project' => ProjectException::class,
+        'exception_business' => BusinessException::class,
+        'exception_controller' => ControllerException::class,
         
         'class_user' => UserApi::class,
-        'exception_project' => ProjectException::class,
-        'exception_business' => ProjectException::class,
-        'exception_controller' => ProjectException::class,
-        
+        //'table_prefix' => '',   // 表前缀
+        //'session_prefix' => '',  // Session 前缀
         'home_url' => 'Home/index',
     ];
     public function install($options)
