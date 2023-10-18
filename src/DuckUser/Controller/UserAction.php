@@ -10,7 +10,6 @@ use DuckPhp\Helper\ControllerHelper as Helper;
 
 use DuckUser\Business\UserBusiness;
 use DuckUser\System\DuckUser;
-use DuckUser\System\Session;
 
 class UserAction
 {

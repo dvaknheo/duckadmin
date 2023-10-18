@@ -10,7 +10,7 @@ use DuckPhp\Component\DbManager;
 use DuckUser\System\ActionApi;
 use DuckUser\System\Session;
 
-class DuckUser extends DuckPhp
+class DuckUserApp extends DuckPhp
 {
     //@override
     public $options = [
@@ -20,13 +20,15 @@ class DuckUser extends DuckPhp
         'controller_class_postfix' => 'Controller', // 控制器后缀
         'controller_method_prefix' => 'action_', // 方法后缀
         
-        'exception_project' => ProjectException::class,
-        'exception_business' => BusinessException::class,
-        'exception_controller' => ControllerException::class,
+        //'exception_project' => ProjectException::class,
+        //'exception_business' => BusinessException::class,
+        //'exception_controller' => ControllerException::class,
+        'exception_reporter' => ExceptionReporter::class,
         
         'class_user' => UserApi::class,
         //'table_prefix' => '',   // 表前缀
         //'session_prefix' => '',  // Session 前缀
+        
         'home_url' => 'Home/index',
     ];
     public function install($options)
@@ -53,16 +55,16 @@ class DuckUser extends DuckPhp
             return;
         }
         $options['database']=$post;
-        $options['force'] = true; // DbManager 只会初始化一次，所以强制初始化。
+        $options['reinit'] = true;
         
         DbManager::G( )->init($options, static::Root());
     }
     public static function DefaultService()
     {
-        return ServiceApi::ServiceWith(static::class);
+        return ServiceApi::CallInPhase(static::class);
     }
     public static function DefaultAction()
     {
-        return AcctionApi::ServiceWith(static::class);
+        return AcctionApi::CallInPhase(static::class);
     }
 }

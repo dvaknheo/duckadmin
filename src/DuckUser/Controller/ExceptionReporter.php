@@ -7,6 +7,8 @@ namespace DuckUser\Controller;
 
 class ExceptionReport
 {
+    use ExceptionReportTrait;
+    
     public static function OnException($ex)
     {
         $class = get_class($ex);
@@ -23,7 +25,7 @@ class ExceptionReport
         // 我们这里想把异常分来现实
         
     }
-    public static function OnBusinessException($ex)
+    public function onBusinessException($ex)
     {
         var_dump(__METHOD__);
         //
@@ -33,7 +35,7 @@ class ExceptionReport
         var_dump(__METHOD__);
         //
     }
-    public static function OnSessionException($ex = null)
+    public function onSessionException($ex = null)
     {
         if(!isset($ex)){
             Helper::Exit404();

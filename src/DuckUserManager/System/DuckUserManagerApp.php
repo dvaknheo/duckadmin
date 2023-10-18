@@ -18,7 +18,7 @@ use DuckAdmin\System\ProjectException;
 /**
  * 入口类
  */
-class DuckUserManager extends DuckPhp
+class DuckUserManagerApp extends DuckPhp
 {
     //@override
     public $options = [
