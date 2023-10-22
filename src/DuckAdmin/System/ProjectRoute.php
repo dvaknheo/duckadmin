@@ -13,7 +13,7 @@ class ProjectRoute extends Route
     protected function pathToClassAndMethod($path_info)
     {
         list($full_class, $method) = parent::pathToClassAndMethod($path_info);
-        if($full_class===null){ return [$class, $method];}
+        if($full_class===null){ return [$full_class, $method];}
         
         // 因为 webman-admin 的控制器命名方式和我们的有所不同 :(
         //DuckAdmin\Controller\aa-bbController => DuckAdmin\Controller\AaBbController

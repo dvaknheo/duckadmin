@@ -9,7 +9,7 @@ use DuckAdmin\Business\Base as Helper;
 use DuckAdmin\Model\RuleModel;
 use DuckAdmin\Model\AdminModel;
 use DuckAdmin\Model\AdminRoleModel;
-use DuckAdmin\System\DuckAdmin;
+use DuckAdmin\System\DuckAdminApp;
 
 
 /**
@@ -20,12 +20,12 @@ class InstallBusiness extends Base
     public function isInstalled()
     {
         //TODO 放到 Helper 里
-        return DuckAdmin::_()->isInstalled();
+        return DuckAdminApp::_()->isInstalled();
     }
     protected function getConfigFile($file)
     {
         //TODO 放到 Helper 里
-        return DuckAdmin::_()->getFileFromSubComponent(DuckAdmin::_()->options, 'config', $file);
+        return DuckAdminApp::_()->getFileFromSubComponent(DuckAdminApp::_()->options, 'config', $file);
     }
     protected function checkDatabase()
     {
@@ -48,7 +48,7 @@ class InstallBusiness extends Base
             'username' => $post['user'],	
             'password' => $post['password'],
         ];
-        DuckAdmin::_()->install($options);
+        DuckAdminApp::_()->install($options);
     }
     ///////////////////////////
     protected function initSql()

@@ -5,7 +5,7 @@
  */
 namespace DuckUser\System;
 
-use DuckPhp\Foudation\SimpleApiTrait;
+use DuckPhp\Foundation\SimpleApiTrait;
 use DuckPhp\Controller\UserAction;
 
 class UserApi

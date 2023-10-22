@@ -5,12 +5,13 @@
  */
 namespace DuckAdmin\Controller;
 
-use DuckPhp\Component\SessionBase;
+use DuckPhp\Foundation\SimpleSessionTrait;
 /**
  * 会话处理
  */
-class AdminSession extends SessionBase
+class AdminSession
 {
+    use SimpleSessionTrait;
     public function getCurrentAdmin()
     {
         $ret = $this->get('admin', []);
