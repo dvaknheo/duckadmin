@@ -21,36 +21,33 @@ if(is_file(__DIR__.'/../../../DNMVCS/autoload.php')){
 
 
 $options = [
-    'namespace_controller' => '\\',
-    'controller_class_postfix' => 'Controller',
     'ext' => [
         // 后台管理系统
 //*/
-        \DuckAdmin\System\DuckAdmin::class => [
+        \DuckAdmin\System\DuckAdminApp::class => [
             'controller_url_prefix' => 'app/admin/', // 访问路径
             'controller_resource_prefix' => 'res/',  // 资源文件前缀
         ],
-        \DuckUser\System\DuckUser::class => [
+        \DuckUser\System\DuckUserApp::class => [
             'controller_url_prefix' => 'user/', // 访问路径
             'controller_resource_prefix' => 'res/',  // 资源文件前缀
         ],
 //*/
-        \DuckUserManager\System\DuckUserManager::class => [
+        \DuckUserManager\System\DuckUserManagerApp::class => [
             'controller_url_prefix' => 'app/admin/', // 访问路径
             'controller_resource_prefix' => 'res/',  // 资源文件前缀
         ],
 //*/
+        \SimpleBlog\System\SimpleBlogApp::class => [
+            'controller_url_prefix' => 'app/admin/', // 访问路径
+            'controller_resource_prefix' => 'res/',  // 资源文件前缀
+        ],
+//*/
+
     ]
 ];
 $options['path'] = dirname(__DIR__).'/';
 
-DuckPhp\DuckPhp::RunQuickly($options);
-
-class MainController
-{
-    public function index()
-    {
-        DuckPhp\DuckPhp::Show(get_defined_vars(), 'main');
-    }
-}
-//DuckAdmin\System\App::RunSelf('app/admin');
+DuckPhp\DuckPhp::RunAsContainerQuickly($options, false, function(){
+    DuckPhp\DuckPhp::Show([], 'main');
+});

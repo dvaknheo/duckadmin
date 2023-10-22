@@ -42,14 +42,14 @@ class AccountBusiness extends Base
 
     public function login($username,$password)
     {
-        Helper::ThrowOn(!$username, '用户名不能为空',1);
+        BusinessException::ThrowOn(!$username, '用户名不能为空',1);
         
         //$this->checkLoginLimit($username);
         $admin = AdminModel::_()->getAdminByName($username);
-        Helper::ThrowOn(!$admin,'账户不存在或密码错误');
+        BusinessException::ThrowOn(!$admin,'账户不存在或密码错误');
         $flag = AdminModel::_()->checkPasswordByAdmin($admin, $password);
-        Helper::ThrowOn(!$flag,'账户不存在或密码错误');
-        Helper::ThrowOn($admin['status'] != 0, '当前账户暂时无法登录',1);
+        BusinessException::ThrowOn(!$flag,'账户不存在或密码错误');
+        BusinessException::ThrowOn($admin['status'] != 0, '当前账户暂时无法登录',1);
         //////////////////////////////////////////
         unset($admin['password']);
         AdminModel::_()->updateLoginAt($admin['id']);
@@ -140,14 +140,14 @@ class AccountBusiness extends Base
         }
         try{
 
-            Helper::ThrowOn(!$admin, $msg = '请登录', 401);
+            BusinessException::ThrowOn(!$admin, $msg = '请登录', 401);
             // 当前管理员无角色
             $roles = $admin['roles'];
-            Helper::ThrowOn(!$roles,  '无权限', 2);
+            BusinessException::ThrowOn(!$roles,  '无权限', 2);
 
             // 角色没有规则
             $rule_ids = RoleModel::_()->getRules($roles);
-            Helper::ThrowOn(!$rule_ids,  '无权限', 2);
+            BusinessException::ThrowOn(!$rule_ids,  '无权限', 2);
             
             // 超级管理员
             if (in_array('*', $rule_ids)){
@@ -157,12 +157,12 @@ class AccountBusiness extends Base
             // 如果action为index，规则里有任意一个以$controller开头的权限即可
             if (strtolower($action) === 'index') {
                 $rule = RuleModel::_()->checkWildRules($rule_ids,$controller,$action);
-                Helper::ThrowOn(!$rule, '无权限', 2);
+                BusinessException::ThrowOn(!$rule, '无权限', 2);
                 return true;
             }else{
                 // 查询是否有当前控制器的规则
                 $rule = RuleModel::_()->checkRules($rule_ids,$controller,$action);
-                Helper::ThrowOn(!$rule, '无权限', 2);
+                BusinessException::ThrowOn(!$rule, '无权限', 2);
                 return true;
             }
         }catch(\Exception $ex){
@@ -183,11 +183,11 @@ class AccountBusiness extends Base
     }
     public function changePassword($admin_id, $old_password, $password, $password_cofirm)
     {
-        Helper::ThrowOn(!$password, '密码不能为空',2);
-        Helper::ThrowOn($password !== $password_cofirm, '两次密码输入不一致',3);
+        BusinessException::ThrowOn(!$password, '密码不能为空',2);
+        BusinessException::ThrowOn($password !== $password_cofirm, '两次密码输入不一致',3);
         
         $flag = AdminModel::_()->checkPasword($admin_id, $old_password);
-        Helper::ThrowOn(!$flag, '原始密码不正确', 1);
+        BusinessException::ThrowOn(!$flag, '原始密码不正确', 1);
         AdminModel::_()->updateAdminPassword($admin_id, $password);
     }
 }
