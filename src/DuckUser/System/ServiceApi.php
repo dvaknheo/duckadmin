@@ -5,12 +5,12 @@
  */
 namespace DuckUser\System;
 
-use DuckPhp\Foundation\SimpleApiTrait;
+use DuckPhp\Foundation\SimpleBusinessTrait;
 use DuckUser\Business\UserBusiness;
 
 class ServiceAPi
 {
-    use SimpleApiTrait;
+    use SimpleBusinessTrait;
     
     public function register($form)
     {

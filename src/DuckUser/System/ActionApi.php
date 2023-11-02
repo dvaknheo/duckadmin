@@ -5,12 +5,12 @@
  */
 namespace DuckUser\System;
 
-use DuckPhp\Foundation\SimpleApiTrait;
+use DuckPhp\Foundation\SimpleActionTrait;
 use DuckPhp\Controller\UserAction;
 
 class ActionApi
 {
-    use SimpleApiTrait;
+    use SimpleActionTrait;
     //
     public function id()
     {

@@ -43,12 +43,10 @@ $options = [
             'controller_resource_prefix' => 'res/',  // 资源文件前缀
         ],
 //*/
-
     ]
 ];
 $options['path'] = dirname(__DIR__).'/';
-
-DuckPhp\DuckPhp::RunAsContainerQuickly($options, false, function(){
+DuckPhp\DuckPhp::InitAsContainer($options)->thenRunAsContainer( false, function(){
     DuckPhp\DuckPhp::Phase(DuckPhp\DuckPhp::class);
     DuckPhp\DuckPhp::Show([], 'main');
 });
