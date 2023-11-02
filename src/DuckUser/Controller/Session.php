@@ -5,13 +5,15 @@
  */
 namespace DuckUser\Controller;
 
-use DuckPhp\Component\SessionBase;
+use DuckPhp\Foundation\SimpleSessionTrait;
 
 /**
  * Session 本质上和 Model 一样不做逻辑运算，不抛异常
  */
-class Session extends SessionBase
+class Session 
 {
+    use SimpleSessionTrait;
+
     /////////////////////////////////////
     public function getCurrentUser()
     {

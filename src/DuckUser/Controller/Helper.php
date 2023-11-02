@@ -6,12 +6,12 @@
 
 namespace DuckUser\Controller;
 
+use DuckPhp\Foundation\SimpleSingletonTrait;
 use DuckPhp\Helper\ControllerHelperTrait;
-use DuckPhp\Foundation\SimpleHelperTrait;
 use DuckPhp\Core\App;
 class Helper
 {
-    use SimpleHelperTrait;
+    use SimpleSingletonTrait;
     use ControllerHelperTrait;
     
     public function goHome()

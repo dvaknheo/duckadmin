@@ -6,9 +6,7 @@
 namespace DuckUser\Controller;
 
 use DuckPhp\Foundation\SimpleControllerTrait;
-
 use DuckUser\Business\UserBusiness;
-use DuckUser\Controller\UserAction as Helper;
 
 class HomeController
 {

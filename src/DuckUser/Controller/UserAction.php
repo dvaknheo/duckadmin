@@ -5,15 +5,12 @@
  */
 namespace DuckUser\Controller;
 
-use DuckPhp\Foundation\SimpleActionTrait;
-use DuckPhp\Helper\ControllerHelper as Helper;
-
+use DuckPhp\Foundation\SimpleControllerTrait;
 use DuckUser\Business\UserBusiness;
-use DuckUser\System\DuckUser;
 
 class UserAction
 {
-    use SimpleActionTrait;
+    use SimpleControllerTrait;
     
     public function id()
     {

@@ -6,7 +6,6 @@
 
 namespace DuckUser\Controller;
 use DuckPhp\Foundation\SimpleControllerTrait;
-use DuckUser\System\ProjectException;
 
 class Base
 {
@@ -17,7 +16,6 @@ class Base
     }
     public function initController($class)
     {
-        Helper::assignExceptionHandler(ProjectException::class, [ExceptionReporter::class, 'OnException']);
         
         Helper::_()->checkCsrf();
         
