@@ -4,7 +4,7 @@
  * From this time, you never be alone~
  */
 
-namespace SimpleBlog\System;
+namespace SimpleBlog\Controller;
 
 use DuckPhp\Foundation\SimpleControllerTrait;
 

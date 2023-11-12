@@ -4,25 +4,15 @@
  * From this time, you never be alone~
  */
 
-namespace SimpleBlog\System;
+namespace SimpleBlog\Controller;
 
 use DuckPhp\Helper\ControllerHelperTrait;
 
 class Helper
 {
     use ControllerHelperTrait;
-    ////   
-    public static function RecordsetUrl($data, $cols_map = [])
-    {
-        return static::G()->_RecordsetUrl($data, $cols_map);
-    }
-    
-    public static function RecordsetH($data, $cols = [])
-    {
-        return static::G()->_RecordsetH($data, $cols);
-    }
-    
-    public function _RecordsetUrl($data, $cols_map = [])
+
+    public function recordsetUrl($data, $cols_map = [])
     {
         //need more quickly;
         if ($data === []) {
@@ -48,7 +38,7 @@ class Helper
         unset($v);
         return $data;
     }
-    public function _RecordsetH($data, $cols = [])
+    public function recordsetH($data, $cols = [])
     {
         if ($data === []) {
             return $data;

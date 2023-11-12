@@ -13,16 +13,15 @@ class MainController
 {
     public function index()
     {
-        $url_reg = __url('register');
-        $url_login = __url('login');
-        $url_logout = __url('logout');
+        $url_reg = Helper::UserSystem()->urlForRegist();
+        $url_login = Helper::UserSystem()->urlForLogin();
+        $url_logout = Helper::UserSystem()->urlForLogout();
         $url_admin = __url('admin/index');
-
-        $user = SessionManager::G()->getCurrentUser();
-        list($articles, $total) = ArticleBusiness::G()->getRecentArticle(Helper::PageNo());
+        $user = SessionManager::_()->getCurrentUser();
+        list($articles, $total) = ArticleBusiness::_()->getRecentArticle(Helper::PageNo());
         
-        $articles = Helper::RecordsetH($articles, ['title']);
-        $articles = Helper::RecordsetUrl($articles, ['url' => 'article/{id}']);
+        $articles = Helper::_()->recordsetH($articles, ['title']);
+        $articles = Helper::_()->recordsetUrl($articles, ['url' => 'article/{id}']);
         
         Helper::Show(get_defined_vars(), 'main');
     }
@@ -30,36 +29,29 @@ class MainController
     {
         $id = Helper::GET('id',1);
         
-        $article = ArticleBusiness::G()->getArticleFullInfo($id, Helper::PageNo(), Helper::PageSize());
+        $article = ArticleBusiness::_()->getArticleFullInfo($id, Helper::PageNo(), Helper::PageWindow());
         if (!$article) {
             Helper::Exit404();
             return;
         }
-        $article['comments'] = Helper::RecordsetH($article['comments'], ['content','username']);
+        $article['comments'] = Helper::_()->recordsetH($article['comments'], ['content','username']);
         $html_pager = Helper::PageHtml($article['comments_total']);
         $url_add_comment = __url('addcomment');
         Helper::Show(get_defined_vars(), 'article');
     }
-    public function _old_reg()
+    public function addcomment()
     {
-        Helper::setViewHeadFoot('user/inc_head.php', 'user/inc_foot.php');
-        Helper::Show(get_defined_vars(), 'user/reg');
-    }
-    public function _old_do_changepass()
-    {
-        $uid = SessionManager::G()->getCurrentUid();
-        //TODO 
-    }
-    public function do_addcomment()
-    {
-        $uid = SessionManager::G()->getCurrentUid();
-        UserBusiness::G()->addComment($uid, Helper::POST('article_id'), Helper::POST('content'));
+        if(!Helper::POST()){return;}
+        $uid = Helper::UserId();
+        UserBusiness::_()->addComment($uid, Helper::POST('article_id'), Helper::POST('content'));
         Helper::ExitRouteTo('article/'.Helper::POST('article_id'));
     }
-    public function do_delcomment()
+    public function delcomment()
     {
-        $uid = SessionManager::G()->getCurrentUid();
-        UserBusiness::G()->deleteCommentByUser($uid, Helper::POST('id'));
+        if(!Helper::POST()){return;}
+        
+        $uid = Helper::UserId();
+        UserBusiness::_()->deleteCommentByUser($uid, Helper::POST('id'));
         Helper::ExitRouteTo('');
     }
 
