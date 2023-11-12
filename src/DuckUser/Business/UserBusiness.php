@@ -5,22 +5,14 @@
  */
 namespace DuckUser\Business;
 
-use DuckPhp\Foundation\SimpleBusinessTrait;
-use DuckPhp\Helper\BusinessHelperTrait;
-
 use DuckUser\Model\UserModel;
 
 /**
  * 我们偷懒，把 BusinessHelper 集成进这里,基类我们也不要了，毕竟只有一个
  * 绑定异常，
  */
-class UserBusiness
+class UserBusiness extends Base
 {
-    use SimpleBusinessTrait; // 单例
-    
-    public function __construct()
-    {
-    }
     public function register($form)
     {
         $form['password'] = $form['password'] ?? '';

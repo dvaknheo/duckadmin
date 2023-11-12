@@ -5,13 +5,10 @@
  */
 namespace DuckUser\Controller;
 
-use DuckPhp\Foundation\SimpleControllerTrait;
 use DuckUser\Business\UserBusiness;
 
-class HomeController
+class HomeController extends Base
 {
-    use SimpleControllerTrait;
-    
     public function action_index()
     {
         $url_logout = __url('logout');

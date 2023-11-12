@@ -5,12 +5,8 @@
  */
 namespace DuckUser\Model;
 
-use DuckPhp\Foundation\SimpleModelTrait;
-
-class UserModel
+class UserModel extends Base
 {
-    use SimpleModelTrait;   
-    
     public function __construct()
     {
         $this->table_name = 'users';

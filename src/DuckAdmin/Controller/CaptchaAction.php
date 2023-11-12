@@ -6,9 +6,6 @@
 
 namespace DuckAdmin\Controller;
 
-use DuckPhp\Core\App;
-use DuckPhp\Core\ComponentBase;
-
 use Gregwar\Captcha\CaptchaBuilder;
 use Gregwar\Captcha\PhraseBuilder;
 
@@ -16,14 +13,15 @@ use Gregwar\Captcha\PhraseBuilder;
  * 验证码系统，你可以修改你的实现
  * 第三方的东西在这里写
  */
-class CaptchaAction extends ComponentBase
+class CaptchaAction extends Base
 {
 	public $options = [
         'set_phrase_handler' => null,
         'get_phrase_handler' => null,
     ];
-    public function __construct()
+    public function init(array $options, ?object $context = null)
     {
+        $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
     }
     //////// 验证码部分 ////////
     public static function ShowCaptcha()
@@ -44,8 +42,8 @@ class CaptchaAction extends ComponentBase
         
         ($this->options['set_phrase_handler'])($phrase);
         
-        App::header('Content-type: image/jpeg');
-        App::header('Cache-Control: no-cache, no-store, max-age=0, must-revalidate');
+        Helper::header('Content-type: image/jpeg');
+        Helper::header('Cache-Control: no-cache, no-store, max-age=0, must-revalidate');
         $builder->output();
     }
 

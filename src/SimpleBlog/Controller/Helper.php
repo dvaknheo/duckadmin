@@ -6,12 +6,10 @@
 
 namespace SimpleBlog\System;
 
-use DuckPhp\Foundation\SimpleSingletonTrait;
 use DuckPhp\Helper\ControllerHelperTrait;
 
 class Helper
 {
-    use SimpleSingletonTrait;
     use ControllerHelperTrait;
     ////   
     public static function RecordsetUrl($data, $cols_map = [])

@@ -5,15 +5,12 @@
  */
 namespace DuckUser\Controller;
 
-use DuckPhp\Foundation\SimpleControllerTrait;
-
 use DuckUser\Business\UserBusiness;
 use DuckUser\Controller\UserAction;
 
 
-class MainController
+class MainController extends base
 {
-    use SimpleControllerTrait;
     public function __construct()
     {
         // this override for skip auth

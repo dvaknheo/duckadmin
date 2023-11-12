@@ -5,13 +5,13 @@
  */
 namespace DuckUser\Controller;
 
-use DuckPhp\Foundation\SimpleControllerTrait;
 use DuckUser\Business\UserBusiness;
 
-class UserAction
+class UserAction extends Base
 {
-    use SimpleControllerTrait;
-    
+    public function __construct()
+    {
+    }
     public function id()
     {
         $user = Session::_()->getCurrentUser();

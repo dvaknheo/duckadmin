@@ -6,17 +6,15 @@
 
 namespace DuckUser\Controller;
 
-use DuckPhp\Foundation\SimpleSingletonTrait;
 use DuckPhp\Helper\ControllerHelperTrait;
-use DuckPhp\Core\App;
+
 class Helper
 {
-    use SimpleSingletonTrait;
     use ControllerHelperTrait;
     
     public function goHome()
     {
-        static::ExitRouteTo(App::Current()->options['home_url']);
+        Helper::ExitRouteTo(App::Current()->options['home_url']);
     }
     public function csrfToken()
     {
@@ -25,15 +23,15 @@ class Helper
     
     public function checkCsrf()
     {
-        if ( empty(static::POST()) ) { return ;}
-        $referer = static::SERVER('HTTP_REFERER','');
-        $domain = static::Domain(true).'/';
-        $token = static::Post('_token');
+        if ( empty(Helper::POST()) ) { return ;}
+        $referer = Helper::SERVER('HTTP_REFERER','');
+        $domain = Helper::Domain(true).'/';
+        $token = Helper::Post('_token');
         
-        static::ThrowOn((substr($referer, 0, strlen($domain)) !== $domain), "CRSF", 419);
+        Helper::ThrowOn((substr($referer, 0, strlen($domain)) !== $domain), "CRSF", 419);
         
         $session_token =  Session::_()->getToken();
-        //static::ThrowOn($token !== $session_token, "csrf_token 失败[$token !== $session_token]", 419);
+        //Helper::ThrowOn($token !== $session_token, "csrf_token 失败[$token !== $session_token]", 419);
     }
     public function isCsrfException($ex)
     {

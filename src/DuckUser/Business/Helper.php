@@ -6,11 +6,9 @@
 
 namespace DuckUser\Business;
 
-use DuckPhp\Foundation\SimpleSingletonTrait;
 use DuckPhp\Helper\BusinessHelperTrait;
 
 class Helper
 {
-    use SimpleSingletonTrait;
     use BusinessHelperTrait;
 }

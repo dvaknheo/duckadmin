@@ -8,8 +8,8 @@ use DuckPhp\Foundation\ExceptionReportTrait;
 
 class ExceptionReport
 {
-
     use ExceptionReportTrait;
+    
     public static function OnException($ex)
     {
         $class = get_class($ex);
