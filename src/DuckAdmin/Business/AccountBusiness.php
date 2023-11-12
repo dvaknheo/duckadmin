@@ -1,9 +1,6 @@
 <?php
 namespace DuckAdmin\Business;
 
-use DuckAdmin\Business\Base;
-use DuckAdmin\Business\Base as Helper;
-
 use DuckAdmin\Model\AdminModel;
 use DuckAdmin\Model\AdminRoleModel;
 use DuckAdmin\Model\RoleModel;
@@ -55,7 +52,7 @@ class AccountBusiness extends Base
         AdminModel::_()->updateLoginAt($admin['id']);
         
         //$this->removeLoginLimit($username);
-        static::FireEvent([static::class,__METHOD__], $admin);
+        //static::FireEvent([static::class,__METHOD__], $admin);
 
         return $admin;
     }

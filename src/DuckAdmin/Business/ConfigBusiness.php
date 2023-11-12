@@ -11,14 +11,14 @@ class ConfigBusiness extends Base
     {
         $config = OptionModel::_()->getSystemConfig();
         if (empty($config)) {
-            $config = static::Config('pear_config',null,[]);
+            $config = Helper::Config('pear_config',null,[]);
             $config = $this->updateConfig($config);
         }
         return $config;
     }
     public function updateConfig($post)
     {
-        $config = static::Config('pear_config',null,[]); //$this->getDefaultConfig();
+        $config = Helper::Config('pear_config',null,[]); //$this->getDefaultConfig();
         $data = [];
         foreach ($post as $section => $items) {
             if (!isset($config[$section])) {

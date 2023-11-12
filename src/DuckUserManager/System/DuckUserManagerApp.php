@@ -32,7 +32,7 @@ class DuckUserManagerApp extends DuckPhp
             RouteHookResource::class => true
         ],
         
-        'class_admin'=> AdminApi::class,
+        //'class_admin'=> AdminApi::class,
         
         'exception_project'=> ProjectException::class,
         'exception_business'=> ProjectException::class,

@@ -3,9 +3,6 @@ namespace DuckAdmin\Business;
 
 use DuckPhp\Component\DbManager; //TODO
 
-use DuckAdmin\Business\Base;
-use DuckAdmin\Business\Base as Helper;
-
 use DuckAdmin\Model\RuleModel;
 use DuckAdmin\Model\AdminModel;
 use DuckAdmin\Model\AdminRoleModel;
@@ -25,15 +22,11 @@ class InstallBusiness extends Base
     protected function getConfigFile($file)
     {
         //TODO 放到 Helper 里
-        return DuckAdminApp::_()->getFileFromSubComponent(DuckAdminApp::_()->options, 'config', $file);
+        return DuckAdminApp::_()->getOverrideableFile(  'config', $file);
     }
     protected function checkDatabase()
     {
-        $options = DbManager::_()->options;
-        if (!empty($options['database']) || !empty($options['database_list'])){
-            return true;
-        }
-        return false;
+        return DuckAdminApp::_()->checkDatabase();
     }
     protected function checkInstallLogFile()
     {
@@ -94,7 +87,7 @@ class InstallBusiness extends Base
     {
         // 首先我们要把 DbManager 搞出来，重新初始化。
         // 如果 DbManager 的数据已设置，我们就用里面的数据，不然我们用自己额外的数据
-        $old = DbManager::G();
+        $old = DbManager::_();
         $options = $old->options;
 
         $options['database']=[
@@ -103,7 +96,7 @@ class InstallBusiness extends Base
             'password'=>$post['password'],
         
         ];
-        DbManager::G(new DbManager())->init($options);
+        DbManager::_(new DbManager())->init($options);
         $database=$post['database'];
         $data = DbManager::Db()->fetchAll("show databases like '$database'");
         if (!$data){
@@ -139,7 +132,7 @@ class InstallBusiness extends Base
         // FirstRole，第一个角色我们要从 initSQL 中抽取出来。
         
         // 导入菜单
-        $menus =  static::Config('menu',null,[]);
+        $menus =  Helper::Config('menu',null,[]);
         RuleModel::_()->importMenu($menus);
         
         $this->writeDbConfigFile($post);

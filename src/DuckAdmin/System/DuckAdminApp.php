@@ -20,17 +20,13 @@ class DuckAdminApp extends DuckPhp
     public $options = [
         'is_debug' =>true, //TODO 这里不继承根应用的，还得调试
         'controller_class_postfix' => 'Controller', // 控制器后缀
+        'controller_method_prefix' => '', // 控制器后缀
         'controller_resource_prefix' => 'res/',  // 资源文件前缀
         
-        'ext_options_from_config' => true,  //使用额外的选项
-        'ext' =>[RouteHookResource::class => true], //  资源配置
+        'ext_options_file_enable' => true,  //使用额外的选项
         
         
-        'class_admin'=> AdminApi::class,
-        
-        'exception_project'=> ProjectException::class,
-        'exception_business'=> ProjectException::class,
-        'exception_controller'=> ProjectException::class,
+        //'class_admin'=> AdminApi::class,
     ];
     public function Action()
     {
@@ -49,13 +45,13 @@ class DuckAdminApp extends DuckPhp
     public function install($options)
     {
         //安装
-        $this->installWithExtOptions($options);
+        parent::install($options);
         
         //切换数据库配置
         $this->switchDbManager();
         
         // 资源文件修正
-        RouteHookResource::G()->init($this->options, $this)->replaceResource();
+        RouteHookResource::_()->init($this->options, $this)->cloneResource();
     }
     public function onPrepare()
     {
@@ -75,14 +71,24 @@ class DuckAdminApp extends DuckPhp
         }
         
         $data = $this->options['database'] ?? null;
+        
         if (empty($data)) {
             return;
         }
         
         // DbManager 只会初始化一次，所以强制初始化。
-        $options['force'] = true; 
+        $options['force_new_init'] = true; 
         $options['database'] = $data;
         
         DbManager::_()->init($options, static::Root());
+    }
+    public function checkDatabase()
+    {
+        $this->switchDbManager();
+        $options = DbManager::_()->options;
+        if (!empty($options['database']) || !empty($options['database_list'])){
+            return true;
+        }
+        return false;
     }
 }

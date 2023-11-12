@@ -6,12 +6,12 @@
 
 namespace DuckAdmin\System;
 
-use DuckPhp\ThrowOn\ThrowOnTrait;
+use DuckPhp\Foundation\SimpleExceptionTrait;
 
 /**
  * 这是工程的错误基类。 可以使用 ThrowOn
  */
 class ProjectException extends \Exception
 {
-    use ThrowOnTrait;
+    use SimpleExceptionTrait;
 }

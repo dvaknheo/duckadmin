@@ -5,9 +5,11 @@
  */
 
 namespace DuckAdmin\Controller;
+use DuckPhp\Foundation\SimpleControllerTrait;
 
 class Base
 {
+    use SimpleControllerTrait;
     /**
      * 无需登录及鉴权的方法
      * @var array

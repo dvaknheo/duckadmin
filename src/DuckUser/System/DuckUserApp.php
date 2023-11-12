@@ -25,7 +25,7 @@ class DuckUserApp extends DuckPhp
         //'exception_controller' => ControllerException::class,
         'exception_reporter' => ExceptionReporter::class,
         
-        'class_user' => UserApi::class,
+        //'class_user' => UserApi::class,
         //'table_prefix' => '',   // 表前缀
         //'session_prefix' => '',  // Session 前缀
         
@@ -44,7 +44,7 @@ class DuckUserApp extends DuckPhp
     }
     protected function switchDbManager()
     {
-        $options = DbManager::G()->options;
+        $options = DbManager::_()->options;
         
         if (!empty($options['database']) || !empty($options['database_list'])){
             return;
@@ -57,7 +57,7 @@ class DuckUserApp extends DuckPhp
         $options['database']=$post;
         $options['reinit'] = true;
         
-        DbManager::G( )->init($options, static::Root());
+        DbManager::_( )->init($options, static::Root());
     }
     public static function DefaultService()
     {

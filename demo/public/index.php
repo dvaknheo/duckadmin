@@ -48,5 +48,5 @@ $options = [
 $options['path'] = dirname(__DIR__).'/';
 DuckPhp\DuckPhp::InitAsContainer($options)->thenRunAsContainer( false, function(){
     DuckPhp\DuckPhp::Phase(DuckPhp\DuckPhp::class);
-    DuckPhp\DuckPhp::Show([], 'main');
+    DuckPhp\Core\View::Show([], 'main');
 });

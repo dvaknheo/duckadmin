@@ -22,6 +22,11 @@ class CaptchaAction extends Base
     public function init(array $options, ?object $context = null)
     {
         $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
+        return $this;
+    }
+    public function __construct()
+    {
+        //just override
     }
     //////// 验证码部分 ////////
     public static function ShowCaptcha()

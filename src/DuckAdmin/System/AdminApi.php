@@ -5,14 +5,13 @@
  */
 
 namespace DuckAdmin\System;
-use DuckPhp\Foundation\SimpleActionTrait;
 
 /**
  * 这里的集合只是抽调给外部用
  */
 class AdminApi
 {
-    use SimpleActionTrait;
+
 	public function id()
 	{
 		//

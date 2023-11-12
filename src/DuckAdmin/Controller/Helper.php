@@ -36,4 +36,8 @@ class Helper
         
 		return static::ExitJson(['code' => $code, 'msg' => $msg, 'type' => 'error'],false);
 	}
+    public static function ThrowOn($flag,$message,$code)
+    {
+        return ControllerException::ThrowOn($flag,$message,$code);
+    }
 }

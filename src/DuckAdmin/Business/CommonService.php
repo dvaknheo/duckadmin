@@ -1,9 +1,6 @@
 <?php
 namespace DuckAdmin\Business;
 
-use DuckAdmin\Business\BaseBusiness;
-use DuckAdmin\Business\BaseBusiness as Helper;
-
 use DuckAdmin\Model\AdminRoleModel;
 use DuckAdmin\Model\RuleModel;
 use DuckAdmin\Model\RoleModel;

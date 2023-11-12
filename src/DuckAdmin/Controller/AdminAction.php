@@ -104,15 +104,15 @@ EOF;
     public function doShowCaptcha()
     {
         return CaptchaAction::_()->init([
-            'set_phrase_handler'=>[AdminSession::G(),'setPhrase'],
-            'get_phrase_handler'=>[AdminSession::G(),'getPhrase'],
+            'set_phrase_handler'=>[AdminSession::_(),'setPhrase'],
+            'get_phrase_handler'=>[AdminSession::_(),'getPhrase'],
         ])->doShowCaptcha();
     }
     public function doCheckCaptcha($captcha)
     {
         return CaptchaAction::_()->init([
-            'set_phrase_handler'=>[AdminSession::G(),'setPhrase'],
-            'get_phrase_handler'=>[AdminSession::G(),'getPhrase'],
+            'set_phrase_handler'=>[AdminSession::_(),'setPhrase'],
+            'get_phrase_handler'=>[AdminSession::_(),'getPhrase'],
         ])->doCheckCaptcha($captcha);
     }
 }
