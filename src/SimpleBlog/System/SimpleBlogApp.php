@@ -7,7 +7,7 @@ namespace SimpleBlog\System;
 
 use DuckPhp\DuckPhp;
 
-class App extends DuckPhp
+class SimpleBlogApp extends DuckPhp
 {
     //@override
     public $options = [       
@@ -17,8 +17,6 @@ class App extends DuckPhp
         'rewrite_map' => [
             '~article/(\d+)/?(\d+)?' => 'article?id=$1&page=$2',
         ],
-        'controller_method_prefix' => '',
-        'table_prefix' => '',
-        'session_prefix' => '',
+        'sql_dump_enable' => true,
     ];
 }

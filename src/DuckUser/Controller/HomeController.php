@@ -11,7 +11,7 @@ class HomeController extends Base
 {
     public function action_index()
     {
-        $url_logout = __url('logout');
+        $url_logout = Helper::UserSystem()->urlForLogout();
         Helper::Show(get_defined_vars());
     }
     public function action_password()
@@ -28,7 +28,7 @@ class HomeController extends Base
             $new_pass = Helper::POST('newpassword','');
             $confirm_pass = Helper::POST('newpassword_confirm','');
             
-            Helper::ThrowOn($new_pass !== $confirm_pass, '重复密码不一致');
+            ControllerException::ThrowOn($new_pass !== $confirm_pass, '重复密码不一致');
             UserBusiness::G()->changePassword($uid, $old_pass, $new_pass);
             
             $error = "密码修改完毕"; 

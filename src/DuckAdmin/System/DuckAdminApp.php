@@ -62,6 +62,10 @@ class DuckAdminApp extends DuckPhp
     {
         //如果根应用没设置数据库，用自己的
         $this->switchDbManager();
+        
+        
+        $this->_AdminSystem(_AdminSystem::CallInPhase(static:class));
+        
     }
     protected function switchDbManager()
     {

@@ -27,12 +27,12 @@ class adminController
         Helper::setViewHeadFoot('admin/inc_head', 'admin/inc_foot');
         Helper::assignViewData($data);
     }
-    public function index()
+    public function action_index()
     {
         Helper::Show([], 'admin/main');
     }
 
-    public function articles()
+    public function action_articles()
     {
         $url_add = __url('admin/article_add');
         list($list, $total) = ArticleBusiness::_()->getArticleList(Helper::PageNo());
@@ -42,7 +42,7 @@ class adminController
         ]);
         Helper::Show(get_defined_vars(), 'admin/article_list');
     }
-    public function article_add()
+    public function action_article_add()
     {
         if(!Helper::POST()){
             Helper::Show(get_defined_vars());
@@ -51,7 +51,7 @@ class adminController
         AdminBusiness::_()->addArticle(Helper::POST('title'), Helper::POST('content'));
         Helper::ExitRouteTo('admin/articles');
     }
-    public function article_edit()
+    public function action_article_edit()
     {
         if(!Helper::POST()){
             $article = AdminBusiness::_()->getArticle(Helper::GET('id',0));
@@ -64,12 +64,12 @@ class adminController
         AdminBusiness::_()->updateArticle(Helper::POST('id'), Helper::POST('title'), Helper::POST('content'));
         Helper::ExitRouteTo('admin/articles');
     }
-    public function do_article_delete()
+    public function action_do_article_delete()
     {
         AdminBusiness::_()->deleteArticle(Helper::POST('id'));
         Helper::ExitRouteTo('admin/articles');
     }
-    public function users()
+    public function action_users()
     {
         list($list, $total) = AdminBusiness::_()->getUserList(Helper::PageNo());
         $csrf_token = '';
@@ -78,12 +78,12 @@ class adminController
         }
         Helper::Show(get_defined_vars());
     }
-    public function delete_user()
+    public function action_delete_user()
     {
         AdminBusiness::_()->deleteUser(Helper::REQUEST('id'));
         Helper::ExitRouteTo('admin/users');
     }
-    public function logs()
+    public function action_logs()
     {
         list($list, $total) = AdminBusiness::_()->getLogList(Helper::PageNo());
         
@@ -94,12 +94,12 @@ class adminController
         
         Helper::Show(get_defined_vars());
     }
-    public function comments()
+    public function action_comments()
     {
         list($list, $total) = AdminBusiness::_()->getCommentList(Helper::PageNo());
         Helper::Show(get_defined_vars());
     }
-    public function delete_comments()
+    public function action_delete_comments()
     {
         AdminBusiness::_()->deleteComment(Helper::POST('id'));
         Helper::ExitRouteTo('admin/comments');

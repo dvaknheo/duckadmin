@@ -11,7 +11,7 @@ use SimpleBlog\ControllerEx\SessionManager;
 
 class MainController
 {
-    public function index()
+    public function action_index()
     {
         $url_reg = Helper::UserSystem()->urlForRegist();
         $url_login = Helper::UserSystem()->urlForLogin();
@@ -25,7 +25,7 @@ class MainController
         
         Helper::Show(get_defined_vars(), 'main');
     }
-    public function article()
+    public function action_article()
     {
         $id = Helper::GET('id',1);
         
@@ -39,14 +39,14 @@ class MainController
         $url_add_comment = __url('addcomment');
         Helper::Show(get_defined_vars(), 'article');
     }
-    public function addcomment()
+    public function action_addcomment()
     {
         if(!Helper::POST()){return;}
         $uid = Helper::UserId();
         UserBusiness::_()->addComment($uid, Helper::POST('article_id'), Helper::POST('content'));
         Helper::ExitRouteTo('article/'.Helper::POST('article_id'));
     }
-    public function delcomment()
+    public function action_delcomment()
     {
         if(!Helper::POST()){return;}
         

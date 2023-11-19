@@ -9,18 +9,21 @@ use DuckUser\Business\UserBusiness;
 
 class UserAction extends Base
 {
-    public function __construct()
+    protected $user  =[];
+    public function current()
     {
+        $user = Session::_()->getCurrentUser();
+        ControllerException::ThrowOn(!$user, '请登录');
+        
+        return $this;
     }
     public function id()
     {
-        $user = Session::_()->getCurrentUser();
-        Helper::ThrowOn(!$user, '请登录');
-        return $user['id'];
+        return $this->user['id'];
     }
     public function data()
     {
-        return Session::_()->getCurrentUser();
+        return $this->user;
     }
     public function register($post)
     {
@@ -36,4 +39,22 @@ class UserAction extends Base
     {
         Session::_()->unsetCurrentUser();
     }
+    ///////////////////
+    public function urlForRegist($url_back = null, $ext = null)
+    {
+        return __url('regist');
+    }
+    public function urlForLogin($url_back = null, $ext = null)
+    {
+        return __url('login');
+    }
+    public function urlForLogout($url_back = null, $ext = null)
+    {
+        return __url('logout');
+    }
+    public function urlForHome($url_back = null, $ext = null)
+    {
+        return __url('home/index');
+    }
+    
 }

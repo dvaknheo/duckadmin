@@ -14,18 +14,10 @@ class DuckUserApp extends DuckPhp
 {
     //@override
     public $options = [
-        'is_debug'=>true,
-        
-        'ext_options_from_config' => true,  //使用额外的选项
-        'controller_class_postfix' => 'Controller', // 控制器后缀
-        'controller_method_prefix' => 'action_', // 方法后缀
-        
-        //'exception_project' => ProjectException::class,
-        //'exception_business' => BusinessException::class,
-        //'exception_controller' => ControllerException::class,
+        'is_debug' => true,
         'exception_reporter' => ExceptionReporter::class,
+        'ext_options_file_enable' => true,
         
-        //'class_user' => UserApi::class,
         //'table_prefix' => '',   // 表前缀
         //'session_prefix' => '',  // Session 前缀
         
@@ -58,6 +50,8 @@ class DuckUserApp extends DuckPhp
         $options['reinit'] = true;
         
         DbManager::_( )->init($options, static::Root());
+        
+        $this->_UserSystem(MyUserSystem::CallInPhase(static::class);
     }
     public static function DefaultService()
     {

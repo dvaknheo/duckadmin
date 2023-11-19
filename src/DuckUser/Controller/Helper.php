@@ -14,7 +14,7 @@ class Helper
     
     public function goHome()
     {
-        Helper::ExitRouteTo(App::Current()->options['home_url']);
+        Helper::ExitRouteTo(UserAction::_()->urlForHome());
     }
     public function csrfToken()
     {
@@ -28,10 +28,10 @@ class Helper
         $domain = Helper::Domain(true).'/';
         $token = Helper::Post('_token');
         
-        Helper::ThrowOn((substr($referer, 0, strlen($domain)) !== $domain), "CRSF", 419);
+        ControllerException::ThrowOn((substr($referer, 0, strlen($domain)) !== $domain), "CRSF", 419);
         
         $session_token =  Session::_()->getToken();
-        //Helper::ThrowOn($token !== $session_token, "csrf_token 失败[$token !== $session_token]", 419);
+        //ControllerException::ThrowOn($token !== $session_token, "csrf_token 失败[$token !== $session_token]", 419);
     }
     public function isCsrfException($ex)
     {
