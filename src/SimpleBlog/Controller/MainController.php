@@ -13,9 +13,9 @@ class MainController
 {
     public function action_index()
     {
-        $url_reg = Helper::UserSystem()->urlForRegist();
-        $url_login = Helper::UserSystem()->urlForLogin();
-        $url_logout = Helper::UserSystem()->urlForLogout();
+        $url_reg = Helper::User()->urlForRegist();
+        $url_login = Helper::User()->urlForLogin();
+        $url_logout = Helper::User()->urlForLogout();
         $url_admin = __url('admin/index');
         $user = SessionManager::_()->getCurrentUser();
         list($articles, $total) = ArticleBusiness::_()->getRecentArticle(Helper::PageNo());

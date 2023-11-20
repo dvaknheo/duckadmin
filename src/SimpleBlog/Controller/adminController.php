@@ -23,7 +23,7 @@ class adminController
         array_walk($data, function (&$v) {
             $v = __url($v);
         });
-        $data['url_logout'] =Helper::AdminSystem()->urlForLogout();
+        $data['url_logout'] =Helper::Admin()->urlForLogout();
         Helper::setViewHeadFoot('admin/inc_head', 'admin/inc_foot');
         Helper::assignViewData($data);
     }
