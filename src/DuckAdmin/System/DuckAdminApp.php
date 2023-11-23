@@ -42,10 +42,10 @@ class DuckAdminApp extends DuckPhp
         parent::__construct();
     }
     
-    public function install($options)
+    public function install($options, $parent_options = [])
     {
         //安装
-        parent::install($options);
+        parent::install($options, $parent_options = []);
         
         //切换数据库配置
         $this->switchDbManager();
@@ -64,7 +64,7 @@ class DuckAdminApp extends DuckPhp
         $this->switchDbManager();
         
         
-        $this->_AdminSystem(_AdminSystem::CallInPhase(static:class));
+        //$this->_AdminSystem(_AdminSystem::CallInPhase(static::class));
         
     }
     protected function switchDbManager()

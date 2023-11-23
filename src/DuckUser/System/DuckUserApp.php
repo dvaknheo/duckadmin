@@ -23,7 +23,7 @@ class DuckUserApp extends DuckPhp
         
         'home_url' => 'Home/index',
     ];
-    public function install($options)
+    public function install($options, $parent_options = [])
     {
         // 如果默认没设置数据库切换数据库
         
@@ -51,7 +51,7 @@ class DuckUserApp extends DuckPhp
         
         DbManager::_( )->init($options, static::Root());
         
-        $this->_UserSystem(MyUserSystem::CallInPhase(static::class);
+        //$this->_UserSystem(MyUserSystem::CallInPhase(static::class));
     }
     public static function DefaultService()
     {
