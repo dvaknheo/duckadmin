@@ -13,7 +13,6 @@ class SimpleBlogApp extends DuckPhp
     public $options = [       
         'error_404' =>'error-404',
         'error_500' => 'error-500',
-        
         'rewrite_map' => [
             '~article/(\d+)/?(\d+)?' => 'article?id=$1&page=$2',
         ],

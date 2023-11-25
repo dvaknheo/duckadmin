@@ -10,6 +10,13 @@ use DuckUser\Business\UserBusiness;
 class UserAction extends Base
 {
     protected $user  =[];
+    public function __construct()
+    {
+        // must override me
+    }
+    public function checkLogin()
+    {
+    }
     public function current()
     {
         $user = Session::_()->getCurrentUser();
@@ -27,12 +34,12 @@ class UserAction extends Base
     }
     public function register($post)
     {
-        $user = UserBusiness::G()->register($post);
+        $user = UserBusiness::_()->register($post);
         Session::_()->setCurrentUser($user);
     }
     public function login()
     {
-        $user = UserBusiness::G()->login($post);
+        $user = UserBusiness::_()->login($post);
         Session::_()->setCurrentUser($user);
     }
     public function logout()
@@ -42,7 +49,7 @@ class UserAction extends Base
     ///////////////////
     public function urlForRegist($url_back = null, $ext = null)
     {
-        return __url('regist');
+        return __url('register');
     }
     public function urlForLogin($url_back = null, $ext = null)
     {

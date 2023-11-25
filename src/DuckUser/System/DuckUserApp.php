@@ -8,7 +8,7 @@ namespace DuckUser\System;
 use DuckPhp\DuckPhp;
 use DuckPhp\Component\DbManager;
 use DuckUser\System\ActionApi;
-use DuckUser\System\Session;
+use DuckUser\Controller\ExceptionReporter;
 
 class DuckUserApp extends DuckPhp
 {
@@ -20,7 +20,7 @@ class DuckUserApp extends DuckPhp
         
         //'table_prefix' => '',   // 表前缀
         //'session_prefix' => '',  // Session 前缀
-        
+        'class_user' => User::class,
         'home_url' => 'Home/index',
     ];
     public function install($options, $parent_options = [])

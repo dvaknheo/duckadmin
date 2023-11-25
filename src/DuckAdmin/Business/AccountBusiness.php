@@ -52,7 +52,7 @@ class AccountBusiness extends Base
         AdminModel::_()->updateLoginAt($admin['id']);
         
         //$this->removeLoginLimit($username);
-        //static::FireEvent([static::class,__METHOD__], $admin);
+        //Helper::FireEvent([static::class,__LOGIN__], $admin);
 
         return $admin;
     }

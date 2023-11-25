@@ -7,6 +7,7 @@
 namespace SimpleBlog\Business;
 
 use DuckPhp\Core\App;
+use DuckPhp\Component\GlobalUser;
 use DuckPhp\Helper\BusinessHelperTrait;
 
 class Helper
@@ -14,7 +15,7 @@ class Helper
     use BusinessHelperTrait;
     public function getUserName($user_id)
     {
-        $user_data = App::Current()::User()->data();
+        $user_data = GlobalUser::_()->data();
         return $user_data['username'];
     }
 }

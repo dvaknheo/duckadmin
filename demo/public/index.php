@@ -38,14 +38,12 @@ $options = [
         ],
 //*/
         \SimpleBlog\System\SimpleBlogApp::class => [
-            'controller_url_prefix' => 'app/admin/', // 访问路径
+            'controller_url_prefix' => 'blog/', // 访问路径
             'controller_resource_prefix' => 'res/',  // 资源文件前缀
         ],
 //*/
     ]
 ];
 $options['path'] = dirname(__DIR__).'/';
-\DuckPhp\DuckPhp::InitAsContainer($options, function(){
-    \DuckPhp\DuckPhp::Phase(DuckPhp\DuckPhp::class);
-    \DuckPhp\Core\View::Show([], 'main');
-})->run();
+$options['welcome_view'] = 'main';
+\DuckPhp\DuckPhp::InitAsContainer($options)->run();

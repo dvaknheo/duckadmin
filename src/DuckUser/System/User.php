@@ -5,9 +5,10 @@
  */
 namespace DuckUser\System;
 
-use DuckPhp\Component\GloalUser;
+use DuckPhp\Component\GlobalUser;
+use DuckUser\Controller\UserAction;
 
-class User extends UserSystem
+class User extends GlobalUser
 {
     public function current()
     {
@@ -21,7 +22,7 @@ class User extends UserSystem
     {
         return UserAction::_()->current()->data();
     }
-    protected function checkLogin()
+    public function checkLogin()
     {
         return UserAction::_()->current();
     }

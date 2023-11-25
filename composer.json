@@ -19,7 +19,8 @@
             "DuckAdminDemo\\": "demo/",
             "DuckAdmin\\": "src/DuckAdmin",
             "DuckUserManager\\": "src/DuckUserManager",
-            "DuckUser\\": "src/DuckUser"
+            "DuckUser\\": "src/DuckUser",
+            "SimpleBlog\\": "src/SimpleBlog"
         }
     },
     "require": {

@@ -4,21 +4,13 @@
  * From this time, you never be alone~
  */
 namespace DuckUser\Controller;
-use DuckPhp\Foundation\ExceptionReportTrait;
+use DuckPhp\Foundation\ExceptionReporterTrait;
 
-class ExceptionReport
+class ExceptionReporter
 {
-    use ExceptionReportTrait;
+    use ExceptionReporterTrait;
     
-    public static function OnException($ex)
-    {
-        $class = get_class($ex);
-        $class = basename(str_replace("\\","/",$class));
-        //这里还要有命名空间前缀的问题
-        return ([static::class,$method])();
-    }
-    
-    public static function OnProjectException($ex)
+    public function tonProjectException($ex)
     {
         var_dump(__METHOD__);
         //$x ::getCode;
@@ -26,14 +18,14 @@ class ExceptionReport
         // 我们这里想把异常分来现实
         
     }
-    public function onBusinessException($ex)
+    public function tonBusinessException($ex)
     {
         var_dump(__METHOD__);
         //
     }
-    public static function OnControllerException($ex)
+    public function tonControllerException($ex)
     {
-        var_dump(__METHOD__);
+        var_dump($ex);
         //
     }
     public function onSessionException($ex = null)

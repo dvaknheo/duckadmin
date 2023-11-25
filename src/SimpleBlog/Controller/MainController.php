@@ -7,17 +7,19 @@ namespace SimpleBlog\Controller;
 
 use SimpleBlog\Business\ArticleBusiness;
 use SimpleBlog\Business\UserBusiness;
-use SimpleBlog\ControllerEx\SessionManager;
 
 class MainController
 {
+    public function __construct()
+    {
+    }
     public function action_index()
     {
         $url_reg = Helper::User()->urlForRegist();
         $url_login = Helper::User()->urlForLogin();
         $url_logout = Helper::User()->urlForLogout();
         $url_admin = __url('admin/index');
-        $user = SessionManager::_()->getCurrentUser();
+        //$user = Helper::User()->data();
         list($articles, $total) = ArticleBusiness::_()->getRecentArticle(Helper::PageNo());
         
         $articles = Helper::_()->recordsetH($articles, ['title']);

@@ -9,7 +9,7 @@ use DuckUser\Business\UserBusiness;
 use DuckUser\Controller\UserAction;
 
 
-class MainController extends base
+class MainController extends Base
 {
     public function __construct()
     {
@@ -25,6 +25,7 @@ class MainController extends base
     public function action_register()
     {
         $post = Helper::POST();
+        
         if (!$post) {
             $csrf_field = Helper::_()->csrfField();
             $url_register = UserAction::_()->urlForRegist();
