@@ -29,23 +29,24 @@ composer require dvaknheo/duckadmin
 但是，这将不是个符合 duckphp 思维的项目。
 demo 只是给你提供了如何使用 duckadmin 这个库的方法。
 
-duckadmin 这个 composer library 里 src/DuckPhp 是个现成的管理模块。
+duckadmin 这个 composer library 里 src/DuckAdmin 是个现成的管理模块。
 你应该像 duckphpdemo 那样使用他。
-duckuser 则是附带的用户系统
-duckmerchant 则是一个商户系统。
 
-duckadmindemo 这个 工程，演示了如何使用第三方的 duckphp 工程作为 库
+duckuser 则是附带的用户系统
+demo 这个工程 ，演示了如何使用第三方的 duckphp 工程作为 库
 
 
 安装
 
 
-
 <a href="<?=__url('app/admin/index')?>">管理后台入口在这里</a>
 
 <a href="<?=__url('user/')?>">用户基本注册登录页面在这里</a>
+
 <a href="<?=__url('app/admin/user')?>">用户管理系统在这里</a>
+
 <a href="<?=__url('blog/')?>">一个简单的博客系统</a>
+
 
 你可以只使用这一小部分，并在这上面改
 </pre>

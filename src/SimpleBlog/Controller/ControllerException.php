@@ -3,7 +3,7 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace SimpleBlog\System;
+namespace SimpleBlog\Controller;
 
 class ControllerException extends ProjectException
 {

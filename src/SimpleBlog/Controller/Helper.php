@@ -6,6 +6,7 @@
 
 namespace SimpleBlog\Controller;
 
+use DuckPhp\Core\App;
 use DuckPhp\Helper\ControllerHelperTrait;
 
 class Helper
@@ -53,5 +54,16 @@ class Helper
             }
         }
         return $data;
+    }
+    public function getUserData()
+    {
+        $phase = App::Phase();
+        try{
+        static::User()->checkLogin();
+        }catch(\Exception $ex){
+            App::Phase($phase);
+            return [];
+        }
+        return static::User()->data();
     }
 }

@@ -16,10 +16,11 @@ class MainController
     public function action_index()
     {
         $url_reg = Helper::User()->urlForRegist();
+        
         $url_login = Helper::User()->urlForLogin();
         $url_logout = Helper::User()->urlForLogout();
         $url_admin = __url('admin/index');
-        //$user = Helper::User()->data();
+        $user = Helper::_()->getUserData();
         list($articles, $total) = ArticleBusiness::_()->getRecentArticle(Helper::PageNo());
         
         $articles = Helper::_()->recordsetH($articles, ['title']);

@@ -33,7 +33,7 @@ class User extends GlobalUser
     }
     public function urlForLogin($url_back = null, $ext = null)
     {
-        return UserAction::_()->urlForLogout($url_back, $ext);
+        return UserAction::_()->urlForLogin($url_back, $ext);
     }
     public function urlForLogout($url_back = null, $ext = null)
     {

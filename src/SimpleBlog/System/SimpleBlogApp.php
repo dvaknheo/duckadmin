@@ -18,4 +18,9 @@ class SimpleBlogApp extends DuckPhp
         ],
         'sql_dump_enable' => true,
     ];
+    public function __construct()
+    {
+        $this->options['path'] = dirname(__DIR__).'/';
+        parent::__construct();
+    }
 }
