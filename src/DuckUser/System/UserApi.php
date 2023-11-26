@@ -14,10 +14,10 @@ class UserApi
     //
     public function id()
     {
-        return UserAction::G()->id();
+        return UserAction::_()->id();
     }
     public function data()
     {
-        return UserAction::G()->data();
+        return UserAction::_()->data();
     }
 }

@@ -3,8 +3,8 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace DuckUser\System;
-
+namespace DuckUser\Business;
+use DuckUser\System\ProjectException;
 class BusinessException extends ProjectException
 {
     //

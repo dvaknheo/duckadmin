@@ -18,7 +18,7 @@ class ExceptionReporter
         }
         $code = $ex->getCode();
         __logger()->warning(''.(get_class($ex)).'('.$ex->getCode().'): '.$ex->getMessage());
-        if (Session::G()->isCsrfException($ex) && __is_debug()) {
+        if (Session::_()->isCsrfException($ex) && __is_debug()) {
             Helper::exit(0);
         }
         Helper::ExitRouteTo('login');

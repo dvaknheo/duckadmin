@@ -37,7 +37,7 @@ class UserAction extends Base
         $user = UserBusiness::_()->register($post);
         Session::_()->setCurrentUser($user);
     }
-    public function login()
+    public function login($post)
     {
         $user = UserBusiness::_()->login($post);
         Session::_()->setCurrentUser($user);

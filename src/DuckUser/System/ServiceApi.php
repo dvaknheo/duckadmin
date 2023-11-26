@@ -14,14 +14,14 @@ class ServiceAPi
     
     public function register($form)
     {
-        return UserBusiness::G()->register($form);
+        return UserBusiness::_()->register($form);
     }
     public function login($form)
     {
-        return UserBusiness::G()->login($form);
+        return UserBusiness::_()->login($form);
     }
     public function changePassword($uid, $password, $new_password)
     {
-        return UserBusiness::G()->changePassword($uid, $password, $new_password);
+        return UserBusiness::_()->changePassword($uid, $password, $new_password);
     }
 }
