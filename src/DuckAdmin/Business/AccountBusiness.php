@@ -47,8 +47,13 @@ class AccountBusiness extends Base
         $flag = AdminModel::_()->checkPasswordByAdmin($admin, $password);
         BusinessException::ThrowOn(!$flag,'账户不存在或密码错误');
         BusinessException::ThrowOn($admin['status'] != 0, '当前账户暂时无法登录',1);
+        
+        // change roles
         //////////////////////////////////////////
         unset($admin['password']);
+        
+        $admin['roles'] = AdminRoleModel::_()->getRoles($admin['id']);
+
         AdminModel::_()->updateLoginAt($admin['id']);
         
         //$this->removeLoginLimit($username);

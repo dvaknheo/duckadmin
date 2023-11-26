@@ -11,7 +11,7 @@ use DuckPhp\Helper\BusinessHelperTrait;
 class Helper
 {
     use BusinessHelperTrait;
-    public static function ThrowOn($flag,$message,$code)
+    public static function ThrowOn($flag,$message,$code=-100)
     {
         return BusinessException::ThrowOn($flag,$message,$code);
     }
