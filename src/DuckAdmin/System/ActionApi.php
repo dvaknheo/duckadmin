@@ -5,29 +5,15 @@
  */
 
 namespace DuckAdmin\System;
+use DuckPhp\Foundation\SimpleControllerTrait;
 
 /**
  * 这里的集合只是抽调给外部用
  */
 class ActionApi
 {
-	public function id()
-	{
-		//
-	}
-	public function isSuper($admin_id)
-	{
-		//
-	}
-    public function canAccessPath($path)
-    {
-        //
-    }
-	public function canAccessAction($controller,$method)
-	{
-		//
-	}
-    public function isMyException(\Exception $ex)
+    use SimpleControllerTrait;
+    public function __construct()
     {
         //
     }

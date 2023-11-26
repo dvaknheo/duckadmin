@@ -15,17 +15,5 @@ use DuckPhp\Foundation\SimpleBusinessTrait;
 class ServiceApi
 {
     use SimpleBusinessTrait;
-    /**
-     * 管理员登录
-     */
-    public static function AdminLogin()
-    {
-    }
-    /*
-     * 是否是超级管理员
-     */
-    public static function IsSuperAdmin($admin)
-    {
-    }
     
 }

@@ -34,7 +34,7 @@ class UserController
      * @return Response
      * @throws BusinessException
      */
-    public function select()
+    public function action_select()
     {
 		$input = Helper::GET();
 		[$data, $count] = UserBusiness::_()->showUsers($input);
@@ -47,7 +47,7 @@ class UserController
      * @return Response
      * @throws BusinessException
      */
-    public function insert()
+    public function action_insert()
     {
         if (!Helper::POST()) {
 			return Helper::Show([],'user/insert');
@@ -63,7 +63,7 @@ class UserController
      * @return Response
      * @throws BusinessException
     */
-    public function update()
+    public function action_update()
     {
 		if (!Helper::POST()) {
 			return Helper::Show([],'user/update');
@@ -77,7 +77,7 @@ class UserController
      * @param 
      * @return Response
      */
-    public function delete()
+    public function action_delete()
     {
 		$post = Helper::POST();
 		UserBusiness::_()->deleteUser(Helper::UserId(), $post['id']);

@@ -8,7 +8,6 @@ use DuckPhp\Component\DbManager;
 use DuckPhp\Component\RouteHookResource;
 use DuckPhp\Core\Route;
 use DuckPhp\DuckPhp;
-use DuckAdmin\Controller\AdminSession;
 
 /**
  * 入口类
@@ -18,8 +17,6 @@ class DuckAdminApp extends DuckPhp
 
     //@override
     public $options = [
-        'is_debug' =>true, //TODO 这里不继承根应用的，还得调试
-        'controller_class_postfix' => 'Controller', // 控制器后缀
         'controller_method_prefix' => '', // 控制器后缀
         'controller_resource_prefix' => 'res/',  // 资源文件前缀
         
@@ -28,13 +25,13 @@ class DuckAdminApp extends DuckPhp
         
         //'class_admin'=> AdminApi::class,
     ];
-    public function Action()
+    public static function Action()
     {
-        return ActionApi::InstanceInPhase(static::class);
+        return ActionApi::CallInPhase(static::class);
     }
-    public function Service()
+    public static  function Service()
     {
-        return ServiceApi::InstanceInPhase(static::class);
+        return ServiceApi::CallInPhase(static::class);
     }
     public function __construct()
     {

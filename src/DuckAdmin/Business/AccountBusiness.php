@@ -114,8 +114,12 @@ class AccountBusiness extends Base
      * @return bool
      * @throws \ReflectionException|BusinessException
      */
-    public function canAccess($admin, string $controller, string $action, int &$code = 0, string &$msg = ''): bool
+    public function canAccess($admin, string $controller, string $action): bool
     {
+        // 无控制器信息说明是函数调用，函数不属于任何控制器，鉴权操作应该在函数内部完成。
+        if (!$controller) {
+            return true;
+        }
         // 获取控制器鉴权信息
         $class = new \ReflectionClass($controller);
         $properties = $class->getDefaultProperties();
@@ -131,43 +135,30 @@ class AccountBusiness extends Base
             return true;
         }        
         
-        // 无控制器信息说明是函数调用，函数不属于任何控制器，鉴权操作应该在函数内部完成。
-        if (!$controller) {
+        BusinessException::ThrowOn(!$admin, $msg = '请登录', 401);
+        // 当前管理员无角色
+        $roles = $admin['roles'];
+        BusinessException::ThrowOn(!$roles,  '无权限', 2);
+
+        // 角色没有规则
+        $rule_ids = RoleModel::_()->getRules($roles);
+        BusinessException::ThrowOn(!$rule_ids,  '无权限', 2);
+        // 超级管理员
+        if (in_array('*', $rule_ids)){
             return true;
         }
-        try{
 
-            BusinessException::ThrowOn(!$admin, $msg = '请登录', 401);
-            // 当前管理员无角色
-            $roles = $admin['roles'];
-            BusinessException::ThrowOn(!$roles,  '无权限', 2);
-
-            // 角色没有规则
-            $rule_ids = RoleModel::_()->getRules($roles);
-            BusinessException::ThrowOn(!$rule_ids,  '无权限', 2);
-            
-            // 超级管理员
-            if (in_array('*', $rule_ids)){
-                return true;
-            }
-
-            // 如果action为index，规则里有任意一个以$controller开头的权限即可
-            if (strtolower($action) === 'index') {
-                $rule = RuleModel::_()->checkWildRules($rule_ids,$controller,$action);
-                BusinessException::ThrowOn(!$rule, '无权限', 2);
-                return true;
-            }else{
-                // 查询是否有当前控制器的规则
-                $rule = RuleModel::_()->checkRules($rule_ids,$controller,$action);
-                BusinessException::ThrowOn(!$rule, '无权限', 2);
-                return true;
-            }
-        }catch(\Exception $ex){
-            $code = $ex->getCode();
-            $msg = $ex->getMessage();
-            return false;
+        // 如果action为index，规则里有任意一个以$controller开头的权限即可
+        if (strtolower($action) === 'index') {
+            $rule = RuleModel::_()->checkWildRules($rule_ids,$controller,$action);
+            BusinessException::ThrowOn(!$rule, '无权限', 2);
+            return true;
+        }else{
+            // 查询是否有当前控制器的规则
+            $rule = RuleModel::_()->checkRules($rule_ids,$controller,$action);
+            BusinessException::ThrowOn(!$rule, '无权限', 2);
+            return true;
         }
-        return true;
     }
     public function update($admin_id, $data)
     {

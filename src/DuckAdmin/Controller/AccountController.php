@@ -50,7 +50,7 @@ class AccountController extends Base
 		Helper::ThrowOn(!$flag, '验证码错误',1);
 		
 		$admin = AccountBusiness::_()->login($username, $password);
-		AdminSession::_()->setCurrentAdmin($admin);
+		AdminAction::_()->setCurrentAdmin($admin);
 		return Helper::Success($admin);
 	}
 
@@ -61,7 +61,7 @@ class AccountController extends Base
      */
     public function logout()
     {
-		AdminSession::_()->setCurrentAdmin([]);
+		AdminAction::_()->setCurrentAdmin([]);
         return Helper::Success(0);
     }
 
@@ -71,7 +71,7 @@ class AccountController extends Base
      */
     public function info()
     {
-		$admin = AdminSession::_()->getCurrentAdmin();
+		$admin = AdminAction::_()->getCurrentAdmin();
 		$data = AccountBusiness::_()->getAccountInfo($admin);
 		//$data['token'] = 'TODO TOKEN';////AdminSession::_()->SessionId();
 		
@@ -88,7 +88,7 @@ class AccountController extends Base
         $data = Helper::POST();
 		
 		$admin = AccountBusiness::_()->update($data);
-        AdminSession::_()->setCurrentAdmin($admin);
+        AdminAction::_()->setCurrentAdmin($admin);
 		
         Helper::Sucess();
     }

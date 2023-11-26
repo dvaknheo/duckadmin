@@ -15,6 +15,12 @@ class AdminAction
 {
     use ControllerHelperTrait;
     
+    public function checkLogin()
+    {
+        $admin = $this->refresh_admin_session();
+        ControllerExeption::ThrowOn(!$admin,"需要登录");
+		return $admin;
+    }
 	/**
 	 * 当前管理员
 	 * @param null|array|string $fields
@@ -22,16 +28,19 @@ class AdminAction
 	 */
 	public function getCurrentAdmin()
 	{
-		$this->refresh_admin_session();		
-		return AdminSession::_()->getCurrentAdmin();
+        return AdminSession::_()->getCurrentAdmin();
 	}
-
+    public function setCurrentAdmin($admin)
+    {
+        return AdminSession::_()->setCurrentAdmin($admin);
+    }
+    
 	/**
 	 * 刷新当前管理员session
 	 * @param bool $force
 	 * @return void
 	 */
-	protected function refresh_admin_session(bool $force = false) //protected
+	protected function refresh_admin_session(bool $force = false)
 	{
 		$time_now = time();
 		$session_ttl = 2;
@@ -60,27 +69,35 @@ class AdminAction
         $code = 0;
         $msg = '';
 		$admin = $this->getCurrentAdmin();
-		$flag = AccountBusiness::_()->canAccess($admin, $controller, $action, $code, $msg);
-		if($flag){
-			$flag = $this->isOptionsMethod();
-			if($flag){
-				return Helper::Exit('');
-			}
-			return;
-		}
-		
-		if (Helper::IsAjax()) {
+        try{
+            AccountBusiness::_()->canAccess($admin, $controller, $action);
+        } catch(\Exception $ex) {
+            $this->onAuthException($ex);
+            return;
+        }
+        $flag = $this->isOptionsMethod();
+        if($flag){
+            return Helper::Exit('');
+        }
+        return;
+    }
+    protected function onAuthException($ex)
+    {
+        $code = $ex->getCode();
+        $msg = $ex->getMessage();
+        
+        if (Helper::IsAjax()) {
 			Helper::ExitJson(['code' => $code, 'msg' => $msg, 'type' => 'error']);
 		}
 		if($code == 401){
 			return $this->exit401();
 		}else if($code == 403){
 			return $this->exit403();
-		}		
+		}
     }
 	protected function isOptionsMethod()
 	{
-		return @$_SERVER['REQUEST_METHOD']=='OPTIONS'?true:false;
+		return Helper::SERVER('REQUEST_METHOD','GET')==='OPTIONS'?true:false;
 	}
 	protected function exit401()
 	{

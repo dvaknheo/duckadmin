@@ -105,7 +105,7 @@ class CommonService extends Base
     }
     public function isSupperAdmin(int $admin_id = 0): bool
     {
-        Helper::ThrowOn($admin_id==0,'参数错误，请指定管理员');
+        BusinessException::ThrowOn($admin_id==0,'参数错误，请指定管理员');
         $roles = AdminRoleModel::_()->getRoles($admin_id);
         $rules = RoleModel::_()->getRules($roles);
         return RuleModel::_()->isSuper($rules); 
