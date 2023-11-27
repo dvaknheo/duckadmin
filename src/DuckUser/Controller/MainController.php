@@ -35,7 +35,7 @@ class MainController extends Base
         }
         try {
             $user = UserAction::_()->register($post);
-            Helper::GoHome();
+            Helper::_()->goHome();
         } catch (\Exception $ex) {
             $error = $ex->getMessage();
             $name = Helper::POST('name', '');
