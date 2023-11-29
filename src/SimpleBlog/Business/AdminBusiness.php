@@ -22,15 +22,21 @@ class AdminBusiness extends Base
     }
     public function getUserList($page = 1, $page_size = 10)
     {
-        return UserModel::_()->getList($page, $page_size);
+        $ret = UserModel::_()->getList($page, $page_size);
+        $ret = [$ret['data'],$ret['total']];
+        return $ret;
     }
     public function getCommentList($page = 1, $page_size = 10)
     {
-        return CommentModel::_()->getList($page, $page_size);
+        $ret = CommentModel::_()->getList($page, $page_size);
+        $ret = [$ret['data'],$ret['total']];
+        return $ret;
     }
     public function getLogList($page = 1, $page_size = 10)
     {
-        return ActionLogModel::_()->getList($page, $page_size);
+        $ret = ActionLogModel::_()->getList($page, $page_size);
+        $ret = [$ret['data'],$ret['total']];
+        return $ret;
     }
     //////////各种操作
     public function addArticle($title, $content)

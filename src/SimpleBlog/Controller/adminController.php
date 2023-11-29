@@ -12,7 +12,7 @@ class adminController
 {
     public function __construct()
     {
-        $admin = Helper::Admin();
+        Helper::Admin()->checkLogin();
        
         $data = [
             'url_articles' => 'admin/articles',
@@ -24,6 +24,7 @@ class adminController
             $v = __url($v);
         });
         $data['url_logout'] =Helper::Admin()->urlForLogout();
+        
         Helper::setViewHeadFoot('admin/inc_head', 'admin/inc_foot');
         Helper::assignViewData($data);
     }
@@ -64,25 +65,12 @@ class adminController
         AdminBusiness::_()->updateArticle(Helper::POST('id'), Helper::POST('title'), Helper::POST('content'));
         Helper::ExitRouteTo('admin/articles');
     }
-    public function action_do_article_delete()
+    public function do_action_article_delete()
     {
         AdminBusiness::_()->deleteArticle(Helper::POST('id'));
         Helper::ExitRouteTo('admin/articles');
     }
-    public function action_users()
-    {
-        list($list, $total) = AdminBusiness::_()->getUserList(Helper::PageNo());
-        $csrf_token = '';
-        foreach ($list as  &$v) {
-            $v['url_delete'] = __url("admin/delete_user?id={$v['id']}&_token={$csrf_token}");
-        }
-        Helper::Show(get_defined_vars());
-    }
-    public function action_delete_user()
-    {
-        AdminBusiness::_()->deleteUser(Helper::REQUEST('id'));
-        Helper::ExitRouteTo('admin/users');
-    }
+
     public function action_logs()
     {
         list($list, $total) = AdminBusiness::_()->getLogList(Helper::PageNo());

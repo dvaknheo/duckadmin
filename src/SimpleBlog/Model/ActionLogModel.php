@@ -11,7 +11,7 @@ class ActionLogModel extends Base
     
     public function log($action, $type = '')
     {
-        $this->insertData($this->table(), ['contents' => $action,'type' => $type,'created_at' => date('Y-m-d H:i:s')]);
+        $this->add(['contents' => $action,'type' => $type,'created_at' => date('Y-m-d H:i:s')]);
     }
     public function get($id)
     {

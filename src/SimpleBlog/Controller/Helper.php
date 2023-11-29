@@ -60,6 +60,7 @@ class Helper
         $phase = App::Phase();
         try{
         static::User()->checkLogin();
+        
         }catch(\Exception $ex){
             App::Phase($phase);
             return [];

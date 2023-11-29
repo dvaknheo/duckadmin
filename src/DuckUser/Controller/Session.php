@@ -33,7 +33,7 @@ class Session
     }
     public function unsetCurrentUser()
     {
-        $this->setCurrentUser('user',[]);
+        $this->set('user',[]);
     }
     public function getToken()
     {

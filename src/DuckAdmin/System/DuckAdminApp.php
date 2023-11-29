@@ -23,7 +23,7 @@ class DuckAdminApp extends DuckPhp
         'ext_options_file_enable' => true,  //使用额外的选项
         
         
-        //'class_admin'=> AdminApi::class,
+        'class_admin'=> Admin::class,
     ];
     public static function Action()
     {

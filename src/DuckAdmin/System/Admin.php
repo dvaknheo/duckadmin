@@ -40,7 +40,7 @@ class Admin extends GlobalAdmin
     }
     public function urlForLogout($url_back = null, $ext = null)
     {
-        throw new \ErrorException('DuckPhp: No Impelement');
+        return __url("logout");
     }
     ///////////////
     public function regist($post)
@@ -51,7 +51,7 @@ class Admin extends GlobalAdmin
     {
         throw new \ErrorException('DuckPhp: No Impelement');
     }
-    public function logout()
+    public function logout($post)
     {
         throw new \ErrorException('DuckPhp: No Impelement');
     }

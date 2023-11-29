@@ -11,6 +11,10 @@ class ArticleModel extends Base
     public function addData($title, $content)
     {
         $data = array('title' => $title,'content' => $content);
+        $date = date('Y-m-d H:i:s');
+        $data['created_at'] = $date;
+        $data['updated_at'] = $date;
+        
         return parent::add($data);
     }
     public function getList(int $page = 1, int $page_size = 10)
@@ -20,6 +24,8 @@ class ArticleModel extends Base
     public function updateData($id, $title, $content)
     {
         $data = array('title' => $title,'content' => $content);
+        $date = date('Y-m-d H:i:s');
+        $data['updated_at'] = $date;
         return parent::update($id, $data);
     }
     public function delete($id)

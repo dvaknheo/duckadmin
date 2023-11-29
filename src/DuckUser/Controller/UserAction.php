@@ -21,7 +21,7 @@ class UserAction extends Base
     {
         $user = Session::_()->getCurrentUser();
         ControllerException::ThrowOn(!$user, '请登录');
-        
+        $this->user = $user;
         return $this;
     }
     public function id()

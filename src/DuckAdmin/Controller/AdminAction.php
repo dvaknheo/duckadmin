@@ -17,8 +17,8 @@ class AdminAction
     
     public function checkLogin()
     {
-        $admin = $this->refresh_admin_session();
-        ControllerExeption::ThrowOn(!$admin,"需要登录");
+        $admin = $this->refresh_admin_session(true);
+        ControllerException::ThrowOn(!$admin,"需要登录");
 		return $admin;
     }
 	/**
@@ -45,16 +45,19 @@ class AdminAction
 		$time_now = time();
 		$session_ttl = 2;
 		$admin = AdminSession::_()->getCurrentAdmin();
-		
 		if(!$admin){
 			return null;
 		}
+        
 		$session_last_update_time = $admin['session_last_update_time'] ?? 0;
 		
+        
 		if (!$force && $time_now - $session_last_update_time < $session_ttl) {
+        
 			return null;
 		}
 		$admin = AccountBusiness::_()->getAdmin($admin['id']);
+        
 		if(!$admin){
 			return null;
 		}
@@ -62,6 +65,7 @@ class AdminAction
 		unset($admin['password']);
 		$admin['session_last_update_time'] = $time_now;
 		AdminSession::_()->setCurrentAdmin($admin);	
+        return $admin;
 	}
     ////////////////
     public function checkAccess($controller,$action)
