@@ -25,7 +25,7 @@ class UserController
     }
     public function __construct()
     {
-        //
+        Helper::Admin()->checkLogin();
     }
 
     /**

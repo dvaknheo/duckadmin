@@ -12,5 +12,12 @@ class UserModel
 {
     use SimpleModelTrait;
     use ModelHelperTrait;
-    
+    public function getUserList($page = 1, $page_size = 10)
+    {
+        //
+    }
+    public function deleteUser($id)
+    {
+        //
+    }
 }

@@ -22,16 +22,12 @@ class DuckUserManagerApp extends DuckPhp
 {
     //@override
     public $options = [
-        'is_debug' => true,
-        'ext_options_from_config' => true,  //使用额外的选项
+        'ext_options_file_enable' => true,  //使用额外的选项
         'controller_resource_prefix' => 'res/',  // 资源文件前缀
         
         'ext' =>[
             RouteHookResource::class => true
         ],
-        
-        //'class_admin'=> Admin::class,
-        'mode' => 'default',
     ];
     public function __construct()
     {
