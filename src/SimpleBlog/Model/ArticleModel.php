@@ -17,6 +17,14 @@ class ArticleModel extends Base
         
         return parent::add($data);
     }
+    public function get($id)
+    {
+        return parent::get($id);
+    }
+    public function getList($where=[] ,$page =1 ,$page_size =10)
+    {
+        return parent::getList($where, $page, $page_size);
+    }
     public function updateData($id, $title, $content)
     {
         $data = array('title' => $title,'content' => $content);

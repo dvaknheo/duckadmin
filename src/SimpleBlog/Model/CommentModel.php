@@ -28,4 +28,8 @@ class CommentModel extends Base
     {
         return parent::delete($id);
     }
+    public function getList($where=[] ,$page =1 ,$page_size =10)
+    {
+        return parent::getList($where, $page, $page_size);
+    }
 }

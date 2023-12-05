@@ -4,7 +4,7 @@
  * From this time, you never be alone~
  */
 
-namespace DuckUser\Model;
+namespace SimpleBlog\Model;
 
 use DuckPhp\Helper\ModelHelperTrait;
 

@@ -20,12 +20,6 @@ class AdminBusiness extends Base
         $ret = ArticleModel::_()->get($id);
         return $ret;
     }
-    public function getUserList($page = 1, $page_size = 10)
-    {
-        $ret = UserModel::_()->getList([], $page, $page_size);
-        $ret = [$ret['data'],$ret['count']];
-        return $ret;
-    }
     public function getCommentList($page = 1, $page_size = 10)
     {
         $ret = CommentModel::_()->getList([], $page, $page_size);
