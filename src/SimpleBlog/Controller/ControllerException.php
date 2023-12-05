@@ -5,7 +5,9 @@
  */
 namespace SimpleBlog\Controller;
 
-class ControllerException extends ProjectException
+use DuckPhp\Foundation\SimpleExceptionTrait;
+
+class ControllerException
 {
-    //
+    use SimpleExceptionTrait;
 }

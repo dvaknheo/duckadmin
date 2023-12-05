@@ -19,10 +19,6 @@ class CommentModel extends Base
         $total = Base::Db()->fetchColumn($sql);
         return array($data,$total);
     }
-    public function getList(int $page = 1, int $page_size = 10)
-    {
-        return parent::getList($page, $page_size);
-    }
     public function addData($user_id, $article_id, $content)
     {
         $data = array('user_id' => $user_id,'article_id' => $article_id,'content' => $content);

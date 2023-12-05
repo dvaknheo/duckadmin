@@ -6,9 +6,9 @@
 
 namespace SimpleBlog\Business;
 
-use SimpleBlog\System\ProjectException;
+use DuckPhp\Foundation\SimpleExceptionTrait;
 
 class BusinessException extends ProjectException
 {
-
+    use SimpleExceptionTrait;
 }
