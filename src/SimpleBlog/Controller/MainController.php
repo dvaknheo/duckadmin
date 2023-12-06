@@ -40,6 +40,8 @@ class MainController
         $article['comments'] = Helper::_()->recordsetH($article['comments'], ['content','username']);
         $html_pager = Helper::PageHtml($article['comments_total']);
         $url_add_comment = __url('addcomment');
+        $user = Helper::_()->getUserData();
+        $url_login_to_commment = Helper::User()->UrlForLogin();
         Helper::Show(get_defined_vars(), 'article');
     }
     public function action_addcomment()
