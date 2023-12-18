@@ -4,41 +4,21 @@
  */
 namespace DuckUserManager\System;
 
-use DuckPhp\Component\DbManager;
-use DuckPhp\Component\RouteHookResource;
-use DuckPhp\Core\Route;
-use DuckPhp\DuckPhp;
-
-use DuckAdmin\System\App as DuckAdmin;
-use DuckAdmin\System\AdminApi;
-use DuckAdmin\System\ProjectException;
-//use DuckAdmin\System\ProjectRoute;
-
+use DuckPhp\DuckPhpAllInOne;
 
 /**
  * 入口类
  */
-class DuckUserManagerApp extends DuckPhp
+class DuckUserManagerApp extends DuckPhpAllInOne
 {
     //@override
     public $options = [
         'ext_options_file_enable' => true,  //使用额外的选项
         'controller_resource_prefix' => 'res/',  // 资源文件前缀
-        
-        'ext' =>[
-            RouteHookResource::class => true
-        ],
     ];
     public function __construct()
     {
         $this->options['path'] = dirname(__DIR__).'/';
         parent::__construct();
     }
-    
-    public function onPrepare()
-    {
-        //默认的路由不符合我们这次的路由，还过
-        Route::_(ProjectRoute::_());
-    }
-
 }

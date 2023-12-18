@@ -1,14 +1,16 @@
 <?php
 namespace DuckUserManager\Controller;
 
+use DuckPhp\Foundation\SimpleControllerTrait;
 use DuckUserManager\Business\UserBusiness;
-use DuckAdmin\Controller\Helper;
+use DuckUserManager\System\DuckUserManagerApp as Helper;
 
 /**
  * 管理员列表 
  */
 class UserController
 {
+    use SimpleControllerTrait;
     /**
      * 不需要鉴权的方法
      * @var array

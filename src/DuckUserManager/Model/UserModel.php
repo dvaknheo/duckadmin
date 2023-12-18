@@ -5,13 +5,12 @@
  */
 namespace DuckUserManager\Model;
 
-use DuckPhp\Component\SimpleModelTrait;
-use DuckPhp\Helper\ModelHelperTrait;
+use DuckPhp\Foundation\SimpleModelTrait;
+use DuckUserManager\System\DuckUserManagerApp as Helper;
 
 class UserModel
 {
     use SimpleModelTrait;
-    use ModelHelperTrait;
     public function getUserList($page = 1, $page_size = 10)
     {
         //

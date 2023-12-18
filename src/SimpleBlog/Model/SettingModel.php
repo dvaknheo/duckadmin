@@ -16,6 +16,7 @@ class SettingModel extends Base
     }
     public function set($key, $value)
     {
+        //TODO
         $sql = "INSERT INTO 'TABLE' (k,v) VALUES(?,?) ON DUPLICATE KEY UPDATE  v=?";
         $sql = $this->prepare($sql);
         $ret = BaseModel::Db()->execute($sql, $key, $value, $value);
