@@ -6,21 +6,20 @@
 namespace SimpleBlog\System;
 
 use DuckPhp\DuckPhp;
+use SimpleBlog\Controller\ExceptionReporter;
 
 class SimpleBlogApp extends DuckPhp
 {
     //@override
-    public $options = [       
-        'error_404' =>'error-404',
-        'error_500' => 'error-500',
+    public $options = [
+        'path' => __DIR__ . '/../',
+        
+        'exception_reporter' =>  ExceptionReporter:class,
+        //'exception_default_class'  => ProjectException::class,
+        
         'rewrite_map' => [
             '~article/(\d+)/?(\d+)?' => 'article?id=$1&page=$2',
         ],
         'sql_dump_enable' => true,
     ];
-    public function __construct()
-    {
-        $this->options['path'] = dirname(__DIR__).'/';
-        parent::__construct();
-    }
 }

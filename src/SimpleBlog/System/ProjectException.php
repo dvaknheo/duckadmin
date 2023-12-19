@@ -1,13 +1,17 @@
 <?php declare(strict_types=1);
 /**
- * DuckPHP
+ * DuckPhp
  * From this time, you never be alone~
  */
-namespace SimpleBlog\Controller;
+
+namespace SimpleBlog\System;
 
 use DuckPhp\Foundation\SimpleExceptionTrait;
 
-class ControllerException
+/**
+ * 这是工程的错误基类。 可以使用 ThrowOn
+ */
+class ProjectException extends \Exception
 {
     use SimpleExceptionTrait;
 }
