@@ -14,9 +14,9 @@ class CommentModelEx extends Base
     {
         $start = $page - 1;
         $sql = "SELECT SQL_CALC_FOUND_ROWS  a.*,b.id as user_id,b.username from {$this->table_name} as a left join {$this->table_name_user} as b on  a.user_id=b.id where a.article_id=? and a.deleted_at is null order by a.id limit $start,$page_size";
-        $data = Helper::Db()->fetchAll($sql, $article_id);
+        $data = $this->fetchAll($sql, $article_id);
         $sql = "SELECT FOUND_ROWS()";
-        $total = Helper::Db()->fetchColumn($sql);
+        $total = $this->fetchColumn($sql);
         return ['data'=>$data,'count'=>$total];
     }
 }

@@ -5,7 +5,6 @@
  */
 namespace SimpleBlog\Business;
 
-use SimpleBlog\Model\SettingModel;
 use SimpleBlog\Model\ActionLogModel;
 use SimpleBlog\Model\ArticleModel;
 use SimpleBlog\Model\UserModel;

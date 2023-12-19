@@ -13,10 +13,9 @@ class CommentModel extends Base
     {
         $start = $page - 1;
         $sql = "SELECT SQL_CALC_FOUND_ROWS  * from 'TABLE' where article_id=? and deleted_at is null order by id desc limit $start,$page_size";
-        $sql = $this->prepare($sql);
-        $data = Base::Db()->fetchAll($sql, $article_id);
+        $data = $this->fetchAll($sql, $article_id);
         $sql = "SELECT FOUND_ROWS()";
-        $total = Base::Db()->fetchColumn($sql);
+        $total = $this->fetchColumn($sql);
         return array($data,$total);
     }
     public function addData($user_id, $article_id, $content)
