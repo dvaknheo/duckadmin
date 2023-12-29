@@ -16,7 +16,6 @@ class Base
     public function get($id)
     {
         $sql = "select * from 'TABLE' where id =? and deleted_at is null";
-        $sql = $this->prepare($sql);
         $ret = $this->fetch($sql, $id);
         return $ret;
     }
@@ -24,7 +23,6 @@ class Base
     {
         $date = date('Y-m-d H:i:s');
         $sql = "update 'TABLE' set deleted_at=? where id=? ";
-        $sql = $this->prepare($sql);
         $ret = $this->execute($sql, $date, $id);
         return $ret;
     }

@@ -7,7 +7,6 @@ namespace SimpleBlog\Business;
 
 use SimpleBlog\Model\ActionLogModel;
 use SimpleBlog\Model\ArticleModel;
-use SimpleBlog\Model\UserModel;
 use SimpleBlog\Model\CommentModel;
 
 class AdminBusiness extends Base
@@ -49,11 +48,6 @@ class AdminBusiness extends Base
         ActionLogModel::_()->log("删除 {$id}，结果", "删除文章");
     }
     ///
-    public function deleteUser($id)
-    {
-        $ret = UserModel::_()->delete($id);
-        ActionLogModel::_()->log("删除 {$id}，结果", "删除用户");
-    }
     public function deleteComment($id)
     {
         $ret = ArticleModel::_()->delete($id);
