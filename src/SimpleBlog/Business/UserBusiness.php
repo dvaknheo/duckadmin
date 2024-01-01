@@ -23,7 +23,7 @@ class UserBusiness extends Base
         $username = Helper::_()->getUserName($user_id);
         
         $comment = CommentModel::_()->get($comment_id);
-        UserException::ThrowOn(!$comment, "没找到评论");
+        UserException::ThrowOn(!$comment, "没找到评论",-1);
         UserException::ThrowOn($comment['user_id'] != $user_id, "不是你的评论", -1);
         CommentModel::_()->delete($id);
         ActionLogModel::_()->log("{$user_id}-{$username} 删除评论成功");

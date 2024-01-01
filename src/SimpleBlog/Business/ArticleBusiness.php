@@ -30,13 +30,14 @@ class ArticleBusiness extends Base
             return array();
         }
         $ret['comments'] = CommentModelEx::_()->getListByArticle([], $id, $comment_pge);
-        
+        //我们这里改成整合 ID 重新来
         return $ret;
     }
     public function getArticleFullInfo($id, $page = 1, $page_size = 10)
     {
         $art = ArticleModel::_()->get($id);
-        $data = CommentModelEx::_()->getListByArticle($id, $page, $page_size);
+        $data = CommentModelEx::_()->getListByArticle([],$id, $page, $page_size);
+        //我们这里改成整合 ID 重新来
         $art['comments'] = $data['data'];
         $art['comments_total'] = $data['count'];
         return $art;
