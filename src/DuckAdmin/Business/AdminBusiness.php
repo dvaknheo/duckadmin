@@ -32,11 +32,11 @@ class AdminBusiness extends Base
     {
         $role_ids=$input['roles'];
         $role_ids = $role_ids ? explode(',', $role_ids) : [];
-        Helper::ThrowOn(!$role_ids,'至少选择一个角色组',1);
+        Helper::BusinessThrowOn(!$role_ids,'至少选择一个角色组',1);
         
         // 这里两个
         $flag = CommonService::_()->noRole($op_id,$role_ids, false);
-        Helper::ThrowOn($flag,'角色超出权限范围',1);
+        Helper::BusinessThrowOn($flag,'角色超出权限范围',1);
         
         //$is_supper_admin = $this->isSupperAdmin($op_id);
         // 这里要调整权限
@@ -59,15 +59,15 @@ class AdminBusiness extends Base
         $admin_id = $input['id'];
         $role_ids = $input['roles'];
         $data = AdminModel::_()->inputFilter($input);
-        Helper::ThrowOn(!$admin_id,'缺少参数',1);
+        Helper::BusinessThrowOn(!$admin_id,'缺少参数',1);
         
         if (isset($data['status']) && $data['status'] == 1 && $admin_id === $op_id) {
-            Helper::ThrowOn(true,'不能禁用自己',1);
+            Helper::BusinessThrowOn(true,'不能禁用自己',1);
         }
 
         // 需要更新角色
         if ($role_ids !== null) {
-            Helper::ThrowOn(!$role_ids,'至少选择一个角色组',1);
+            Helper::BusinessThrowOn(!$role_ids,'至少选择一个角色组',1);
             
             $role_ids = explode(',', $role_ids);
             $exist_role_ids = AdminRoleModel::_()->rolesByAdmin($admin_id);
@@ -76,10 +76,10 @@ class AdminBusiness extends Base
             $is_supper_admin = CommonService::_()->isSupperAdmin($op_id);
             if (!$is_supper_admin){
                 if(!array_intersect($exist_role_ids, $scope_role_ids)) {
-                    Helper::ThrowOn(true,'无权限更改该记录',1);
+                    Helper::BusinessThrowOn(true,'无权限更改该记录',1);
                 }
                 if (array_diff($role_ids, $scope_role_ids)) {
-                    Helper::ThrowOn(true,'角色超出权限范围',1);
+                    Helper::BusinessThrowOn(true,'角色超出权限范围',1);
                 }
             }
             AdminRoleModel::_()->updateAdminRole($admin_id, $exist_role_ids, $role_ids);
@@ -93,12 +93,12 @@ class AdminBusiness extends Base
             return true;
         }
         $ids = (array)$ids;
-        Helper::ThrowOn(in_array($op_id, $ids),'不能删除自己',1);
+        Helper::BusinessThrowOn(in_array($op_id, $ids),'不能删除自己',1);
         $is_supper_admin = CommonService::_()->isSupperAdmin($op_id);
         if (!$is_supper_admin){
             $scope_role_ids = AdminRoleModel::_()->rolesByAdmin($op_id);
             if (array_diff($ids, $scope_role_ids)) {
-                Helper::ThrowOn(true,'无数据权限',1);
+                Helper::BusinessThrowOn(true,'无数据权限',1);
             }
         }
         

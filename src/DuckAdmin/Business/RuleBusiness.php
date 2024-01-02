@@ -192,7 +192,7 @@ class RuleBusiness extends Base
         $data['pid'] = empty($data['pid']) ? 0 : $data['pid'];
         $key = $data['key'] ?? '';
         $flag = RuleModel::_()->findByKey($key);
-        Helper::ThrowOn($flag, "菜单标识 $key 已经存在", 1);
+        Helper::BusinessThrowOn($flag, "菜单标识 $key 已经存在", 1);
         
         RuleModel::_()->addMenu($data['key'],$data);
     }
@@ -201,12 +201,12 @@ class RuleBusiness extends Base
         $id = $input['id'];
         $row = RuleModel::_()->findById($id);
         
-        Helper::ThrowOn(!$row, '记录不存在',2);
+        Helper::BusinessThrowOn(!$row, '记录不存在',2);
         $data = RuleModel::_()->inputFilter($input);
         //[$id, $data] = $this->updateInput($input);
         if (isset($data['pid'])) {
             $data['pid'] = $data['pid'] ?: 0;
-            Helper::ThrowOn($data['pid'] == $row['id'], '不能将自己设置为上级菜单',2);
+            Helper::BusinessThrowOn($data['pid'] == $row['id'], '不能将自己设置为上级菜单',2);
         }
         if (isset($data['key'])) {
             $data['key'] = str_replace('\\\\', '\\', $data['key']);

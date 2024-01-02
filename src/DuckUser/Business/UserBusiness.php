@@ -5,30 +5,33 @@
  */
 namespace DuckUser\Business;
 
+use DuckPhp\Foundation\SimpleBusinessTrait;
+use DuckUser\Business\UserBusiness as Helper;
 use DuckUser\Model\UserModel;
 
 /**
  * 我们偷懒，把 BusinessHelper 集成进这里,基类我们也不要了，毕竟只有一个
  * 绑定异常，
  */
-class UserBusiness extends Base
+class UserBusiness
 {
+    use SimpleBusinessTrait;
     public function register($form)
     {
         $form['password'] = $form['password'] ?? '';
         $form['password_confirm'] = $form['password_confirm'] ?? '';
         
-        BusinessException::ThrowOn($form['password'] != $form['password_confirm'], '重复密码不一致');
+        Helper::BusinessThrowOn($form['password'] != $form['password_confirm'], '重复密码不一致');
 
         $username = $form['name'];
         $password = $form['password'] ?? '';
-        BusinessException::ThrowOn($password === '', "密码为空");
+        Helper::BusinessThrowOn($password === '', "密码为空");
         
         $flag = UserModel::_()->exsits($username);
-        BusinessException::ThrowOn($flag, "用户已经存在");
+        Helper::BusinessThrowOn($flag, "用户已经存在");
         
         $uid = UserModel::_()->addUser($username, $password);
-        BusinessException::ThrowOn(!$uid, "注册新用户失败");
+        Helper::BusinessThrowOn(!$uid, "注册新用户失败");
         
         $user = UserModel::_()->getUserById($uid);
         $user = UserModel::_()->unloadPassword($user);
@@ -40,11 +43,11 @@ class UserBusiness extends Base
         $username = $form['name'];
         $password = $form['password'];
         $user = UserModel::_()->getUserByUsername($username);
-        BusinessException::ThrowOn(empty($user), "用户不存在");
-        BusinessException::ThrowOn(!empty($user['delete_at']), "用户已被禁用");
+        Helper::BusinessThrowOn(empty($user), "用户不存在");
+        Helper::BusinessThrowOn(!empty($user['delete_at']), "用户已被禁用");
         
         $flag = UserModel::_()->verifyPassword($user, $password);
-        BusinessException::ThrowOn(!$flag, "密码错误");
+        Helper::BusinessThrowOn(!$flag, "密码错误");
         
         $user = UserModel::_()->unloadPassword($user);
         Helper::FireEvent([self::class, __METHOD__],$user);
@@ -52,14 +55,14 @@ class UserBusiness extends Base
     }
     public function changePassword($uid, $password, $new_password)
     {
-        BusinessException::ThrowOn($new_password === '', "空密码");
+        Helper::BusinessThrowOn($new_password === '', "空密码");
         $user = UserModel::_()->getUserById($uid);
         
-        BusinessException::ThrowOn(!empty($user['delete_at']), "用户已被禁用");
+        Helper::BusinessThrowOn(!empty($user['delete_at']), "用户已被禁用");
         
         $flag = UserModel::_()->verifyPassword($user, $password);
         
-        BusinessException::ThrowOn(!$flag, "旧密码错误");
+        Helper::BusinessThrowOn(!$flag, "旧密码错误");
         
         UserModel::_()->updatePassword($uid, $new_password);
     }
