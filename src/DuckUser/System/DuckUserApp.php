@@ -15,12 +15,13 @@ class DuckUserApp extends DuckPhp
     //@override
     public $options = [
         'is_debug' => true,
-        'exception_reporter' => ExceptionReporter::class,
         'ext_options_file_enable' => true,
+        'exception_reporter' => ExceptionReporter::class,
         
+        'class_user' => User::class,
         //'table_prefix' => '',   // 表前缀
         //'session_prefix' => '',  // Session 前缀
-        'class_user' => User::class,
+        
         'home_url' => 'Home/index',
     ];
     public function install($options, $parent_options = [])

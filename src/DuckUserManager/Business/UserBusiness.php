@@ -22,7 +22,7 @@ class UserBusiness
     public function getUserList($page = 1, $page_size = 10)
     {
         //我们这里要加个显示被禁用的用户等
-        return UserModel::_()->getList($page, $page_size);
+        return UserModel::_()->getList([], $page, $page_size);
     }
     public function deleteUser($id)
     {

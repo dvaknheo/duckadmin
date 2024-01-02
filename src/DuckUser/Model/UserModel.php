@@ -9,7 +9,7 @@ class UserModel extends Base
 {
     public function __construct()
     {
-        $this->table_name = 'users';
+        $this->table_name = 'Users';
     }
     public function install()
     {

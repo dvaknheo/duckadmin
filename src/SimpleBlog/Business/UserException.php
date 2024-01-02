@@ -5,8 +5,9 @@
  */
 
 namespace SimpleBlog\Business;
+use SimpleBlog\System\ProjectException;
 
-class UserException extends BusinessException
+class UserException extends ProjectException
 {
-
+    //
 }

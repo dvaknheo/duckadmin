@@ -18,4 +18,8 @@ class Helper
         $user_data = GlobalUser::_()->data();
         return $user_data['username'];
     }
+    public function getUserNames($user_ids)
+    {
+        //
+    }
 }
