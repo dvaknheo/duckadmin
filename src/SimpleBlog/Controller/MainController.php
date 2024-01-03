@@ -31,6 +31,7 @@ class MainController
     public function action_article()
     {
         $id = Helper::GET('id',1);
+        $id = (int)$id;
         
         $article = ArticleBusiness::_()->getArticleFullInfo($id, Helper::PageNo(), Helper::PageWindow());
         if (!$article) {
@@ -41,7 +42,7 @@ class MainController
         $html_pager = Helper::PageHtml($article['comments_total']);
         $url_add_comment = __url('addcomment');
         $user = Helper::_()->getUserData();
-        $url_login_to_commment = Helper::User()->UrlForLogin();
+        $url_login_to_commment = Helper::User()->UrlForLogin(__url("article/$id"));
         Helper::Show(get_defined_vars(), 'article');
     }
     public function action_addcomment()

@@ -13,7 +13,7 @@ class SimpleBlogApp extends DuckPhp
     //@override
     public $options = [
         'path' => __DIR__ . '/../',      
-        'exception_reporter' =>  ExceptionReporter:class,
+        'exception_reporter' =>  ExceptionReporter::class,
         'exception_for_business'  => ProjectException::class,
         'exception_for_controller'  => ProjectException::class,
         

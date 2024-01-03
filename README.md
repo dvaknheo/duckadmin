@@ -9,30 +9,20 @@
 
 `DuckAdmin` 只做了公司员工结构的基本代码，通用业务。你可以在这之上添加更多符合公司业务的功能。
 
-附带的 `DuckAdminDemo` 工程，你可以参考着修改
 
 ## 运行
 
 最简单的方式：
 
 ```php
-composer create-project  dvaknheo/duckadmin myporject
-cd myproject
-php duckphp-project run
-# 首次运行会安装填写数据库，密码
-# 打开 127.0.0.1
-
-```
-这模式为允许 demo 目录下的代码。 附带会有一个用户管理系统。用于管理外部注册用户。
-
-
-这只是DEMO， 正常模式下：
-
-```php
 composer require dvaknheo/duckadmin
+cd demo
+php go.php run
+# 打开 127.0.0.1
+# 进入后台管理系统，为系统安装
 
-```
-然后酌情修改你的代码 。
+
+根据 demo 目录，酌情修改你的代码 。
 
 目前 duckphp 系统还没有自动发现插件机制扩展。(我们做个自动发现插件的机制扩展？)
 
@@ -40,26 +30,8 @@ composer require dvaknheo/duckadmin
 
 ### 前置知识
 
-你需要了解 DuckPhp 的插件机制。
-
-
 ### 调整选项
-```
-    $this->options['ext'][\DuckAdmin\Api\DuckAdminPlugin::class]=[
-        'plugin_url_prefix' => 'admin/',
-        'table_prefix' => '',
-        'session_prefix' => '',
-        
-    ];
-```
 ### 静态资源外放
-
-为性能你需要修改 DuckAdmin\Api\DuckAdminPlugin 类的选项 `duckadmin_res`
-
-`duckadmin_res` = 'https://mycdn.site/', 
-
-// 注意别漏了最后的 斜杠
-
 ### 接管视图
 
 作为 DuckPhp 的插件。
@@ -68,12 +40,6 @@ composer require dvaknheo/duckadmin
 
 ### 使用 API
 
-你的控制器可能会用到 `DuckAdmin\Api\DuckAdminAction`，的方法
-
-
-你的业务代码，可能会用到 `DuckAdmin\Api\DuckAdminService` ，的方法。
-
-不过，为了给你的应用工程师（你的小弟）使用，你应该自己封装入类似  `DuckAdminDemo\System\ProjectController` 和 `DuckAdminDemo\System\ProjectBusiness` 里。
 
 ### 修改实现
 
@@ -82,10 +48,3 @@ composer require dvaknheo/duckadmin
 ```
 DuckAdmin\Api\DuckAdminPlugin::G(MyDuckAdminPlugin::G())
 ``
-
-### 在 DuckAdmin 的 url 中修改东西
-
-
-
-###
-难题，在 duckadmin 的项目中，相对 duckadmin 的 url 和相对 duckadmindemo 的  url

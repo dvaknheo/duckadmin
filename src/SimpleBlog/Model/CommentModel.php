@@ -16,11 +16,11 @@ class CommentModel extends Base
         $data = $this->fetchAll($sql, $article_id);
         $sql = "SELECT FOUND_ROWS()";
         $total = $this->fetchColumn($sql);
-        return array($data,$total);
+        return ['data'=>$data,'count'=>$total];
     }
     public function addData($user_id, $article_id, $content)
     {
-        $data = array('user_id' => $user_id,'article_id' => $article_id,'content' => $content);
+        $data = array('user_id' => $user_id,'article_id' => $article_id,'content' => $content, 'created_at'=>date('Y-m-d H:i:s'));
         return parent::add($data);
     }
     public function delete($id)

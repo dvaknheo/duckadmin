@@ -6,6 +6,7 @@
 namespace DuckUser\Business;
 
 use DuckPhp\Foundation\SimpleBusinessTrait;
+use DuckPhp\Helper\BusinessHelperTrait;
 use DuckUser\Business\UserBusiness as Helper;
 use DuckUser\Model\UserModel;
 
@@ -16,6 +17,8 @@ use DuckUser\Model\UserModel;
 class UserBusiness
 {
     use SimpleBusinessTrait;
+    use BusinessHelperTrait;
+    
     public function register($form)
     {
         $form['password'] = $form['password'] ?? '';

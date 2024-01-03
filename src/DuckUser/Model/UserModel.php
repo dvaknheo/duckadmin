@@ -60,14 +60,15 @@ class UserModel
         
         return $user;
     }
-    public function getUsernames($user_id)
+    public function getUsernames($user_ids)
     {
-        $user_ids = static::DbForRead()->quoteIn($user_id);
-        $sql = "select * from `'TABLE'` where id in ($user_ids)";
-        $data = $this->fetch($sql, $username);
+        if(empty($user_ids)){ return []; }
+        $user_ids = static::DbForRead()->quoteIn($user_ids);
+        $sql = "select id,username from `'TABLE'` where id in ($user_ids)";
+        $data = $this->fetchAll($sql);
         $ret = [];
         foreach ($data as $v) {
-            $ret[$v['id']] = $ret['username'];
+            $ret[$v['id']] = $v['username'];
         }
         return $ret;
     }

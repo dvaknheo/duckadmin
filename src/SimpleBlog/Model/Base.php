@@ -11,6 +11,7 @@ use DuckPhp\Helper\ModelHelperTrait;
 class Base
 {
     use SimpleModelTrait;
+    use ModelHelperTrait;
     
     //public $table_name = null;
 

@@ -6,7 +6,7 @@
 namespace SimpleBlog\Business;
 
 use SimpleBlog\Model\ArticleModel;
-use SimpleBlog\Model\CommentModelEx;
+use SimpleBlog\Model\CommentModel;
 
 class ArticleBusiness extends Base
 {
@@ -26,13 +26,13 @@ class ArticleBusiness extends Base
     public function getArticleFullInfo($id, $page = 1, $page_size = 10)
     {
         $art = ArticleModel::_()->get($id);
-        $data = CommentModel::_()->getListByArticle([],$id, $page, $page_size);
+        $data = CommentModel::_()->getListByArticle($id, $page, $page_size);
         
         $comments = $data['data'];
         $ids = array_column($data['data'],'id');
-        $names = Helper::_()->getUsernames($ids);
-        foreach($comomments as &$v){
-            $v['names']= $names[$v['id']];
+        $names = !empty($ids)? Helper::_()->getUsernames($ids) :[];
+        foreach($comments as &$v){
+            $v['username']= $names[$v['user_id']];
         }
         unset($v);
         

@@ -57,7 +57,7 @@ class UserAction extends Base
     }
     public function urlForLogin($url_back = null, $ext = null)
     {
-        return __url('login');
+        return __url("login?b=".__url($url_back));
     }
     public function urlForLogout($url_back = null, $ext = null)
     {
