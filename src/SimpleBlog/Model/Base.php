@@ -17,7 +17,7 @@ class Base
     public function get($id)
     {
         //override as public
-        $sql = "select * from 'TABLE' where id =? and deleted_at is null";
+        $sql = "select * from `'TABLE'` where id =? and deleted_at is null";
         $ret = $this->fetch($sql, $id);
         return $ret;
     }
@@ -25,7 +25,7 @@ class Base
     {
         //override as public
         $date = date('Y-m-d H:i:s');
-        $sql = "update 'TABLE' set deleted_at=? where id=? ";
+        $sql = "update `'TABLE'` set deleted_at=? where id=? ";
         $ret = $this->execute($sql, $date, $id);
         return $ret;
     }
@@ -38,7 +38,7 @@ class Base
             $sql_where .=" deleted_at is null";  // ugly
         }
         
-        $sql = "SELECT * from 'TABLE' where $sql_where order by id desc";
+        $sql = "SELECT * from `'TABLE'` where $sql_where order by id desc";
         $sql = $this->prepare($sql);
         
         $total = self::DbForRead()->fetchColumn(self::SqlForCountSimply($sql));

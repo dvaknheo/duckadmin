@@ -33,7 +33,7 @@ class UserModel
     }
     public function exsits($name)
     {
-        $sql = "select count(*) as c from 'TABLE' where username=?";
+        $sql = "select count(*) as c from `'TABLE'` where username=?";
         
         $count = $this->fetchColumn($sql, $name);
         return !empty($count)?true:false;
@@ -48,14 +48,14 @@ class UserModel
     }
     public function getUserById($id)
     {
-        $sql = "select * from 'TABLE' where id=?";
+        $sql = "select * from `'TABLE'` where id=?";
         $user = $this->fetch($sql, $id);
         
         return $user;
     }
     public function getUserByUsername($username)
     {
-        $sql = "select * from 'TABLE' where username=?";
+        $sql = "select * from `'TABLE'` where username=?";
         $user = $this->fetch($sql, $username);
         
         return $user;
@@ -63,7 +63,7 @@ class UserModel
     public function getUsernames($user_id)
     {
         $user_ids = static::DbForRead()->quoteIn($user_id);
-        $sql = "select * from 'TABLE' where id in ($user_ids)";
+        $sql = "select * from `'TABLE'` where id in ($user_ids)";
         $data = $this->fetch($sql, $username);
         $ret = [];
         foreach ($data as $v) {
@@ -83,7 +83,7 @@ class UserModel
     public function updatePassword($uid, $password)
     {
         $password = $this->hash($password);
-        $sql = "update 'TABLE' set password=? where id=? limit 1";
+        $sql = "update `'TABLE'` set password=? where id=? limit 1";
         $ret = $this->execute($sql, $password, $uid);
         return $ret;
     }
