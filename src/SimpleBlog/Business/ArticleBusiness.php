@@ -27,8 +27,16 @@ class ArticleBusiness extends Base
     {
         $art = ArticleModel::_()->get($id);
         $data = CommentModel::_()->getListByArticle([],$id, $page, $page_size);
-        //我们这里改成整合 ID 重新来
-        $art['comments'] = $data['data'];
+        
+        $comments = $data['data'];
+        $ids = array_column($data['data'],'id');
+        $names = Helper::_()->getUsernames($ids);
+        foreach($comomments as &$v){
+            $v['names']= $names[$v['id']];
+        }
+        unset($v);
+        
+        $art['comments'] = $comments;
         $art['comments_total'] = $data['count'];
         return $art;
     }

@@ -46,6 +46,10 @@ class UserAction extends Base
     {
         Session::_()->unsetCurrentUser();
     }
+    public function getUsernames($ids)
+    {
+        return UserBusiness::_()->getUsernames($ids);
+    }
     ///////////////////
     public function urlForRegist($url_back = null, $ext = null)
     {

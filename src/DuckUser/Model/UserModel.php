@@ -6,10 +6,12 @@
 namespace DuckUser\Model;
 
 use DuckPhp\Foundation\SimpleModelTrait;
+use DuckPhp\Helper\ModelHelperTrait;
 
 class UserModel
 {
     use SimpleModelTrait;
+    use ModelHelperTrait;
 
     public function __construct()
     {
@@ -57,6 +59,17 @@ class UserModel
         $user = $this->fetch($sql, $username);
         
         return $user;
+    }
+    public function getUsernames($user_id)
+    {
+        $user_ids = static::DbForRead()->quoteIn($user_id);
+        $sql = "select * from 'TABLE' where id in ($user_ids)";
+        $data = $this->fetch($sql, $username);
+        $ret = [];
+        foreach ($data as $v) {
+            $ret[$v['id']] = $ret['username'];
+        }
+        return $ret;
     }
     public function verifyPassword($user, $password)
     {

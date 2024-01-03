@@ -13,14 +13,14 @@ class UserBusiness extends Base
 {
     public function addComment($user_id, $article_id, $content)
     {
-        $username = Helper::_()->getUserName($user_id);
+        $username = Helper::_()->getUsername($user_id);
         
         CommentModel::_()->addData($user_id, $article_id, $content);
         ActionLogModel::_()->log("{$user_id}-{$username} 评论成功");
     }
     public function deleteCommentByUser($user_id, $comment_id)
     {
-        $username = Helper::_()->getUserName($user_id);
+        $username = Helper::_()->getUsername($user_id);
         
         $comment = CommentModel::_()->get($comment_id);
         UserException::ThrowOn(!$comment, "没找到评论",-1);

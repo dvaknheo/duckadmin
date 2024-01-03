@@ -66,4 +66,8 @@ class UserBusiness
         
         UserModel::_()->updatePassword($uid, $new_password);
     }
+    public function getUsernames($ids)
+    {
+        return UserModel::_()->getUsernames($ids);
+    }
 }

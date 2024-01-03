@@ -26,6 +26,10 @@ class User extends GlobalUser
     {
         return UserAction::_()->current();
     }
+    public function getUsernames($ids)
+    {
+        return UserAction::_()->getUsernames($ids);
+    }
     ///////////////
     public function urlForRegist($url_back = null, $ext = null)
     {

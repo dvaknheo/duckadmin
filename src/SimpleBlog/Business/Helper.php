@@ -13,13 +13,21 @@ use DuckPhp\Helper\BusinessHelperTrait;
 class Helper
 {
     use BusinessHelperTrait;
-    public function getUserName($user_id)
+    public function getCurrentUsername($user_id)
     {
-        $user_data = GlobalUser::_()->data();
-        return $user_data['username'];
+        $names = GlobalUser::_()->getUsernames([$user_id]);
+        return $names[$user_id]??'--';
     }
     public function getUserNames($user_ids)
     {
-        //
+        try{
+            //这个是非标实现 , 强制检查可能会有问题
+            return GlobalUser::_()->getUsernames($user_ids);
+        }catch(\Exception $ex){
+            throw $ex;
+            // 这里是否要复位？
+        }
+        
+        return [];
     }
 }
