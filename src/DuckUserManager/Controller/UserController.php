@@ -21,9 +21,9 @@ class UserController
      * 浏览
      * @return Response
      */
-    public function index()
+    public function action_index()
     {
-        return Helper::Show([],'user/index');
+        Helper::Show([],'user/index');
     }
     public function __construct()
     {

@@ -19,32 +19,30 @@ composer require dvaknheo/duckadmin
 cd demo
 php go.php run
 # 打开 127.0.0.1
-# 进入后台管理系统，为系统安装
+# 进入后台管理系统，安装系统
+```
+## 安装
+(  我并不喜欢 web 模式下的安装，但是目前 先这样吧 )
+
 
 
 根据 demo 目录，酌情修改你的代码 。
 
-目前 duckphp 系统还没有自动发现插件机制扩展。(我们做个自动发现插件的机制扩展？)
 
 ## 高级问题
 
 ### 前置知识
-
 ### 调整选项
 ### 静态资源外放
 ### 接管视图
-
-作为 DuckPhp 的插件。
 
 `demo/view/DuckUser` 目录 就是demo工程调整后的视图
 
 ### 使用 API
 
-
 ### 修改实现
 
-遵从 `DuckPhp` 应用的可变单例模式，你要在想修改的类前面放这么一句：
 
-```
-DuckAdmin\Api\DuckAdminPlugin::G(MyDuckAdminPlugin::G())
-``
+## TODO
+1. 需要在 webman 下也能运行。
+2. 需要覆盖测试。

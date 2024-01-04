@@ -8,6 +8,8 @@ namespace DuckAdmin\System;
 use DuckPhp\Component\GlobalAdmin;
 use DuckPhp\Core\Phase;
 use DuckAdmin\Controller\AdminAction;
+use DuckAdmin\Controller\Helper;
+use DuckAdmin\Controller\ControllerException;
 
 class Admin extends GlobalAdmin
 {
@@ -27,7 +29,11 @@ class Admin extends GlobalAdmin
     
     public function checkLogin()
     {
-       return AdminAction::_()->checkLogin();
+        // 这里如果没登录，我们跳转到 报错页面
+        Helper::assignExceptionHandler(ControllerException::class,function(){
+            Helper::ExitRedirect(__url('index')); // TODO backurl
+        });
+        return AdminAction::_()->checkLogin();
     }
     ///////////////
     public function urlForRegist($url_back = null, $ext = null)

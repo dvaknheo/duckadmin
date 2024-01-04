@@ -18,4 +18,5 @@
     <div class="layui-row " style="border-left:1px solid;border-right:1px solid;padding:1em;">
         <div class="layui-col-md8" >
 <!-- -->
-<h1>欢迎使用XX前台系统</h1>
+<h1>欢迎使用Demo 前台系统</h1>
+<div>已经由 Demo 美化，视图文件在 demo/view/DuckUser 下面</div>

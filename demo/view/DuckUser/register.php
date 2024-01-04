@@ -1,7 +1,5 @@
 <?php __display('inc-head'); ?>
 
-
-
 <form method="POST" action="<?= __h($url_register); ?>">
     <?= $csrf_field ?>
 <?php if (isset($error)) { ?>
