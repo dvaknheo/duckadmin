@@ -14,14 +14,12 @@ use DuckPhp\DuckPhp;
  */
 class DuckAdminApp extends DuckPhp
 {
-
     //@override
     public $options = [
+        'path' => __DIR__ . '/../',
         'controller_method_prefix' => '', // 控制器后缀
         'controller_resource_prefix' => 'res/',  // 资源文件前缀
-        
         'ext_options_file_enable' => true,  //使用额外的选项
-        
         
         'class_admin'=> Admin::class,
     ];
@@ -33,12 +31,29 @@ class DuckAdminApp extends DuckPhp
     {
         return ServiceApi::CallInPhase(static::class);
     }
-    public function __construct()
+    /**
+     * dump demo sql
+     */   
+    public function command_dumpsql()
     {
-        $this->options['path'] = dirname(__DIR__).'/';
-        parent::__construct();
+        //static::Phase(static::class);
+        $dsn = $this->options['database']['dsn'] ?? null;
+        $a=explode(';',$dsn);
+        $t =[];
+        foreach($a as $v){ $c=explode('=',$v); @$t[$c[0]]=$c[1];}
+        $dbname = $t['dbname'];
+        exec("mysqldump $dbname >demo.sql");
+        echo "dump to demo.sql done: ";
+        echo (DATE(DATE_ATOM));
+        echo "\n";
     }
-    
+    /**
+     * dump demo sql
+     */  
+    public function command_install()
+    {
+        echo "TODO";
+    }
     public function install($options, $parent_options = [])
     {
         //安装
@@ -52,17 +67,14 @@ class DuckAdminApp extends DuckPhp
     }
     public function onPrepare()
     {
-        //默认的路由不符合我们这次的路由，还过
+        //默认的路由不符合我们这次的路由，换
         Route::_(ProjectRoute::_());
     }
     public function onInit()
     {
+        
         //如果根应用没设置数据库，用自己的
         $this->switchDbManager();
-        
-        
-        //$this->_AdminSystem(_AdminSystem::CallInPhase(static::class));
-        
     }
     protected function switchDbManager()
     {
@@ -72,7 +84,6 @@ class DuckAdminApp extends DuckPhp
         }
         
         $data = $this->options['database'] ?? null;
-        
         if (empty($data)) {
             return;
         }
