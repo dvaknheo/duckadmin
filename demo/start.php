@@ -3,7 +3,8 @@
  * DuckPhp
  * From this time, you never be alone~
  */
- 
+use WorkermanHttpd\Request;
+use WorkermanHttpd\Response;
 require_once(__DIR__.'/../vendor/autoload.php');
 
 ////[[[[
@@ -17,14 +18,8 @@ if(is_file(__DIR__.'/../../DNMVCS/autoload.php')){
     spl_autoload_register($t);
 }
 ////]]]]
-class MainController
-{
-    public function index()
-    {
-        DuckPhp\DuckPhp::Show(get_defined_vars(), 'main');
-    }
-}
-/*
+
+//*
 class FixedRequest extends \WorkermanHttpd\Request
 {
 
@@ -35,6 +30,40 @@ class FixedRequest extends \WorkermanHttpd\Request
 }
 class FixedWorkermanHttpd extends \WorkermanHttpd\WorkermanHttpd
 {
+    public function _OnMessage($connection, $request)
+    {
+        Request::G($request);
+        Response::G(new Response());
+        $this->doSuperGlobal($request);
+        list($flag, $data) = $this->onRequest();
+        Response::G()->withBody($data);
+        
+        ////
+        $keep_alive = $request->header('connection');
+        if (($keep_alive === null && $request->protocolVersion() === '1.1')
+            || $keep_alive === 'keep-alive' || $keep_alive === 'Keep-Alive'
+        ) {
+            $connection->send(Response::G());
+            $this->endSession();
+            Response::G(new \stdClass()); //free reference.
+            Request::G(new \stdClass()); //free reference.
+            return;
+        }
+        $connection->close(Response::G());  //  ---- THIS CODE IS OVERRIDE  TO FIX THIS
+        $this->endSession();
+        Response::G(new \stdClass()); //free reference.
+        Request::G(new \stdClass()); //free reference.
+    }
+    public function _header($output, bool $replace = true, int $http_response_code = 0)
+    {
+        if ($http_response_code) {
+            Response::G()->withStatus($http_response_code);
+            // return; //  ---- THIS CODE IS OVERRIDE  TO FIX THIS
+        }
+        list($key, $value) = explode(':', $output);
+        return Response::G()->header($key, $value)->withStatus($http_response_code);
+    }
+    
     public function _session_start(array $options = [])
     {
         //var_dump(\WorkermanHttpd\Request::G());
@@ -44,33 +73,53 @@ class FixedWorkermanHttpd extends \WorkermanHttpd\WorkermanHttpd
     }
 }
 //*/
+function onInit()
+{
+    // 我们需要热修一下，以及除了 宏改变导致的问题
+
+    \DuckPhp\Core\SystemWrapper::system_wrapper_replace(\WorkermanHttpd\WorkermanHttpd::system_wrapper_get_providers());
+    \DuckPhp\Core\SystemWrapper::system_wrapper_replace(['exit'=>function(){
+        throw new \DuckPhp\Core\ExitException('exit at'.DATE(DATE_ATOM),0);
+        return;
+    }]);
+}
 function myworker()
 {
-    $options = [
-        'namespace_controller' => '\\',
-        'controller_class_postfix' => 'Controller',
-        'ext' => [
-            // 后台管理系统
-            \DuckAdmin\System\App::class => [
-                'controller_url_prefix' => 'app/admin/', // 访问路径
-                'controller_resource_prefix' => '/app/admin/res/',  // 资源文件前缀，这里可以修改一下
-                
-                'ext' => [DuckPhp\Component\RouteHookResource::class=>[
-                
-                ]],
 
-            ],
+$options = [
+    'cli_enable'=>false,
+    'is_debug'=>true,
+    'ext' => [
+        // 后台管理系统
+//*/
+        \DuckAdmin\System\DuckAdminApp::class => [
+            'controller_url_prefix' => 'app/admin/', // 访问路径
+            'controller_resource_prefix' => 'res/',  // 资源文件前缀
         ],
-        'cli_enable'=>false,
-    ];
-    $options['path'] = __DIR__.'/';
+        \DuckUser\System\DuckUserApp::class => [
+            'controller_url_prefix' => 'user/', // 访问路径
+            'controller_resource_prefix' => 'res/',  // 资源文件前缀
+        ],
+//*/
+        \DuckUserManager\System\DuckUserManagerApp::class => [
+            'controller_url_prefix' => 'app/admin/', // 访问路径
+            'controller_resource_prefix' => 'res/',  // 资源文件前缀
+        ],
+//*/
+        \SimpleBlog\System\SimpleBlogApp::class => [
+            'controller_url_prefix' => 'blog/', // 访问路径
+            'controller_resource_prefix' => 'res/',  // 资源文件前缀
+        ],
+//*/
+    ],
+    'on_init'=> 'onInit',
+];
+$options['path'] = __DIR__.'/';
+$options['welcome_view'] = 'main';
+\DuckPhp\DuckPhp::InitAsContainer($options)->run();
+//SystemWrapper::_()->_system_wrapper_get_providers();
 
-    DuckPhp\DuckPhp::RunQuickly($options, function(){
-        // 这里 新版应该是宏替换了
-        DuckPhp\DuckPhp::system_wrapper_replace(\WorkermanHttpd\WorkermanHttpd::system_wrapper_get_providers());
 
-
-    });
         return true;
 }
 $options =[
@@ -90,7 +139,8 @@ $options =[
     \WorkermanHttpd\Response::class,
     \WorkermanHttpd\Worker::class,
 ]);
-\WorkermanHttpd\WorkermanHttpd::G(FixedWorkermanHttpd::G());
 \WorkermanHttpd\Request::G(new FixedRequest());
 //*/
-\WorkermanHttpd\WorkermanHttpd::RunQuickly($options); // 我们需要热修一下，以及除了 宏改变导致的问题
+\WorkermanHttpd\WorkermanHttpd::G(FixedWorkermanHttpd::G());
+
+\WorkermanHttpd\WorkermanHttpd::RunQuickly($options);

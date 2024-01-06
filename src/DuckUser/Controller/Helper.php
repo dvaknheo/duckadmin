@@ -7,14 +7,31 @@
 namespace DuckUser\Controller;
 
 use DuckPhp\Helper\ControllerHelperTrait;
-
+use DuckPhp\Core\ExitException;
+use DuckPhp\Core\CoreHelper;
 class Helper
 {
     use ControllerHelperTrait;
+    //
+    public static function ExitRouteTo($url, $exit = true)
+    {
+        return CoreHelper::_()->_ExitRedirect(CoreHelper::Url($url), false);
+    }
+    public static function isExitException($ex)
+    {
+        return \is_a($ex,ExitException::class);
+    }
     
     public function goHome()
     {
-        Helper::ExitRouteTo(UserAction::_()->urlForHome());
+        try{
+            Helper::ExitRouteTo(UserAction::_()->urlForHome(),true);
+        }catch(\Exception $ex){
+            if($this->isExitException($ex)){
+                throw $ex;
+            }
+        }
+        return;
     }
     public function csrfToken()
     {
