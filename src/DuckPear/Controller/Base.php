@@ -21,12 +21,12 @@ class Base
         // 入口类
         static::assignExceptionHandler(\Exception::class, function(){
             // 这里应该调整成可调的
-            static::ExitRouteTo(static::_GetInitRedirectRoute());
+            static::Show302(static::_GetInitRedirectRoute());
         });        
         $flag = AdminAction::G()->doCheckPermission();
         
         if(!$flag){
-            static::Exit404();
+            static::Show404();
             return;
         }
         // 初始化View

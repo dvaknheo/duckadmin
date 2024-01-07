@@ -13,7 +13,7 @@ class ExceptionReporter
     public function onSessionException($ex = null)
     {
         if(!isset($ex)){
-            Helper::Exit404();
+            Helper::Show404();
             return;
         }
         $code = $ex->getCode();
@@ -21,7 +21,7 @@ class ExceptionReporter
         if (Session::_()->isCsrfException($ex) && __is_debug()) {
             Helper::exit(0);
         }
-        Helper::ExitRouteTo('login');
+        Helper::Show302('login');
     }
 
 }

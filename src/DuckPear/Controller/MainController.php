@@ -46,7 +46,7 @@ class MainController extends Base
         AdminBusiness::ThrowOn(!$flag,"验证码错误");
         $admin = AdminBusiness::G()->login($post);
         AdminSession::G()->setCurrentAdmin($admin,$post['remember']);
-        C::ExitRouteTo('Profile/index');  // 这里要设置成可配置的
+        C::Show302('Profile/index');  // 这里要设置成可配置的
     }
     /**
      * 登出
@@ -54,7 +54,7 @@ class MainController extends Base
     public function logout()
     {
         AdminSession::G()->logout();
-        C::ExitRouteTo('');
+        C::Show302('');
     }
     /**
      * 验证码

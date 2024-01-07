@@ -35,7 +35,7 @@ class MainController
         
         $article = ArticleBusiness::_()->getArticleFullInfo($id, Helper::PageNo(), Helper::PageWindow());
         if (!$article) {
-            Helper::Exit404();
+            Helper::Show404();
             return;
         }
         $article['comments'] = Helper::_()->recordsetH($article['comments'], ['content','username']);
@@ -50,7 +50,7 @@ class MainController
         if(!Helper::POST()){return;}
         $uid = Helper::UserId();
         UserBusiness::_()->addComment($uid, Helper::POST('article_id'), Helper::POST('content'));
-        Helper::ExitRouteTo('article/'.Helper::POST('article_id'));
+        Helper::Show302('article/'.Helper::POST('article_id'));
     }
     public function action_delcomment()
     {
@@ -58,7 +58,7 @@ class MainController
         
         $uid = Helper::UserId();
         UserBusiness::_()->deleteCommentByUser($uid, Helper::POST('id'));
-        Helper::ExitRouteTo('');
+        Helper::Show302('');
     }
 
 }

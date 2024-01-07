@@ -81,7 +81,7 @@ class AdminAction
         }
         $flag = $this->isOptionsMethod();
         if($flag){
-            return Helper::Exit('');
+            return Helper::Show302('');
         }
         return;
     }
@@ -91,7 +91,8 @@ class AdminAction
         $msg = $ex->getMessage();
         
         if (Helper::IsAjax()) {
-			Helper::ExitJson(['code' => $code, 'msg' => $msg, 'type' => 'error']);
+			Helper::ShowJson(['code' => $code, 'msg' => $msg, 'type' => 'error']);
+            return;
 		}
 		if($code == 401){
 			return $this->exit401();

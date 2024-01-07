@@ -31,7 +31,7 @@ class Admin extends GlobalAdmin
     {
         // 这里如果没登录，我们跳转到 报错页面
         Helper::assignExceptionHandler(ControllerException::class,function(){
-            Helper::ExitRedirect(__url('index')); // TODO backurl
+            Helper::Show302('index'); // TODO backurl
         });
         return AdminAction::_()->checkLogin();
     }

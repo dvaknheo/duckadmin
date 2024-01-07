@@ -39,9 +39,9 @@ class InstallController extends Base
 		try{
 			InstallBusiness::_()->step1($post);
 		}catch(\Exception $ex){
-			return Helper::ExitJson(['code' => $ex->getCode(), 'msg' => $ex->getMessage(), 'type' => 'error']);
+			return Helper::ShowJson(['code' => $ex->getCode(), 'msg' => $ex->getMessage(), 'type' => 'error']);
 		}
-		return Helper::ExitJson(['code' =>0, 'data' => [] , 'msg' => '',]);
+		return Helper::ShowJson(['code' =>0, 'data' => [] , 'msg' => '',]);
     }
 
     /**
@@ -56,9 +56,9 @@ class InstallController extends Base
 		try{
 			InstallBusiness::_()->step2($username,$password,$password_confirm);
 		}catch(\Exception $ex){
-			return Helper::ExitJson(['code' => $ex->getCode(), 'msg' => $ex->getMessage(), 'type' => 'error']);
+			return Helper::ShowJson(['code' => $ex->getCode(), 'msg' => $ex->getMessage(), 'type' => 'error']);
 		}
-		return Helper::ExitJson(['code' =>0, 'data' => [] , 'msg' => '',]);
+		return Helper::ShowJson(['code' =>0, 'data' => [] , 'msg' => '',]);
     }
 
 }

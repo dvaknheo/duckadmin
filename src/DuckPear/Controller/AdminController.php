@@ -31,7 +31,7 @@ class AdminController extends Base
         $post = C::Post();
         if($post){
             AdminBusiness::G()->addAdmin($post);
-            C::ExitRouteTo('Admin/index');
+            C::Show302('Admin/index');
             return;  // return 是个好习惯。
         }
         $roles = AdminBusiness::G()->getRoles();
@@ -49,7 +49,7 @@ class AdminController extends Base
         $post = C::Post();
         if($post){
             AdminBusiness::G()->updateAdmin($post);
-            C::ExitRouteTo('Admin/index');
+            C::Show302('Admin/index');
             return; // return 是个好习惯。
         }
         $admin = AdminBusiness::G()->getAdmin(C::GET('id'));

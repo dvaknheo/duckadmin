@@ -35,7 +35,7 @@ class ConfigController extends Base
     public function get()
     {
 		$data = ConfigBusiness::_()->getDefaultConfig();
-		return Helper::ExitJson($data); //注意这里不能用 success
+		return Helper::ShowJson($data); //注意这里不能用 success
     }
  
     /**
@@ -48,6 +48,6 @@ class ConfigController extends Base
     {
         $post = Helper::POST();
 		ConfigBusiness::_()->updateConfig($post);
-        return Helper::ExitJson(0);
+        return Helper::ShowJson(0);
     }
 }

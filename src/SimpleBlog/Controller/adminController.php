@@ -50,7 +50,7 @@ class adminController
             return;
         }
         AdminBusiness::_()->addArticle(Helper::POST('title'), Helper::POST('content'));
-        Helper::ExitRouteTo('admin/articles');
+        Helper::Show302('admin/articles');
     }
     public function action_article_edit()
     {
@@ -63,12 +63,12 @@ class adminController
             return;
         }
         AdminBusiness::_()->updateArticle(Helper::POST('id'), Helper::POST('title'), Helper::POST('content'));
-        Helper::ExitRouteTo('admin/articles');
+        Helper::Show302('admin/articles');
     }
     public function do_action_article_delete()
     {
         AdminBusiness::_()->deleteArticle(Helper::POST('id'));
-        Helper::ExitRouteTo('admin/articles');
+        Helper::Show302('admin/articles');
     }
 
     public function action_logs()
@@ -90,6 +90,6 @@ class adminController
     public function action_delete_comments()
     {
         AdminBusiness::_()->deleteComment(Helper::POST('id'));
-        Helper::ExitRouteTo('admin/comments');
+        Helper::Show302('admin/comments');
     }
 }

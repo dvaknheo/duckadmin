@@ -12,11 +12,6 @@ use DuckPhp\Core\CoreHelper;
 class Helper
 {
     use ControllerHelperTrait;
-    //
-    public static function ExitRouteTo($url, $exit = true)
-    {
-        return CoreHelper::_()->_ExitRedirect(CoreHelper::Url($url), false);
-    }
     public static function isExitException($ex)
     {
         return \is_a($ex,ExitException::class);
@@ -25,7 +20,7 @@ class Helper
     public function goHome()
     {
         try{
-            Helper::ExitRouteTo(UserAction::_()->urlForHome(),true);
+            Helper::Show302(UserAction::_()->urlForHome());
         }catch(\Exception $ex){
             if($this->isExitException($ex)){
                 throw $ex;

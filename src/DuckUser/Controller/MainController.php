@@ -68,6 +68,6 @@ class MainController extends Base
     {
         UserAction::_()->logout();
         
-        Helper::ExitRouteTo('index');
+        Helper::Show302('index');
     }
 }
