@@ -23,14 +23,6 @@ class DuckAdminApp extends DuckPhp
         
         'class_admin'=> Admin::class,
     ];
-    public static function Action()
-    {
-        return ActionApi::CallInPhase(static::class);
-    }
-    public static  function Service()
-    {
-        return ServiceApi::CallInPhase(static::class);
-    }
     /**
      * dump demo sql
      */   

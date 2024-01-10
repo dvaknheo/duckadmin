@@ -23,8 +23,11 @@ php go.php run
 ```
 ## 安装
 (  我并不喜欢 web 模式下的安装，但是目前 先这样吧 )
-
-
+`demo/demo.sql` 这是我正在用的 sql， 配合
+DuckPhpApps.config.php
+      'dsn' => 'mysql:host=127.0.0.1;port=3306;dbname=webman_admin;charset=utf8mb4;',
+      
+修改数据库
 
 根据 demo 目录，酌情修改你的代码 。
 
