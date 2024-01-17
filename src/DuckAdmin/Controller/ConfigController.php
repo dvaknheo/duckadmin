@@ -34,7 +34,7 @@ class ConfigController extends Base
      */
     public function get()
     {
-		$data = ConfigBusiness::_()->getDefaultConfig();
+        $data = ConfigBusiness::_()->getDefaultConfig();
 		return Helper::ShowJson($data); //注意这里不能用 success
     }
  

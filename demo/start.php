@@ -45,22 +45,32 @@ class FixedWorkermanHttpd extends \WorkermanHttpd\WorkermanHttpd
         ) {
             $connection->send(Response::G());
             $this->endSession();
-            Response::G(new \stdClass()); //free reference.
+            Response::G(new Response()); //free reference.
             Request::G(new \stdClass()); //free reference.
             return;
         }
         $connection->close(Response::G());  //  ---- THIS CODE IS OVERRIDE  TO FIX THIS
         $this->endSession();
-        Response::G(new \stdClass()); //free reference.
+        Response::G(new Response()); //free reference.
         Request::G(new \stdClass()); //free reference.
     }
     public function _header($output, bool $replace = true, int $http_response_code = 0)
     {
+        $http_response_code = $http_response_code ? $http_response_code: 200;
         if ($http_response_code) {
             Response::G()->withStatus($http_response_code);
             // return; //  ---- THIS CODE IS OVERRIDE  TO FIX THIS
         }
-        @list($key, $value) = explode(':', $output);
+        if(strpos($output, ':') !== false){
+            @list($key, $value) = explode(':', $output);
+            
+            if(strtoupper($key) === 'CONTENT-TYPE'){
+                $key = "Content-Type";
+            }
+            return Response::G()->header($key, $value)->withStatus($http_response_code);
+        } else {
+            return Response::G()->withStatus($http_response_code);
+        }
         return Response::G()->header($key, $value)->withStatus($http_response_code);
     }
     
@@ -79,6 +89,7 @@ function onInit()
 
     \DuckPhp\Core\SystemWrapper::system_wrapper_replace(\WorkermanHttpd\WorkermanHttpd::system_wrapper_get_providers());
     \DuckPhp\Core\SystemWrapper::system_wrapper_replace(['exit'=>function(){
+        // 这里还需要一定的宏
         throw new \DuckPhp\Core\ExitException('exit at'.DATE(DATE_ATOM),0);
         return;
     }]);

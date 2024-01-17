@@ -184,7 +184,7 @@ CREATE TABLE `wa_admins` (
 
 LOCK TABLES `wa_admins` WRITE;
 /*!40000 ALTER TABLE `wa_admins` DISABLE KEYS */;
-INSERT INTO `wa_admins` VALUES (1,'admin1','超级管理员','$2y$10$1bRAcXYt5wQjS4xsY0nkHeS8poSYcJJdWgGgVBAaPXioukPjzcumO','/app/admin/avatar.png',NULL,NULL,'2023-11-12 10:35:47','2023-11-26 15:31:34','2024-01-04 21:11:01',NULL);
+INSERT INTO `wa_admins` VALUES (1,'admin1','超级管理员','$2y$10$1bRAcXYt5wQjS4xsY0nkHeS8poSYcJJdWgGgVBAaPXioukPjzcumO','/app/admin/avatar.png',NULL,NULL,'2023-11-12 10:35:47','2023-11-26 15:31:34','2024-01-17 05:28:10',NULL);
 /*!40000 ALTER TABLE `wa_admins` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -271,7 +271,7 @@ CREATE TABLE `wa_rules` (
 
 LOCK TABLES `wa_rules` WRITE;
 /*!40000 ALTER TABLE `wa_rules` DISABLE KEYS */;
-INSERT INTO `wa_rules` VALUES (1,'权限管理','layui-icon-vercode','auth',0,'2023-11-12 10:30:57','2023-11-12 10:30:57',NULL,0,900),(2,'账户管理',NULL,'DuckAdmin\\Controller\\AdminController',1,'2023-11-12 10:30:57','2023-11-12 10:30:57','admin/index',1,1000),(3,'角色管理',NULL,'DuckAdmin\\Controller\\RoleController',1,'2023-11-12 10:30:57','2023-11-12 10:30:57','role/index',1,900),(4,'菜单管理',NULL,'DuckAdmin\\Controller\\RuleController',1,'2023-11-12 10:30:57','2023-11-12 10:30:57','rule/index',1,800),(5,'会员管理','layui-icon-username','user',0,'2023-11-12 10:30:57','2023-11-12 10:30:57',NULL,0,800),(6,'用户',NULL,'DuckAdmin\\Controller\\UserController',5,'2023-11-12 10:30:57','2023-11-12 10:30:57','user/index',1,800),(7,'通用设置','layui-icon-set','common',0,'2023-11-12 10:30:57','2023-11-12 10:30:57',NULL,0,700),(8,'个人资料',NULL,'DuckAdmin\\Controller\\AccountController',7,'2023-11-12 10:30:57','2023-11-12 10:30:57','account/index',1,800),(9,'系统设置',NULL,'DuckAdmin\\Controller\\ConfigController',7,'2023-11-12 10:30:57','2023-11-12 10:30:57','config/index',1,500),(10,'asfd','','bafgd',0,'2023-11-26 17:49:54','2023-11-26 17:49:54','',0,0),(11,'fsda','','zfdsfsadf',10,'2023-11-26 17:50:10','2023-11-26 17:50:10','',2,0);
+INSERT INTO `wa_rules` VALUES (1,'权限管理','layui-icon-vercode','auth',0,'2023-11-12 10:30:57','2023-11-12 10:30:57',NULL,0,900),(2,'账户管理',NULL,'DuckAdmin\\Controller\\AdminController',1,'2023-11-12 10:30:57','2023-11-12 10:30:57','admin/index',1,1000),(3,'角色管理',NULL,'DuckAdmin\\Controller\\RoleController',1,'2023-11-12 10:30:57','2023-11-12 10:30:57','role/index',1,900),(4,'菜单管理',NULL,'DuckAdmin\\Controller\\RuleController',1,'2023-11-12 10:30:57','2023-11-12 10:30:57','rule/index',1,800),(5,'会员管理','layui-icon-username','user',0,'2023-11-12 10:30:57','2023-11-12 10:30:57',NULL,0,800),(6,'用户','','DuckAdmin\\Controller\\UserController',5,'2023-11-12 10:30:57','2024-01-17 06:54:37','User/index',1,800),(7,'通用设置','layui-icon-set','common',0,'2023-11-12 10:30:57','2023-11-12 10:30:57',NULL,0,700),(8,'个人资料',NULL,'DuckAdmin\\Controller\\AccountController',7,'2023-11-12 10:30:57','2023-11-12 10:30:57','account/index',1,800),(9,'系统设置',NULL,'DuckAdmin\\Controller\\ConfigController',7,'2023-11-12 10:30:57','2023-11-12 10:30:57','config/index',1,500);
 /*!40000 ALTER TABLE `wa_rules` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -330,4 +330,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-01-05  0:04:30
+-- Dump completed on 2024-01-17 15:12:53
