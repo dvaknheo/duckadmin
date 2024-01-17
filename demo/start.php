@@ -60,7 +60,7 @@ class FixedWorkermanHttpd extends \WorkermanHttpd\WorkermanHttpd
             Response::G()->withStatus($http_response_code);
             // return; //  ---- THIS CODE IS OVERRIDE  TO FIX THIS
         }
-        list($key, $value) = explode(':', $output);
+        @list($key, $value) = explode(':', $output);
         return Response::G()->header($key, $value)->withStatus($http_response_code);
     }
     

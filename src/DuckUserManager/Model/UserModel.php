@@ -11,12 +11,12 @@ use DuckUserManager\System\DuckUserManagerApp as Helper;
 class UserModel
 {
     use SimpleModelTrait;
-    public function getUserList($page = 1, $page_size = 10)
+    public function getUserList($conditions=[], $page = 1, $page_size = 10)
     {
-        //
+        
     }
-    public function deleteUser($id)
+    public function changeUserStatus($id,$stat)
     {
-        //
+        return 1;
     }
 }

@@ -7,26 +7,19 @@ namespace DuckUserManager\Business;
 
 use DuckPhp\Foundation\SimpleBusinessTrait;
 use DuckUserManager\Model\UserModel;
-use DuckUserManager\System\DuckUserManagerApp as Helper;
 
-/**
- * 我们偷懒，把 BusinessHelper 集成进这里,基类我们也不要了，毕竟只有一个
- */
 class UserBusiness
 {
     use SimpleBusinessTrait;
     
-    public function __construct()
-    {
-    }
-    public function getUserList($page = 1, $page_size = 10)
+    public function getUserList($conditions=[],$page = 1, $page_size = 10)
     {
         //我们这里要加个显示被禁用的用户等
-        return UserModel::_()->getList([], $page, $page_size);
+        return UserModel::_()->getList($conditions, $page, $page_size);
     }
-    public function deleteUser($id)
+    public function changeUserStatus($id,$stat)
     {
-        $ret = UserModel::G()->delete($id);
-        ActionLogModel::_()->log("禁用 {$id}，结果", "删除用户");
+        //$ret = UserModel::G()->disable($id);
+        ActionLogModel::_()->log("禁用 {$id}，结果", "调整用户");
     }
 }
