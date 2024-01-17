@@ -19,31 +19,8 @@ if(is_file(__DIR__.'/../../../DNMVCS/autoload.php')){
 }
 ////]]]]
 
-$options = [
-    'ext' => [
-        // 后台管理系统
-//*/
-        \DuckAdmin\System\DuckAdminApp::class => [
-            'controller_url_prefix' => 'app/admin/', // 访问路径
-            'controller_resource_prefix' => 'res/',  // 资源文件前缀
-        ],
-        \DuckUser\System\DuckUserApp::class => [
-            'controller_url_prefix' => 'user/', // 访问路径
-            'controller_resource_prefix' => 'res/',  // 资源文件前缀
-        ],
-//*/
-        \DuckUserManager\System\DuckUserManagerApp::class => [
-            'controller_url_prefix' => 'app/admin/', // 访问路径
-            'controller_resource_prefix' => 'res/',  // 资源文件前缀
-        ],
-//*/
-        \SimpleBlog\System\SimpleBlogApp::class => [
-            'controller_url_prefix' => 'blog/', // 访问路径
-            'controller_resource_prefix' => 'res/',  // 资源文件前缀
-        ],
-//*/
-    ]
+require_once(__DRI__. '/../DemoApp.php');
+$options=[
+    //'cli_mode'=>true,
 ];
-$options['path'] = dirname(__DIR__).'/';
-$options['welcome_view'] = 'main';
-\DuckPhp\DuckPhp::InitAsContainer($options)->run();
+DemoApp::RunQuickly($options);

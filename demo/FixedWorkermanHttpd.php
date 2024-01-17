@@ -1,35 +1,15 @@
 <?php declare(strict_types=1);
-/**
- * DuckPhp
- * From this time, you never be alone~
- */
 use WorkermanHttpd\Request;
 use WorkermanHttpd\Response;
-require_once(__DIR__.'/../vendor/autoload.php');
 
-////[[[[
-// 这里用本地的最新版本 DuckPhp 方便测试可调。
-if(is_file(__DIR__.'/../../DNMVCS/autoload.php')){
-    $funcs = spl_autoload_functions();
-    $t =$funcs[0];
-    spl_autoload_unregister($t);
-    @include_once(__DIR__.'/../../DNMVCS/src/Core/AutoLoader.php');    // 这里用本地的最新版本 DuckPhp 方便测试可调。
-    spl_autoload_register([DuckPhp\Core\AutoLoader::class ,'DuckPhpSystemAutoLoader']);
-    spl_autoload_register($t);
-}
-////]]]]
-
-//*
-class FixedRequest extends \WorkermanHttpd\Request
+// 目前版本的 WorkermanHttpd 和当前版本不匹配，我们修复他
+class Httpd extends \WorkermanHttpd\WorkermanHttpd
 {
-
-    public function __construct($buffer='')
+    public static function _($object = null)
     {
-        $this->_buffer = $buffer;
+        return static::G($object);
     }
-}
-class FixedWorkermanHttpd extends \WorkermanHttpd\WorkermanHttpd
-{
+    //@override to hot fix
     public function _OnMessage($connection, $request)
     {
         Request::G($request);
@@ -54,6 +34,7 @@ class FixedWorkermanHttpd extends \WorkermanHttpd\WorkermanHttpd
         Response::G(new Response()); //free reference.
         Request::G(new \stdClass()); //free reference.
     }
+    //@override to hot fix
     public function _header($output, bool $replace = true, int $http_response_code = 0)
     {
         $http_response_code = $http_response_code ? $http_response_code: 200;
@@ -73,7 +54,7 @@ class FixedWorkermanHttpd extends \WorkermanHttpd\WorkermanHttpd
         }
         return Response::G()->header($key, $value)->withStatus($http_response_code);
     }
-    
+    //@override to hot fix
     public function _session_start(array $options = [])
     {
         //var_dump(\WorkermanHttpd\Request::G());
@@ -81,65 +62,79 @@ class FixedWorkermanHttpd extends \WorkermanHttpd\WorkermanHttpd
         if(!$flag){return;}
         $_SESSION = \WorkermanHttpd\Request::G()->session()->all();
     }
-}
-//*/
-function onInit()
-{
-    // 我们需要热修一下，以及除了 宏改变导致的问题
-
-    \DuckPhp\Core\SystemWrapper::system_wrapper_replace(\WorkermanHttpd\WorkermanHttpd::system_wrapper_get_providers());
-    \DuckPhp\Core\SystemWrapper::system_wrapper_replace(['exit'=>function(){
-        // 这里还需要一定的宏
-        throw new \DuckPhp\Core\ExitException('exit at'.DATE(DATE_ATOM),0);
-        return;
-    }]);
-}
-function myworker()
-{
-
-$options = [
-    'cli_enable'=>false,
-    'is_debug'=>true,
-    'ext' => [
-        // 后台管理系统
-//*/
-        \DuckAdmin\System\DuckAdminApp::class => [
-            'controller_url_prefix' => 'app/admin/', // 访问路径
-            'controller_resource_prefix' => 'res/',  // 资源文件前缀
-        ],
-        \DuckUser\System\DuckUserApp::class => [
-            'controller_url_prefix' => 'user/', // 访问路径
-            'controller_resource_prefix' => 'res/',  // 资源文件前缀
-        ],
-//*/
-        \DuckUserManager\System\DuckUserManagerApp::class => [
-            'controller_url_prefix' => 'app/admin/', // 访问路径
-            'controller_resource_prefix' => 'res/',  // 资源文件前缀
-        ],
-//*/
-        \SimpleBlog\System\SimpleBlogApp::class => [
-            'controller_url_prefix' => 'blog/', // 访问路径
-            'controller_resource_prefix' => 'res/',  // 资源文件前缀
-        ],
-//*/
-    ],
-    'on_init'=> 'onInit',
-];
-$options['path'] = __DIR__.'/';
-$options['welcome_view'] = 'main';
-\DuckPhp\DuckPhp::InitAsContainer($options)->run();
-//SystemWrapper::_()->_system_wrapper_get_providers();
-
-
+    protected function runHttpAppClass()
+    {
+        $app = $this->options['http_app_class'];
+        $flag = $app::_()->run();
         return true;
+    }
 }
-$options =[
-    'http_handler' => 'myworker',
-    'http_handler_root' => '',
-    'with_http_handler_file' => true,
-    'http_app_class'=>null,
-    //'request_class'=>FixedRequest::class,
-];
+
+
+class FixedWorkermanHttpd extends Httpd
+{
+    
+    public function _exit($code = 0)
+    {
+        //这里的退出异常，应该使用 error, defind exit;
+        throw new \DuckPhp\Core\ExitException('exit at'.DATE(DATE_ATOM),0);
+        //throw new ExitException(''.$code, $code);
+    }
+    public function init(array $options, object $context = null)
+    {
+        //这里也是有要调整的地方，就这么调整了。
+        $http_app_class = $options['http_app_class'];
+        $http_app_class::_()->options['cli_enable']=false;
+        
+        $options['http_app_class']  = null; //这里出了状况。
+        parent::init($options, $context);
+        $this->options['http_app_class'] =$http_app_class ;
+        
+        
+        
+        //切换 SystemWrapper
+        if(!defined('__SYSTEM_WRAPPER_REPLACER')){
+            define('__SYSTEM_WRAPPER_REPLACER',static::class);
+        }
+        
+        return $this;
+    }    
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//*/
 /*
 \DuckPhp\Core\PhaseContainer::ReplaceSingletonImplement();
 \DuckPhp\Core\PhaseContainer::GetContainerInstanceEx()->setDefaultContainer(\DuckPhp\DuckPhp::class);
@@ -152,6 +147,33 @@ $options =[
 ]);
 \WorkermanHttpd\Request::G(new FixedRequest());
 //*/
-\WorkermanHttpd\WorkermanHttpd::G(FixedWorkermanHttpd::G());
 
+/*
+\WorkermanHttpd\WorkermanHttpd::G(FixedWorkermanHttpd::G());
 \WorkermanHttpd\WorkermanHttpd::RunQuickly($options);
+
+        $app = $this->options['http_app_class'];
+        if($app){
+            $app::G()->options['skip_404_handler'] = true;
+            $app::assignExceptionHandler(ExitException::class, function () {
+            });
+            $app::system_wrapper_replace(static::system_wrapper_get_providers());
+        }
+//*/
+
+
+/*
+class FixedRequest extends \WorkermanHttpd\Request
+{
+
+    public function __construct($buffer='')
+    {
+        $this->_buffer = $buffer;
+    }
+}
+        $options['http_app_class'] = $this->context_class;
+        $options['path'] = $this->context()->options['path'];
+        if (!empty($options['http_server'])) {
+            $class = str_replace('/', '\\', $options['http_server']);
+            HttpServer::_($class::_());
+*/
