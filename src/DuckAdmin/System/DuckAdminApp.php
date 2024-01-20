@@ -40,11 +40,11 @@ class DuckAdminApp extends DuckPhp
         echo "\n";
     }
     /**
-     * dump demo sql
+     * install
      */  
     public function command_install()
     {
-        echo "TODO";
+        $this->install([]);
     }
     public function install($options, $parent_options = [])
     {

@@ -12,10 +12,11 @@ class MySqlDatabaseSetter extends ComponentBase
         $ref = DbManager::_()->getDatabaseConfigList();
         if(!$force && $ref){
             echo "database configed ,use --force to force\n";
-            return;
+            return false;
         }
         $data = $this->configDatabase($ref);
         $this->changeDatabase($data);
+        return true;
     }
     protected function changeDatabase($data)
     {

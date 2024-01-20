@@ -5,7 +5,7 @@ class DemoApp extends DuckPhp
     public $options = [
         'is_debug' => true,
         'path' => __DIR__.'/',
-        
+        'ext_options_file_enable'=>true,
         'ext' => [
             // 后台管理系统
 //*/
@@ -36,17 +36,20 @@ class DemoApp extends DuckPhp
      */
     public function command_install($force=false)
     {
-        MySqlDatabaseSetter::_()->callResetDatabase($force);
-        
-        return;
-        
-        $this->install(['force'=>$force]);
+        $flag = MySqlDatabaseSetter::_()->callResetDatabase($force);
+        if(!$flag){
+            return;
+        }
+        $this->install([],[]);
+        echo "Install Main Done , install ext Apps\n";
         foreach($this->options['ext'] as $app => $options){
             if(!is_a($app,\DuckPhp\Core\App::class)){ continue;}
             if(method_exist($app,'command_install')){
                 $app::_()->command_install($force);
             }
         }
+        echo "Install All Done \n";
+        return;
     }
     /**
      * Config

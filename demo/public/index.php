@@ -20,6 +20,8 @@ if(is_file(__DIR__.'/../../../DNMVCS/autoload.php')){
 ////]]]]
 
 require_once(__DRI__. '/../DemoApp.php');
+require_once(__DRI__. '/../MySqlDatabaseSetter.php');
+
 $options=[
     //'cli_mode'=>true,
 ];
