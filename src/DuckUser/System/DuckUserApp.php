@@ -29,37 +29,10 @@ class DuckUserApp extends DuckPhp
         // 如果默认没设置数据库切换数据库
         
         $this->installWithExtOptions($options);
-        $this->switchDbManager(); 
     }
     protected function onInit()
     {
-        $this->switchDbManager(); 
+        //
     }
-    protected function switchDbManager()
-    {
-        $options = DbManager::_()->options;
-        
-        if (!empty($options['database']) || !empty($options['database_list'])){
-            return;
-        }
-        
-        $post = $this->options['database'] ?? null;
-        if (empty($post)) {
-            return;
-        }
-        $options['database']=$post;
-        $options['reinit'] = true;
-        
-        DbManager::_( )->init($options, static::Root());
-        
-        //$this->_UserSystem(MyUserSystem::CallInPhase(static::class));
-    }
-    public static function DefaultService()
-    {
-        return ServiceApi::CallInPhase(static::class);
-    }
-    public static function DefaultAction()
-    {
-        return AcctionApi::CallInPhase(static::class);
-    }
+
 }

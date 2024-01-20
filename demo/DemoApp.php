@@ -1,11 +1,11 @@
 <?php
 use DuckPhp\DuckPhp;
-
 class DemoApp extends DuckPhp
 {
     public $options = [
         'is_debug' => true,
         'path' => __DIR__.'/',
+        
         'ext' => [
             // 后台管理系统
 //*/
@@ -31,45 +31,31 @@ class DemoApp extends DuckPhp
         ],
         'namespace_controller' => '\\',
     ];
-    public function command_install()
+    /**
+     * Install
+     */
+    public function command_install($force=false)
     {
-        // install database
-        //stripcslashes
+        MySqlDatabaseSetter::_()->callResetDatabase($force);
         
-    }
-    //@Override
-    public function install($options, $parent_options =[])
-    {
-        //
-    }
-    protected function installApps()
-    {
+        return;
+        
+        $this->install(['force'=>$force]);
         foreach($this->options['ext'] as $app => $options){
             if(!is_a($app,\DuckPhp\Core\App::class)){ continue;}
-            //echo "install xx"
+            if(method_exist($app,'command_install')){
+                $app::_()->command_install($force);
+            }
         }
     }
-    protected function configDatabase()
+    /**
+     * Config
+     */
+    public function command_config($force = false)
     {
-        //get database setting from me, or setting.
-        $desc = <<<EOT
-DatabaseSetting
-host[{host}]
-port[{port}]
-
-areyousure[{ok}]
-
-done;
-
-EOT;
-        $options=[
-            //'host'=>'127.0.0.1',
-            'port'=>'80',
-        ];
+        MySqlDatabaseSetter::_()->callResetDatabase($force);
     }
-    protected function configRedis()
-    {
-    }
+
 }
 class MainController
 {
