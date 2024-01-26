@@ -5,12 +5,14 @@
 namespace DuckUserManager\System;
 
 use DuckPhp\DuckPhpAllInOne;
+use DuckPhp\Ext\InstallerTrait;
 
 /**
  * 入口类
  */
 class DuckUserManagerApp extends DuckPhpAllInOne
 {
+    use InstallerTrait;
     //@override
     public $options = [
         'path' => __DIR__ . '/../',

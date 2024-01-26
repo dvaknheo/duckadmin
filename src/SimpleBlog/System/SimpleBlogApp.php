@@ -7,12 +7,15 @@ namespace SimpleBlog\System;
 
 use DuckPhp\DuckPhp;
 use SimpleBlog\Controller\ExceptionReporter;
+use DuckPhp\Ext\InstallerTrait;
 
 class SimpleBlogApp extends DuckPhp
 {
-    //@override
+    use InstallerTrait;
+    
     public $options = [
-        'path' => __DIR__ . '/../',      
+        'path' => __DIR__ . '/../',
+        
         'exception_reporter' =>  ExceptionReporter::class,
         'exception_for_business'  => ProjectException::class,
         'exception_for_controller'  => ProjectException::class,
@@ -20,6 +23,5 @@ class SimpleBlogApp extends DuckPhp
         'rewrite_map' => [
             '~article/(\d+)/?(\d+)?' => 'article?id=$1&page=$2',
         ],
-        'sql_dump_enable' => true,
     ];
 }

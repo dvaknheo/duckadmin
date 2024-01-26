@@ -184,7 +184,7 @@ CREATE TABLE `wa_admins` (
 
 LOCK TABLES `wa_admins` WRITE;
 /*!40000 ALTER TABLE `wa_admins` DISABLE KEYS */;
-INSERT INTO `wa_admins` VALUES (1,'admin1','超级管理员','$2y$10$1bRAcXYt5wQjS4xsY0nkHeS8poSYcJJdWgGgVBAaPXioukPjzcumO','/app/admin/avatar.png',NULL,NULL,'2023-11-12 10:35:47','2023-11-26 15:31:34','2024-01-17 05:28:10',NULL);
+INSERT INTO `wa_admins` VALUES (1,'admin1','超级管理员','$2y$10$1bRAcXYt5wQjS4xsY0nkHeS8poSYcJJdWgGgVBAaPXioukPjzcumO','/app/admin/avatar.png',NULL,NULL,'2023-11-12 10:35:47','2023-11-26 15:31:34','2024-01-17 12:20:25',NULL);
 /*!40000 ALTER TABLE `wa_admins` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -330,4 +330,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-01-17 15:12:53
+-- Dump completed on 2024-01-26 16:13:53

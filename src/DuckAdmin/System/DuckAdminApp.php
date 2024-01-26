@@ -8,12 +8,15 @@ use DuckPhp\Component\DbManager;
 use DuckPhp\Component\RouteHookResource;
 use DuckPhp\Core\Route;
 use DuckPhp\DuckPhp;
+use DuckPhp\Ext\InstallerTrait;
+use DuckPhp\Component\SqlDumper;
 
 /**
  * 入口类
  */
 class DuckAdminApp extends DuckPhp
 {
+    use InstallerTrait;
     //@override
     public $options = [
         'path' => __DIR__ . '/../',
@@ -28,8 +31,7 @@ class DuckAdminApp extends DuckPhp
      */   
     public function command_dumpsql()
     {
-        //static::Phase(static::class);
-        $dsn = $this->options['database']['dsn'] ?? null;
+        $dsn = static::Root()->options['database_list'][0]['dsn'] ?? null;
         $a=explode(';',$dsn);
         $t =[];
         foreach($a as $v){ $c=explode('=',$v); @$t[$c[0]]=$c[1];}
@@ -39,60 +41,15 @@ class DuckAdminApp extends DuckPhp
         echo (DATE(DATE_ATOM));
         echo "\n";
     }
-    /**
-     * install
-     */  
-    public function command_install()
+    public function command_dump()
     {
-        $this->install([]);
+        SqlDumper::_()->init($this->options,$this)->run();
+        var_dump(DATE(DATE_ATOM));
     }
-    public function install($options, $parent_options = [])
-    {
-        //安装
-        parent::install($options, $parent_options = []);
-        
-        //切换数据库配置
-        $this->switchDbManager();
-        
-        // 资源文件修正
-        RouteHookResource::_()->init($this->options, $this)->cloneResource();
-    }
-    public function onPrepare()
+
+    protected function onPrepare()
     {
         //默认的路由不符合我们这次的路由，换
         Route::_(ProjectRoute::_());
-    }
-    public function onInit()
-    {
-        
-        //如果根应用没设置数据库，用自己的
-        $this->switchDbManager();
-    }
-    protected function switchDbManager()
-    {
-        $options = DbManager::_()->options;
-        if (!empty($options['database']) || !empty($options['database_list'])){
-            return;
-        }
-        
-        $data = $this->options['database'] ?? null;
-        if (empty($data)) {
-            return;
-        }
-        
-        // DbManager 只会初始化一次，所以强制初始化。
-        $options['force_new_init'] = true; 
-        $options['database'] = $data;
-        
-        DbManager::_()->init($options, static::Root());
-    }
-    public function checkDatabase()
-    {
-        $this->switchDbManager();
-        $options = DbManager::_()->options;
-        if (!empty($options['database']) || !empty($options['database_list'])){
-            return true;
-        }
-        return false;
     }
 }
