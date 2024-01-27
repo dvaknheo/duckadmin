@@ -9,11 +9,11 @@ use DuckPhp\DuckPhp;
 use DuckPhp\Component\DbManager;
 use DuckUser\System\ActionApi;
 use DuckUser\Controller\ExceptionReporter;
-use DuckPhp\Ext\InstallerTrait;
+use DuckPhp\Foundation\FastInstallerTrait;
 
 class DuckUserApp extends DuckPhp
 {
-    use InstallerTrait;
+    use FastInstallerTrait;
     
     //@override
     public $options = [

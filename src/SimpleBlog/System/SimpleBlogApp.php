@@ -7,11 +7,11 @@ namespace SimpleBlog\System;
 
 use DuckPhp\DuckPhp;
 use SimpleBlog\Controller\ExceptionReporter;
-use DuckPhp\Ext\InstallerTrait;
+use DuckPhp\Foundation\FastInstallerTrait;
 
 class SimpleBlogApp extends DuckPhp
 {
-    use InstallerTrait;
+    use FastInstallerTrait;
     
     public $options = [
         'path' => __DIR__ . '/../',

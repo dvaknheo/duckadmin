@@ -1,6 +1,6 @@
 <?php
 use DuckPhp\DuckPhp;
-use DuckPhp\Ext\InstallerTrait;
+use DuckPhp\Foundation\FastInstallerTrait;
 use DuckPhp\Foundation\Helper;
 
 class MainController
@@ -13,7 +13,7 @@ class MainController
 
 class DemoApp extends DuckPhp
 {
-    use InstallerTrait;
+    use FastInstallerTrait;
     
     public $options = [
         'path' => __DIR__.'/',
@@ -27,11 +27,12 @@ class DemoApp extends DuckPhp
         ],
         'app' => [
             // 后台管理系统
-//*/
+//*
             \DuckAdmin\System\DuckAdminApp::class => [
                 'controller_url_prefix' => 'app/admin/', // 访问路径
                 'controller_resource_prefix' => 'res/',  // 资源文件前缀
             ],
+//*/
             \DuckUser\System\DuckUserApp::class => [
                 'controller_url_prefix' => 'user/', // 访问路径
                 'controller_resource_prefix' => 'res/',  // 资源文件前缀

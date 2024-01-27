@@ -1,8 +1,7 @@
-<?php //regenerate by DuckPhp\Component\ExtOptionsLoader->saveExtOptions at 2024-01-26T15:40:36+08:00
+<?php //regenerate by DuckPhp\Component\ExtOptionsLoader->saveExtOptions at 2024-01-27T16:58:42+08:00
 return array (
   'DemoApp' => 
   array (
-    'force' => false,
     'install' => '2024-01-20T22:19:56+08:00',
     'database_list' => 
     array (
@@ -23,5 +22,11 @@ return array (
         'select' => '',
       ),
     ),
+    'is_debug' => true,
+  ),
+  'DuckAdmin\\System\\DuckAdminApp' => 
+  array (
+    'abc' => 'def',
+    'install' => '2024-01-26T19:26:30+08:00',
   ),
 );
