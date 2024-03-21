@@ -6,14 +6,14 @@
 namespace DuckUserManager\Model;
 
 use DuckPhp\Foundation\SimpleModelTrait;
-use DuckUserManager\System\DuckUserManagerApp as Helper;
 
 class UserModel
 {
     use SimpleModelTrait;
+    
     public function getUserList($conditions=[], $page = 1, $page_size = 10)
     {
-        
+        var_dump("todo");
     }
     public function changeUserStatus($id,$stat)
     {

@@ -6,11 +6,12 @@
 namespace SimpleBlog\System;
 
 use DuckPhp\DuckPhp;
-use SimpleBlog\Controller\ExceptionReporter;
 use DuckPhp\Foundation\FastInstallerTrait;
+use SimpleBlog\Controller\ExceptionReporter;
 
 class SimpleBlogApp extends DuckPhp
 {
+    // use CommonCommandTrait;
     use FastInstallerTrait;
     
     public $options = [

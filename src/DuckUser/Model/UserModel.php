@@ -6,12 +6,10 @@
 namespace DuckUser\Model;
 
 use DuckPhp\Foundation\SimpleModelTrait;
-use DuckPhp\Helper\ModelHelperTrait;
 
 class UserModel
 {
     use SimpleModelTrait;
-    use ModelHelperTrait;
 
     public function __construct()
     {

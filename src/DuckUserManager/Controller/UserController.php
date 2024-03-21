@@ -1,9 +1,9 @@
 <?php
 namespace DuckUserManager\Controller;
 
+use DuckPhp\Foundation\Controller\Helper;
 use DuckPhp\Foundation\SimpleControllerTrait;
 use DuckUserManager\Business\UserBusiness;
-use DuckUserManager\System\DuckUserManagerApp as Helper;
 
 /**
  * 管理员列表 
