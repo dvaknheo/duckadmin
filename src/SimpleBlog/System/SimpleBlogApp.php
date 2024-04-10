@@ -6,17 +6,18 @@
 namespace SimpleBlog\System;
 
 use DuckPhp\DuckPhp;
+use DuckPhp\Foundation\CommonCommandTrait;
 use DuckPhp\Foundation\FastInstallerTrait;
 use SimpleBlog\Controller\ExceptionReporter;
 
 class SimpleBlogApp extends DuckPhp
 {
-    // use CommonCommandTrait;
+    use CommonCommandTrait;
     use FastInstallerTrait;
     
     public $options = [
         'path' => __DIR__ . '/../',
-        
+        'cli_command_class' => null,
         'exception_reporter' =>  ExceptionReporter::class,
         'exception_for_business'  => ProjectException::class,
         'exception_for_controller'  => ProjectException::class,

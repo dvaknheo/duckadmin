@@ -6,18 +6,21 @@
 namespace DuckUser\System;
 
 use DuckPhp\DuckPhp;
-use DuckPhp\Component\DbManager;
+use DuckPhp\Foundation\CommonCommandTrait;
+use DuckPhp\Foundation\FastInstallerTrait;
+
 use DuckUser\System\ActionApi;
 use DuckUser\Controller\ExceptionReporter;
-use DuckPhp\Foundation\FastInstallerTrait;
 
 class DuckUserApp extends DuckPhp
 {
+    use CommonCommandTrait;
     use FastInstallerTrait;
     
     //@override
     public $options = [
         'path' => __DIR__ . '/../',
+        'cli_command_class' => null,
         
         'exception_reporter' => ExceptionReporter::class,
         'class_user' => User::class,

@@ -4,18 +4,17 @@
  */
 namespace DuckAdmin\System;
 
-use DuckPhp\Component\DbManager;
-use DuckPhp\Component\RouteHookResource;
 use DuckPhp\Core\Route;
 use DuckPhp\DuckPhp;
+use DuckPhp\Foundation\CommonCommandTrait;
 use DuckPhp\Foundation\FastInstallerTrait;
-use DuckPhp\Component\SqlDumper;
 
 /**
  * 入口类
  */
 class DuckAdminApp extends DuckPhp
 {
+    use CommonCommandTrait;
     use FastInstallerTrait;
     
     //@override
@@ -24,7 +23,8 @@ class DuckAdminApp extends DuckPhp
         'controller_method_prefix' => '', // 控制器后缀
         'controller_resource_prefix' => 'res/',  // 资源文件前缀
         'ext_options_file_enable' => true,  //使用额外的选项
-        
+        'cli_command_class' => null,
+
         'class_admin'=> Admin::class,
         //----
         //'install_input_desc'=>'input [{abc}]',

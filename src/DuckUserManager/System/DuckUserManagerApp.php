@@ -5,7 +5,7 @@
 namespace DuckUserManager\System;
 
 use DuckPhp\DuckPhp;
-// use DuckPhp\Foundation\CommonCommandTrait;
+use DuckPhp\Foundation\CommonCommandTrait;
 use DuckPhp\Foundation\FastInstallerTrait;
 
 /**
@@ -13,11 +13,12 @@ use DuckPhp\Foundation\FastInstallerTrait;
  */
 class DuckUserManagerApp extends DuckPhp
 {
-    // use CommonCommandTrait;
+    use CommonCommandTrait;
     use FastInstallerTrait;
     
     //@override
     public $options = [
         'path' => __DIR__ . '/../',
+        'cli_command_class' => null,
     ];
 }
