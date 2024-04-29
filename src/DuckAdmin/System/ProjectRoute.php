@@ -26,12 +26,4 @@ class ProjectRoute extends Route
         }
         return [$full_class,$method];
     }
-    public function pathFromClassAndMethod($full_class, $method,...$args)
-    {
-        //我们要完成这个逆函数,并放到 Core/Route 里
-        $prefix = $this->getControllerNamespacePrefix();
-        $class = substr($full_class,$prefix);
-        $path = $class .'/'. $method;
-        return $path;
-    }
 }

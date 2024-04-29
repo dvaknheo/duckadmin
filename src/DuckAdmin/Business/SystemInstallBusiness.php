@@ -1,6 +1,7 @@
 <?php
 namespace DuckAdmin\Business;
 
+//  命令行下的安装
 class SystemInstallBusiness extends Base
 {
     /**

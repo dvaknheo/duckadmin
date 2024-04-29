@@ -1,8 +1,8 @@
-<?php //regenerate by DuckPhp\Component\ExtOptionsLoader->saveExtOptions at 2024-01-27T16:58:42+08:00
+<?php //regenerate by DuckPhp\Component\ExtOptionsLoader->saveExtOptions at 2024-04-11T21:48:22+08:00
 return array (
   'DemoApp' => 
   array (
-    'install' => '2024-01-20T22:19:56+08:00',
+    'install' => '2024-04-11T21:15:26+08:00',
     'database_list' => 
     array (
       0 => 
@@ -23,10 +23,24 @@ return array (
       ),
     ),
     'is_debug' => true,
+    'app_a' => '111',
+    'app_b' => '33',
+    'controller_url_prefix' => '',
+    'controller_resource_prefix' => '',
   ),
   'DuckAdmin\\System\\DuckAdminApp' => 
   array (
     'abc' => 'def',
-    'install' => '2024-01-26T19:26:30+08:00',
+    'install' => '2024-04-11T14:20:26+08:00',
+  ),
+  'DuckUser\\System\\DuckUserApp' => 
+  array (
+    'install' => '2024-04-11T10:37:49+08:00',
+  ),
+  'DuckUserManager\\System\\DuckUserManagerApp' => 
+  array (
+  ),
+  'SimpleBlog\\System\\SimpleBlogApp' => 
+  array (
   ),
 );

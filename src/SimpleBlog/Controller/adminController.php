@@ -75,7 +75,7 @@ class adminController
     {
         list($list, $total) = AdminBusiness::_()->getLogList(Helper::PageNo());
         
-        $list = Helper::RecordsetUrl($list, [
+        $list = Helper::_()->recordsetUrl($list, [
             'url_edit' => 'admin/article_edit?id={id}',
             'url_delete' => 'admin/article_delete?id={id}',
         ]);

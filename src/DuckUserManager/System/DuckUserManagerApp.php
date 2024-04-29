@@ -20,5 +20,6 @@ class DuckUserManagerApp extends DuckPhp
     public $options = [
         'path' => __DIR__ . '/../',
         'cli_command_class' => null,
+        'database_driver'=>'sqlite',
     ];
 }

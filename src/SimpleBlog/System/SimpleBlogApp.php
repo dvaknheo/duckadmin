@@ -17,7 +17,7 @@ class SimpleBlogApp extends DuckPhp
     
     public $options = [
         'path' => __DIR__ . '/../',
-        'cli_command_class' => null,
+        'cli_command_class' => Command::class,
         'exception_reporter' =>  ExceptionReporter::class,
         'exception_for_business'  => ProjectException::class,
         'exception_for_controller'  => ProjectException::class,
@@ -25,5 +25,6 @@ class SimpleBlogApp extends DuckPhp
         'rewrite_map' => [
             '~article/(\d+)/?(\d+)?' => 'article?id=$1&page=$2',
         ],
+        'database_driver'=>'sqlite',
     ];
 }

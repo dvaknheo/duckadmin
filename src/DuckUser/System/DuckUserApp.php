@@ -6,24 +6,18 @@
 namespace DuckUser\System;
 
 use DuckPhp\DuckPhp;
-use DuckPhp\Foundation\CommonCommandTrait;
-use DuckPhp\Foundation\FastInstallerTrait;
-
-use DuckUser\System\ActionApi;
 use DuckUser\Controller\ExceptionReporter;
 
 class DuckUserApp extends DuckPhp
 {
-    use CommonCommandTrait;
-    use FastInstallerTrait;
-    
     //@override
     public $options = [
         'path' => __DIR__ . '/../',
-        'cli_command_class' => null,
-        
+        'cli_command_class' => Command::class,
+        'database_driver'=>'sqlite',
         'exception_reporter' => ExceptionReporter::class,
         'class_user' => User::class,
+        
         
         //'table_prefix' => '',   // 表前缀
         //'session_prefix' => '',  // Session 前缀

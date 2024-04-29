@@ -1,5 +1,6 @@
 <?php
 use DuckPhp\DuckPhp;
+use DuckPhp\Foundation\CommonCommandTrait;
 use DuckPhp\Foundation\FastInstallerTrait;
 use DuckPhp\Foundation\Helper;
 
@@ -13,15 +14,15 @@ class MainController
 
 class DemoApp extends DuckPhp
 {
+    use CommonCommandTrait;
     use FastInstallerTrait;
     
     public $options = [
         'path' => __DIR__.'/',
-        
         'is_debug' => true,
         
+        'cli_command_class' => null,
         'namespace_controller' => '\\',
-        
         'ext' => [
             // add your extensions;
         ],
@@ -49,6 +50,22 @@ class DemoApp extends DuckPhp
             ],
 //*/
         ],
-        
+        'install_options'=>[
+            'app_a'=>'111',
+        ],
+        //install_need_redis
+        //install_need_database
+        //install_options
+        //install_input_validators
+        'install_input_desc' => <<<EOT
+url prefix: [{controller_url_prefix}]
+resource prefix: [{controller_resource_prefix}]
+zzzzz [{app_a}]
+zzzzz [{app_b}]
+//就是说duck可以很好的解决应用间的复用和嵌套问题，而且对应用的修改和拓展也是无侵害的
+----
+EOT
+,
+        'app_b'=> '222',
     ];
 }

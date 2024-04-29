@@ -10,7 +10,7 @@ use DuckAdmin\System\DuckAdminApp;
 
 
 /**
- * 个人资料业务
+ * 这个安装是 web 的安装
  */
 class InstallBusiness extends Base
 {
@@ -22,7 +22,9 @@ class InstallBusiness extends Base
     protected function getConfigFile($file)
     {
         //TODO 放到 Helper 里
-        return DuckAdminApp::_()->getOverrideableFile(  'config', $file);
+        //extendFullFile
+
+        return DuckAdminApp::_()->getOverrideableFile('config', $file); 
     }
     protected function checkDatabase()
     {
@@ -210,6 +212,13 @@ class InstallBusiness extends Base
         Helper::BusinessThrowOn($password !== $password_confirm, '两次密码不一致',1);
         $flag = $this->checkDataBase();
         Helper::BusinessThrowOn(!$flag, '请先完成第一步数据库配置', 1);
+        
+        //////////////////////////////////////
+        
+        // 导入菜单
+        //$menus =  Helper::Config('menu',null,[]);
+        //RuleModel::_()->importMenu($menus);
+        
         $flag = AdminModel::_()->hasAdmins();
         Helper::BusinessThrowOn($flag, '后台已经安装完毕，无法通过此页面创建管理员',1);
         
