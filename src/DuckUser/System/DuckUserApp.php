@@ -6,6 +6,7 @@
 namespace DuckUser\System;
 
 use DuckPhp\DuckPhp;
+use DuckPhp\FastInstaller\FastInstaller;
 use DuckUser\Controller\ExceptionReporter;
 
 class DuckUserApp extends DuckPhp
@@ -13,11 +14,12 @@ class DuckUserApp extends DuckPhp
     //@override
     public $options = [
         'path' => __DIR__ . '/../',
-        'cli_command_class' => Command::class,
-        'database_driver'=>'sqlite',
+
         'exception_reporter' => ExceptionReporter::class,
         'class_user' => User::class,
         
+        'cli_command_classes' => [FastInstaller::class],
+        'database_driver'=>'sqlite',
         
         //'table_prefix' => '',   // 表前缀
         //'session_prefix' => '',  // Session 前缀

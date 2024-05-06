@@ -12,9 +12,9 @@ class CommentModel extends Base
     public function getListByArticle($article_id, int $page = 1, int $page_size = 10)
     {
         $start = $page - 1;
-        $sql = "SELECT SQL_CALC_FOUND_ROWS  * from `'TABLE'` where article_id=? and deleted_at is null order by id desc limit $start,$page_size";
+        $sql = "SELECT  * from `'TABLE'` where article_id=? and deleted_at is null order by id desc limit $start,$page_size";
         $data = $this->fetchAll($sql, $article_id);
-        $sql = "SELECT FOUND_ROWS()";
+        $sql = "SELECT count(*) as c from `'TABLE'`";
         $total = $this->fetchColumn($sql);
         return ['data'=>$data,'count'=>$total];
     }

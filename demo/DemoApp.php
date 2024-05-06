@@ -1,7 +1,7 @@
 <?php
 use DuckPhp\DuckPhp;
 use DuckPhp\Foundation\CommonCommandTrait;
-use DuckPhp\Foundation\FastInstallerTrait;
+use DuckPhp\FastInstaller\FastInstaller;
 use DuckPhp\Foundation\Helper;
 
 class MainController
@@ -14,58 +14,42 @@ class MainController
 
 class DemoApp extends DuckPhp
 {
-    use CommonCommandTrait;
-    use FastInstallerTrait;
-    
     public $options = [
-        'path' => __DIR__.'/',
         'is_debug' => true,
+        'path' => __DIR__.'/',
         
-        'cli_command_class' => null,
+        'cli_command_classes' => [FastInstaller::class],
         'namespace_controller' => '\\',
-        'ext' => [
-            // add your extensions;
-        ],
         'app' => [
-            // 后台管理系统
 //*
-            \DuckAdmin\System\DuckAdminApp::class => [
-                'controller_url_prefix' => 'app/admin/', // 访问路径
-                'controller_resource_prefix' => 'res/',  // 资源文件前缀
+            \DuckAdmin\System\DuckAdminApp::class => [      // 后台管理系统
+                'controller_url_prefix' => 'app/admin/',    // 访问路径
+                'controller_resource_prefix' => 'res/',     // 资源文件前缀
             ],
 //*/
             \DuckUser\System\DuckUserApp::class => [
                 'controller_url_prefix' => 'user/', // 访问路径
-                'controller_resource_prefix' => 'res/',  // 资源文件前缀
+                'controller_resource_prefix' => '/res/user',  // 资源文件前缀
             ],
 //*/
             \DuckUserManager\System\DuckUserManagerApp::class => [
                 'controller_url_prefix' => 'app/admin/', // 访问路径
-                'controller_resource_prefix' => 'res/',  // 资源文件前缀
+                'controller_resource_prefix' => '/res/app/admin/',  // 资源文件前缀
             ],
 //*/
             \SimpleBlog\System\SimpleBlogApp::class => [
                 'controller_url_prefix' => 'blog/', // 访问路径
-                'controller_resource_prefix' => 'res/',  // 资源文件前缀
+                'controller_resource_prefix' => '/res/blog',  // 资源文件前缀
             ],
 //*/
         ],
-        'install_options'=>[
-            'app_a'=>'111',
-        ],
-        //install_need_redis
-        //install_need_database
-        //install_options
-        //install_input_validators
-        'install_input_desc' => <<<EOT
-url prefix: [{controller_url_prefix}]
-resource prefix: [{controller_resource_prefix}]
-zzzzz [{app_a}]
-zzzzz [{app_b}]
-//就是说duck可以很好的解决应用间的复用和嵌套问题，而且对应用的修改和拓展也是无侵害的
-----
-EOT
-,
-        'app_b'=> '222',
     ];
+    public function onInit()
+    {
+        // You Codes,
+    }
+    public function command_foo($uri = '', $post = false)
+    {
+        //var_dump(Console::_()->getCliParameters());
+    }
 }

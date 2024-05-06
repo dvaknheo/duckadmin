@@ -1,4 +1,4 @@
-<?php //regenerate by DuckPhp\Component\ExtOptionsLoader->saveExtOptions at 2024-04-11T21:48:22+08:00
+<?php //regenerate by DuckPhp\Component\ExtOptionsLoader->saveExtOptions at 2024-05-02T20:49:40+08:00
 return array (
   'DemoApp' => 
   array (
@@ -42,5 +42,15 @@ return array (
   ),
   'SimpleBlog\\System\\SimpleBlogApp' => 
   array (
+    'database_list' => 
+    array (
+      0 => 
+      array (
+        'dsn' => 'sqlite:/mnt/d/Code/DuckAdmin/src/SimpleBlog/config/struct.sqlite3',
+        'username' => '',
+        'password' => '',
+      ),
+    ),
+    'install' => '2024-05-02T20:49:40+08:00',
   ),
 );

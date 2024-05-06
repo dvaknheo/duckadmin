@@ -133,6 +133,7 @@ class InstallBusiness extends Base
         
         // FirstRole，第一个角色我们要从 initSQL 中抽取出来。
         
+        //INSERT INTO `wa_roles` VALUES (1,'超级管理员','*','2022-08-13 16:15:01','2022-12-23 12:05:07',NULL);
         // 导入菜单
         $menus =  Helper::Config('menu',null,[]);
         RuleModel::_()->importMenu($menus);
@@ -209,12 +210,15 @@ class InstallBusiness extends Base
      */
     public function step2($username,$password,$password_confirm)
     {
-        Helper::BusinessThrowOn($password !== $password_confirm, '两次密码不一致',1);
-        $flag = $this->checkDataBase();
-        Helper::BusinessThrowOn(!$flag, '请先完成第一步数据库配置', 1);
+        //Helper::BusinessThrowOn($password !== $password_confirm, '两次密码不一致',1);
+        //$flag = $this->checkDataBase();
+        //Helper::BusinessThrowOn(!$flag, '请先完成第一步数据库配置', 1);
         
         //////////////////////////////////////
-        
+                //INSERT INTO `wa_roles` VALUES (1,'超级管理员','*','2022-08-13 16:15:01','2022-12-23 12:05:07',NULL);
+        // 导入菜单
+        $menus =  Helper::Config('menu',null,[]);
+        RuleModel::_()->importMenu($menus);
         // 导入菜单
         //$menus =  Helper::Config('menu',null,[]);
         //RuleModel::_()->importMenu($menus);
@@ -223,8 +227,8 @@ class InstallBusiness extends Base
         Helper::BusinessThrowOn($flag, '后台已经安装完毕，无法通过此页面创建管理员',1);
         
         try{
-        $admin_id = AdminModel::_()->addFirstAdmin($username, $password);
-        AdminRoleModel::_()->addFirstRole($admin_id);
+            $admin_id = AdminModel::_()->addFirstAdmin($username, $password);
+            AdminRoleModel::_()->addFirstRole($admin_id);
         }catch(\Throwable $ex){
             var_dump($ex);
         }
