@@ -4,7 +4,8 @@
  */
 namespace DuckAdmin\System;
 
-
+use DuckAdmin\Business\InstallBusiness;
+use DuckPhp\Core\Console;
 use DuckPhp\Core\Route;
 use DuckPhp\DuckPhp;
 use DuckPhp\FastInstaller\FastInstaller;
@@ -27,7 +28,7 @@ class DuckAdminApp extends DuckPhp
         
         //----
         //'install_input_desc'=>'input [{abc}]',
-        //'install_default_options'=>['abc'=>'def'],
+        //'install_default_options'=>['username'=>'admin','password'=>'123456','password_confirm'=>''],
     ];
     protected function onPrepare()
     {
@@ -37,16 +38,39 @@ class DuckAdminApp extends DuckPhp
     }
     protected function onInit()
     {
-        //onInstall();  我们这里要安装
-        //EventManager::OnEvent([static::class,'OnInstalled'],[static::class,'OnInstall']);
     }
+    public function onInstall()
+    {
+        $desc =<<<EOT
+设置超级管理员：
+----
+默认管理员：[{username}]
+默认密码  ：[{password}]
+重复密码  ：[{password_confirm}]
 
-    public static function OnInstalled()
-    {
-        return static::_()->_OnInstall();
+EOT;
+        $input_options = [
+            'username'=>'',
+            'password'=>'123456',
+            'password_confirm'=>'123456',
+        ];
+        while(true){
+            try{
+                $input_options = Console::_()->readLines($input_options, $desc);
+                $this->doInstallStep2($input_options['username'],$input_options['password'],$input_options['password_confirm'])
+            }catch(\Exception $ex){
+                echo "----\n";
+                echo $ex->getMessage();
+                echo "\n";
+                continue;
+            }
+            break;
+        };
+        
+        return true;
     }
-    public function _OnInstalled()
+    public function doInstallStep2($username,$password,$password_confirm)
     {
-        var_dump("welcome to SimpleBlog");
-    }    
+        InstallBusiness::_()->step2($username,$password,$password_confirm);
+    }
 }

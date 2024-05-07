@@ -108,5 +108,11 @@ class RoleModel extends Base
 			static::Db()->updateData("wa_roles", $id, $data, 'id');
 		}
 	}
+    
+    public function addFirstRole()
+    {
+        $sql = "INSERT INTO `wa_roles` VALUES (1,'超级管理员','*','2022-08-13 16:15:01','2022-12-23 12:05:07',NULL);";
+        static::Db()->execute($sql);
+    }
 
 }
