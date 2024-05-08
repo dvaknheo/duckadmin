@@ -101,6 +101,7 @@ class AdminModel extends Base
             'email' => 'email',
             'mobile' => 'mobile',
             'username' => 'username',
+            'status' =>'status',
         ];
 
         $update_data = [];

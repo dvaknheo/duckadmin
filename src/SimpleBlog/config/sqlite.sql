@@ -25,4 +25,3 @@ CREATE TABLE `Comments` (
 	PRIMARY KEY("id" AUTOINCREMENT)
 );
 
-#### DATA BEGIN ####

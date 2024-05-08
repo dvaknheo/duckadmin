@@ -30,7 +30,9 @@ class UserAction extends Base
     }
     public function data()
     {
-        return $this->user;
+            $user = Session::_()->getCurrentUser();
+
+        return $user;
     }
     public function register($post)
     {

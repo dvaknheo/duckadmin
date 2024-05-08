@@ -20,7 +20,7 @@ class DuckUserApp extends DuckPhp
         
         'cli_command_classes' => [FastInstaller::class],
         'database_driver'=>'sqlite',
-        
+        'local_database' =>true,
         //'table_prefix' => '',   // 表前缀
         //'session_prefix' => '',  // Session 前缀
         

@@ -50,14 +50,14 @@ class DuckAdminApp extends DuckPhp
 
 EOT;
         $input_options = [
-            'username'=>'',
+            'username'=>'admin',
             'password'=>'123456',
             'password_confirm'=>'123456',
         ];
         while(true){
             try{
                 $input_options = Console::_()->readLines($input_options, $desc);
-                $this->doInstallStep2($input_options['username'],$input_options['password'],$input_options['password_confirm'])
+                $this->doInstallStep2($input_options['username'],$input_options['password'],$input_options['password_confirm']);
             }catch(\Exception $ex){
                 echo "----\n";
                 echo $ex->getMessage();

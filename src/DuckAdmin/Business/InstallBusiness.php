@@ -33,7 +33,7 @@ class InstallBusiness extends Base
      */
     public function step2($username,$password,$password_confirm)
     {
-        Helper::BusinessThrowOn($flag, '后台已经安装完毕，无法通过此页面创建管理员',1);
+        //Helper::BusinessThrowOn($flag, '后台已经安装完毕，无法通过此页面创建管理员',1);
         Helper::BusinessThrowOn($password !== $password_confirm, '两次密码不一致',1);
         RoleModel::_()->addFirstRole();
         $menus =  Helper::Config('menu',null,[]);

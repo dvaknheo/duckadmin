@@ -85,6 +85,7 @@ class AdminBusiness extends Base
             AdminRoleModel::_()->updateAdminRole($admin_id, $exist_role_ids, $role_ids);
         }
         AdminModel::_()->updateAdmin($admin_id, $data);
+
         return;
     }
     public function deleteAdmin($op_id, $ids)

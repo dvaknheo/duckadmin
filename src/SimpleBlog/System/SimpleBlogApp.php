@@ -35,5 +35,10 @@ EOT
     {
         //
     }
-    
+    public function onInstall()
+    {
+    }
+    public function onInstalled()
+    {
+    }
 }
