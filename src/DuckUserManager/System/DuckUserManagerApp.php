@@ -5,7 +5,6 @@
 namespace DuckUserManager\System;
 
 use DuckPhp\DuckPhp;
-use DuckPhp\FastInstaller\FastInstaller;
 
 /**
  * 入口类
@@ -15,7 +14,9 @@ class DuckUserManagerApp extends DuckPhp
     //@override
     public $options = [
         'path' => __DIR__ . '/../',
-        'database_driver'=>'sqlite',
-        'cli_command_classes' => [FastInstaller::class],
+        
+        //'database_driver'=>'sqlite',
+        //'need_install'=>true,
+        'cli_command_with_fast_installer' => true,
     ];
 }

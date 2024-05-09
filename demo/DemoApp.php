@@ -1,7 +1,5 @@
 <?php
 use DuckPhp\DuckPhp;
-use DuckPhp\Foundation\CommonCommandTrait;
-use DuckPhp\FastInstaller\FastInstaller;
 use DuckPhp\Foundation\Helper;
 
 class MainController
@@ -18,7 +16,7 @@ class DemoApp extends DuckPhp
         'is_debug' => true,
         'path' => __DIR__.'/',
         
-        'cli_command_classes' => [FastInstaller::class],
+        'cli_command_with_fast_installer' => true,
         'namespace_controller' => '\\',
         'app' => [
 //*

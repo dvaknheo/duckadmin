@@ -16,7 +16,8 @@ require_once(__DIR__. '/DemoApp.php');
 require_once(__DIR__. '/FixedWorkermanHttpd.php');
 
 $options=[
-    'cli_mode'=>true,
 ];
+
 DuckPhp\HttpServer\HttpServer::_(FixedWorkermanHttpd::_());
+
 DemoApp::RunQuickly($options);

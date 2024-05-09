@@ -3,9 +3,6 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-use SebastianBergmann\CodeCoverage\CodeCoverage;
-use SebastianBergmann\CodeCoverage\Report\Html\Facade as ReportOfHtmlOfFacade;
-use SebastianBergmann\CodeCoverage\Report\PHP as ReportOfPHP;
 
 require_once(__DIR__.'/../../vendor/autoload.php');
 
@@ -22,22 +19,10 @@ if(is_file(__DIR__.'/../../../DNMVCS/autoload.php')){
 ////]]]]
 
 require_once(__DIR__. '/../DemoApp.php');
-
+//require_once(__DIR__. '/../MyCoverage.php');
 $options=[
-    // 'cli_mode'=>true,
     // ...
 ];
-
-//$path = '';
-//$name = '';
-//$output_file ='';
-
-//$coverage = new CodeCoverage();
-//$coverage->filter()->addDirectoryToWhitelist($path);
-//$coverage->start($name);
-
-//$coverage->stop();
-//(new ReportOfPHP)->process($coverage, $output_file);
-
+//MyCoverage::Begin([]);
 DemoApp::RunQuickly($options);
-
+//MyCoverage::End();

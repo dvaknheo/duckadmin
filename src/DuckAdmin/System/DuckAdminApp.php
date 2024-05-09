@@ -8,7 +8,6 @@ use DuckAdmin\Business\InstallBusiness;
 use DuckPhp\Core\Console;
 use DuckPhp\Core\Route;
 use DuckPhp\DuckPhp;
-use DuckPhp\FastInstaller\FastInstaller;
 
 /**
  * 入口类
@@ -24,7 +23,8 @@ class DuckAdminApp extends DuckPhp
         'controller_method_prefix' => '',
         'class_admin'=> Admin::class,
         
-        'cli_command_classes' => [FastInstaller::class],
+        'need_install'=>true,
+        'cli_command_with_fast_installer' => true,
         
         //----
         //'install_input_desc'=>'input [{abc}]',

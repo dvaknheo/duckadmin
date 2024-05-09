@@ -5,10 +5,7 @@
  */
 namespace SimpleBlog\System;
 
-use DuckPhp\Core\EventManager;
-use DuckPhp\Core\Console;
 use DuckPhp\DuckPhp;
-use DuckPhp\FastInstaller\FastInstaller;
 use SimpleBlog\Controller\ExceptionReporter;
 
 class SimpleBlogApp extends DuckPhp
@@ -22,10 +19,11 @@ class SimpleBlogApp extends DuckPhp
         'rewrite_map' => [
             '~article/(\d+)/?(\d+)?' => 'article?id=$1&page=$2',
         ],
-        'cli_command_classes' => [FastInstaller::class],
+        
         
         'database_driver'=>'sqlite',
-        
+        'need_install'=>true,
+        'cli_command_with_fast_installer' => true,
         'install_input_desc' => <<<EOT
 欢迎使用SimpleBlog
 EOT
