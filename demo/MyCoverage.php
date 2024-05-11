@@ -13,7 +13,8 @@ class MyCoverage
         'path_src' => 'src/',
         'path_dump' => 'test_coveragedumps',
         'path_report' => 'test_reports',
-        'id'=>'',
+        'group'=>'',
+        'name'=>'',
     ];
     public $is_inited = false;
     
@@ -40,9 +41,9 @@ class MyCoverage
     public function __construct()
     {
     }
-    public static function Begin($options)
+    public static function Begin()
     {
-        return static::_()->doBegin($options);
+        return static::_()->doBegin();
     }
     public static function End()
     {
@@ -82,38 +83,38 @@ class MyCoverage
         
         $this->coverage = new CodeCoverage();
         $this->is_inited = true;
+        // auto start
         return $this;
     }
-    public function doBegin($options)
+    public function doBegin()
     {
-        $this->init($options);
         $path_src = $this->getSubPath('path_src');
         $this->coverage->filter()->addDirectoryToWhitelist($path_src);
         
-        $this->coverage->start($_SERVER['REQUEST_URI'],true);
+        $this->coverage->start($this->options['name'],true);
     }
     
     public function doEnd()
     {
         $this->coverage->stop();
         $path_dump = $this->getSubPath('path_dump');
-        $path_dump = $path_dump. $this->options['id'].'/';
+        $path_dump = $path_dump. $this->options['group'].'/';
         
-        $file = md5($this->options['id'].$_SERVER['REQUEST_URI']);
+        $file = md5($this->options['name']);
         
         (new ReportOfPHP)->process($this->coverage, $path_dump.$file.'.php');
         $this->coverage = null;
-        $this->createReport();
+        __var_log($path_dump.$file.'.php');
+        //$this->createReport();
     }
-    
-    protected function createReport()
+    public function createReport()
     {
         $path_src = $this->getSubPath('path_src');
         $path_dump = $this->getSubPath('path_dump');
         $path_report = $this->getSubPath('path_report');
         
-        $path_dump = $path_dump. $this->options['id'];
-        $path_report = $path_report. $this->options['id'];
+        $path_dump = $path_dump. $this->options['group'];
+        $path_report = $path_report. $this->options['group'];
 
         $coverage = new CodeCoverage();
         $coverage->filter()->addDirectoryToWhitelist($path_src);

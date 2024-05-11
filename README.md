@@ -9,59 +9,72 @@
 
 `DuckAdmin` 只做了公司员工结构的基本代码，通用业务。你可以在这之上添加更多符合公司业务的功能。
 
-## 安装
-基本安装
+## 快速安装
 
-克隆工程
+基本需求： mysql sqlite
+
+### demo 的安装
 
 ```
-composer install
+composer install dvaknheo/duckamin 
 cd demo
-php cli.php install
-
+php cli.php run
 ```
 按照提示设置数据库
 ```
 Database Setting:
 
 ```
-
-1. 修改数据库
-
-`demo/config/DuckPhpApps.config.php`
+### 正常作为库引入
 
 ```
-      'dsn' => 'mysql:host=127.0.0.1;port=3306;dbname=webman_admin;charset=utf8mb4;',
+composer install dvaknheo/duckamin 
 ```
 
-
-2. 导入
-`demo/demo.sql` 这是我正在用的 sql
-
-管理员 `admin1` 密码  `123456`
-用户 `user1` 密码 `123456`
-
-## 运行
-
-最简单的方式，克隆工程
-
+根据 demo 的 DemoApp.php 填写相关代码
 ```php
-composer install
-cd demo
-php cli.php run
-# 打开 127.0.0.1:8080
 
+class MyApp extends DuckPhp
+{
+    public $options = [
+        'is_debug' => true,
+        'path' => __DIR__.'/',
+        
+        'cli_command_with_fast_installer' => true,
+        'namespace_controller' => '\\',
+        'app' => [
+            \DuckAdmin\System\DuckAdminApp::class => [      // 后台管理系统
+                'controller_url_prefix' => 'app/admin/',    // 访问路径
+                'controller_resource_prefix' => 'res/',     // 资源文件前缀
+                
+            ],
+        ],
+    ];
+    public function __construct()
+    {
+    }
+}
 ```
-
+安装程序
+```
+php cli.php install
+```
+运行
+```
+php cli.php run
+```
+访问 127.0.0.1:8080
 
 ## 高级问题
 
 ### 前置知识
 
 ### 调整选项
+
 ### 静态资源外放
 
 ### 接管视图
+
 `demo/view/DuckUser` 目录 就是demo工程调整后的视图
 
 ### 使用 API
@@ -70,4 +83,3 @@ php cli.php run
 
 
 ## TODO
-需要覆盖测试。
