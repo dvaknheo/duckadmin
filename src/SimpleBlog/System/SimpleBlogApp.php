@@ -11,8 +11,10 @@ use SimpleBlog\Controller\ExceptionReporter;
 class SimpleBlogApp extends DuckPhp
 {
     public $options = [
-
         'path' => __DIR__ . '/../',
+        'namespace' => 'SimpleBlog',
+        //'is_maintain'=>true,
+        
         'exception_reporter' =>  ExceptionReporter::class,
         'exception_for_business'  => ProjectException::class,
         'exception_for_controller'  => ProjectException::class,
@@ -20,12 +22,16 @@ class SimpleBlogApp extends DuckPhp
             '~article/(\d+)/?(\d+)?' => 'article?id=$1&page=$2',
         ],
         
+        //'error_maintain'=>'_sys/error_maintain',
+        //'error_need_install'=>'_sys/error_need_install',
         
-        'database_driver'=>'sqlite',
         'need_install'=>true,
+        'local_database'=>true,
+        'database_driver'=>'sqlite',
+        
         'cli_command_with_fast_installer' => true,
         'install_input_desc' => <<<EOT
-欢迎使用SimpleBlog
+welcome to use SimpleBlog
 EOT
         ,
     ];

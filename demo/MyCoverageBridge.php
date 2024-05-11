@@ -7,39 +7,35 @@ namespace Demo;
 
 use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
+use DuckPhp\Core\Console;
 use DuckPhp\Core\EventManager;
 use DuckPhp\Foundation\Helper;
+
 class MyCoverageBridge extends ComponentBase
 {
     //    use SingletonTrait;
     public $options =[
-        'log_request'=>false,
         'path_src' => null,
     ];
     ////
     public function getRuntimePath()
     {
-        //TODO to helper ,PathOfRuntime
         $path = static::SlashDir(App::Root()->options['path']);
         $path_runtime = static::SlashDir(App::Root()->options['path_runtime']);
         return static::IsAbsPath($path_runtime) ? $path_runtime : $path.$path_runtime;
     }
     protected function initOptions(array $options)
     {
-        
         $path = $this->getRuntimePath();
-        
-        $group = App::Setting('group',null);
-        $group = $group ?? date('H_i_s');
-        
-        
         MyCoverage::_()->options['path']=$path;
-        MyCoverage::_()->options['group']=$group;
-        
+        //MyCoverage::_()->options['group']=$group;
+        MyCoverage::_()->options['path_src'] = realpath(__DIR__.'/../').'/src';
         MyCoverage::_()->init($options);
         
-        EventManager::OnEvent([get_class(App::Current()),'onBeforeRun'],[static::class,'onBeforeRun']);
-        EventManager::OnEvent([get_class(App::Current()),'onAfterRun'],[static::class,'OnAfterRun']);
+        
+        
+        App::Current()->on([get_class(App::Current()),'onBeforeRun'],[static::class,'onBeforeRun']);
+        App::Current()->on([get_class(App::Current()),'onAfterRun'],[static::class,'OnAfterRun']);
     }
     
     public static function OnBeforeRun()
@@ -55,16 +51,19 @@ class MyCoverageBridge extends ComponentBase
         if (PHP_SAPI === 'cli' && App::Current()->options['cli_enable']) {
             return;
         }
+        
         $name = $this->getTestName();
-        if($this->options['log_request']){
-            $path = MyCoverage::_()->options['path'];
-            $group = MyCoverage::_()->options['group'];
-            
-            file_put_contents($path.$group.'.requests.log',$name."\n",FILE_APPEND);
+        $group = $this->getTestGroup();
+        if(!$group){
+            return;
         }
+        $path = $this->getRuntimePath();
+        @mkdir($path.'test_coveragedumps/');
+        file_put_contents($path.'test_coveragedumps/'.$group.'.list',$name."\n",FILE_APPEND);
+        
         ////////////
+        MyCoverage::_()->options['group'] = $group;
         MyCoverage::_()->options['name'] = $name;
-        MyCoverage::_()->options['path_src']=$this->options['path_src'];
         MyCoverage::Begin();
     }
     public function _OnAfterRun()
@@ -72,6 +71,7 @@ class MyCoverageBridge extends ComponentBase
         if (PHP_SAPI === 'cli' && App::Current()->options['cli_enable']) {
             return;
         }
+        ///////////////
         MyCoverage::End();
     }
     public function createReport()
@@ -80,6 +80,10 @@ class MyCoverageBridge extends ComponentBase
     }
     protected function getTestGroup()
     {
+        $path = $this->getRuntimePath();
+        $group = @file_get_contents($path.'MyCoverage.watching.txt');
+        //var_dump($group);
+        return $group;
     }
     protected function getTestName()
     {
@@ -91,18 +95,57 @@ class MyCoverageBridge extends ComponentBase
         $ret =implode("\t",[$uri,$post,$session_id,$method]);
         return $ret;
     }
-    public function command_test_group()
+    /**
+     * tests group. use --help for more.
+     */
+    public function command_testgroup()
     {
-        var_dump("hit!");
+        $p = Console::_()->getCliParameters();
+        if($p['help']??false){
+            $str = <<<EOT
+--watch {name}
+--stop
+--replay
+--report
+EOT;
+            echo $str;
+            return;
+        }
+        $path = $this->getRuntimePath();
+        $p = Console::_()->getCliParameters();
+        if($p['watch']??false){
+            if($p['watch']===true){
+                $p['watch'] = DATE('Y_m_d_H_i_s');
+            }
+            file_put_contents($path.'MyCoverage.watching.txt',$p['watch']);
+             echo "watching {$p['watch']}\n";
+            //return;
+        }
+        if($p['stop']??false){
+            @unlink($path.'MyCoverage.watching.txt');
+            //return;
+        }
+        if($p['replay']??false){
+            $this->replay();
+        }
+        
+        if($p['report']??false){
+            $group = $this->getTestGroup();
+            MyCoverage::_()->options['group'] = $group;
+            MyCoverage::_()->createReport();
+        }
+        
+        
+        var_dump(DATE(DATE_ATOM));
         //
     }
-    public function command_testreport()
+    protected function replay()
     {
-        MyCoverageBridge::_()->createReport();
-        var_dump("dump report done.");
-        var_dump(DATE(DATE_ATOM));
+        $path = $this->getRuntimePath();
+        $group = $this->getTestGroup();
+        $list = file($path.'test_coveragedumps/'.$group.'.list');
+        var_dump($list);
     }
-
     protected function curl_file_get_contents($url, $post =[])
     {
         $ch = curl_init();

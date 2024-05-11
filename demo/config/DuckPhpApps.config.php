@@ -1,32 +1,8 @@
-<?php //regenerate by DuckPhp\Component\ExtOptionsLoader->saveExtOptions at 2024-05-11T17:46:16+08:00
+<?php //regenerate by DuckPhp\Component\ExtOptionsLoader->saveExtOptions at 2024-05-11T20:50:42+08:00
 return array (
   'DemoApp' => 
   array (
-    'install' => '2024-04-11T21:15:26+08:00',
-    'database_list' => 
-    array (
-      0 => 
-      array (
-        'username' => 'user1',
-        'password' => '123456',
-        'dsn' => 'mysql:host=127.0.0.1;port=3306;dbname=DuckAdminDb;charset=utf8mb4;',
-      ),
-    ),
-    'redis_list' => 
-    array (
-      0 => 
-      array (
-        'host' => '127.0.0.1',
-        'port' => '6379',
-        'auth' => 'password1',
-        'select' => '1',
-      ),
-    ),
-    'is_debug' => true,
-    'app_a' => '111',
-    'app_b' => '33',
-    'controller_url_prefix' => '',
-    'controller_resource_prefix' => '',
+    //
   ),
   'DuckAdmin\\System\\DuckAdminApp' => 
   array (
@@ -49,7 +25,7 @@ return array (
     array (
       0 => 
       array (
-        'dsn' => 'sqlite:/mnt/d/Code/DuckAdmin/src/DuckUser/config/s2.sqlite3',
+        'dsn' => 'sqlite:db/DuckUser.db',
         'username' => '',
         'password' => '',
       ),
@@ -64,11 +40,11 @@ return array (
     array (
       0 => 
       array (
-        'dsn' => 'sqlite:/mnt/d/Code/DuckAdmin/demo/runtime/x.sqlite',
+        'dsn' => 'sqlite:db/SimpleBlog.db',
         'username' => '',
         'password' => '',
       ),
     ),
-    'install' => '2024-05-11T17:46:16+08:00',
+    'install' => '2024-05-11T20:50:42+08:00',
   ),
 );

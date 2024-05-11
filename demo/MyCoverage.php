@@ -79,7 +79,7 @@ class MyCoverage
         if (static::IsAbsPath($this->options[$path_key])) {
             return static::SlashDir($this->options[$path_key]).DIRECTORY_SEPARATOR;
         } else {
-            return static::SlashDir($this->options['path']) .DIRECTORY_SEPARATOR . static::SlashDir($this->options[$path_key]).DIRECTORY_SEPARATOR;
+            return static::SlashDir($this->options['path']) .DIRECTORY_SEPARATOR . static::SlashDir($this->options[$path_key]);
         }
     }
     public function init(array $options, ?object $context = null)
@@ -114,13 +114,13 @@ class MyCoverage
     }
     public function createReport()
     {
+
         $path_src = $this->getSubPath('path_src');
         $path_dump = $this->getSubPath('path_dump');
         $path_report = $this->getSubPath('path_report');
         
         $path_dump = $path_dump. $this->options['group'];
         $path_report = $path_report. $this->options['group'];
-
         $coverage = new CodeCoverage();
         $coverage->filter()->addDirectoryToWhitelist($path_src);
         $coverage->setTests([
@@ -130,7 +130,7 @@ class MyCoverage
           ],
         ]);
         
-        $path_dump = $this->getSubPath('path_dump');
+        //$path_dump = $this->getSubPath('path_dump');
         
         $directory = new \RecursiveDirectoryIterator($path_dump, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS);
 
