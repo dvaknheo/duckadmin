@@ -1,4 +1,10 @@
-<?php
+<?php declare(strict_types=1);
+/**
+ * DuckPhp
+ * From this time, you never be alone~
+ */
+namespace Demo;
+
 use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\EventManager;
@@ -85,14 +91,43 @@ class MyCoverageBridge extends ComponentBase
         $ret =implode("\t",[$uri,$post,$session_id,$method]);
         return $ret;
     }
-    public function command_stargroup()
+    public function command_test_group()
     {
+        var_dump("hit!");
         //
     }
-    public function command_report()
+    public function command_testreport()
     {
         MyCoverageBridge::_()->createReport();
         var_dump("dump report done.");
         var_dump(DATE(DATE_ATOM));
     }
+
+    protected function curl_file_get_contents($url, $post =[])
+    {
+        $ch = curl_init();
+        
+        if (is_array($url)) {
+            list($base_url, $real_host) = $url;
+            $url = $base_url;
+            $host = parse_url($url, PHP_URL_HOST);
+            $port = parse_url($url, PHP_URL_PORT);
+            $c = $host.':'.$port.':'.$real_host;
+            curl_setopt($ch, CURLOPT_CONNECT_TO, [$c]);
+        }
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+        if(!empty($post)){
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post));
+            //$this->prepare_token();
+        }
+        
+        
+        $data = curl_exec($ch);
+        curl_close($ch);
+        return $data !== false?$data:'';
+    }
+    
 }
