@@ -14,11 +14,6 @@ class Base
     use SimpleModelTrait;
     use ModelHelperTrait;
     
-    public function table()
-    {
-        return $this->table_name;
-    }
-	
     /**
      * 查询前置
      * @param Request $request
@@ -123,6 +118,7 @@ class Base
     }
 	protected function getAllowColumns()
 	{
+        //TODO Sqlite
         $allow_column = self::Db()->fetchAll("desc `".$this->table()."`");
         $allow_column = array_column($allow_column, 'Field', 'Field');
 

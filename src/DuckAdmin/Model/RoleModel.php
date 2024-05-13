@@ -98,7 +98,7 @@ class RoleModel extends Base
 	{
 		$time = date('Y-m-d H:i:s');
 		$data['updated_at'] = $time;
-		return $this->updateData($id, $data, 'id');
+		return $this->update($id, $data, 'id');
 	}
 	public function updateRoleMore($descendant_role_ids,$rule_ids)
 	{
