@@ -14,13 +14,18 @@ use DuckAdmin\Controller\AdminSession;
 class Helper
 {
     use ControllerHelperTrait;
-    
+    /*
     public static function AdminId()
     {
         return AdminSession::_()->getCurrentAdminId();
     }
+    */
     
     public static function Success($data = [],$count = null)
+    {
+        return static::_()->_Success($data, $count);
+    }
+    public function _Success($data = [],$count = null)
 	{
 		if(is_null($count)){
 			static::ShowJson(['code' => 0, 'data' => $data, 'msg' => 'ok']);
@@ -28,12 +33,15 @@ class Helper
 			static::ShowJson(['code' => 0, 'msg' => 'ok', 'count' => $count, 'data' => $data]);
 		}
 	}
-	public static function ShowException($ex)
+    public static function ShowException($ex)
+    {
+        return static::_()->_ShowException($ex);
+    }
+	public function _ShowException($ex)
 	{
 		$code = $ex->getCode();
 		$msg = $ex->getMessage();
 		if(!$code){$code = -1;}
-        
 		return static::ShowJson(['code' => $code, 'msg' => $msg, 'type' => 'error'],false);
 	}
 }

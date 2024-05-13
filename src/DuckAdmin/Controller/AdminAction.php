@@ -18,7 +18,7 @@ class AdminAction
     public function checkLogin()
     {
         $admin = $this->refresh_admin_session(true);
-        ControllerException::ThrowOn(!$admin,"需要登录");
+        Helper::ControllerThrowOn(!$admin,"需要登录");
 		return $admin;
     }
 	/**
@@ -33,6 +33,10 @@ class AdminAction
     public function setCurrentAdmin($admin)
     {
         return AdminSession::_()->setCurrentAdmin($admin);
+    }
+    public function getCurrentAdminId()
+    {
+        return AdminSession::_()->getCurrentAdminId();
     }
     
 	/**
@@ -72,9 +76,9 @@ class AdminAction
     {
         $code = 0;
         $msg = '';
-		$admin = $this->getCurrentAdmin();
         try{
-            AccountBusiness::_()->canAccess($admin, $controller, $action);
+            $admin_id = AdminSession::_()->getCurrentAdminId();
+            AccountBusiness::_()->canAccess($admin_id, $controller, $action);
         } catch(\Exception $ex) {
             $this->onAuthException($ex);
             return;
@@ -92,7 +96,7 @@ class AdminAction
         
         if (Helper::IsAjax()) {
 			Helper::ShowJson(['code' => $code, 'msg' => $msg, 'type' => 'error']);
-            return;
+            Helper::exit();
 		}
 		if($code == 401){
 			return $this->exit401();

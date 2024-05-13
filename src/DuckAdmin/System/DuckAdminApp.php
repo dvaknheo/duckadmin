@@ -1,10 +1,12 @@
 <?php declare(strict_types=1);
 /**
- * 这里我们做一下
+ *  入口类
  */
 namespace DuckAdmin\System;
 
+
 use DuckAdmin\Business\InstallBusiness;
+use DuckAdmin\Controller\ExceptionReporter;
 use DuckPhp\Core\Console;
 use DuckPhp\Core\Route;
 use DuckPhp\DuckPhp;
@@ -18,11 +20,17 @@ class DuckAdminApp extends DuckPhp
     //@override
     public $options = [    
         'path' => __DIR__ . '/../',
+        'namespace' => 'DuckAdmin',
         'controller_resource_prefix' => 'res/',  // 资源文件前缀
-        'database_driver'=>'mysql',
         'controller_method_prefix' => '',
+        
+        'exception_for_business'  => BusinessException::class,
+        'exception_for_controller'  => ControllerException::class,
+        'exception_reporter' =>  ExceptionReporter::class,
+        
         'class_admin'=> Admin::class,
         
+        'database_driver'=>'mysql',
         'need_install'=>true,
         'cli_command_with_fast_installer' => true,
         
@@ -38,6 +46,7 @@ class DuckAdminApp extends DuckPhp
     }
     protected function onInited()
     {
+        parent::onInited();
     }
     public function onInstall()
     {
@@ -66,8 +75,6 @@ EOT;
             }
             break;
         };
-        
-        return true;
     }
     public function doInstall($username,$password,$password_confirm)
     {

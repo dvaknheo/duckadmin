@@ -70,9 +70,8 @@ class AccountBusiness extends Base
      * @return bool
      * @throws \ReflectionException|BusinessException
      */
-    public function canAccess($admin, string $controller, string $action): bool
+    public function canAccess($admin_id, string $controller, string $action): bool
     {
-        $admin_id = $admin['id']; // 我们只用 admin['id'],不传入状态。
         
         ////[[[[ 这段是控制器内的。
         // 无控制器信息说明是函数调用，函数不属于任何控制器，鉴权操作应该在函数内部完成。
