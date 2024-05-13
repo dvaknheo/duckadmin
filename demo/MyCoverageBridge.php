@@ -34,6 +34,7 @@ class MyCoverageBridge extends ComponentBase
         
         
         
+        //TODO 内嵌 command
         App::Current()->on([get_class(App::Current()),'onBeforeRun'],[static::class,'onBeforeRun']);
         App::Current()->on([get_class(App::Current()),'onAfterRun'],[static::class,'OnAfterRun']);
     }

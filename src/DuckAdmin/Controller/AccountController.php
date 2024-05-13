@@ -86,11 +86,15 @@ class AccountController extends Base
     public function update()
     {
         $data = Helper::POST();
-		
-		$admin = AccountBusiness::_()->update($data);
+		$admin = AdminAction::_()->getCurrentAdmin();
+        $admin_id = $admin['id'];
+        
+		AccountBusiness::_()->update($admin_id,$data);
+        $admin = AccountBusiness::_()->getAdmin($admin_id);
+        
         AdminAction::_()->setCurrentAdmin($admin);
 		
-        Helper::Sucess();
+        Helper::Success();
     }
 
     /**
@@ -105,7 +109,7 @@ class AccountController extends Base
 		$old_password = Helper::POST('old_password');
 		
 		AccountBusiness::_()->changePassword($old_password, $password, $password_confirm );
-		Helper::Sucess();
+		Helper::Success();
     }
     /**
      * 验证码

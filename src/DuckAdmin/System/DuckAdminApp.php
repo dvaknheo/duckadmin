@@ -36,7 +36,7 @@ class DuckAdminApp extends DuckPhp
         Route::_(ProjectRoute::_());
         parent::onPrepare();
     }
-    protected function onInit()
+    protected function onInited()
     {
     }
     public function onInstall()
@@ -57,7 +57,7 @@ EOT;
         while(true){
             try{
                 $input_options = Console::_()->readLines($input_options, $desc);
-                $this->doInstallStep2($input_options['username'],$input_options['password'],$input_options['password_confirm']);
+                $this->doInstall($input_options['username'],$input_options['password'],$input_options['password_confirm']);
             }catch(\Exception $ex){
                 echo "----\n";
                 echo $ex->getMessage();
@@ -69,8 +69,8 @@ EOT;
         
         return true;
     }
-    public function doInstallStep2($username,$password,$password_confirm)
+    public function doInstall($username,$password,$password_confirm)
     {
-        InstallBusiness::_()->step2($username,$password,$password_confirm);
+        InstallBusiness::_()->install($username,$password,$password_confirm);
     }
 }

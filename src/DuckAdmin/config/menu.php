@@ -41,7 +41,7 @@ return [
             [
                 'title' => '用户',
                 'key' => 'DuckAdmin\\Controller\\UserController',
-                'href' => 'user/index',
+                'href' => 'User/index',
                 'type' => 1,
                 'weight' => 800,
             ]

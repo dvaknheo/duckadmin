@@ -19,49 +19,13 @@
 
                 <div class="layui-tab layui-tab-brief">
                 <ul class="layui-tab-title">
-                    <li class="layui-this">基本信息</li>
-                    <li>菜单配置</li>
+                    <li class="layui-this">菜单配置</li>
                     <li>页面配置</li>
                 </ul>
                 <div class="layui-tab-content">
 
-                    <!-- 基本信息 -->
-                    <div class="layui-tab-item layui-show">
-
-                        <form class="layui-form" lay-filter="baseInfo">
-                            <div class="layui-form-item">
-                                <label class="layui-form-label">网站名称</label>
-                                <div class="layui-input-block">
-                                    <input type="text" name="title" required  lay-verify="required" placeholder="请输入网站名称" autocomplete="off" class="layui-input">
-                                </div>
-                            </div>
-                            <div class="layui-form-item">
-                                <label class="layui-form-label">网站Logo</label>
-                                <div class="layui-input-block">
-                                    <img class="img-3" src=""/>
-                                    <input type="text" style="display:none" name="image" value="<?=__res('avatar.png')?>" />
-                                    <button type="button" class="pear-btn pear-btn-primary pear-btn-sm" id="image" permission="app.admin.upload.avatar">
-                                        <i class="layui-icon layui-icon-upload"></i>上传图片
-                                    </button>
-                                    <button type="button" class="pear-btn pear-btn-primary pear-btn-sm" id="attachment-choose-image" permission="app.admin.upload.attachment">
-                                        <i class="layui-icon layui-icon-align-left"></i>选择图片
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="layui-form-item">
-                                <div class="layui-input-block">
-                                    <button type="submit" class="pear-btn pear-btn-primary pear-btn-md" lay-submit="" lay-filter="saveBaseInfo">
-                                        提交
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-
-                    </div>
-
                     <!-- 菜单设置 -->
-                    <div class="layui-tab-item">
+                    <div class="layui-tab-item layui-show">
 
                         <form class="layui-form" lay-filter="menuInfo">
                             <div class="layui-form-item">
@@ -179,56 +143,6 @@
         <script src="<?=__res('admin/js/permission.js')?>"></script>
         <script>
 
-            // 基础设置
-            layui.use(["upload", "layer", "popup"], function() {
-                let $ = layui.$;
-                let form = layui.form;
-
-                // image
-                let input = $("#image").prev();
-                input.prev().attr("src", input.val());
-                layui.$("#attachment-choose-image").on("click", function() {
-                    parent.layer.open({
-                        type: 2,
-                        title: "选择附件",
-                        content: "<?=__url('upload/attachment?ext=jpg,jpeg,png,gif,bmp')?>",
-                        area: ["95%", "90%"],
-                        success: function (layero, index) {
-                            parent.layui.$("#layui-layer" + index).data("callback", function (data) {
-                                input.val(data.url).prev().attr("src", data.url);
-                            });
-                        }
-                    });
-                });
-                layui.upload.render({
-                    elem: "#image",
-                    url: "<?=__url('upload/avatar')?>",
-                    acceptMime: "image/gif,image/jpeg,image/jpg,image/png",
-                    done: function (res) {
-                        if (res.code) {
-                            return layui.popup.failure(res.msg);
-                        }
-                        this.item.prev().val(res.data.url).prev().attr("src", res.data.url);
-                    }
-                });
-
-                // 提交
-                form.on("submit(saveBaseInfo)", function(data){
-                    $.ajax({
-                        url: "<?=__url('config/update')?>",
-                        dataType: "json",
-                        type: "POST",
-                        data: {logo: data.field},
-                        success: function (res) {
-                            if (res.code) {
-                                return layui.popup.failure(res.msg);
-                            }
-                            return layui.popup.success("操作成功");
-                        }
-                    });
-                    return false;
-                });
-            });
 
             // 菜单设置
             layui.use(["upload", "layer", "popup"], function() {

@@ -22,23 +22,17 @@ class InstallBusiness extends Base
     }
     ///////////////////////////
 
-    public function step1($post)
+    
+    public function install($username,$password,$password_confirm)
     {
-        return true;
-    }
-    ////////////
-    /**
-     * 设置管理员
-
-     */
-    public function step2($username,$password,$password_confirm)
-    {
-        //Helper::BusinessThrowOn($flag, '后台已经安装完毕，无法通过此页面创建管理员',1);
         Helper::BusinessThrowOn($password !== $password_confirm, '两次密码不一致',1);
+        
+        $flag = AdminModel::_()->hasAdmins();
+        Helper::BusinessThrowOn($flag, '后台已经安装完毕，无法通过此页面创建管理员',1);
+        
         RoleModel::_()->addFirstRole();
         $menus =  Helper::Config('menu',null,[]);
         RuleModel::_()->importMenu($menus);
-        $flag = AdminModel::_()->hasAdmins();
         
         try{
             $admin_id = AdminModel::_()->addFirstAdmin($username, $password);

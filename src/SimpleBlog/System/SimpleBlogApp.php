@@ -13,7 +13,6 @@ class SimpleBlogApp extends DuckPhp
     public $options = [
         'path' => __DIR__ . '/../',
         'namespace' => 'SimpleBlog',
-        //'is_maintain'=>true,
         
         'exception_reporter' =>  ExceptionReporter::class,
         'exception_for_business'  => ProjectException::class,
@@ -21,9 +20,6 @@ class SimpleBlogApp extends DuckPhp
         'rewrite_map' => [
             '~article/(\d+)/?(\d+)?' => 'article?id=$1&page=$2',
         ],
-        
-        //'error_maintain'=>'_sys/error_maintain',
-        //'error_need_install'=>'_sys/error_need_install',
         
         'need_install'=>true,
         'local_database'=>true,

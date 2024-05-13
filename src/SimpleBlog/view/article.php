@@ -2,6 +2,7 @@
 <html>
 <meta http-equiv="content-type" content="text/html;charset=utf-8" />
 <body>
+<h1>SimpleBlog 的默认界面太难看了，需要重载</h1>
 <fieldset>
 	<legend><?=$article['title']?></legend>
 	<div>

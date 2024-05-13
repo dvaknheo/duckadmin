@@ -50,11 +50,12 @@ class RuleModel extends Base
 	}
 	public function checkRules($rule_ids,$controller,$action)
 	{
+        // 根据 key 来判断权限
 		$str = static::Db()->quoteIn($ruls_ids);
 		$full = static::Db()->quote($controller.'@'.$action);
-		$c = static::Db()->quote($controller);
+		$controller = static::Db()->quote($controller);
 		
-		$sql = "select * from wa_rules where id in $str and (key = $full  or key = $c)";
+		$sql = "select * from wa_rules where id in $str and (key = $full  or key = $controller)";
 		$data = static::Db()->fetchColumn($sql);
 		return $data;
 	}

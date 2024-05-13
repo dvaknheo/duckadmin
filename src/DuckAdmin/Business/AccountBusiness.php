@@ -39,14 +39,14 @@ class AccountBusiness extends Base
 
     public function login($username,$password)
     {
-        BusinessException::ThrowOn(!$username, '用户名不能为空',1);
+        Helper::BusinessThrowOn(!$username, '用户名不能为空',1);
         
         //$this->checkLoginLimit($username);
         $admin = AdminModel::_()->getAdminByName($username);
-        BusinessException::ThrowOn(!$admin,'账户不存在或密码错误');
+        Helper::BusinessThrowOn(!$admin,'账户不存在或密码错误');
         $flag = AdminModel::_()->checkPasswordByAdmin($admin, $password);
-        BusinessException::ThrowOn(!$flag,'账户不存在或密码错误');
-        BusinessException::ThrowOn($admin['status'] != 0, '当前账户暂时无法登录',1);
+        Helper::BusinessThrowOn(!$flag,'账户不存在或密码错误');
+        Helper::BusinessThrowOn($admin['status'] != 0, '当前账户暂时无法登录',1);
         
         // change roles
         //////////////////////////////////////////
@@ -58,56 +58,7 @@ class AccountBusiness extends Base
         
         //$this->removeLoginLimit($username);
         //Helper::FireEvent([static::class,__LOGIN__], $admin);
-
         return $admin;
-    }
-    /**
-     * 检查登录频率限制
-     * @param $username
-     * @return void
-     * @throws BusinessException
-     */
-    protected function checkLoginLimit($username)
-    {
-        //TODO
-        $limit_log_path = runtime_path() . '/login';
-        if (!is_dir($limit_log_path)) {
-            mkdir($limit_log_path, 0777, true);
-        }
-        $limit_file = $limit_log_path . '/' . md5($username) . '.limit';
-        $time = date('YmdH') . ceil(date('i')/5);
-        $limit_info = [];
-        if (is_file($limit_file)) {
-            $json_str = file_get_contents($limit_file);
-            $limit_info = json_decode($json_str, true);
-        }
-
-        if (!$limit_info || $limit_info['time'] != $time) {
-            $limit_info = [
-                'username' => $username,
-                'count' => 0,
-                'time' => $time
-            ];
-        }
-        $limit_info['count']++;
-        file_put_contents($limit_file, json_encode($limit_info));
-        if ($limit_info['count'] >= 5) {
-            throw new BusinessException('登录失败次数过多，请5分钟后再试');
-        }
-    }
-
-    /**
-     * 解除登录频率限制
-     * @param $username
-     * @return void
-     */
-    protected function removeLoginLimit($username)
-    {
-        $limit_log_path = runtime_path() . '/login'; //runtime_path() 
-        $limit_file = $limit_log_path . '/' . md5($username) . '.limit';
-        if (is_file($limit_file)) {
-            unlink($limit_file);
-        }
     }
     
     /**
@@ -121,6 +72,9 @@ class AccountBusiness extends Base
      */
     public function canAccess($admin, string $controller, string $action): bool
     {
+        $admin_id = $admin['id']; // 我们只用 admin['id'],不传入状态。
+        
+        ////[[[[ 这段是控制器内的。
         // 无控制器信息说明是函数调用，函数不属于任何控制器，鉴权操作应该在函数内部完成。
         if (!$controller) {
             return true;
@@ -139,29 +93,36 @@ class AccountBusiness extends Base
         if (in_array($action, $noNeedAuth)) {
             return true;
         }        
+        ////]]]]
         
-        BusinessException::ThrowOn(!$admin, $msg = '请登录', 401);
-        // 当前管理员无角色
-        $roles = $admin['roles'];
-        BusinessException::ThrowOn(!$roles,  '无权限', 2);
+        ////[[[[
+        
+        $admin = AdminModel::_()->getAdminById($admin_id); 
+        Helper::BusinessThrowOn(!$admin, $msg = '请登录', 401);
+        Helper::BusinessThrowOn($admin['status'] != 0, $msg = '账户被禁用', 401);
+        
+        $roles = AdminRoleModel::_()->getRoles($admin_id);
+        Helper::BusinessThrowOn(!$roles,  '无权限', 2); //当前管理员无角色
+        ////]]]]
 
         // 角色没有规则
         $rule_ids = RoleModel::_()->getRules($roles);
-        BusinessException::ThrowOn(!$rule_ids,  '无权限', 2);
+        Helper::BusinessThrowOn(!$rule_ids,  '无权限', 2);
         // 超级管理员
         if (in_array('*', $rule_ids)){
             return true;
         }
 
         // 如果action为index，规则里有任意一个以$controller开头的权限即可
+        // 这两段长得一样？
         if (strtolower($action) === 'index') {
             $rule = RuleModel::_()->checkWildRules($rule_ids,$controller,$action);
-            BusinessException::ThrowOn(!$rule, '无权限', 2);
+            Helper::BusinessThrowOn(!$rule, '无权限', 2);
             return true;
         }else{
             // 查询是否有当前控制器的规则
             $rule = RuleModel::_()->checkRules($rule_ids,$controller,$action);
-            BusinessException::ThrowOn(!$rule, '无权限', 2);
+            Helper::BusinessThrowOn(!$rule, '无权限', 2);
             return true;
         }
     }
@@ -176,11 +137,11 @@ class AccountBusiness extends Base
     }
     public function changePassword($admin_id, $old_password, $password, $password_cofirm)
     {
-        BusinessException::ThrowOn(!$password, '密码不能为空',2);
-        BusinessException::ThrowOn($password !== $password_cofirm, '两次密码输入不一致',3);
+        Helper::BusinessThrowOn(!$password, '密码不能为空',2);
+        Helper::BusinessThrowOn($password !== $password_cofirm, '两次密码输入不一致',3);
         
         $flag = AdminModel::_()->checkPasword($admin_id, $old_password);
-        BusinessException::ThrowOn(!$flag, '原始密码不正确', 1);
+        Helper::BusinessThrowOn(!$flag, '原始密码不正确', 1);
         AdminModel::_()->updateAdminPassword($admin_id, $password);
     }
 }
