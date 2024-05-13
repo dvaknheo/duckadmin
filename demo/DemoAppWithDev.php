@@ -18,7 +18,6 @@ class DemoAppWithDev extends DemoApp
         $path_src = realpath(__DIR__.'/../src/').'/';
         $this->options['ext'][MyCoverageBridge::class]=[
             'path_src'=> $path_src,
-            'group'=>'main',
         ];
         $this->options['cli_command_classes'][]=MyCoverageBridge::class;
     }
@@ -36,7 +35,9 @@ class DemoAppWithDev extends DemoApp
         $last_phase = static::Phase(\DuckAdmin\System\DuckAdminApp::class);
         $routes =$this->listAllRoutes();
         foreach($routes as $method =>$route){
-            echo $route."\t\t\t\t".$method ."\n";
+            echo $route;
+            echo "\n";
+            //echo $route."\t\t\t\t".$method ."\n";
         }
         static::Phase($last_phase);
     }

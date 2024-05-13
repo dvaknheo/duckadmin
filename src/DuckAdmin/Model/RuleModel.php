@@ -10,7 +10,7 @@ namespace DuckAdmin\Model;
  */
 class RuleModel extends Base
 {
-	public $table_name = 'wa_rules';
+	public $table_name = 'rules';
 	
     public function selectInput($data): array
 	{
@@ -34,8 +34,8 @@ class RuleModel extends Base
 	}
 	public function allRules()
 	{
-		$sql = "select * from wa_rules order by weight desc";
-		$data = static::Db()->fetchAll($sql);
+		$sql = "select * from `'TABLE'` order by weight desc";
+		$data = $this->fetchAll($sql);
 		return $data;
 	}
 	public function checkWildRules($rule_ids,$controller,$action)
@@ -44,8 +44,8 @@ class RuleModel extends Base
 		$key = static::Db()->quote($controller);
 		$like = static::Db()->quote($controller.'@%');
 		
-		$sql = "select * from wa_rules where id in $str and (key = $key  or key like $like)";
-		$data = static::Db()->fetchColumn($sql);
+		$sql = "select * from `'TABLE'` where id in $str and (key = $key  or key like $like)";
+		$data = $this->fetchColumn($sql);
 		return $data;
 	}
 	public function checkRules($rule_ids,$controller,$action)
@@ -55,14 +55,14 @@ class RuleModel extends Base
 		$full = static::Db()->quote($controller.'@'.$action);
 		$controller = static::Db()->quote($controller);
 		
-		$sql = "select * from wa_rules where id in $str and (key = $full  or key = $controller)";
-		$data = static::Db()->fetchColumn($sql);
+		$sql = "select * from `'TABLE'` where id in $str and (key = $full  or key = $controller)";
+		$data = $this->fetchColumn($sql);
 		return $data;
 	}
 	public function allRulesForTree()
 	{
-		$sql= "select * from wa_rules";
-		$rules = static::Db()->fetchAll($sql);
+		$sql= "select * from `'TABLE'`";
+		$rules = $this->fetchAll($sql);
 		
         $items = [];
         foreach ($rules as $item) {
@@ -77,13 +77,13 @@ class RuleModel extends Base
 	}
 	public function findById($id)
 	{
-		$sql = "select * from wa_rules where id =?";
-		return static::Db()->fetch($sql,$id);
+		$sql = "select * from `'TABLE'` where id =?";
+		return $this->fetch($sql,$id);
 	}
 	public function findByKey($key)
 	{
-		$sql = "select * from wa_rules where `key` =?";
-		return static::Db()->fetch($sql,$key);
+		$sql = "select * from `'TABLE'` where `key` =?";
+		return $this->fetch($sql,$key);
 	}
 	///////////////
     public function dropWithChildren($ids)
@@ -95,46 +95,37 @@ class RuleModel extends Base
             $delete_ids = array_merge($delete_ids, $children_ids);
         }
 		// 这两个要合并
-		$sql = "delete from wa_rules where id in (" . static::Db()->quoteIn($delete_ids).')';
-		static::Db()->execute($sql);
+		$sql = "delete from `'TABLE'` where id in (" . static::Db()->quoteIn($delete_ids).')';
+		$this->execute($sql);
 	}
 	////////////////////////////////////////////
 	
 	public function updateTitleByKey($name,$title)
 	{
 		$time = date('Y-m-d H:i:s');
-		$sql = "update wa_rules set title=?, updated_at=? where `key`=?";
-		return static::Db()->execute($sql, $title, $time, $key);
+		$sql = "update `'TABLE'` set title=?, updated_at=? where `key`=?";
+		return $this->execute($sql, $title, $time, $key);
 	}
 	public function updateRule($id, $data)
 	{
-        /*
-		if(isset($data['key'])){
-			$data['`key`']=$data['key'];  //修复 db 类的 bug
-			unset($data['key']);
-		}
-        //*/
-		
 		$time = date('Y-m-d H:i:s');
 		$data['updated_at'] =$time;
 		$data['pid'] = $data['pid']? $data['pid']:0;
-		return static::Db()->updateData("wa_rules", $id, $data, 'id');
+		return $this->update($id, $data, 'id');
 	}
 	protected function updateMenu($key,$menu)
 	{
 		$pid = $menu['pid']??0;
 		$time = date('Y-m-d H:i:s');
-		$sql = "update wa_rules set pid=?, title=?, icon=?, updated_at=? where `key`=?";
-		return static::Db()->execute($sql, $pid, $menu['title'], $menu['icon']??null, $time, $key);
+		$sql = "update `'TABLE'` set pid=?, title=?, icon=?, updated_at=? where `key`=?";
+		return $this->execute($sql, $pid, $menu['title'], $menu['icon']??null, $time, $key);
 	}
 	public function addMenu($key,$menu)
 	{
-
-		
 		$time = date('Y-m-d H:i:s');
 		$menu['created_at']=$time;
 		$menu['updated_at']=$time;
-		static::Db()->insertData('wa_rules',$menu);
+		$this->add($menu);
 		
 		return static::Db()->lastInsertId();
 	}
@@ -142,8 +133,8 @@ class RuleModel extends Base
 	protected function get_children_ids($ids)
 	{
 		//这个函数名字要改
-		$sql ="select id from wa_rules where pid in (" .static::Db()->quoteIn($ids) .")";
-		$data = static::Db()->fetchAll($sql);
+		$sql ="select id from `'TABLE'` where pid in (" .static::Db()->quoteIn($ids) .")";
+		$data = $this->fetchAll($sql);
 		return array_column($data,'id');
 	}
     /**
@@ -194,21 +185,21 @@ class RuleModel extends Base
 
 	public function getKeysByIds($rules)
 	{
-		$sql ="select `key` from wa_rules where id in (" .static::Db()->quoteIn($rules) .")";
-		$data = static::Db()->fetchAll($sql);
+		$sql ="select `key` from `'TABLE'` where id in (" .static::Db()->quoteIn($rules) .")";
+		$data = $this->fetchAll($sql);
 		return array_column($data,'key');
 	}
 	public function checkRulesExist($rule_ids)
 	{
-		$sql ="select count(*) as c from wa_rules  where id in (" .static::Db()->quoteIn($rule_ids) .")";
-		$data = static::Db()->fetchColumn($sql);
+		$sql ="select count(*) as c from `'TABLE'`  where id in (" .static::Db()->quoteIn($rule_ids) .")";
+		$data = $this->fetchColumn($sql);
 		$data = (int)$data;
 		return ($data === count($rule_ids))?true:false;
 	}
 	public function getAllByKey()
 	{
-		$sql ="select * from `wa_rules` where `key` like '%\\\\\\\\%'"; // 这要8个\ 猜猜看为什么
-		$data = static::Db()->fetchAll($sql);
+		$sql ="select * from `'TABLE'` where `key` like '%\\\\\\\\%'"; // 这要8个\ 猜猜看为什么
+		$data = $this->fetchAll($sql);
 		$ret=[];
 		foreach($data as $v){
 			$ret[$v['key']]=$v;
@@ -218,6 +209,7 @@ class RuleModel extends Base
 	///////////////////////
 	public function descTable()
 	{
+        throw new \Exception('TODO: compat with sqlite');
 		$sql ="desc `wa_rules`";
 		$data = static::Db()->fetchAll($sql);
         $columns = array_column($data, 'Type', 'Field');

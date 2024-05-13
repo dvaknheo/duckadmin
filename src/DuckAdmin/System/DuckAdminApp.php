@@ -34,9 +34,8 @@ class DuckAdminApp extends DuckPhp
         'need_install'=>true,
         'cli_command_with_fast_installer' => true,
         
-        //----
-        //'install_input_desc'=>'input [{abc}]',
-        //'install_default_options'=>['username'=>'admin','password'=>'123456','password_confirm'=>''],
+        'table_prefix' =>'wa_'
+        
     ];
     protected function onPrepare()
     {

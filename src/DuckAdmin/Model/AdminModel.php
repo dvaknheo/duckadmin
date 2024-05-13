@@ -10,7 +10,7 @@ namespace DuckAdmin\Model;
  */
 class AdminModel extends Base
 {
-    public $table_name = 'wa_admins';
+    protected $table_name = 'admins';
     
     public function passwordVerify($password, $admin_password)
     {
@@ -45,34 +45,34 @@ class AdminModel extends Base
 
     public function getAdminByName($username)
     {
-        return static::Db()->fetch("select * from wa_admins where username = ?",$username);
+        return $this->fetch("select * from `'TABLE'` where username = ?",$username);
 
     }
     public function getAdminById($admin_id)
     {
-        $data = static::Db()->fetch("select * from wa_admins where id = ?", $admin_id);
+        $data = $this->fetch("select * from `'TABLE'` where id = ?", $admin_id);
         return $data;
     }
 
     
     public function hasAdmins()
     {
-        return static::Db()->fetchColumn("select count(*) as c from wa_admins");
+        return $this->fetchColumn("select count(*) as c from wa_admins");
     }
     //// delete
     public function deleteByIds($ids)
     {
-        $sql ="delete from wa_admins where id in(".static::Db()->quoteIn($ids).")";
+        $sql ="delete from `'TABLE'` where id in(".static::Db()->quoteIn($ids).")";
         static::execute($sql);
     }
     //// insert
     public function addFirstAdmin($username,$password)
     {
-        $sql="insert into `wa_admins` (`username`, `password`, `nickname`, `created_at`, `updated_at`) values (?, ?, ?, ?, ?)";
+        $sql="insert into `'TABLE'` (`username`, `password`, `nickname`, `created_at`, `updated_at`) values (?, ?, ?, ?, ?)";
         
         $password = $this->passwordHash($password);
         $time = date('Y-m-d H:i:s');
-        static::Db()->execute($sql, $username,$password, '超级管理员',$time,$time);
+        $this->execute($sql, $username,$password, '超级管理员',$time,$time);
         $admin_id = static::Db()->lastInsertId();
         return $admin_id;
     }
@@ -84,13 +84,13 @@ class AdminModel extends Base
         $time = date('Y-m-d H:i:s');
         $data['created_at']=$time;
         $data['updated_at']=$time;
-        static::Db()->insertData($this->table(),$data);
-        return 	static::Db()->lastInsertId();
+        $this->add($data);
+        return	static::Db()->lastInsertId();
     }
     //// update
     public function updateLoginAt($admin_id)
     {
-        static::Db()->execute("update wa_admins set login_at =? where id=?",date('Y-m-d H:i:s'), $admin_id);
+        $this->execute("update `'TABLE'` set login_at =? where id=?",date('Y-m-d H:i:s'), $admin_id);
     }
     
     public function updateAdmin($admin_id, $data)
@@ -110,7 +110,7 @@ class AdminModel extends Base
                 $update_data[$column] = $data[$key];
             }
         }
-        static::Db()->updateData($this->table(),$admin_id,$update_data, 'id');
+        $this->update($admin_id,$update_data, 'id');
         return $update_data;
     }
     public function checkPasswordByAdmin($admin, $password)
@@ -127,6 +127,6 @@ class AdminModel extends Base
         $update_data = [
             'password' => $this->passwordHash($password),
         ];
-        static::Db()->updateData($this->table(),$admin_id,$update_data, 'id');
+        $this->update($admin_id,$update_data, 'id');
     }
 }

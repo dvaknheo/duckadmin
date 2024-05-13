@@ -10,7 +10,9 @@ namespace DuckAdmin\Model;
  */
 class RoleModel extends Base
 {
-	public $table_name = 'wa_roles';
+	protected $table_name = 'roles';
+    protected $table_pk = 'id';
+
     public function selectInput($data): array
 	{
 		// 隔离BaseModel 的调用
@@ -29,14 +31,14 @@ class RoleModel extends Base
 
 	public function getRules($roles)
 	{
-		$sql="select rules from wa_roles where id in (". static::Db()->quoteIn($roles).')';
-		$data = static::Db()->fetchAll($sql);
+		$sql="select rules from `'TABLE'` where id in (". static::Db()->quoteIn($roles).')';
+		$data = $this->fetchAll($sql);
 		return array_column($data,'rules');
 	}
 	public function hasSuperAdmin($roles)
     {
-		$sql="select rules from wa_roles where id in (" . static::Db()->quoteIn($roles).')';
-		$rules = static::Db()->fetchColumn($sql);
+		$sql="select rules from `'TABLE'` where id in (" . static::Db()->quoteIn($roles).')';
+		$rules = $this->fetchColumn($sql);
 		
         $rule_ids = [];
         foreach ($rules as $rule_string) {
@@ -50,45 +52,45 @@ class RoleModel extends Base
 	
 	public function getAllId()
 	{
-		$sql="select id from wa_roles";
-		$data = static::Db()->fetchAll($sql);
+		$sql="select id from `'TABLE'`";
+		$data = $this->fetchAll($sql);
 		return array_column($data,'id');
 	}
 	public function getAll()
 	{
-		$sql="select * from wa_roles";
-		$data = static::Db()->fetchAll($sql);
+		$sql="select * from `'TABLE'`";
+		$data = $this->fetchAll($sql);
 		return $data;
 	}
 	public function getById($id)
 	{
-		$sql="select * from wa_roles where id = ?";
-		$data = static::Db()->fetch($sql,$id);
+		$sql="select * from `'TABLE'` where id = ?";
+		$data = $this->fetch($sql,$id);
 		return $data;
 	}
 	public function getRulesByRoleId($role_id)
 	{
-		$sql = "select rules from wa_roles where id = ?";
-		$data = static::Db()->fetchColumn($sql,$role_id);
+		$sql = "select rules from `'TABLE'` where id = ?";
+		$data = $this->fetchColumn($sql,$role_id);
 		return $data;
 	}
 	public function getAllIdPid()
 	{
-		$sql = "select id,pid from wa_roles";
-		$data = static::Db()->fetchAll($sql);
+		$sql = "select id,pid from `'TABLE'`";
+		$data = $this->fetchAll($sql);
 		return $data;
 	}
 	public function deleteByIds($ids)
 	{
-		$sql="delete from wa_roles where id in (" . static::Db()->quoteIn($ids).')';
-		static::Db()->execute($sql);
+		$sql="delete from `'TABLE'` where id in (" . static::Db()->quoteIn($ids).')';
+		$this->execute($sql);
 	}
 	public function addRole($data)
 	{
 		$time = date('Y-m-d H:i:s');
 		$data['created_at']=$time;
 		$data['updated_at']=$time;
-		static::Db()->insertData('wa_roles',$data);
+		$this->add('wa_roles',$data);
 		
 		return static::Db()->lastInsertId();
 	}
@@ -96,23 +98,23 @@ class RoleModel extends Base
 	{
 		$time = date('Y-m-d H:i:s');
 		$data['updated_at'] = $time;
-		return static::Db()->updateData("wa_roles", $id, $data, 'id');
+		return $this->updateData($id, $data, 'id');
 	}
 	public function updateRoleMore($descendant_role_ids,$rule_ids)
 	{
 		foreach ($descendant_role_ids as $role_id) {
-			$data = static::Db()->fetch("select * from wa_roles where id = ? ",$role_id);
+			$data = static::Db()->fetch("select * from `'TABLE'` where id = ? ",$role_id);
 			$data['rules'] = implode(',', array_intersect(explode(',',$data['rules']),$rule_ids));
 			$time = date('Y-m-d H:i:s');
 			$data['updated_at'] = $time;
-			static::Db()->updateData("wa_roles", $id, $data, 'id');
+			$this->update($id, $data, 'id');
 		}
 	}
     
     public function addFirstRole()
     {
-        $sql = "INSERT INTO `wa_roles` VALUES (1,'超级管理员','*','2022-08-13 16:15:01','2022-12-23 12:05:07',NULL);";
-        static::Db()->execute($sql);
+        $sql = "INSERT INTO `'TABLE'` VALUES (1,'超级管理员','*','2022-08-13 16:15:01','2022-12-23 12:05:07',NULL);";
+        $this->execute($sql);
     }
 
 }
