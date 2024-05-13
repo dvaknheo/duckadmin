@@ -32,11 +32,10 @@ class MyCoverageBridge extends ComponentBase
         MyCoverage::_()->options['path_src'] = realpath(__DIR__.'/../').'/src';
         MyCoverage::_()->init($options);
         
-        
-        
-        //TODO 内嵌 command
-        App::Current()->on([get_class(App::Current()),'onBeforeRun'],[static::class,'onBeforeRun']);
-        App::Current()->on([get_class(App::Current()),'onAfterRun'],[static::class,'OnAfterRun']);
+        Console::_()->regCommandClass(App::Current()->options['cli_command_prefix']??App::Phase(), App::Phase(), [static::class]);
+
+        App::Current()->on([App::Phase(),'onBeforeRun'],[static::class,'OnBeforeRun']);
+        App::Current()->on([App::Phase(),'onAfterRun'],[static::class,'OnAfterRun']);
     }
     
     public static function OnBeforeRun()
@@ -83,7 +82,6 @@ class MyCoverageBridge extends ComponentBase
     {
         $path = $this->getRuntimePath();
         $group = @file_get_contents($path.'MyCoverage.watching.txt');
-        //var_dump($group);
         return $group;
     }
     protected function getTestName()
@@ -140,6 +138,7 @@ EOT;
         var_dump(DATE(DATE_ATOM));
         //
     }
+    
     protected function replay()
     {
         $path = $this->getRuntimePath();
@@ -173,5 +172,60 @@ EOT;
         curl_close($ch);
         return $data !== false?$data:'';
     }
+
     
+    //////////////////////////
+    protected function get_component_path($component)
+    {
+        $base_class = App::Current()->options['namespace']."\\{$component}\\Base";
+        $ref = new \ReflectionClass($base_class);
+        $path = dirname($ref->getFilename()).'/';
+        return $path;
+    }
+    protected function get_all_component_classes($path, $component)
+    {
+        $directory = new \RecursiveDirectoryIterator($path, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS);
+        $iterator = new \RecursiveIteratorIterator($directory);
+        $files = \iterator_to_array($iterator, false);
+        
+        $ret = [];
+        foreach ($files as $file) {
+            if(substr($file,-strlen($component.'.php'))!==$component.'.php'){continue;};
+            $ret[] = $file;
+        }
+        return $ret;
+    }
+    public function getBusinessTestString($path, $file, $namespace)
+    {
+        $data = file_get_contents($file);
+        preg_match_all('/public\s+function (([^\(]+)\([^\)]*\))/', (string)$data, $m);
+        $funcs = $m[1];
+        
+        $ret = '';
+        $class = substr($file,strlen($path),-strlen('.php'));
+        $class = $namespace .str_replace('/','\\',$class);
+        foreach ($funcs as $v) {
+            $v = str_replace(['&','callable '], ['',''], $v);
+            $ret .= "        \\{$class}::_()->$v;\n";
+        }
+        return $ret;
+    }
+    public function getAllComponentTestTemplate($component)
+    {
+        $path = $this->get_component_path($component);
+        $files = $this->get_all_component_classes($path,$component);
+        $namespace = App::Current()->options['namespace']."\\{$component}\\";
+        $data =[];
+        foreach($files as $file){
+            $data[]= $this->getBusinessTestString($path,$file,$namespace);
+        }
+        return implode("\n",$data)."\n";
+    }
+    public function command_foo2()
+    {
+        $last_phase = App::Phase(\DuckAdmin\System\DuckAdminApp::class);
+        $str = $this->getAllComponentTestTemplate('Controller');
+        echo $str;
+        App::Phase($last_phase);
+    }
 }

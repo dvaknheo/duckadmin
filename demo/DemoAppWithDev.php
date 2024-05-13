@@ -98,7 +98,7 @@ class DemoAppWithDev extends DemoApp
         $ret = $this->get_pathinfos($classes);
         return $ret;
     }
-    protected function pathInfoFromClassAndMethod($class, $method)
+    protected function pathInfoFromClassAndMethod($class, $method, $adjuster = null)
     {
         $class_postfix = Route::_()->options['controller_class_postfix'];
         $method_prefix = Route::_()->options['controller_method_prefix'];
