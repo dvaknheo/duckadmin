@@ -31,8 +31,8 @@ class AdminController extends Base
      */
     public function select()
     {
-		$input = Helper::GET();
-		[$data, $count] = AdminBusiness::_()->showAdmins(Helper::AdminId(),$input);
+        $input = Helper::GET();
+        [$data, $count] = AdminBusiness::_()->showAdmins(Helper::AdminId(),$input);
         return Helper::Success($data,$count);
     }
 
@@ -45,11 +45,11 @@ class AdminController extends Base
     public function insert()
     {
         if (!Helper::POST()) {
-			return Helper::Show([],'admin/insert');
-		}
-		$input = Helper::POST();
-		$admin_id = AdminBusiness::_()->addAdmin(Helper::AdminId(), $input);
-		return Helper::Success(['id' => $admin_id]);
+            return Helper::Show([],'admin/insert');
+        }
+        $input = Helper::POST();
+        $admin_id = AdminBusiness::_()->addAdmin(Helper::AdminId(), $input);
+        return Helper::Success(['id' => $admin_id]);
     }
 
     /**
@@ -60,11 +60,11 @@ class AdminController extends Base
     */
     public function update()
     {
-		if (!Helper::POST()) {
-			return Helper::Show([],'admin/update');
-		}
-		$post = Helper::POST();
-		AdminBusiness::_()->updateAdmin(Helper::AdminId(), $post);
+        if (!Helper::POST()) {
+            return Helper::Show([],'admin/update');
+        }
+        $post = Helper::POST();
+        AdminBusiness::_()->updateAdmin(Helper::AdminId(), $post);
     }
 
     /**
@@ -74,9 +74,9 @@ class AdminController extends Base
      */
     public function delete()
     {
-		$post = Helper::POST();
-		AdminBusiness::_()->deleteAdmin(Helper::AdminId(), $post['id']);
-		return Helper::Success();
+        $post = Helper::POST();
+        AdminBusiness::_()->deleteAdmin(Helper::AdminId(), $post['id']);
+        return Helper::Success();
     }
 
 }

@@ -25,7 +25,7 @@ class ConfigController extends Base
      */
     public function index()
     {
-		return Helper::Show([],'config/index');
+        return Helper::Show([],'config/index');
     }
 
     /**
@@ -35,7 +35,7 @@ class ConfigController extends Base
     public function get()
     {
         $data = ConfigBusiness::_()->getDefaultConfig();
-		return Helper::ShowJson($data); //注意这里不能用 success
+        return Helper::ShowJson($data); //注意这里不能用 success
     }
  
     /**
@@ -47,7 +47,7 @@ class ConfigController extends Base
     public function update()
     {
         $post = Helper::POST();
-		ConfigBusiness::_()->updateConfig($post);
+        ConfigBusiness::_()->updateConfig($post);
         return Helper::ShowJson(0);
     }
 }

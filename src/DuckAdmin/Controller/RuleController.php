@@ -38,11 +38,11 @@ class RuleController extends Base
      */
     public function select()
     {
-		$data = Helper::GET();
+        $data = Helper::GET();
 
-		[$data,$total] = RuleBusiness::_()->selectRules(Helper::AdminId(), $data); // 结果还是一股脑把参数传进去了
+        [$data,$total] = RuleBusiness::_()->selectRules(Helper::AdminId(), $data); // 结果还是一股脑把参数传进去了
 
-		return Helper::Success($data,$total);
+        return Helper::Success($data,$total);
     }
 
     /**
@@ -52,13 +52,13 @@ class RuleController extends Base
      */
     public function get()
     {
-		$types = Helper::GET('type', '0,1');
+        $types = Helper::GET('type', '0,1');
         $types = is_string($types) ? explode(',', $types) : [0, 1];
-		
-		$admin = AdminAction::_()->getCurrentAdmin();
-		$data = RuleBusiness::_()->get($admin['roles']??[],$types);
-		
-		return Helper::Success($data);
+        
+        $admin = AdminAction::_()->getCurrentAdmin();
+        $data = RuleBusiness::_()->get($admin['roles']??[],$types);
+        
+        return Helper::Success($data);
     }
     /**
      * 获取权限
@@ -67,10 +67,10 @@ class RuleController extends Base
      */
     public function permission()
     {
-		$admin = AdminAction::_()->getCurrentAdmin();
+        $admin = AdminAction::_()->getCurrentAdmin();
         $permissions = RuleBusiness::_()->permission($admin['roles']??[]);
         return Helper::Success($permissions);
-	}
+    }
     /**
      * 添加
      * @param Request $request
@@ -79,11 +79,11 @@ class RuleController extends Base
      */
     public function insert()
     {
-		$post = Helper::POST();
+        $post = Helper::POST();
         if (!$post) {
             return Helper::Show([], 'rule/insert');
         }
-		RuleBusiness::_()->insertRule(Helper::AdminId(), $post);
+        RuleBusiness::_()->insertRule(Helper::AdminId(), $post);
         return Helper::Success();
     }
 
@@ -95,11 +95,11 @@ class RuleController extends Base
      */
     public function update()
     {
-		$post = Helper::POST();
+        $post = Helper::POST();
         if (!$post) {
-			return Helper::Show([], 'rule/update');
+            return Helper::Show([], 'rule/update');
         }
-		RuleBusiness::_()->updateRule(Helper::AdminId(), $post);
+        RuleBusiness::_()->updateRule(Helper::AdminId(), $post);
         return Helper::Success();
     }
     
@@ -110,8 +110,8 @@ class RuleController extends Base
      */
     public function delete()
     {
-		$post = Helper::POST();
-		RuleBusiness::_()->deleteRule(Helper::AdminId(),$post['id']);
+        $post = Helper::POST();
+        RuleBusiness::_()->deleteRule(Helper::AdminId(),$post['id']);
         return Helper::Success();
     }
 

@@ -36,10 +36,10 @@ class RoleController extends Base
      */
     public function select()
     {
-		$post = Helper::GET();
-		$id = Helper::GET('id');
-		[$data,$total] = RoleBusiness::_()->selectRoles(Helper::AdminId(), $id, $post);
-		return Helper::Success($data,$total);
+        $post = Helper::GET();
+        $id = Helper::GET('id');
+        [$data,$total] = RoleBusiness::_()->selectRoles(Helper::AdminId(), $id, $post);
+        return Helper::Success($data,$total);
     }
 
     /**
@@ -50,13 +50,13 @@ class RoleController extends Base
      */
     public function insert()
     {
-		if (!Helper::POST()) {
-			return Helper::Show([],'role/insert');
-		}
-		$post = Helper::POST();
-		
-		$id = RoleBusiness::_()->insertRole(Helper::AdminId(), $post);
-		return Helper::Success(['id' => $id]);
+        if (!Helper::POST()) {
+            return Helper::Show([],'role/insert');
+        }
+        $post = Helper::POST();
+        
+        $id = RoleBusiness::_()->insertRole(Helper::AdminId(), $post);
+        return Helper::Success(['id' => $id]);
 
     }
 
@@ -68,13 +68,13 @@ class RoleController extends Base
      */
     public function update()
     {
-		if (!Helper::POST()) {
-			return Helper::Show([],'role/update');
-		}
-		$post = Helper::POST();
-		
-		$id = RoleBusiness::_()->updateRole(Helper::AdminId(), $post);
-		return Helper::Success(['id' => $id]);
+        if (!Helper::POST()) {
+            return Helper::Show([],'role/update');
+        }
+        $post = Helper::POST();
+        
+        $id = RoleBusiness::_()->updateRole(Helper::AdminId(), $post);
+        return Helper::Success(['id' => $id]);
     }
 
     /**
@@ -85,7 +85,7 @@ class RoleController extends Base
      */
     public function delete()
     {
-		$id = RoleBusiness::_()->deleteRole(Helper::AdminId(), Helper::POST('id',0));
+        $id = RoleBusiness::_()->deleteRole(Helper::AdminId(), Helper::POST('id',0));
         return  Helper::Success();
     }
 
@@ -96,9 +96,9 @@ class RoleController extends Base
      */
     public function rules()
     {
-		$role_id = Helper::GET('id');
-		
-		$tree = RoleBusiness::_()->tree(Helper::AdminId(), $role_id);
+        $role_id = Helper::GET('id');
+        
+        $tree = RoleBusiness::_()->tree(Helper::AdminId(), $role_id);
         return Helper::Success($tree);
     }
 }

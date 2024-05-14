@@ -10,15 +10,15 @@ namespace DuckAdmin\Model;
  */
 class OptionModel extends Base
 {
-	protected $table_name = 'options';
+    protected $table_name = 'options';
     
     public function getSystemConfig()
     {
-		$data = $this->fetch("select * from `'TABLE'` where name='system_config'");
-		return $data?json_decode($data['value'],true):[];
+        $data = $this->fetch("select * from `'TABLE'` where name='system_config'");
+        return $data?json_decode($data['value'],true):[];
     }
-	public function setSystemConfig($value)
-	{
+    public function setSystemConfig($value)
+    {
         $data = $this->fetch("select * from `'TABLE'` where name='system_config'");
         if(!$data){
             $flag = $this->execute("insert into `'TABLE'` ( value ) values( ? )" ,json_encode($value));
@@ -26,5 +26,5 @@ class OptionModel extends Base
             $flag = $this->execute("update `'TABLE'` set value = ? where name='system_config'" ,json_encode($value));
         }
         return $flag;
-	}
+    }
 }

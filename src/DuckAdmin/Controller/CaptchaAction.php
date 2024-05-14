@@ -15,7 +15,7 @@ use Gregwar\Captcha\PhraseBuilder;
  */
 class CaptchaAction extends Base
 {
-	public $options = [
+    public $options = [
         'set_phrase_handler' => null,
         'get_phrase_handler' => null,
     ];
