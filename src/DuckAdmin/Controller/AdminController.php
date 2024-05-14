@@ -74,8 +74,7 @@ class AdminController extends Base
      */
     public function delete()
     {
-        $post = Helper::POST();
-        AdminBusiness::_()->deleteAdmin(Helper::AdminId(), $post['id']);
+        AdminBusiness::_()->deleteAdmin(Helper::AdminId(), Helper::POST('id',null));
         return Helper::Success();
     }
 

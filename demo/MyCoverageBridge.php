@@ -21,7 +21,10 @@ class MyCoverageBridge extends MyCoverage
         'group'=>'',
         'name'=>'',
     ];
-    ////
+    public function __construct()
+    {
+        parent::__construct();
+    }
     public function getRuntimePath()
     {
         $path = static::SlashDir(App::Root()->options['path']);
@@ -38,13 +41,12 @@ class MyCoverageBridge extends MyCoverage
         $this->options['group'] = $group; //$this->getTestGroup();
         
         Console::_()->regCommandClass(App::Current()->options['cli_command_prefix']??App::Phase(), App::Phase(), [static::class]);
-        App::Current()->on([App::Phase(),'onBeforeRun'],[static::class,'OnBeforeRun']);
-        App::Current()->on([App::Phase(),'onAfterRun'],[static::class,'OnAfterRun']);
+        EventManager::_()->on([App::Phase(),'onBeforeRun'],[static::class,'OnBeforeRun']);
+        EventManager::_()->on([App::Phase(),'onAfterRun'],[static::class,'OnAfterRun']);
     }
     
     public static function OnBeforeRun()
     {
-    
         return static::_()->_OnBeforeRun();
     }
     public function OnAfterRun()
@@ -64,10 +66,21 @@ class MyCoverageBridge extends MyCoverage
         $name = $this->getTestName();
         $this->options['name'] = $name;
         
-
         $path_dump = $this->getSubPath('path_dump');
         @mkdir($path_dump);
-        file_put_contents($path_dump.$this->options['group'].'.list',$name."\n",FILE_APPEND);
+        
+        ////[[[[
+        $data ='';
+        $session_id = Helper::COOKIE('PHPSESSID','');
+        $post = Helper::POST();
+        $post = http_build_query($post);
+        if($post){
+            $data ="#POST {$post}\n";
+        }
+        $uri = Helper::SERVER('REQUEST_URI','');
+        $data.=$uri ."\n";
+        ////]]]]
+        file_put_contents($path_dump.$this->options['group'].'.list',$data,FILE_APPEND);
         
         ////////////
         $this->doBegin();
@@ -89,11 +102,11 @@ class MyCoverageBridge extends MyCoverage
     protected function getTestName()
     {
         $method = Helper::SERVER('REQUEST_METHOD','GET');
-        $session_id = Helper::session_id();
+        $session_id = Helper::COOKIE('PHPSESSID','');
         $uri = Helper::SERVER('REQUEST_URI','');
         $post = Helper::POST();
         $post = http_build_query($post);
-        $ret =implode("\t",[$uri,$post,$session_id,$method]);
+        $ret =implode(";",[$uri,$post,$session_id,$method]);
         return $ret;
     }
     /**
@@ -138,24 +151,31 @@ EOT;
         var_dump(DATE(DATE_ATOM));
         //
     }
-    
+    protected $is_save_session=false;
+    protected $session_id='';
     protected function replay()
     {
-        $list = file('request.list');
+        $this->is_save_session=true;
+        $list = file(__DIR__.'/request.list');
         foreach($list as $line){
             $request =trim($line);
-            $url ="http://127.0.0.1:8080/".$request;
-            $this->curl_file_get_contents($url);
-            echo $url;
-            echo "\n";
+            if(!$request){
+                continue;
+            }
+
+            if(substr($request,0,1)==='#'){
+                if(substr($request,0,strlen('#POST '))==='#POST '){
+                    parse_str(substr($request,strlen('#POST ')),$post);
+                    continue;
+                }
+                if(substr($request,0,2)==='##'){
+                continue;
+                }
+            }
+            $url ="http://admin.demo.local".$request; //TODO
+            $data = $this->curl_file_get_contents([$url,'127.0.0.1'],$post);
+            $post =[];
         }
-        $this->createReport();
-        //var_dump(DATE(DATE_ATOM);
-        
-        //$path = $this->getRuntimePath();
-        //$group = $this->getTestGroup();
-        //$list = file($path.'test_coveragedumps/'.$group.'.list');
-        //var_dump($list);
     }
     protected function curl_file_get_contents($url, $post =[])
     {
@@ -172,14 +192,35 @@ EOT;
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+        if($this->is_save_session){
+            curl_setopt($ch, CURLOPT_HEADER, 1);
+        }
+        
         if(!empty($post)){
             curl_setopt($ch, CURLOPT_POST, 1);
             curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post));
-            //$this->prepare_token();
+        }
+        if($this->session_id){
+            curl_setopt($ch, CURLOPT_COOKIE, "PHPSESSID={$this->session_id}");
         }
         
         
         $data = curl_exec($ch);
+        
+        if($this->is_save_session){
+            $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+            $headers = substr($data, 0, $header_size);
+            $data = substr($data, $header_size);
+            
+            $flag = preg_match('/PHPSESSID=(\w+)/',$headers,$m);
+            if($flag){
+                $this->session_id = $m[1];
+                $this->is_save_session = false;
+            }
+        }
+        echo $url;
+        echo "\n";
+        //echo $data;
         curl_close($ch);
         return $data !== false?$data:'';
     }

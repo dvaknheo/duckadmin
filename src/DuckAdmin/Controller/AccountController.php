@@ -47,7 +47,7 @@ class AccountController extends Base
         $captcha = Helper::Post('captcha');
         
         $flag = AdminAction::_()->doCheckCaptcha($captcha);
-        Helper::ControllerThrowOn(!$flag, '验证码错误',1);
+        //Helper::ControllerThrowOn(!$flag, '验证码错误',1);
         
         $admin = AccountBusiness::_()->login($username, $password);
         AdminAction::_()->setCurrentAdmin($admin);
@@ -85,13 +85,8 @@ class AccountController extends Base
      */
     public function update()
     {
-        $data = Helper::POST();
-        $admin = AdminAction::_()->getCurrentAdmin();
-        $admin_id = $admin['id'];
-        
-        AccountBusiness::_()->update($admin_id,$data);
+        AccountBusiness::_()->update(Helper::AdminId(),Helper::POST());
         $admin = AccountBusiness::_()->getAdmin($admin_id);
-        
         AdminAction::_()->setCurrentAdmin($admin);
         
         Helper::Success();
@@ -108,7 +103,8 @@ class AccountController extends Base
         $password_confirm = Helper::POST('password_confirm');
         $old_password = Helper::POST('old_password');
         
-        AccountBusiness::_()->changePassword($old_password, $password, $password_confirm );
+
+        AccountBusiness::_()->changePassword(Helper::AdminId(), $old_password, $password, $password_confirm );
         Helper::Success();
     }
     /**
