@@ -90,7 +90,7 @@ class RoleModel extends Base
 		$time = date('Y-m-d H:i:s');
 		$data['created_at']=$time;
 		$data['updated_at']=$time;
-		$this->add('wa_roles',$data);
+		$this->add($data);
 		
 		return static::Db()->lastInsertId();
 	}

@@ -18,8 +18,8 @@ class DemoApp extends DuckPhp
 //*
             \DuckAdmin\System\DuckAdminApp::class => [      // 后台管理系统
                 'controller_url_prefix' => 'app/admin/',    // 访问路径
-                //'controller_resource_prefix' => 'res/',     // 资源文件前缀
-                'controller_resource_prefix' => '/res/app/admin/',     // 资源文件前缀
+                'controller_resource_prefix' => 'res/',     // 资源文件前缀
+                //'controller_resource_prefix' => '/res/app/admin/',     // 资源文件前缀
             ],
 //*/
             \DuckUser\System\DuckUserApp::class => [

@@ -18,6 +18,6 @@ require_once(__DIR__. '/FixedWorkermanHttpd.php');
 $options=[
 ];
 
-DuckPhp\HttpServer\HttpServer::_(FixedWorkermanHttpd::_());
+\DuckPhp\HttpServer\HttpServer::_(FixedWorkermanHttpd::_());
 
-DemoApp::RunQuickly($options);
+\Demo\DemoApp::RunQuickly($options);

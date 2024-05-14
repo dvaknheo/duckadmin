@@ -9,7 +9,6 @@ use DuckPhp\Component\GlobalAdmin;
 use DuckPhp\Core\Phase;
 use DuckAdmin\Controller\AdminAction;
 use DuckAdmin\Controller\Helper;
-use DuckAdmin\Controller\ControllerException;
 
 class Admin extends GlobalAdmin
 {
@@ -26,7 +25,17 @@ class Admin extends GlobalAdmin
     {
         return AdminAction::_()->getCurrentAdmin();
     }
-    
+    public function canAccessUrl($url)
+    {
+        $this->checkLogin();
+        return true;
+    }
+    public function canAccessCall($class, $method)
+    {
+        $this->checkLogin();
+        //
+        return true;
+    }
     public function checkLogin()
     {
         // 这里如果没登录，我们跳转到 报错页面
@@ -38,28 +47,14 @@ class Admin extends GlobalAdmin
     ///////////////
     public function urlForRegist($url_back = null, $ext = null)
     {
-        throw new \ErrorException('DuckPhp: No Impelement');
+        return __url("");
     }
     public function urlForLogin($url_back = null, $ext = null)
     {
-        throw new \ErrorException('DuckPhp: No Impelement');
+        return __url("");
     }
     public function urlForLogout($url_back = null, $ext = null)
     {
         return __url("logout");
     }
-    ///////////////
-    public function regist($post)
-    {
-        throw new \ErrorException('DuckPhp: No Impelement');
-    }
-    public function login($post)
-    {
-        throw new \ErrorException('DuckPhp: No Impelement');
-    }
-    public function logout($post)
-    {
-        throw new \ErrorException('DuckPhp: No Impelement');
-    }
-    
 }

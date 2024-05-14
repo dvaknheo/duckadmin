@@ -209,7 +209,7 @@ class RuleModel extends Base
 	///////////////////////
 	public function descTable()
 	{
-        throw new \Exception('TODO: compat with sqlite');
+        //throw new \Exception('TODO: compat with sqlite');
 		$sql ="desc `wa_rules`";
 		$data = static::Db()->fetchAll($sql);
         $columns = array_column($data, 'Type', 'Field');

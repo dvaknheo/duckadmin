@@ -14,7 +14,12 @@ class UserController
 
     public function __construct()
     {
-        Helper::Admin()->checkLogin();
+        $controller = Helper::getRouteCallingClass();
+        $action = Helper::getRouteCallingMethod();
+        
+		$flag = Helper::Admin()->canAccessCall($controller,$action);
+        
+        Helper::ControllerThrowOn(!$flag,"请登录");
     }
     /**
      * 浏览

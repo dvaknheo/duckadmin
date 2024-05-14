@@ -1,77 +1,8 @@
 <?php declare(strict_types=1);
-use WorkermanHttpd\Request;
-use WorkermanHttpd\Response;
+use WorkermanHttpd\WorkermanHttpd;
 
-// 目前版本的 WorkermanHttpd 和当前版本不匹配，我们修复他
-class Httpd extends \WorkermanHttpd\WorkermanHttpd
-{
-    public static function _($object = null)
-    {
-        return static::G($object);
-    }
-    //@override to hot fix
-    public function _OnMessage($connection, $request)
-    {
-        Request::G($request);
-        Response::G(new Response());
-        $this->doSuperGlobal($request);
-        list($flag, $data) = $this->onRequest();
-        Response::G()->withBody($data);
-        
-        ////
-        $keep_alive = $request->header('connection');
-        if (($keep_alive === null && $request->protocolVersion() === '1.1')
-            || $keep_alive === 'keep-alive' || $keep_alive === 'Keep-Alive'
-        ) {
-            $connection->send(Response::G());
-            $this->endSession();
-            Response::G(new Response()); //free reference.
-            Request::G(new \stdClass()); //free reference.
-            return;
-        }
-        $connection->close(Response::G());  //  ---- THIS CODE IS OVERRIDE  TO FIX THIS
-        $this->endSession();
-        Response::G(new Response()); //free reference.
-        Request::G(new \stdClass()); //free reference.
-    }
-    //@override to hot fix
-    public function _header($output, bool $replace = true, int $http_response_code = 0)
-    {
-        $http_response_code = $http_response_code ? $http_response_code: 200;
-        if ($http_response_code) {
-            Response::G()->withStatus($http_response_code);
-            // return; //  ---- THIS CODE IS OVERRIDE  TO FIX THIS
-        }
-        if(strpos($output, ':') !== false){
-            @list($key, $value) = explode(':', $output);
-            
-            if(strtoupper($key) === 'CONTENT-TYPE'){
-                $key = "Content-Type";
-            }
-            return Response::G()->header($key, $value)->withStatus($http_response_code);
-        } else {
-            return Response::G()->withStatus($http_response_code);
-        }
-        return Response::G()->header($key, $value)->withStatus($http_response_code);
-    }
-    //@override to hot fix
-    public function _session_start(array $options = [])
-    {
-        //var_dump(\WorkermanHttpd\Request::G());
-        $flag = \WorkermanHttpd\Request::G()->session();
-        if(!$flag){return;}
-        $_SESSION = \WorkermanHttpd\Request::G()->session()->all();
-    }
-    protected function runHttpAppClass()
-    {
-        $app = $this->options['http_app_class'];
-        $flag = $app::_()->run();
-        return true;
-    }
-}
-
-
-class FixedWorkermanHttpd extends Httpd
+// 虽然升级到 1.0.5 但是还是不能完全隐藏，
+class FixedWorkermanHttpd extends WorkermanHttpd
 {
     
     public function _exit($code = 0)
@@ -88,10 +19,10 @@ class FixedWorkermanHttpd extends Httpd
         $http_app_class::_()->options['cli_enable']=false;
         
         $options['http_app_class']  = null; //这里出了状况。
+        
         parent::init($options, $context);
+        
         $this->options['http_app_class'] =$http_app_class ;
-        
-        
         
         //切换 SystemWrapper
         if(!defined('__SYSTEM_WRAPPER_REPLACER')){
