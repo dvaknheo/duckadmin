@@ -6,16 +6,20 @@
 namespace Demo;
 
 use DuckPhp\Core\App;
-use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\Console;
 use DuckPhp\Core\EventManager;
 use DuckPhp\Foundation\Helper;
 
-class MyCoverageBridge extends ComponentBase
+class MyCoverageBridge extends MyCoverage
 {
     //    use SingletonTrait;
     public $options =[
-        'path_src' => null,
+        'path' => '',
+        'path_src' => 'src',
+        'path_dump' => 'test_coveragedumps',
+        'path_report' => 'test_reports',
+        'group'=>'',
+        'name'=>'',
     ];
     ////
     public function getRuntimePath()
@@ -24,22 +28,23 @@ class MyCoverageBridge extends ComponentBase
         $path_runtime = static::SlashDir(App::Root()->options['path_runtime']);
         return static::IsAbsPath($path_runtime) ? $path_runtime : $path.$path_runtime;
     }
-    protected function initOptions(array $options)
+    public function init(array $options, ?object $context = null)
     {
+        parent::init($options, $context);
         $path = $this->getRuntimePath();
-        MyCoverage::_()->options['path']=$path;
-        //MyCoverage::_()->options['group']=$group;
-        MyCoverage::_()->options['path_src'] = realpath(__DIR__.'/../').'/src';
-        MyCoverage::_()->init($options);
+        $this->options['path']=$path;
+        $this->options['path_src'] = realpath(__DIR__.'/../').'/src';
+        $group = $this->getTestGroup();
+        $this->options['group'] = $group; //$this->getTestGroup();
         
         Console::_()->regCommandClass(App::Current()->options['cli_command_prefix']??App::Phase(), App::Phase(), [static::class]);
-
         App::Current()->on([App::Phase(),'onBeforeRun'],[static::class,'OnBeforeRun']);
         App::Current()->on([App::Phase(),'onAfterRun'],[static::class,'OnAfterRun']);
     }
     
     public static function OnBeforeRun()
     {
+    
         return static::_()->_OnBeforeRun();
     }
     public function OnAfterRun()
@@ -52,19 +57,20 @@ class MyCoverageBridge extends ComponentBase
             return;
         }
         
-        $name = $this->getTestName();
-        $group = $this->getTestGroup();
-        if(!$group){
+        if(!$this->options['group']){
             return;
         }
-        $path = $this->getRuntimePath();
-        @mkdir($path.'test_coveragedumps/');
-        file_put_contents($path.'test_coveragedumps/'.$group.'.list',$name."\n",FILE_APPEND);
+        
+        $name = $this->getTestName();
+        $this->options['name'] = $name;
+        
+
+        $path_dump = $this->getSubPath('path_dump');
+        @mkdir($path_dump);
+        file_put_contents($path_dump.$this->options['group'].'.list',$name."\n",FILE_APPEND);
         
         ////////////
-        MyCoverage::_()->options['group'] = $group;
-        MyCoverage::_()->options['name'] = $name;
-        MyCoverage::Begin();
+        $this->doBegin();
     }
     public function _OnAfterRun()
     {
@@ -72,11 +78,7 @@ class MyCoverageBridge extends ComponentBase
             return;
         }
         ///////////////
-        MyCoverage::End();
-    }
-    public function createReport()
-    {
-        return MyCoverage::_()->createReport();
+        $this->doEnd();
     }
     protected function getTestGroup()
     {
@@ -105,7 +107,7 @@ class MyCoverageBridge extends ComponentBase
 --watch {name}
 --stop
 --replay
---report
+--report [a b c]
 EOT;
             echo $str;
             return;
@@ -117,7 +119,7 @@ EOT;
                 $p['watch'] = DATE('Y_m_d_H_i_s');
             }
             file_put_contents($path.'MyCoverage.watching.txt',$p['watch']);
-             echo "watching {$p['watch']}\n";
+            echo "watching {$p['watch']}\n";
             //return;
         }
         if($p['stop']??false){
@@ -129,11 +131,9 @@ EOT;
         }
         
         if($p['report']??false){
-            $group = $this->getTestGroup();
-            MyCoverage::_()->options['group'] = $group;
-            MyCoverage::_()->createReport();
+            $groups = is_array($p['report'])?$p['report']:[];
+            $this->createReport($groups);
         }
-        
         
         var_dump(DATE(DATE_ATOM));
         //

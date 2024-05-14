@@ -77,9 +77,9 @@ class MyCoverage
     protected function getSubPath($path_key)
     {
         if (static::IsAbsPath($this->options[$path_key])) {
-            return static::SlashDir($this->options[$path_key]).DIRECTORY_SEPARATOR;
+            return static::SlashDir($this->options[$path_key]);
         } else {
-            return static::SlashDir($this->options['path']) .DIRECTORY_SEPARATOR . static::SlashDir($this->options[$path_key]);
+            return static::SlashDir($this->options['path']) . static::SlashDir($this->options[$path_key]);
         }
     }
     public function init(array $options, ?object $context = null)
@@ -109,18 +109,22 @@ class MyCoverage
         
         (new ReportOfPHP)->process($this->coverage, $path_dump.$file.'.php');
         $this->coverage = null;
-        __var_log($path_dump.$file.'.php');
-        //$this->createReport();
     }
-    public function createReport()
+    public function createReport($groups =[])
     {
-
         $path_src = $this->getSubPath('path_src');
         $path_dump = $this->getSubPath('path_dump');
         $path_report = $this->getSubPath('path_report');
         
-        $path_dump = $path_dump. $this->options['group'];
-        $path_report = $path_report. $this->options['group'];
+        
+        if(empty($groups)){
+            $groups =[$this->options['group']];
+        }
+        if(count($groups)===1){
+            $path_report = $path_report. $groups[0];
+        }else{
+            $path_report = $path_report. DATE('y-m-d');
+        }
         $coverage = new CodeCoverage();
         $coverage->filter()->addDirectoryToWhitelist($path_src);
         $coverage->setTests([
@@ -130,18 +134,21 @@ class MyCoverage
           ],
         ]);
         
-        //$path_dump = $this->getSubPath('path_dump');
-        
-        $directory = new \RecursiveDirectoryIterator($path_dump, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS);
+        foreach($groups as $group) {
+            $current_path_dump = $path_dump. $group;
+            $directory = new \RecursiveDirectoryIterator($current_path_dump, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS);
 
-        $iterator = new \RecursiveIteratorIterator($directory);
-        $files = \iterator_to_array($iterator, false);
-        foreach ($files as $file) {
-            // 要重复两遍才能 100% ，所以 ignore 得了，使用 include 会导致一个 Bug 。
-            $t = static::include_file($file);    //@codeCoverageIgnore
-            $coverage->merge($t);   //@codeCoverageIgnore
+            $iterator = new \RecursiveIteratorIterator($directory);
+            $files = \iterator_to_array($iterator, false);
+            foreach ($files as $file) {
+                // 要重复两遍才能 100% ，所以 ignore 得了，使用 include 会导致一个 Bug 。
+                $t = static::include_file($file);    //@codeCoverageIgnore
+                if(is_int($t)){ var_dump($file); exit;continue;}
+                $coverage->merge($t);   //@codeCoverageIgnore
+            }
+            (new ReportOfHtmlOfFacade)->process($coverage, $path_report);
         }
-        (new ReportOfHtmlOfFacade)->process($coverage, $path_report);
+        
         
         $report = $coverage->getReport();
         $lines_tested = $report->getNumExecutedLines();
