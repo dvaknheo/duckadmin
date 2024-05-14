@@ -14,27 +14,17 @@ use DuckAdmin\Business\InstallBusiness;
 class MainController extends Base
 {
     /**
-     * 无需登录的方法
-     * @var string[]
+     * 跳过验证，这里
      */
-    protected $noNeedLogin = ['index','test'];
-
-    /**
-     * 不需要鉴权的方法
-     * @var string[]
-     */
-    protected $noNeedAuth = ['dashboard'];
-
+    public function __construct()
+    {
+        // 跳过验证，不做任何事
+    }
     /**
      * 首页
      */
     public function index()
     {
-		$isInstalled = InstallBusiness::_()->IsInstalled();
-        if (!$isInstalled) {
-            Helper::Show([], 'index/install');
-            return;
-        }
         $admin = AdminAction::_()->getCurrentAdmin();
         if (!$admin) {
             Helper::Show([], 'account/login');

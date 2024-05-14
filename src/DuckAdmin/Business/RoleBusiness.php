@@ -147,11 +147,9 @@ class RoleBusiness extends Base
             return;
         }
         $rule_ids = explode(',', $rule_ids);
-        if (in_array('*', $rule_ids)) {
-            Helper::BusinessThrowOn(true, '非法数据');
-        }
+        Helper::BusinessThrowOn(in_array('*', $rule_ids), '非法数据');
+        
         $flag = RuleModel::_()->checkRulesExist($rule_ids);
-
         Helper::BusinessThrowOn(!$flag, '权限不存在');
 
         $rule_id_string = RoleModel::_()->getRulesByRoleId($role_id);
@@ -161,8 +159,8 @@ class RoleBusiness extends Base
             return;
         }
         
-        $legal_rule_ids = explode(',', $rule_id_string);
-        if (array_diff($rule_ids, $legal_rule_ids)) {
+        $ext_rule =array_diff($rule_ids, explode(',', $rule_id_string));
+        if ($legal_rule_ids) {
             Helper::BusinessThrowOn(true, '数据超出权限范围');
         }
     }

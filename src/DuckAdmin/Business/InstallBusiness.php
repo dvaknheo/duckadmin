@@ -15,14 +15,6 @@ use DuckAdmin\System\DuckAdminApp;
  */
 class InstallBusiness extends Base
 {
-    public function isInstalled()
-    {
-        //TODO 放到 Helper 里
-        return DuckAdminApp::_()->isInstalled();
-    }
-    ///////////////////////////
-
-    
     public function install($username,$password,$password_confirm)
     {
         Helper::BusinessThrowOn($password !== $password_confirm, '两次密码不一致',1);

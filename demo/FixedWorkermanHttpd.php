@@ -9,6 +9,7 @@ class FixedWorkermanHttpd extends WorkermanHttpd
     {
         //这里的退出异常，应该使用 error, defind exit;
         //DUCKPHP_EXIT_EXCEPTION
+        \DuckPhp\Core\ExitException::Init();
         throw new \DuckPhp\Core\ExitException('exit at'.DATE(DATE_ATOM),0);
         //throw new ExitException(''.$code, $code);
     }

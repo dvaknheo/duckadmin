@@ -85,8 +85,7 @@ class RoleController extends Base
      */
     public function delete()
     {
-		$post = Helper::POST();
-		$id = RoleBusiness::_()->deleteRole(Helper::AdminId(), $post['id']);
+		$id = RoleBusiness::_()->deleteRole(Helper::AdminId(), Helper::POST('id',0));
         return  Helper::Success();
     }
 

@@ -117,13 +117,13 @@ if (self !== top) {
 }
 </script>
 EOF;
-		Helper::header('',true,401);
+		Helper::header('Unauthorized',true,401);
 		echo $response;
 		Helper::exit();
 	}
 	protected function exit403()
 	{
-		Helper::header('',true,403);
+		Helper::header('Forbidden',true,403);
 		Helper::Show('_sys/403');
 		Helper::exit();
 	}

@@ -141,10 +141,21 @@ EOT;
     
     protected function replay()
     {
-        $path = $this->getRuntimePath();
-        $group = $this->getTestGroup();
-        $list = file($path.'test_coveragedumps/'.$group.'.list');
-        var_dump($list);
+        $list = file('request.list');
+        foreach($list as $line){
+            $request =trim($line);
+            $url ="http://127.0.0.1:8080/".$request;
+            $this->curl_file_get_contents($url);
+            echo $url;
+            echo "\n";
+        }
+        $this->createReport();
+        //var_dump(DATE(DATE_ATOM);
+        
+        //$path = $this->getRuntimePath();
+        //$group = $this->getTestGroup();
+        //$list = file($path.'test_coveragedumps/'.$group.'.list');
+        //var_dump($list);
     }
     protected function curl_file_get_contents($url, $post =[])
     {
