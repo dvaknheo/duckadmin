@@ -47,7 +47,7 @@ class AccountController extends Base
         $captcha = Helper::Post('captcha');
         
         $flag = AdminAction::_()->doCheckCaptcha($captcha);
-        //Helper::ControllerThrowOn(!$flag, '验证码错误',1);
+        Helper::ControllerThrowOn(!$flag, '验证码错误',1);
         
         $admin = AccountBusiness::_()->login($username, $password);
         AdminAction::_()->setCurrentAdmin($admin);

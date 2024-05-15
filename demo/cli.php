@@ -18,6 +18,7 @@ require_once(__DIR__. '/FixedWorkermanHttpd.php');
 $options=[
 ];
 
+//WorkermanHttpd::_()->options['on_init']=
 \DuckPhp\HttpServer\HttpServer::_(FixedWorkermanHttpd::_());
 
 \Demo\DemoApp::RunQuickly($options);

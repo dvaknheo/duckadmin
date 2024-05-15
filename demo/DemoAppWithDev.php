@@ -32,7 +32,7 @@ class DemoAppWithDev extends DemoApp
     }
     public function command_foo($uri = '', $post = false)
     {
-        require_once('RouteList.php');
+        require_once('Test/RouteList.php');
         
         $last_phase = static::Phase(\DuckAdmin\System\DuckAdminApp::class);
         $routes = RouteList::_()->listAllRoutes();

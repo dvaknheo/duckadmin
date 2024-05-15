@@ -23,7 +23,10 @@ class FixedWorkermanHttpd extends WorkermanHttpd
         
         parent::init($options, $context);
         
-        $this->options['http_app_class'] =$http_app_class ;
+        $this->options['http_app_class'] = $http_app_class ;
+        
+        
+        
         
         //切换 SystemWrapper
         if(!defined('__SYSTEM_WRAPPER_REPLACER')){
