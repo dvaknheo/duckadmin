@@ -33,7 +33,6 @@ CREATE TABLE IF NOT EXISTS "wa_admins" (
 	"username"	TEXT NOT NULL UNIQUE,
 	"nickname"	TEXT NOT NULL,
 	"password"	TEXT NOT NULL,
-	"avatar"	TEXT,
 	"email"	TEXT,
 	"mobile"	TEXT,
 	"created_at"	TEXT,

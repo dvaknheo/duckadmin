@@ -11,7 +11,6 @@ CREATE TABLE `wa_admins` (
   `username` varchar(32) NOT NULL COMMENT '用户名',
   `nickname` varchar(40) NOT NULL COMMENT '昵称',
   `password` varchar(255) NOT NULL COMMENT '密码',
-  `avatar` varchar(255) DEFAULT '/app/admin/avatar.png' COMMENT '头像',
   `email` varchar(100) DEFAULT NULL COMMENT '邮箱',
   `mobile` varchar(16) DEFAULT NULL COMMENT '手机',
   `created_at` datetime DEFAULT NULL COMMENT '创建时间',
