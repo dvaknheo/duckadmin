@@ -19,8 +19,6 @@ if(is_file(__DIR__.'/../../../DNMVCS/autoload.php')){
 ////]]]]
 
 require_once(__DIR__. '/../DemoApp.php');
-require_once(__DIR__. '/../MyCoverage.php');
-require_once(__DIR__. '/../MyCoverageBridge.php');
 
 $options=[
     // ...

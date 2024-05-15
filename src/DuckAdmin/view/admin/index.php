@@ -145,13 +145,6 @@
 						field: "password",
 						hide: true,
 					},{
-						title: "头像",
-						field: "avatar",
-						templet: function (d) {
-							return '<img src="'+encodeURI(d['avatar'])+'" style="max-width:32px;max-height:32px;" alt="" />'
-						},
-                        width: 90,
-					},{
 						title: "邮箱",
 						field: "email",
                         hide: true,

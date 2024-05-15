@@ -42,20 +42,6 @@
                     </div>
                     
                     <div class="layui-form-item">
-                        <label class="layui-form-label">头像</label>
-                        <div class="layui-input-block">
-                            <img class="img-3" src=""/>
-                            <input type="text" style="display:none" name="avatar" value="" />
-                            <button type="button" class="pear-btn pear-btn-primary pear-btn-sm" id="avatar" permission="app.admin.upload.avatar">
-                                <i class="layui-icon layui-icon-upload"></i>上传图片
-                            </button>
-                            <button type="button" class="pear-btn pear-btn-primary pear-btn-sm" id="attachment-choose-avatar" permission="app.admin.upload.attachment">
-                                <i class="layui-icon layui-icon-align-left"></i>选择图片
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="layui-form-item">
                         <label class="layui-form-label">邮箱</label>
                         <div class="layui-input-block">
                             <input type="text" name="email" value="" class="layui-input">
@@ -116,35 +102,6 @@
                             } else {
                                 obj.attr("value", value);
                             }
-                        });
-                        
-                        // 字段 头像 avatar
-                        layui.use(["upload", "layer"], function() {
-                            let input = layui.$("#avatar").prev();
-                            input.prev().attr("src", input.val());
-                            layui.$("#attachment-choose-avatar").on("click", function() {
-                                parent.layer.open({
-                                    type: 2,
-                                    title: "选择附件",
-                                    content: "<?=__url('upload/attachment?ext=jpg,jpeg,png,gif,bmp')?>",
-                                    area: ["95%", "90%"],
-                                    success: function (layero, index) {
-                                        parent.layui.$("#layui-layer" + index).data("callback", function (data) {
-                                            input.val(data.url).prev().attr("src", data.url);
-                                        });
-                                    }
-                                });
-                            });
-                            layui.upload.render({
-                                elem: "#avatar",
-                                url: "<?=__url('upload/avatar')?>",
-                                acceptMime: "image/gif,image/jpeg,image/jpg,image/png",
-                                field: "__file__",
-                                done: function (res) {
-                                    if (res.code > 0) return layui.layer.msg(res.msg);
-                                    this.item.prev().val(res.data.url).prev().attr("src", res.data.url);
-                                }
-                            });
                         });
                         
                         // 字段 角色 roles
