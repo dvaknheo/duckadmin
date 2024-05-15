@@ -3,7 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-namespace Demo;
+namespace Demo\Test;
 
 use DuckPhp\Core\App;
 use DuckPhp\Core\Console;
@@ -223,5 +223,22 @@ EOT;
         //echo $data;
         curl_close($ch);
         return $data !== false?$data:'';
+    }
+    public function foo()
+    {
+        $port = 9529;
+        $server_options=[
+            'path'=>$path_app,
+            'path_document'=>'public',
+            'port'=>$port,
+            'background'=>true,
+            
+        ];
+        HttpServer::RunQuickly($server_options);
+        //echo HttpServer::_()->getPid();
+        sleep(1);// ugly
+        $host ="http://127.0.0.1:{$port}/";
+        //anything.
+        HttpServer::_()->close();
     }
 }

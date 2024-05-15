@@ -42,7 +42,7 @@ class DemoApp extends DuckPhp
     public function __construct()
     {
         // embed welcomepage
-        $path = explode('\\', __CLASS__);
+        $path = explode('\\', static::class);
         $short_class = array_pop($path);
         $ext_options =  [
             'namespace_controller' =>  "\\" . __NAMESPACE__ ,

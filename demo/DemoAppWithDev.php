@@ -7,42 +7,36 @@ namespace Demo;
 
 use DuckPhp\Core\Route;
 use DuckPhp\DuckPhp;
-
 use DuckPhp\Foundation\Helper;
+use Demo\Test\MyCoverageBridge;
+use Demo\Test\TestFileCreator;
+
+require_once(__DIR__. '/Test/MyCoverage.php');
+require_once(__DIR__. '/Test/MyCoverageBridge.php');
+require_once(__DIR__. '/Test/TestFileCreator.php');
 
 class DemoAppWithDev extends DemoApp
 {
     public function __construct()
     {
         parent::__construct();
+        
         $path_src = realpath(__DIR__.'/../src/').'/';
         $this->options['ext'][MyCoverageBridge::class]=[
             'path_src'=> $path_src,
         ];
-        $this->options['cli_command_classes'][]=MyCoverageBridge::class;
-    }
-    public function onInit()
-    {
-        parent::onInit();
+        $this->options['cli_command_classes'][] = MyCoverageBridge::class;
     }
     public function action_index()
     {
-        var_dump("DevMode!");
+        var_dump("dev");
         Helper::Show([],'main');
     }
-    public function command_foo($uri = '', $post = false)
+    public function command_gentest($uri = '', $post = false)
     {
-        require_once('Test/RouteList.php');
-        
         $last_phase = static::Phase(\DuckAdmin\System\DuckAdminApp::class);
-        $routes = RouteList::_()->listAllRoutes();
-        
-        foreach($routes as $method =>$route){
-            $route = strtolower($route);
-            echo $route;
-            echo "\n";
-            //echo $route."\t\t\t\t".$method ."\n";
-        }
+        $routes = TestFileCreator::_()->genRunFile();
         static::Phase($last_phase);
+        var_dump(DATE(DATE_ATOM));
     }
 }
