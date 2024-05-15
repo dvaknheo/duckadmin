@@ -34,8 +34,10 @@ class DemoAppWithDev extends DemoApp
     }
     public function command_gentest($uri = '', $post = false)
     {
+    
+        $x=static::Root()->options;
         $last_phase = static::Phase(\DuckAdmin\System\DuckAdminApp::class);
-        $routes = TestFileCreator::_()->genRunFile();
+        //$routes = TestFileCreator::_()->genRunFile();
         static::Phase($last_phase);
         var_dump(DATE(DATE_ATOM));
     }

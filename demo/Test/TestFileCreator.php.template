@@ -16,6 +16,14 @@ class RunAllTrait
 //@routes
 EOT;
     }
+    public function getAllLocalToRun()
+    {
+        $list = <<<EOT
+#NAMESPACE_BEGIN XXXX
+#CLI Test\RunAll@runAllBusiness
+#CLI Test\RunAll@runAllModel
+EOT;
+    }
     public function runAllController()
     {
         //@controllers

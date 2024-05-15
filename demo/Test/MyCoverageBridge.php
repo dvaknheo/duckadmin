@@ -9,20 +9,19 @@ use DuckPhp\Core\App;
 use DuckPhp\Core\Console;
 use DuckPhp\Core\EventManager;
 use DuckPhp\Foundation\Helper;
+use DuckPhp\Core\PhaseContainer;
 
 class MyCoverageBridge extends MyCoverage
 {
     //    use SingletonTrait;
     public $options =[
-        'path' => '',
-        'path_src' => 'src',
-        'path_dump' => 'test_coveragedumps',
-        'path_report' => 'test_reports',
-        'group'=>'',
-        'name'=>'',
+        'test_server_port'=> '',
     ];
+    protected $is_save_session=false;
+    protected $session_id='';
     public function __construct()
     {
+        $this->options = array_replace_recursive($this->options, (new parent())->options); //merge parent's options;
         parent::__construct();
     }
     public function getRuntimePath()
@@ -35,10 +34,10 @@ class MyCoverageBridge extends MyCoverage
     {
         parent::init($options, $context);
         $path = $this->getRuntimePath();
-        $this->options['path']=$path;
+        $this->options['path'] = $path;
         $this->options['path_src'] = realpath(__DIR__.'/../').'/src';
-        $group = $this->getTestGroup();
-        $this->options['group'] = $group; //$this->getTestGroup();
+        
+        $this->options['group'] = $this->getTestGroup();
         
         Console::_()->regCommandClass(App::Current()->options['cli_command_prefix']??App::Phase(), App::Phase(), [static::class]);
         EventManager::_()->on([App::Phase(),'onBeforeRun'],[static::class,'OnBeforeRun']);
@@ -55,36 +54,25 @@ class MyCoverageBridge extends MyCoverage
     }
     public function _OnBeforeRun()
     {
-        if (PHP_SAPI === 'cli' && App::Current()->options['cli_enable']) {
-            return;
-        }
-        
         if(!$this->options['group']){
             return;
         }
+        if (PHP_SAPI === 'cli' && App::Current()->options['cli_enable']) {
+            //TODO console mode
+            return;
+        }
         
-        $name = $this->getTestName();
-        $this->options['name'] = $name;
+        $this->options['name'] = $this->getTestName();
         
+        //// save list
         $path_dump = $this->getSubPath('path_dump');
         @mkdir($path_dump);
-        
-        ////[[[[
-        $data ='';
-        $session_id = Helper::COOKIE('PHPSESSID','');
-        $post = Helper::POST();
-        $post = http_build_query($post);
-        if($post){
-            $data ="#POST {$post}\n";
-        }
-        $uri = Helper::SERVER('REQUEST_URI','');
-        $data.=$uri ."\n";
-        ////]]]]
-        file_put_contents($path_dump.$this->options['group'].'.list',$data,FILE_APPEND);
-        
+        $data =$this->getCommandToSave();
+        file_put_contents($path_dump.$this->options['group'].'.list',$data,FILE_APPEND); 
         ////////////
         $this->doBegin();
     }
+    
     public function _OnAfterRun()
     {
         if (PHP_SAPI === 'cli' && App::Current()->options['cli_enable']) {
@@ -93,11 +81,37 @@ class MyCoverageBridge extends MyCoverage
         ///////////////
         $this->doEnd();
     }
-    protected function getTestGroup()
+    protected function getCommandToSave()
+    {
+        $data ='';
+        $post = Helper::POST();
+        $post = http_build_query($post);
+        if($post){
+            $data ="#POST {$post}\n";
+        }
+        $uri = Helper::SERVER('REQUEST_URI','');
+        $data.=$uri ."\n";
+        return $data;
+    }
+    protected function watchingBegin($name)
+    {
+        $path = $this->getRuntimePath();
+        file_put_contents($path.'MyCoverage.watching.txt',$name);
+    }
+    protected function watchingEnd()
+    {
+        $path = $this->getRuntimePath();
+        @unlink($path.'MyCoverage.watching.txt');
+    }
+    protected function watchingGetName()
     {
         $path = $this->getRuntimePath();
         $group = @file_get_contents($path.'MyCoverage.watching.txt');
-        return $group;
+        return $group;    
+    }
+    protected function getTestGroup()
+    {
+        return $this->watchingGetName();
     }
     protected function getTestName()
     {
@@ -108,6 +122,45 @@ class MyCoverageBridge extends MyCoverage
         $post = http_build_query($post);
         $ret =implode(";",[$uri,$post,$session_id,$method]);
         return $ret;
+    }
+    protected function get_all_namepace_phase_map()
+    {
+        $classes = PhaseContainer::GetContainerInstanceEx()->publics;
+        $ret =[];
+        foreach($classes as $class =>$_){
+            if(!isset($class::_()->options['namespace'])){continue;}
+            $ret[$class::_()->options['namespace'].'\\' ]= $class;
+        }
+        return $ret;
+    }
+    protected function phase_from_class($phase_map ,$class)
+    {
+        foreach ($phase_map as $k=>$v) {
+            if(substr($class,0,strlen($k))===$k){
+                return $v;
+            }
+        }
+        return '';
+    }
+    public function command_testgroup2()
+    {
+        $phase_map = $this->get_all_namepace_phase_map();
+        
+        $command = '#CALL DuckAdmin\Test\RunAll@test';
+        $flag = preg_match('/#CALL\s+([^@]+)@(\w+)/',$command,$m);
+        if(!$flag){ return; }
+        list($command,$class,$method) = $m;
+        
+        $phase = $this->phase_from_class($phase_map,$class);
+        
+        if(!$phase){ return; }
+        
+        // save name ;
+        
+        $last_phase = App::Phase();
+        $class::_()->$method();
+        App::Phase($last_phase);
+        var_dump(DATE(DATE_ATOM));
     }
     /**
      * tests group. use --help for more.
@@ -131,12 +184,12 @@ EOT;
             if($p['watch']===true){
                 $p['watch'] = DATE('Y_m_d_H_i_s');
             }
-            file_put_contents($path.'MyCoverage.watching.txt',$p['watch']);
+            $this->watchingBegin($p['watch']);
             echo "watching {$p['watch']}\n";
             //return;
         }
         if($p['stop']??false){
-            @unlink($path.'MyCoverage.watching.txt');
+            $this->watchingEnd();
             //return;
         }
         if($p['replay']??false){
@@ -151,12 +204,13 @@ EOT;
         var_dump(DATE(DATE_ATOM));
         //
     }
-    protected $is_save_session=false;
-    protected $session_id='';
+
+    protected $post =[];
     protected function replay()
     {
-        $this->is_save_session=true;
-        $list = file(__DIR__.'/request.list');
+        $test_list = $this->getTestList();
+        $this->startServer();
+        $this->post =[];
         foreach($list as $line){
             $request =trim($line);
             if(!$request){
@@ -164,18 +218,31 @@ EOT;
             }
 
             if(substr($request,0,1)==='#'){
-                if(substr($request,0,strlen('#POST '))==='#POST '){
-                    parse_str(substr($request,strlen('#POST ')),$post);
-                    continue;
-                }
-                if(substr($request,0,2)==='##'){
+                $this->readCommand($request);
                 continue;
-                }
             }
             $url ="http://admin.demo.local".$request; //TODO
             $data = $this->curl_file_get_contents([$url,'127.0.0.1'],$post);
-            $post =[];
+            $this->post =[];
         }
+        $this->stopServer();
+    }
+    protected function readCommand($request)
+    {
+        if(substr($request,0,strlen('#POST '))==='#POST '){
+            parse_str(substr($request,strlen('#POST ')),$post);
+            return;
+        }
+        if(substr($request,0,2)==='##'){
+            return;
+        }
+        if(substr($request,0,strlen('#CALL '))==='#CALL '){
+            // 我们这里写入命令，调用方法， Phase 要怎么处理呢？
+        }
+    }
+    protected function getTestList()
+    {
+        $list = file(__DIR__.'/request.list');
     }
     protected function curl_file_get_contents($url, $post =[])
     {
@@ -201,9 +268,8 @@ EOT;
             curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post));
         }
         if($this->session_id){
-            curl_setopt($ch, CURLOPT_COOKIE, "PHPSESSID={$this->session_id}");
+            curl_setopt($ch, CURLOPT_COOKIE, "PHPSESSID={$this->session_id}"); //TODO
         }
-        
         
         $data = curl_exec($ch);
         
@@ -224,21 +290,21 @@ EOT;
         curl_close($ch);
         return $data !== false?$data:'';
     }
-    public function foo()
+    public function startServer()
     {
-        $port = 9529;
+        $server_path = App::PathForProject();
         $server_options=[
-            'path'=>$path_app,
+            'path'=>$server_path,
             'path_document'=>'public',
-            'port'=>$port,
-            'background'=>true,
-            
+            'port'=>$this->options['test_server_port'],
         ];
+        $server_options['background'] =true;
         HttpServer::RunQuickly($server_options);
         //echo HttpServer::_()->getPid();
         sleep(1);// ugly
-        $host ="http://127.0.0.1:{$port}/";
-        //anything.
+    }
+    public function stopServer()
+    {
         HttpServer::_()->close();
     }
 }

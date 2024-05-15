@@ -6,6 +6,7 @@
 
 namespace DuckAdmin\Model;
 
+use DuckPhp\Core\App;
 use DuckPhp\Foundation\SimpleModelTrait;
 use DuckPhp\Helper\ModelHelperTrait;
 
@@ -118,7 +119,13 @@ class Base
     }
     protected function getAllowColumns()
     {
-        //TODO Sqlite
+        if(App::Current()->options['database_driver'] === 'sqlite'){
+            $sql = "pragma table_info(".$this->table().")";
+            $allow_column = self::Db()->fetchAll("desc `".$this->table()."`");
+            $allow_column = array_column($allow_column, 'name', 'name');
+            return $allow_column;
+        }
+        //select * from sqlite_master where type = "table";
         $allow_column = self::Db()->fetchAll("desc `".$this->table()."`");
         $allow_column = array_column($allow_column, 'Field', 'Field');
 

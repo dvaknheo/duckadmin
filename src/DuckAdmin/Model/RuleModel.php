@@ -207,14 +207,6 @@ class RuleModel extends Base
         return $ret;
     }	
     ///////////////////////
-    public function descTable()
-    {
-        //throw new \Exception('TODO: compat with sqlite');
-        $sql ="desc `wa_rules`";
-        $data = static::Db()->fetchAll($sql);
-        $columns = array_column($data, 'Type', 'Field');
-        return $columns;
-    }
     ////////////////
     /**
      * 获取菜单中某个(些)字段的值
