@@ -28,10 +28,9 @@ class AccountBusiness extends Base
             'id' => $admin['id'],
             'username' => $admin['username'],
             'nickname' => $admin['nickname'],
-            'avatar' => $admin['avatar'],
             'email' => $admin['email'],
             'mobile' => $admin['mobile'],
-            'isSupperAdmin' =>CommonService::_()->isSupperAdmin($admin['id']), //TODO
+            'isSupperAdmin' =>CommonService::_()->isSupperAdmin($admin['id']?$admin['id']:0), //TODO
         ];
         
         return $info;

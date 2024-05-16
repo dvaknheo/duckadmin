@@ -44,17 +44,9 @@ class DemoAppWithDev extends DemoApp
     }
     public static function _GetTestList()
     {
-        //$routes_text = \DuckAdmin\Test\RunAll::_()->getAllRouteToRun();
-        
-        $routes_text ='';
-        
-        $routes_text .= "#CALL DuckAdmin\\Test\\RunAll@getAllRouteToRun\n";
-        //$routes_text .= "#CALL DuckAdmin\\Model\\Base@foo\n";
-        return $routes_text;
-       
+        $routes_text= \DuckAdmin\Test\RunAll::_()->getAllRouteToRun();
         $prefix=\DuckAdmin\System\DuckAdminApp::_()->options['controller_url_prefix'];
         $routes_text = str_replace('#WEB ',$prefix,$routes_text);
         return $routes_text;
     }
-
 }

@@ -156,7 +156,7 @@ class MyCoverageBridge extends MyCoverage
         $test_list = \call_user_func($callback);
         $test_list = explode("\n",$test_list);
         
-        $this->is_save_session = false;
+        $this->is_save_session = true;
         $this->session_id = '';
         $this->post = [];
         
@@ -241,6 +241,7 @@ class MyCoverageBridge extends MyCoverage
             
             $flag = preg_match('/PHPSESSID=(\w+)/',$headers,$m);
             if($flag){
+
                 $this->session_id = $m[1];
                 $this->is_save_session = false;
             }

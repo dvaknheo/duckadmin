@@ -48,7 +48,7 @@ class AccountController extends Base
         
         $flag = AdminAction::_()->doCheckCaptcha($captcha);
         if (Helper::SERVER('REMOTE_ADDR')!=='127.0.0.1') {
-            Helper::ControllerThrowOn(!$flag, '验证码错误',1);
+            Helper::ControllerThrowOn(!$flag, '验证码错误',1); //@codeCoverageIgnore
         }else{
             //__debug_log("skip captcha for test");
         }
