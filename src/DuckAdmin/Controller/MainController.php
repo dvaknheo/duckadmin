@@ -25,8 +25,8 @@ class MainController extends Base
      */
     public function index()
     {
-        $admin = AdminAction::_()->getCurrentAdmin();
-        if (!$admin) {
+        $admin_id = AdminAction::_()->getCurrentAdminId();
+        if (!$admin_id) {
             Helper::Show([], 'account/login');
             return;
         }
@@ -34,6 +34,8 @@ class MainController extends Base
     }
     public function dashboard()
     {
-        Helper::Show([], 'index/dashboard');
+        // 这里要验证， 捂脸
+        $data = [];
+        Helper::Show($data, 'index/dashboard');
     }
 }

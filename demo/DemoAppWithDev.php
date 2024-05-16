@@ -44,9 +44,12 @@ class DemoAppWithDev extends DemoApp
     }
     public static function _GetTestList()
     {
-        $routes_text= \DuckAdmin\Test\RunAll::_()->getAllRouteToRun();
-        $prefix=\DuckAdmin\System\DuckAdminApp::_()->options['controller_url_prefix'];
-        $routes_text = str_replace('#WEB ',$prefix,$routes_text);
-        return $routes_text;
+        $str = '';
+        $str .= \DuckAdmin\Test\Tester::_()->getTestList();
+        $str .= \DuckUser\Test\Tester::_()->getTestList();
+        $str .= \DuckUserManager\Test\Tester::_()->getTestList();
+        $str .= \SimpleBlog\Test\Tester::_()->getTestList();
+        
+        return $str;
     }
 }

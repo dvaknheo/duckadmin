@@ -126,20 +126,19 @@ class AccountBusiness extends Base
     }
     public function update($admin_id, $data)
     {
-        $update_data = AdminModel::_()->updateAdmin($admin_id,$data);
-        
-        foreach ($update_data as $key => $value) {
-            $admin[$key] = $value;
+        if(!$data){
+            return [];
         }
-        return $admin;
+        AdminModel::_()->updateAdmin($admin_id,$data);
+        
     }
     public function changePassword($admin_id, $old_password, $password, $password_cofirm)
     {
-        Helper::BusinessThrowOn(!$password, '密码不能为空',2);
-        Helper::BusinessThrowOn($password !== $password_cofirm, '两次密码输入不一致',3);
+        Helper::BusinessThrowOn(!$password, '密码不能为空',1);
+        Helper::BusinessThrowOn($password !== $password_cofirm, '两次密码输入不一致',2);
         
         $flag = AdminModel::_()->checkPasword($admin_id, $old_password);
-        Helper::BusinessThrowOn(!$flag, '原始密码不正确', 1);
+        Helper::BusinessThrowOn(!$flag, '原始密码不正确', 3);
         AdminModel::_()->updateAdminPassword($admin_id, $password);
     }
 }

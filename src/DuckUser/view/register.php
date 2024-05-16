@@ -14,7 +14,7 @@
 <hr>
         <main class="py-4">
 
-
+(实际应用请重写)
 <form method="POST" action="<?= __h($url_register); ?>">
     <?= $csrf_field ?>
 <?php if (isset($error)) { ?>

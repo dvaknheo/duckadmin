@@ -77,7 +77,6 @@ class AccountController extends Base
     {
         $admin = AdminAction::_()->getCurrentAdmin();
         $data = AccountBusiness::_()->getAccountInfo($admin);
-        //$data['token'] = 'TODO TOKEN';////AdminSession::_()->SessionId();
         
         return Helper::Success($data);
     }
@@ -103,11 +102,13 @@ class AccountController extends Base
      */
     public function password()
     {
+        if(!Helper::POST()){
+            return;
+        }
         $password = Helper::POST('password');
         $password_confirm = Helper::POST('password_confirm');
         $old_password = Helper::POST('old_password');
         
-
         AccountBusiness::_()->changePassword(Helper::AdminId(), $old_password, $password, $password_confirm );
         Helper::Success();
     }

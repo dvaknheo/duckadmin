@@ -1,9 +1,12 @@
 <?php
 namespace DuckAdmin\Test;
-use DuckAdmin\Model\AdminModel;
-//@codeCoverageIgnoreStart
-trait RunAllTrait
+
+use DuckPhp\Foundation\SimpleSingletonTrait;
+
+class Tester
 {
+    use SimpleSingletonTrait;
+    
     public function test()
     {
         AdminModel::_()->foo();
@@ -14,10 +17,10 @@ trait RunAllTrait
         //$this->runAllModel();
         //$this->runAllExtract();
     }
-    public function getAllRouteToRun()
+    public function getTestList()
     {
+        //#COMMAND FUNCTION_METHOD
         $list = <<<EOT
-#COMMAND FUNCTION_METHOD
 #POST username=admin&password=123456&captcha=7268
 
 #WEB account/login
@@ -59,6 +62,8 @@ trait RunAllTrait
 #WEB 
 
 EOT;
+        $prefix = \DuckAdmin\System\DuckAdminApp::_()->options['controller_url_prefix'];
+        $list = str_replace('#WEB ',$prefix,$list);
         return $list;
     }
     public function runAllController()
@@ -211,5 +216,3 @@ EOT;
     //// start ////
     
 }
-
-//@codeCoverageIgnoreEnd
