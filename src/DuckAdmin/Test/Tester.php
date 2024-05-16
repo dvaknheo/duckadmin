@@ -22,19 +22,24 @@ class Tester
         //#COMMAND FUNCTION_METHOD
         $list = <<<EOT
 #POST username=admin&password=123456&captcha=7268
-
 #WEB account/login
-#WEB account/index
 #WEB account/info
+#WEB account/index
+#WEB account/captcha
+#POST old_password=123456&password=654321&password_confirm=654321
 #WEB account/password
-#WEB account/update
-###WEB account/captcha
-
+#POST old_password=654321&password=123456&password_confirm=123456
+#WEB account/password
 #WEB admin/index
+#WEB account/update
+##WEB account/password
+
+EOT;/*
 #WEB admin/select
 #WEB admin/insert
 #WEB admin/update
 #WEB admin/delete
+#WEB admin/index
 
 #WEB config/index
 #WEB config/get
@@ -56,12 +61,13 @@ class Tester
 #WEB rule/permission
 #WEB rule/insert
 #WEB rule/update
-###WEB rule/delete
+#WEB rule/delete
 
 #WEB account/logout
 #WEB 
-
 EOT;
+//*/
+
         $prefix = \DuckAdmin\System\DuckAdminApp::_()->options['controller_url_prefix'];
         $list = str_replace('#WEB ',$prefix,$list);
         return $list;

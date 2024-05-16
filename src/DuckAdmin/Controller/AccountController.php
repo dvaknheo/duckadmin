@@ -93,8 +93,8 @@ class AccountController extends Base
     public function update()
     {
         AccountBusiness::_()->update(Helper::AdminId(),Helper::POST());
-        $admin = AccountBusiness::_()->getAdmin($admin_id);
-        AdminAction::_()->setCurrentAdmin($admin);
+        //$admin = AccountBusiness::_()->getAdmin($admin_id);
+        //AdminAction::_()->setCurrentAdmin($admin);
         
         Helper::Success();
     }

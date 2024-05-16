@@ -161,7 +161,7 @@ class MyCoverageBridge extends MyCoverage
         $this->post = [];
         
         $this->doBegin();
-        $this->startServer();
+        
         foreach($test_list as $line){
             $request =trim($line);
             if(!$request){
@@ -172,7 +172,7 @@ class MyCoverageBridge extends MyCoverage
                 $this->readCommand($request);
                 continue;
             }
-
+            $this->startServer();
             $url ="http://127.0.0.1:{$this->options['test_server_port']}".$this->options['test_homepage'].$request;
             $data = $this->curl_file_get_contents([$url,'127.0.0.1'],$this->post);
             if($this->options['test_echo_back']??false){
@@ -253,8 +253,12 @@ class MyCoverageBridge extends MyCoverage
         $data = ($data !== false)?$data:'';
         return $data;
     }
+    protected $is_server_started=false;
     protected function startServer()
     {
+        if($this->is_server_started){
+            return;
+        }
         $server_path = App::PathForProject();
         $server_options=[
             'path'=>$server_path,
@@ -268,10 +272,12 @@ class MyCoverageBridge extends MyCoverage
         HttpServer::RunQuickly($server_options);
         //echo HttpServer::_()->getPid();
         sleep(1);// ugly
+        $this->is_server_started=true;
     }
     protected function stopServer()
     {
         HttpServer::_()->close();
+        $this->is_server_started=false;
     }
     //////////
     protected function explainWeb($request)
