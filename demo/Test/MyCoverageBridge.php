@@ -7,15 +7,19 @@ namespace Demo\Test;
 
 use DuckPhp\Core\App;
 use DuckPhp\Core\Console;
-use DuckPhp\Core\EventManager;
-use DuckPhp\Foundation\Helper;
 use DuckPhp\Core\PhaseContainer;
+use DuckPhp\Foundation\Helper;
+use DuckPhp\HttpServer\HttpServer;
 
 class MyCoverageBridge extends MyCoverage
 {
-    //    use SingletonTrait;
     public $options =[
-        'test_server_port'=> '',
+        'test_server_port'=> 8080,
+        'test_server_host'=> '',
+        'test_homepage' =>'/index_dev.php/',
+        'test_path_document'=>'public',
+        'test_new_server'=>true,
+        //'test_list_callback'=>''
     ];
     protected $is_save_session=false;
     protected $session_id='';
@@ -24,24 +28,22 @@ class MyCoverageBridge extends MyCoverage
         $this->options = array_replace_recursive($this->options, (new parent())->options); //merge parent's options;
         parent::__construct();
     }
-    public function getRuntimePath()
-    {
-        $path = static::SlashDir(App::Root()->options['path']);
-        $path_runtime = static::SlashDir(App::Root()->options['path_runtime']);
-        return static::IsAbsPath($path_runtime) ? $path_runtime : $path.$path_runtime;
-    }
     public function init(array $options, ?object $context = null)
     {
+
         parent::init($options, $context);
-        $path = $this->getRuntimePath();
+        $path = App::PathForRuntime();
+
         $this->options['path'] = $path;
-        $this->options['path_src'] = realpath(__DIR__.'/../').'/src';
-        
-        $this->options['group'] = $this->getTestGroup();
-        
-        Console::_()->regCommandClass(App::Current()->options['cli_command_prefix']??App::Phase(), App::Phase(), [static::class]);
-        EventManager::_()->on([App::Phase(),'onBeforeRun'],[static::class,'OnBeforeRun']);
-        EventManager::_()->on([App::Phase(),'onAfterRun'],[static::class,'OnAfterRun']);
+        $this->options['path_src'] = realpath(__DIR__.'/../../').'/src';
+
+        $this->options['group'] = $this->watchingGetName();
+
+        $prefix = App::Current()->options['cli_command_prefix']??App::Phase();
+        $prefix = App::IsRoot()?'':$prefix;
+        Console::_()->regCommandClass($prefix, App::Phase(), [static::class]);
+        App::OnEvent([App::Phase(),'onBeforeRun'],[static::class,'OnBeforeRun']);
+        App::OnEvent([App::Phase(),'onAfterRun'],[static::class,'OnAfterRun']);
     }
     
     public static function OnBeforeRun()
@@ -67,7 +69,7 @@ class MyCoverageBridge extends MyCoverage
         //// save list
         $path_dump = $this->getSubPath('path_dump');
         @mkdir($path_dump);
-        $data =$this->getCommandToSave();
+        $data =$this->getHttpStringToLog();
         file_put_contents($path_dump.$this->options['group'].'.list',$data,FILE_APPEND); 
         ////////////
         $this->doBegin();
@@ -81,7 +83,7 @@ class MyCoverageBridge extends MyCoverage
         ///////////////
         $this->doEnd();
     }
-    protected function getCommandToSave()
+    protected function getHttpStringToLog()
     {
         $data ='';
         $post = Helper::POST();
@@ -95,23 +97,19 @@ class MyCoverageBridge extends MyCoverage
     }
     protected function watchingBegin($name)
     {
-        $path = $this->getRuntimePath();
+        $path = App::PathForRuntime();
         file_put_contents($path.'MyCoverage.watching.txt',$name);
     }
     protected function watchingEnd()
     {
-        $path = $this->getRuntimePath();
+        $path = App::PathForRuntime();
         @unlink($path.'MyCoverage.watching.txt');
     }
     protected function watchingGetName()
     {
-        $path = $this->getRuntimePath();
+        $path = App::PathForRuntime();
         $group = @file_get_contents($path.'MyCoverage.watching.txt');
         return $group;    
-    }
-    protected function getTestGroup()
-    {
-        return $this->watchingGetName();
     }
     protected function getTestName()
     {
@@ -123,95 +121,39 @@ class MyCoverageBridge extends MyCoverage
         $ret =implode(";",[$uri,$post,$session_id,$method]);
         return $ret;
     }
-    protected function get_all_namepace_phase_map()
+    //////////////////
+    
+    private $phase_map =[];
+    private function get_all_namepace_phase_map()
     {
         $classes = PhaseContainer::GetContainerInstanceEx()->publics;
-        $ret =[];
+        $phase_map =[];
         foreach($classes as $class =>$_){
             if(!isset($class::_()->options['namespace'])){continue;}
             $ret[$class::_()->options['namespace'].'\\' ]= $class;
         }
-        return $ret;
+        return $phase_map;
     }
-    protected function phase_from_class($phase_map ,$class)
+    private function phase_from_class($class)
     {
-        foreach ($phase_map as $k=>$v) {
+        if(!$this->phase_map){
+            $this->phase_map = $this->get_all_namepace_phase_map();
+        }
+        foreach ($this->phase_map as $k=>$v) {
             if(substr($class,0,strlen($k))===$k){
                 return $v;
             }
         }
         return '';
     }
-    public function command_testgroup2()
-    {
-        $phase_map = $this->get_all_namepace_phase_map();
-        
-        $command = '#CALL DuckAdmin\Test\RunAll@test';
-        $flag = preg_match('/#CALL\s+([^@]+)@(\w+)/',$command,$m);
-        if(!$flag){ return; }
-        list($command,$class,$method) = $m;
-        
-        $phase = $this->phase_from_class($phase_map,$class);
-        
-        if(!$phase){ return; }
-        
-        // save name ;
-        
-        $last_phase = App::Phase();
-        $class::_()->$method();
-        App::Phase($last_phase);
-        var_dump(DATE(DATE_ATOM));
-    }
-    /**
-     * tests group. use --help for more.
-     */
-    public function command_testgroup()
-    {
-        $p = Console::_()->getCliParameters();
-        if($p['help']??false){
-            $str = <<<EOT
---watch {name}
---stop
---replay
---report [a b c]
-EOT;
-            echo $str;
-            return;
-        }
-        $path = $this->getRuntimePath();
-        $p = Console::_()->getCliParameters();
-        if($p['watch']??false){
-            if($p['watch']===true){
-                $p['watch'] = DATE('Y_m_d_H_i_s');
-            }
-            $this->watchingBegin($p['watch']);
-            echo "watching {$p['watch']}\n";
-            //return;
-        }
-        if($p['stop']??false){
-            $this->watchingEnd();
-            //return;
-        }
-        if($p['replay']??false){
-            $this->replay();
-        }
-        
-        if($p['report']??false){
-            $groups = is_array($p['report'])?$p['report']:[];
-            $this->createReport($groups);
-        }
-        
-        var_dump(DATE(DATE_ATOM));
-        //
-    }
 
     protected $post =[];
     protected function replay()
     {
-        $test_list = $this->getTestList();
         $this->startServer();
+        $test_list = $this->getTestList();
         $this->post =[];
-        foreach($list as $line){
+        foreach($test_list as $line){
             $request =trim($line);
             if(!$request){
                 continue;
@@ -221,8 +163,12 @@ EOT;
                 $this->readCommand($request);
                 continue;
             }
-            $url ="http://admin.demo.local".$request; //TODO
-            $data = $this->curl_file_get_contents([$url,'127.0.0.1'],$post);
+
+            $url ="http://127.0.0.1:{$this->options['test_server_port']}".$this->options['test_homepage'].$request;
+            $data = $this->curl_file_get_contents([$url,'127.0.0.1'],$this->post);
+            if($this->options['test_echo_back']??false){
+                echo substr($data,0,100);
+            }
             $this->post =[];
         }
         $this->stopServer();
@@ -230,19 +176,30 @@ EOT;
     protected function readCommand($request)
     {
         if(substr($request,0,strlen('#POST '))==='#POST '){
-            parse_str(substr($request,strlen('#POST ')),$post);
+            $this->explainPost($request);
             return;
         }
         if(substr($request,0,2)==='##'){
             return;
         }
         if(substr($request,0,strlen('#CALL '))==='#CALL '){
+            $this->explainCall($request);
+            // 我们这里写入命令，调用方法， Phase 要怎么处理呢？
+        }
+        if(substr($request,0,strlen('#COMMAND '))==='#COMMAND '){
             // 我们这里写入命令，调用方法， Phase 要怎么处理呢？
         }
     }
     protected function getTestList()
     {
-        $list = file(__DIR__.'/request.list');
+        $routes_text = \DuckAdmin\Test\RunAll::_()->getAllRouteToRun();
+        $prefix=\DuckAdmin\System\DuckAdminApp::_()->options['controller_url_prefix'];
+        $routes_text = str_replace('#WEB ',$prefix,$routes_text);
+        return explode("\n",$routes_text);
+    }
+    public function prepareCurl($ch)
+    {
+        return $ch;
     }
     protected function curl_file_get_contents($url, $post =[])
     {
@@ -270,7 +227,7 @@ EOT;
         if($this->session_id){
             curl_setopt($ch, CURLOPT_COOKIE, "PHPSESSID={$this->session_id}"); //TODO
         }
-        
+        $this->prepareCurl($ch);
         $data = curl_exec($ch);
         
         if($this->is_save_session){
@@ -288,23 +245,115 @@ EOT;
         echo "\n";
         //echo $data;
         curl_close($ch);
-        return $data !== false?$data:'';
+        $data = ($data !== false)?$data:'';
+        return $data;
     }
-    public function startServer()
+    protected function startServer()
     {
         $server_path = App::PathForProject();
         $server_options=[
             'path'=>$server_path,
-            'path_document'=>'public',
+            'path_document'=>$this->options['test_path_document'],
             'port'=>$this->options['test_server_port'],
         ];
         $server_options['background'] =true;
+        if($this->options['test_new_server']){
+            HttpServer::_(new HttpServer()); 
+        }
         HttpServer::RunQuickly($server_options);
         //echo HttpServer::_()->getPid();
         sleep(1);// ugly
     }
-    public function stopServer()
+    protected function stopServer()
     {
         HttpServer::_()->close();
+    }
+    //////////
+
+    protected function explainPost($request)
+    {
+        parse_str(substr($request,strlen('#POST ')),$post);
+        $this->post = $post;
+    }
+    protected function explainCall($command)
+    {
+        $flag = preg_match('/#CALL\s+([^@]+)@(\w+)/',$command,$m);
+        if(!$flag){ return; }
+        list($command,$class,$method) = $m;
+        $phase = $this->phase_from_class($class);
+        if(!$phase){ return; }
+        
+        // save name ;
+        $this->options['name'] = $command;
+        $last_phase = App::Phase();
+        $class::_()->$method();
+        App::Phase($last_phase);
+
+    }
+    /**
+     * tests group. use --help for more.
+     */
+    public function command_testgroup()
+    {
+        $p = Console::_()->getCliParameters();
+        if($p['help']??false){
+            $str = <<<EOT
+--watch {name}
+--stop
+--replay
+--report [a b c]
+EOT;
+            echo $str;
+            return;
+        }
+        $path = App::PathForRuntime();
+        $p = Console::_()->getCliParameters();
+        if($p['watch']??false){
+            if($p['watch']===true){
+                $p['watch'] = DATE('Y_m_d_H_i_s');
+            }
+            $this->watchingBegin($p['watch']);
+            echo "watching {$p['watch']}\n";
+            //return;
+        }
+        if($p['stop']??false){
+            $this->watchingEnd();
+            //return;
+        }
+        if($p['replay']??false){
+            $this->replay();
+        }
+        
+        if($p['report']??false){
+            $groups = is_array($p['report'])?$p['report']:[];
+            $this->createReport($groups);
+        }
+        
+        var_dump(DATE(DATE_ATOM));
+        //
+    }
+    public function command_testgroup2()
+    {
+        $command = '#CALL DuckAdmin\Test\RunAll@test';
+        $this->explain_call($command);
+        var_dump(DATE(DATE_ATOM));
+    }
+    public function command_gentest()
+    {
+        $this->startServer();
+        echo "waiting...\n";
+      
+        $request ='app/admin/index';
+        //$data = $this->curl_file_get_contents("http://127.0.0.1:{$this->options['test_server_port']}".$this->options['test_homepage'],$this->post);
+        $this->curl_file_get_contents(["http://admin.demo.local".$this->options['test_homepage'],'127.0.0.1:8080'],$this->post);
+        var_dump($data);
+        
+        $this->stopServer();
+        var_dump(DATE(DATE_ATOM));return;
+        $x=App::Root()->options;
+        $last_phase = App::Phase(\DuckAdmin\System\DuckAdminApp::class);
+        //$routes = TestFileCreator::_()->genRunFile();
+        App::Phase($last_phase);
+        var_dump(DATE(DATE_ATOM));
     }
 }

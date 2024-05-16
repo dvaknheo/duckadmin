@@ -20,25 +20,15 @@ class DemoAppWithDev extends DemoApp
     public function __construct()
     {
         parent::__construct();
-        
         $path_src = realpath(__DIR__.'/../src/').'/';
         $this->options['ext'][MyCoverageBridge::class]=[
             'path_src'=> $path_src,
         ];
-        $this->options['cli_command_classes'][] = MyCoverageBridge::class;
     }
     public function action_index()
     {
         var_dump("dev");
-        Helper::Show([],'main');
+        parent::action_index();
     }
-    public function command_gentest($uri = '', $post = false)
-    {
-    
-        $x=static::Root()->options;
-        $last_phase = static::Phase(\DuckAdmin\System\DuckAdminApp::class);
-        //$routes = TestFileCreator::_()->genRunFile();
-        static::Phase($last_phase);
-        var_dump(DATE(DATE_ATOM));
-    }
+
 }

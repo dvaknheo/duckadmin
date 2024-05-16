@@ -7,6 +7,7 @@
 namespace DuckAdmin\Controller;
 
 use DuckAdmin\Business\AccountBusiness;
+use DuckAdmin\Core\App;
 
 /**
  * 系统设置
@@ -47,7 +48,9 @@ class AccountController extends Base
         $captcha = Helper::Post('captcha');
         
         $flag = AdminAction::_()->doCheckCaptcha($captcha);
-        Helper::ControllerThrowOn(!$flag, '验证码错误',1);
+        if (!(App::Setting('skip_captcha')??false)) {
+            Helper::ControllerThrowOn(!$flag, '验证码错误',1);
+        }
         
         $admin = AccountBusiness::_()->login($username, $password);
         AdminAction::_()->setCurrentAdmin($admin);

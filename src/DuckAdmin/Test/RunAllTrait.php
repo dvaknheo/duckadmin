@@ -10,54 +10,56 @@ trait RunAllTrait
     }
     public function runInConsole()
     {
-        $this->runAllBusiness();
-        $this->runAllModel();
-        $this->runAllExtract();
+        //$this->runAllBusiness();
+        //$this->runAllModel();
+        //$this->runAllExtract();
     }
     public function getAllRouteToRun()
     {
         $list = <<<EOT
+#COMMAND FUNCTION_METHOD
 #POST username=admin&password=123456&captcha=7268
 
-app/admin/account/login
-app/admin/account/index
-app/admin/account/info
-app/admin/account/password
-app/admin/account/update
-##app/admin/account/captcha
+#WEB account/login
+#WEB account/index
+#WEB account/info
+#WEB account/password
+#WEB account/update
+###WEB account/captcha
 
-app/admin/admin/index
-app/admin/admin/select
-app/admin/admin/insert
-app/admin/admin/update
-app/admin/admin/delete
+#WEB admin/index
+#WEB admin/select
+#WEB admin/insert
+#WEB admin/update
+#WEB admin/delete
 
-app/admin/config/index
-app/admin/config/get
-app/admin/config/update
+#WEB config/index
+#WEB config/get
+#WEB config/update
 
-app/admin/
-app/admin/dashboard
+#WEB 
+#WEB dashboard
 
-app/admin/role/index
-app/admin/role/select
-app/admin/role/insert
-app/admin/role/update
-##app/admin/role/delete
-app/admin/role/rules
+#WEB role/index
+#WEB role/select
+#WEB role/insert
+#WEB role/update
+###WEB role/delete
+#WEB role/rules
 
-app/admin/rule/index
-app/admin/rule/select
-app/admin/rule/get
-app/admin/rule/permission
-app/admin/rule/insert
-app/admin/rule/update
-##app/admin/rule/delete
+#WEB rule/index
+#WEB rule/select
+#WEB rule/get
+#WEB rule/permission
+#WEB rule/insert
+#WEB rule/update
+###WEB rule/delete
 
-app/admin/account/logout
-app/admin/
+#WEB account/logout
+#WEB 
 
 EOT;
+        return $list;
     }
     public function runAllController()
     {
