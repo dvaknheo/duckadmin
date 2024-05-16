@@ -39,8 +39,12 @@ class AdminModel extends Base
     }
     public function doSelect(array $where, string $field = null, string $order= 'desc' ,$page=1,$page_size=10)
     {
-        // 隔离BaseModel 的调用
-        return parent::doSelect($where, $field, $order,$page,$page_size);
+        // 这里要去除密码行
+        $ret =parent::doSelect($where, $field, $order,$page,$page_size);
+        foreach($ret[0] as &$v){
+            unset($v['password']);
+        }
+        return $ret;
     }
 
     public function getAdminByName($username)

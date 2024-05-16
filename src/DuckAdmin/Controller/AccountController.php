@@ -7,7 +7,6 @@
 namespace DuckAdmin\Controller;
 
 use DuckAdmin\Business\AccountBusiness;
-use DuckAdmin\Core\App;
 
 /**
  * 系统设置
@@ -48,8 +47,10 @@ class AccountController extends Base
         $captcha = Helper::Post('captcha');
         
         $flag = AdminAction::_()->doCheckCaptcha($captcha);
-        if (!(App::Setting('skip_captcha')??false)) {
+        if (Helper::SERVER('REMOTE_ADDR')!=='127.0.0.1') {
             Helper::ControllerThrowOn(!$flag, '验证码错误',1);
+        }else{
+            //__debug_log("skip captcha for test");
         }
         
         $admin = AccountBusiness::_()->login($username, $password);

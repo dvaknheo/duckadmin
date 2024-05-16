@@ -34,8 +34,6 @@ class MainController extends Base
     }
     public function dashboard()
     {
-        var_dump(DATE(DATE_ATOM));return;
-        $dashboard=[];//AllInOnBusiness::_()->getDashboard();
-        return Helper::Show($dashboard, 'index/dashboard');
+        Helper::Show([], 'index/dashboard');
     }
 }

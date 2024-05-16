@@ -21,14 +21,33 @@ class DemoAppWithDev extends DemoApp
     {
         parent::__construct();
         $path_src = realpath(__DIR__.'/../src/').'/';
-        $this->options['ext'][MyCoverageBridge::class]=[
+        
+        $tester_options = [
             'path_src'=> $path_src,
+            'test_server_port'=> 8080,
+            'test_homepage' =>'/index_dev.php/',
+            'test_path_document'=>'public',
+            'test_new_server'=>true,
+            'test_list_callback'=>[static::class,'GetTestList'],
         ];
+        
+        $this->options['ext'][MyCoverageBridge::class] = $tester_options;
     }
     public function action_index()
     {
         var_dump("dev");
         parent::action_index();
+    }
+    public static function GetTestList()
+    {
+        return static::_()->_GetTestList();
+    }
+    public static function _GetTestList()
+    {
+        $routes_text = \DuckAdmin\Test\RunAll::_()->getAllRouteToRun();
+        $prefix=\DuckAdmin\System\DuckAdminApp::_()->options['controller_url_prefix'];
+        $routes_text = str_replace('#WEB ',$prefix,$routes_text);
+        return $routes_text;
     }
 
 }

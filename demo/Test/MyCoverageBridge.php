@@ -19,10 +19,12 @@ class MyCoverageBridge extends MyCoverage
         'test_homepage' =>'/index_dev.php/',
         'test_path_document'=>'public',
         'test_new_server'=>true,
-        //'test_list_callback'=>''
+        'test_list_callback'=>null,
     ];
     protected $is_save_session=false;
     protected $session_id='';
+    protected $post =[];
+
     public function __construct()
     {
         $this->options = array_replace_recursive($this->options, (new parent())->options); //merge parent's options;
@@ -33,7 +35,6 @@ class MyCoverageBridge extends MyCoverage
 
         parent::init($options, $context);
         $path = App::PathForRuntime();
-
         $this->options['path'] = $path;
         $this->options['path_src'] = realpath(__DIR__.'/../../').'/src';
 
@@ -147,12 +148,17 @@ class MyCoverageBridge extends MyCoverage
         return '';
     }
 
-    protected $post =[];
     protected function replay()
     {
+        $callback = $this->options['test_list_callback'];
+        $test_list = \call_user_func($callback);
+        $test_list = explode("\n",$test_list);
+        
+        $this->is_save_session = false;
+        $this->session_id = '';
+        $this->post = [];
+        
         $this->startServer();
-        $test_list = $this->getTestList();
-        $this->post =[];
         foreach($test_list as $line){
             $request =trim($line);
             if(!$request){
@@ -186,17 +192,11 @@ class MyCoverageBridge extends MyCoverage
             $this->explainCall($request);
             // 我们这里写入命令，调用方法， Phase 要怎么处理呢？
         }
-        if(substr($request,0,strlen('#COMMAND '))==='#COMMAND '){
-            // 我们这里写入命令，调用方法， Phase 要怎么处理呢？
+        if(substr($request,0,strlen('#WEB '))==='#WEB '){
+            $this->explainWeb($request);
         }
     }
-    protected function getTestList()
-    {
-        $routes_text = \DuckAdmin\Test\RunAll::_()->getAllRouteToRun();
-        $prefix=\DuckAdmin\System\DuckAdminApp::_()->options['controller_url_prefix'];
-        $routes_text = str_replace('#WEB ',$prefix,$routes_text);
-        return explode("\n",$routes_text);
-    }
+
     public function prepareCurl($ch)
     {
         return $ch;
@@ -269,7 +269,11 @@ class MyCoverageBridge extends MyCoverage
         HttpServer::_()->close();
     }
     //////////
-
+    protected function explainWeb($request)
+    {
+        parse_str(substr($request,strlen('#WEB ')),$post);
+        $this->post = $post;
+    }
     protected function explainPost($request)
     {
         parse_str(substr($request,strlen('#POST ')),$post);
