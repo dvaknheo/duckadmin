@@ -13,6 +13,7 @@ use DuckPhp\HttpServer\HttpServer;
 
 class MyCoverageBridge extends MyCoverage
 {
+    //todo use  global singletonex to replace default singleton function
     public $options =[
         'test_server_port'=> 8080,
         'test_server_host'=> '',
@@ -131,15 +132,16 @@ class MyCoverageBridge extends MyCoverage
         $phase_map =[];
         foreach($classes as $class =>$_){
             if(!isset($class::_()->options['namespace'])){continue;}
-            $ret[$class::_()->options['namespace'].'\\' ]= $class;
+            $phase_map[$class::_()->options['namespace'].'\\' ]= $class;
         }
         return $phase_map;
     }
-    private function phase_from_class($class)
+    private function phaseFromClass($class)
     {
         if(!$this->phase_map){
             $this->phase_map = $this->get_all_namepace_phase_map();
         }
+        
         foreach ($this->phase_map as $k=>$v) {
             if(substr($class,0,strlen($k))===$k){
                 return $v;
@@ -158,6 +160,7 @@ class MyCoverageBridge extends MyCoverage
         $this->session_id = '';
         $this->post = [];
         
+        $this->doBegin();
         $this->startServer();
         foreach($test_list as $line){
             $request =trim($line);
@@ -178,6 +181,7 @@ class MyCoverageBridge extends MyCoverage
             $this->post =[];
         }
         $this->stopServer();
+        $this->doEnd();
     }
     protected function readCommand($request)
     {
@@ -284,15 +288,26 @@ class MyCoverageBridge extends MyCoverage
         $flag = preg_match('/#CALL\s+([^@]+)@(\w+)/',$command,$m);
         if(!$flag){ return; }
         list($command,$class,$method) = $m;
-        $phase = $this->phase_from_class($class);
-        if(!$phase){ return; }
-        
+        $phase = $this->phaseFromClass($class);
+        //if(!$phase){ return; }
         // save name ;
         $this->options['name'] = $command;
+        
+        ////[[[[
+                
+        //// save list
+        $path_dump = $this->getSubPath('path_dump');
+        @mkdir($path_dump);
+        $data = $command ."\n";
+        file_put_contents($path_dump.$this->options['group'].'.list',$data,FILE_APPEND); 
+        ////]]]]
+        
         $last_phase = App::Phase();
+        
         $class::_()->$method();
+        
         App::Phase($last_phase);
-
+        
     }
     /**
      * tests group. use --help for more.
@@ -329,6 +344,7 @@ EOT;
         }
         
         if($p['report']??false){
+            echo "reporting...\n";
             $groups = is_array($p['report'])?$p['report']:[];
             $this->createReport($groups);
         }

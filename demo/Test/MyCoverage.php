@@ -108,7 +108,7 @@ class MyCoverage
         $file = md5($this->options['name']);
         
         (new ReportOfPHP)->process($this->coverage, $path_dump.$file.'.php');
-        $this->coverage = null;
+        //$this->coverage = null;
     }
     public function createReport($groups =[])
     {
