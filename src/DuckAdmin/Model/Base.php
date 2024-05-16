@@ -68,7 +68,7 @@ class Base
                 } elseif ($value[0] == 'not null') {
                     $sql_where.=" and `$column`  not null";
                 } else {
-                    $sql_where.="`$column`  between(".self::Db()->quoteIn($value[1]).")";
+                    $sql_where.=" and `$column`  between".self::Db()->quote($value[0]). ' and '. self::Db()->quote($value[1]);
                 }
             } else {
                 $sql_where.=" and `$column` = ". self::Db()->quote($value);
