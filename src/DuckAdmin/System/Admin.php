@@ -40,7 +40,7 @@ class Admin extends GlobalAdmin
     {
         // 这里如果没登录，我们跳转到 报错页面
         Helper::assignExceptionHandler(ControllerException::class,function(){
-            Helper::Show302('index'); // TODO backurl
+            Helper::Show302('');
         });
         return AdminAction::_()->checkLogin();
     }
@@ -55,6 +55,6 @@ class Admin extends GlobalAdmin
     }
     public function urlForLogout($url_back = null, $ext = null)
     {
-        return __url("logout");
+        return __url("account/logout");
     }
 }

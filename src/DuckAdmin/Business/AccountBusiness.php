@@ -137,8 +137,8 @@ class AccountBusiness extends Base
         Helper::BusinessThrowOn(!$password, '密码不能为空',1);
         Helper::BusinessThrowOn($password !== $password_cofirm, '两次密码输入不一致',2);
         
-        $flag = AdminModel::_()->checkPasword($admin_id, $old_password);
+        $flag = AdminModel::_()->checkPassword($admin_id, $old_password);
         Helper::BusinessThrowOn(!$flag, '原始密码不正确', 3);
-        AdminModel::_()->updateAdminPassword($admin_id, $password);
+        AdminModel::_()->changePassword($admin_id, $password);
     }
 }

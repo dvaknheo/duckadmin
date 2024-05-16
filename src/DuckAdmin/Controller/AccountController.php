@@ -66,7 +66,11 @@ class AccountController extends Base
     public function logout()
     {
         AdminAction::_()->setCurrentAdmin([]);
-        return Helper::Success(0);
+        if(Helper::IsAjax()){
+            Helper::Success(0); //@codeCoverageIgnore
+        }else{
+            Helper::Show302(__url(''));
+        }
     }
 
     /**

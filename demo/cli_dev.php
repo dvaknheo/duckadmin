@@ -14,12 +14,12 @@ if(is_file(__DIR__.'/../../DNMVCS/autoload.php')){
 ////]]]]
 require_once(__DIR__. '/DemoApp.php');
 require_once(__DIR__. '/DemoAppWithDev.php');
-
 require_once(__DIR__. '/FixedWorkermanHttpd.php');
 
 $options=[
 ];
 
-DuckPhp\HttpServer\HttpServer::_(FixedWorkermanHttpd::_());
+//WorkermanHttpd::_()->options['on_init']=
+\DuckPhp\HttpServer\HttpServer::_(FixedWorkermanHttpd::_());
 
 \Demo\DemoAppWithDev::RunQuickly($options);
