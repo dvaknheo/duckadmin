@@ -18,7 +18,7 @@ class AdminAction
     public function checkLogin()
     {
         $admin = $this->refresh_admin_session(true);
-        Helper::ControllerThrowOn(!$admin,"需要登录");
+        Helper::ControllerThrowOn(!$admin,"需要登录",401);
         return $admin;
     }
     /**
@@ -77,8 +77,8 @@ class AdminAction
         $code = 0;
         $msg = '';
         try{
-            $admin = $this->checkLogin();
-            $admin_id =$admin['id'];
+            //$admin = $this->checkLogin(); // 这里不能用checklogin
+            $admin_id =AdminSession::_()->getCurrentAdminId();
             AccountBusiness::_()->canAccess($admin_id, $controller, $action);
         } catch(\Exception $ex) {
             $this->onAuthException($ex);

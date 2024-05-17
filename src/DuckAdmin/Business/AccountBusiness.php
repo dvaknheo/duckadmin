@@ -103,12 +103,12 @@ class AccountBusiness extends Base
         Helper::BusinessThrowOn($admin['status'] != 0, $msg = '账户被禁用', 401);
         
         $roles = AdminRoleModel::_()->getRoles($admin_id);
-        Helper::BusinessThrowOn(!$roles,  '无权限', 2); //当前管理员无角色
+        Helper::BusinessThrowOn(!$roles,  '无权限', 403); //当前管理员无角色
         ////]]]]
 
         // 角色没有规则
         $rule_ids = RoleModel::_()->getRules($roles);
-        Helper::BusinessThrowOn(!$rule_ids,  '无权限', 2);
+        Helper::BusinessThrowOn(!$rule_ids,  '无权限', 403);
         // 超级管理员
         if (in_array('*', $rule_ids)){
             return true;
@@ -117,13 +117,13 @@ class AccountBusiness extends Base
         // 如果action为index，规则里有任意一个以$controller开头的权限即可
         // 这两段长得一样？
         if (strtolower($action) === 'index') {
-            $rule = RuleModel::_()->checkWildRules($rule_ids,$controller,$action);
-            Helper::BusinessThrowOn(!$rule, '无权限', 2);
+            $rule = RuleModel::_()->checkWildRules($rule_ids,$controller);
+            Helper::BusinessThrowOn(!$rule, '无权限', 403);
             return true;
         }else{
             // 查询是否有当前控制器的规则
             $rule = RuleModel::_()->checkRules($rule_ids,$controller,$action);
-            Helper::BusinessThrowOn(!$rule, '无权限', 2);
+            Helper::BusinessThrowOn(!$rule, '无权限', 403);
             return true;
         }
     }
