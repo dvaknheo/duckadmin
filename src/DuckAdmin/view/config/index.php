@@ -137,7 +137,9 @@
             </div>
         </div>
 
-
+<script>
+    window.PERMISSION_API = "<?=__url('rule/permission')?>";
+</script>
         <script src="<?=__res('component/layui/layui.js')?>"></script>
         <script src="<?=__res('component/pear/pear.js')?>"></script>
         <script src="<?=__res('admin/js/permission.js')?>"></script>
