@@ -21,6 +21,7 @@ class MyCoverageBridge extends MyCoverage
         'test_path_document'=>'public',
         'test_new_server'=>true,
         'test_list_callback'=>null,
+        'test_report_direct'=>true,
     ];
     protected $is_save_session=false;
     protected $session_id='';
@@ -90,28 +91,15 @@ class MyCoverageBridge extends MyCoverage
         $data ='';
         $post = Helper::POST();
         $post = http_build_query($post);
-        if($post){
-            $data ="#POST {$post}\n";
-        }
+        
         $uri = Helper::SERVER('REQUEST_URI','');
-        $data.=$uri ."\n";
+        $data .= $uri;
+        
+        if($post){
+            $data .=" {$post}";
+        }
+        $data .="\n";
         return $data;
-    }
-    protected function watchingBegin($name)
-    {
-        $path = App::PathForRuntime();
-        file_put_contents($path.'MyCoverage.watching.txt',$name);
-    }
-    protected function watchingEnd()
-    {
-        $path = App::PathForRuntime();
-        @unlink($path.'MyCoverage.watching.txt');
-    }
-    protected function watchingGetName()
-    {
-        $path = App::PathForRuntime();
-        $group = @file_get_contents($path.'MyCoverage.watching.txt');
-        return $group;    
     }
     protected function getTestName()
     {
@@ -123,6 +111,22 @@ class MyCoverageBridge extends MyCoverage
         $ret =implode(";",[$uri,$post,$session_id,$method]);
         return $ret;
     }
+    ////[[[[
+    protected function watchingBegin($name)
+    {
+        file_put_contents($this->options['path'].'MyCoverage.watching.txt',$name);
+    }
+    protected function watchingEnd()
+    {
+        @unlink($this->options['path'].'MyCoverage.watching.txt');
+    }
+    protected function watchingGetName()
+    {
+        $group = @file_get_contents($this->options['path'].'MyCoverage.watching.txt');
+        return $group;    
+    }
+    ////]]]]
+    
     //////////////////
     
     private $phase_map =[];
@@ -229,7 +233,7 @@ class MyCoverageBridge extends MyCoverage
             curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post));
         }
         if($this->session_id){
-            curl_setopt($ch, CURLOPT_COOKIE, "PHPSESSID={$this->session_id}"); //TODO
+            curl_setopt($ch, CURLOPT_COOKIE, "PHPSESSID={$this->session_id}"); 
         }
         $this->prepareCurl($ch);
         $data = curl_exec($ch);
@@ -246,13 +250,14 @@ class MyCoverageBridge extends MyCoverage
                 $this->is_save_session = false;
             }
         }
-        echo $url;
+        echo $url; echo ' ' ; echo http_build_query($post);
         echo "\n";
         //echo $data;
         curl_close($ch);
         $data = ($data !== false)?$data:'';
         return $data;
     }
+    ////[[[[
     protected $is_server_started=false;
     protected function startServer()
     {
@@ -266,9 +271,9 @@ class MyCoverageBridge extends MyCoverage
             'port'=>$this->options['test_server_port'],
         ];
         $server_options['background'] =true;
-        if($this->options['test_new_server']){
+        //if($this->options['test_new_server']){
             HttpServer::_(new HttpServer()); 
-        }
+        //}
         HttpServer::RunQuickly($server_options);
         //echo HttpServer::_()->getPid();
         sleep(1);// ugly
@@ -276,28 +281,42 @@ class MyCoverageBridge extends MyCoverage
     }
     protected function stopServer()
     {
+        if(!$this->is_server_started){ return;}
         HttpServer::_()->close();
         $this->is_server_started=false;
     }
+    ////]]]]
     //////////
     protected function explainWeb($request)
     {
-        parse_str(substr($request,strlen('#WEB ')),$post);
-        $this->post = $post;
+        @list($command,$uri,$poststr,$method, $session_id) = explode(' ',$request);
+        
+        if($command!=='#WEB'){return;}
+        
+        $this->startServer();
+        $post =[];
+        if($poststr){
+            parse_str($poststr,$post);
+        }
+        
+        $url ="http://127.0.0.1:{$this->options['test_server_port']}".$this->options['test_homepage'].$uri;
+        $data = $this->curl_file_get_contents([$url,'127.0.0.1'],$post);
+        if($this->options['test_echo_back']??false){
+            echo substr($data,0,100);
+        }
+        $this->post=[];
     }
     protected function explainPost($request)
     {
         parse_str(substr($request,strlen('#POST ')),$post);
         $this->post = $post;
-    }
+    } 
     protected function explainCall($command)
     {
         $flag = preg_match('/#CALL\s+([^@]+)@(\w+)/',$command,$m);
         if(!$flag){ return; }
         list($command,$class,$method) = $m;
         $phase = $this->phaseFromClass($class);
-        //if(!$phase){ return; }
-        // save name ;
         $this->options['name'] = $command;
         
         ////[[[[
@@ -309,13 +328,11 @@ class MyCoverageBridge extends MyCoverage
         file_put_contents($path_dump.$this->options['group'].'.list',$data,FILE_APPEND); 
         ////]]]]
         
-        $last_phase = App::Phase();
-        
-        $class::_()->$method();
-        
+        $last_phase = App::Phase($phase);
+        $class::_()->$method(); // TODO a=1&b=2 ...
         App::Phase($last_phase);
-        
     }
+    
     /**
      * tests group. use --help for more.
      */
@@ -340,11 +357,9 @@ EOT;
             }
             $this->watchingBegin($p['watch']);
             echo "watching {$p['watch']}\n";
-            //return;
         }
         if($p['stop']??false){
             $this->watchingEnd();
-            //return;
         }
         if($p['replay']??false){
             $this->replay();
@@ -357,30 +372,12 @@ EOT;
         }
         
         var_dump(DATE(DATE_ATOM));
-        //
     }
-    public function command_testgroup2()
-    {
-        $command = '#CALL DuckAdmin\Test\RunAll@test';
-        $this->explain_call($command);
-        var_dump(DATE(DATE_ATOM));
-    }
+
     public function command_gentest()
     {
-        $this->startServer();
-        echo "waiting...\n";
-      
-        $request ='app/admin/index';
-        //$data = $this->curl_file_get_contents("http://127.0.0.1:{$this->options['test_server_port']}".$this->options['test_homepage'],$this->post);
-        $this->curl_file_get_contents(["http://admin.demo.local".$this->options['test_homepage'],'127.0.0.1:8080'],$this->post);
-        var_dump($data);
-        
-        $this->stopServer();
-        var_dump(DATE(DATE_ATOM));return;
-        $x=App::Root()->options;
-        $last_phase = App::Phase(\DuckAdmin\System\DuckAdminApp::class);
         //$routes = TestFileCreator::_()->genRunFile();
-        App::Phase($last_phase);
         var_dump(DATE(DATE_ATOM));
     }
+    ////]]]]
 }

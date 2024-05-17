@@ -216,6 +216,7 @@ class RuleBusiness extends Base
     }
     public function deleteRule($op_id, $ids)
     {
+        if(empty($ids)){return;}
         RuleModel::_()->dropWithChildren($ids);
     }
     

@@ -3,8 +3,9 @@
  */
 layui.$(function () {
     let $ = layui.$;
+    the_url = window.PERMISSION_API ? window.PERMISSION_API : "/app/admin/rule/permission";
     $.ajax({
-        url: "/app/admin/rule/permission",
+        url: the_url,
         dataType: "json",
         success: function (res) {
             let style = '';

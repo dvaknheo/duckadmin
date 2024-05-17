@@ -35,7 +35,10 @@ class AccountBusiness extends Base
         
         return $info;
     }
-
+    public function getDashBoardInfo($admin_id)
+    {
+        return [];
+    }
     public function login($username,$password)
     {
         Helper::BusinessThrowOn(!$username, '用户名不能为空',1);

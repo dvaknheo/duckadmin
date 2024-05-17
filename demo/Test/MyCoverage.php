@@ -120,11 +120,14 @@ class MyCoverage
         if(empty($groups)){
             $groups =[$this->options['group']];
         }
-        if(count($groups)===1){
-            $path_report = $path_report. $groups[0];
-        }else{
-            $path_report = $path_report. DATE('y-m-d');
+        if(!$this->options['test_report_direct']){
+            if(count($groups)===1){
+                $path_report = $path_report. $groups[0];
+            }else{
+                $path_report = $path_report. DATE('y-m-d');
+            }
         }
+        
         $coverage = new CodeCoverage();
         $coverage->filter()->addDirectoryToWhitelist($path_src);
         $coverage->setTests([

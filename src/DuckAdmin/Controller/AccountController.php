@@ -23,7 +23,7 @@ class AccountController extends Base
      * 不需要鉴权的方法
      * @var string[]
      */
-    protected $noNeedAuth = ['info'];
+    protected $noNeedAuth = ['info','dashboard'];
 
     /**
      * 账户设置
@@ -42,6 +42,9 @@ class AccountController extends Base
      */
     public function login()
     {
+        if(!Helper::Post()){
+            return Helper::Show([],'account/index');
+        }
         $username = Helper::Post('username', '');
         $password = Helper::Post('password', '');
         $captcha = Helper::Post('captcha');
@@ -80,11 +83,16 @@ class AccountController extends Base
     public function info()
     {
         $admin = AdminAction::_()->getCurrentAdmin();
-        $data = AccountBusiness::_()->getAccountInfo($admin);
+        $data = AccountBusiness::_()->getAccountInfo($admin); //TODO 改成 admin_id
         
         return Helper::Success($data);
     }
-
+    public function dashboard()
+    {
+        // 这里要验证， 捂脸
+        $data = AccountBusiness::_()->getDashBoardInfo(Helper::AdminId());
+        Helper::Show($data, 'index/dashboard');
+    }
     /**
      * 更新
      * @param 

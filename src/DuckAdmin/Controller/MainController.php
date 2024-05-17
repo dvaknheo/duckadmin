@@ -32,10 +32,4 @@ class MainController extends Base
         }
         Helper::Show([], 'index/index');
     }
-    public function dashboard()
-    {
-        // 这里要验证， 捂脸
-        $data = [];
-        Helper::Show($data, 'index/dashboard');
-    }
 }

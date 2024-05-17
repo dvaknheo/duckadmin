@@ -110,8 +110,7 @@ class RuleController extends Base
      */
     public function delete()
     {
-        $post = Helper::POST();
-        RuleBusiness::_()->deleteRule(Helper::AdminId(),$post['id']);
+        RuleBusiness::_()->deleteRule(Helper::AdminId(),Helper::POST('id',0));
         return Helper::Success();
     }
 

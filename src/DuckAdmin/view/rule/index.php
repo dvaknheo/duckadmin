@@ -31,7 +31,9 @@
             <button class="pear-btn pear-btn-xs tool-btn" lay-event="edit" permission="app.admin.rule.update">编辑</button>
             <button class="pear-btn pear-btn-xs tool-btn" lay-event="remove" permission="app.admin.rule.delete">删除</button>
         </script>
-
+<script>
+    window.PERMISSION_API = "<?=__url('rule/permission')?>";
+</script>
         <script src="<?=__res('component/layui/layui.js')?>"></script>
         <script src="<?=__res('component/pear/pear.js')?>"></script>
         <script src="<?=__res('admin/js/permission.js')?>"></script>
@@ -47,6 +49,7 @@
             const INSERT_URL = "<?=__url('rule/insert')?>";
             const UPDATE_URL = "<?=__url('rule/update')?>";
             const SELECT_TREE_API = "<?=__url('rule/select?format=tree&type=0,1')?>";
+            //const PERMISSION_API = "<?=__url('rule/permission')?>";
             // 表格渲染
             layui.use(["table", "treetable", "form", "common", "popup", "util"], function() {
                 let table = layui.table;

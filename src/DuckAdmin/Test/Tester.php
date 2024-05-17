@@ -19,42 +19,46 @@ class Tester
     }
     public function getTestList()
     {
-        //#COMMAND FUNCTION_METHOD
         $list = <<<EOT
-#POST username=admin&password=123456&captcha=7268
 #WEB account/login
+#WEB account/login username=admin&password=123456&captcha=7268
 #WEB account/info
+#WEB account/dashboard
 #WEB account/index
 #WEB account/captcha
-#POST old_password=123456&password=654321&password_confirm=654321
 #WEB account/password
-#POST old_password=654321&password=123456&password_confirm=123456
-#WEB account/password
-#WEB admin/index
+#WEB account/password old_password=123456&password=654321&password_confirm=654321
+#WEB account/password old_password=654321&password=123456&password_confirm=123456
 #WEB account/update
-##WEB account/password
+#WEB account/logout
 
-EOT;/*
+#WEB account/login username=admin&password=123456&captcha=7268
+#WEB admin/index
 #WEB admin/select
 #WEB admin/insert
 #WEB admin/update
 #WEB admin/delete
-#WEB admin/index
+#WEB admin/insert roles=1&username=admin{new_admin_id}&nickname=the_admin{new_admin_id}&password=123456&email=youxiang{new_admin_id}&mobile=shouji{new_admin_id}
+#WEB admin/update roles=1&username=admin{new_admin_id}&nickname=the_admin_new{new_admin_id}&password=&email=xyouxiang{new_admin_id}&mobile=xshouji{new_admin_id}&id={new_admin_id}
+#WEB admin/admin/delete id={new_admin_id}
 
+#WEB account/login username=admin&password=123456&captcha=7268
 #WEB config/index
 #WEB config/get
 #WEB config/update
 
-#WEB 
-#WEB dashboard
 
+##WEB account/login username=admin&password=123456&captcha=7268
 #WEB role/index
 #WEB role/select
+#WEB role/rules
 #WEB role/insert
 #WEB role/update
-###WEB role/delete
-#WEB role/rules
+#WEB role/insert pid=1&name=myrole{new_role_id}a&rules=1
+#WEB role/update pid=1&name=myrol2e{new_role_id}&rules=1&id={new_role_id}
+#WEB role/delete id={new_role_id}
 
+##WEB account/login username=admin&password=123456&captcha=7268
 #WEB rule/index
 #WEB rule/select
 #WEB rule/get
@@ -62,15 +66,55 @@ EOT;/*
 #WEB rule/insert
 #WEB rule/update
 #WEB rule/delete
+#WEB rule/insert title=biaoti{new_rule_id}&key=biaozhi{new_rule_id}&pid=&href=&icon=layui-icon-login-wechat&type=1&weight=0
+#WEB rule/update title=biaoti{new_rule_id}a&key=biaozhi{new_rule_id}x&pid=&href=&icon=layui-icon-login-wechat&type=1&weight=0&id={new_rule_id}
+#WEB rule/delete id={new_rule_id}
 
-#WEB account/logout
 #WEB 
-EOT;
-//*/
+#WEB account/logout
+#WEB index
 
+EOT;
+  
+
+        $last_phase = \DuckAdmin\System\DuckAdminApp::Phase(\DuckAdmin\System\DuckAdminApp::class);
+        
+        $sql = "show table status where Name ='".\DuckAdmin\System\DuckAdminApp::_()->options['table_prefix'] ."admins'";
+        $new_admin_id = \DuckPhp\Component\DbManager::Db()->fetch($sql)["Auto_increment"];
+        
+        $sql = "show table status where Name ='".\DuckAdmin\System\DuckAdminApp::_()->options['table_prefix'] ."roles'";
+        $new_role_id = \DuckPhp\Component\DbManager::Db()->fetch($sql)["Auto_increment"];
+        
+        $sql = "show table status where Name ='".\DuckAdmin\System\DuckAdminApp::_()->options['table_prefix'] ."rules'";
+        $new_rule_id = \DuckPhp\Component\DbManager::Db()->fetch($sql)["Auto_increment"];
+        
+        //$sql = "select seq from sqlite_sequence where name = ?"
+        
+        $args = [
+            'new_admin_id'=>$new_admin_id,
+            'new_role_id'=>$new_role_id,
+            'new_rule_id'=>$new_rule_id,
+        ];
+        $list = $this->replace_string($list,$args);
         $prefix = \DuckAdmin\System\DuckAdminApp::_()->options['controller_url_prefix'];
-        $list = str_replace('#WEB ',$prefix,$list);
+        $list = str_replace('#WEB ','#WEB '.$prefix,$list);
+        
+        \DuckAdmin\System\DuckAdminApp::Phase($last_phase);
         return $list;
+    }
+    private function replace_string($str,$args)
+    {
+        if (empty($args)) {
+            return $str;
+        }
+        $a = [];
+        foreach ($args as $k => $v) {
+            $a["{".$k."}"] = $v;
+        }
+        
+        $ret = str_replace(array_keys($a), array_values($a), $str);
+        
+        return $ret;
     }
     public function runAllController()
     {
