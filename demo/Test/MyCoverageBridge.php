@@ -22,6 +22,7 @@ class MyCoverageBridge extends MyCoverage
         'test_new_server'=>true,
         'test_list_callback'=>null,
         'test_report_direct'=>true,
+        //'test_echo_back'=>true,
     ];
     protected $is_save_session=false;
     protected $session_id='';
@@ -47,6 +48,7 @@ class MyCoverageBridge extends MyCoverage
         Console::_()->regCommandClass($prefix, App::Phase(), [static::class]);
         App::OnEvent([App::Phase(),'onBeforeRun'],[static::class,'OnBeforeRun']);
         App::OnEvent([App::Phase(),'onAfterRun'],[static::class,'OnAfterRun']);
+        \DuckPhp\Core\ExitException::Init();
     }
     
     public static function OnBeforeRun()
@@ -308,7 +310,7 @@ class MyCoverageBridge extends MyCoverage
         $url ="http://127.0.0.1:{$this->options['test_server_port']}".$this->options['test_homepage'].$uri;
         $data = $this->curl_file_get_contents([$url,'127.0.0.1'],$post,$is_ajax);
         if($this->options['test_echo_back']??false){
-            echo substr($data,0,100);
+            echo substr($data,0,200);
         }
     }
     protected function explainPost($request)

@@ -21,6 +21,7 @@ class Tester
     {
         $list = <<<EOT
 #WEB account/dashboard  AJAX
+#WEB account/login
 #WEB account/login username=admin&password=123456&captcha=7268
 #WEB account/info
 #WEB account/dashboard
