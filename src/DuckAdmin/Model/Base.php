@@ -81,7 +81,7 @@ class Base
         if ($field) {
             $sql .=" order by `$field` $order "; // 这里可能会有些问题
         }
-        $items = self::Db()->fetchAll(self::SqlForPager($sql, $page, $page_size));
+        $items = self::Db()->fetchAll(self::SqlForPager($sql, (int)$page, (int)$page_size));
         return [$items, $total];
     }
     

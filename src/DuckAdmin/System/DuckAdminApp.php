@@ -50,6 +50,7 @@ class DuckAdminApp extends DuckPhp
     }
     public function onInstall()
     {
+        // for FastInstaller
         $desc =<<<EOT
 设置超级管理员：
 ----
@@ -76,7 +77,7 @@ EOT;
             break;
         };
     }
-    public function doInstall($username,$password,$password_confirm)
+    protected function doInstall($username,$password,$password_confirm)
     {
         InstallBusiness::_()->install($username,$password,$password_confirm);
     }

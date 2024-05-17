@@ -11,9 +11,9 @@ class AdminBusiness extends Base
 {
     public function showAdmins($op_id,$input)
     {
-        [$where, $format, $limit, $field, $order] = AdminModel::_()->selectInput($input);
+        [$where, $format, $limit, $field, $order, $page] = AdminModel::_()->selectInput($input);
         
-        [$items,$total] = AdminModel::_()->doSelect($where, $field, $order);
+        [$items,$total] = AdminModel::_()->doSelect($where, $field, $order,$page,$limit);
         
         if ('select' ===  ($input['format']??null)) {
             return CommonService::_()->formatSelect($items,$format,$limit);
