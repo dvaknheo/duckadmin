@@ -77,7 +77,8 @@ class AdminAction
         $code = 0;
         $msg = '';
         try{
-            $admin_id = AdminSession::_()->getCurrentAdminId();
+            $admin = $this->checkLogin();
+            $admin_id =$admin['id'];
             AccountBusiness::_()->canAccess($admin_id, $controller, $action);
         } catch(\Exception $ex) {
             $this->onAuthException($ex);

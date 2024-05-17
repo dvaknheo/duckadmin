@@ -29,6 +29,7 @@ class CaptchaAction extends Base
         //just override
     }
     //////// 验证码部分 ////////
+    /*
     public static function ShowCaptcha()
     {
         return static::_()->doShowCaptcha();
@@ -37,6 +38,7 @@ class CaptchaAction extends Base
     {
         return static::_()->doCheckCaptcha($captcha);
     }
+    */
     public function doShowCaptcha()
     {
         $phraseBuilder = new PhraseBuilder(4, '0123456789');

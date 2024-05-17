@@ -24,6 +24,7 @@ class DuckAdminApp extends DuckPhp
         'controller_resource_prefix' => 'res/',  // 资源文件前缀
         'controller_method_prefix' => '',
         
+        'exception_for_project'  => ProjectException::class,
         'exception_for_business'  => BusinessException::class,
         'exception_for_controller'  => ControllerException::class,
         'exception_reporter' =>  ExceptionReporter::class,

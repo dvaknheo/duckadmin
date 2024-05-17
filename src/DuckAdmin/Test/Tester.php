@@ -20,7 +20,7 @@ class Tester
     public function getTestList()
     {
         $list = <<<EOT
-#WEB account/login
+#WEB account/dashboard  AJAX
 #WEB account/login username=admin&password=123456&captcha=7268
 #WEB account/info
 #WEB account/dashboard
@@ -90,6 +90,7 @@ EOT;
         
         //$sql = "select seq from sqlite_sequence where name = ?"
         
+        //$list ="#WEB account/dashboard  AJAX\n";
         $args = [
             'new_admin_id'=>$new_admin_id,
             'new_role_id'=>$new_role_id,
