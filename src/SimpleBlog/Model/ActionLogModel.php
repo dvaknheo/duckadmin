@@ -11,7 +11,7 @@ class ActionLogModel extends Base
     
     public function getList($where = [], int $page = 1, int $page_size = 10)
     {
-        return parent::getList($where, $page, int $page_size);
+        return parent::getList($where, $page, $page_size);
     }
     public function log($action, $type = '')
     {
