@@ -34,6 +34,7 @@ class Tester
 #WEB account/logout
 #WEB account/logout  AJAX
 
+#WEB account/dashboard
 #WEB account/login username=admin&password=123456&captcha=7268
 #WEB admin/index?diffname  OPTIONS
 
@@ -44,9 +45,8 @@ class Tester
 #WEB admin/delete
 #WEB admin/insert roles=1&username=admin{new_admin_id}&nickname=the_admin{new_admin_id}&password=123456&email=youxiang{new_admin_id}&mobile=shouji{new_admin_id}
 #WEB admin/update roles=1&username=admin{new_admin_id}&nickname=the_admin_new{new_admin_id}&password=&email=xyouxiang{new_admin_id}&mobile=xshouji{new_admin_id}&id={new_admin_id}
-#WEB admin/delete id={new_admin_id}
 
-#WEB account/login username=admin&password=123456&captcha=7268
+
 #WEB config/index
 #WEB config/get
 #WEB config/update
@@ -60,7 +60,7 @@ class Tester
 #WEB role/update
 #WEB role/insert pid=1&name=myrole{new_role_id}a&rules=1
 #WEB role/update pid=1&name=myrol2e{new_role_id}&rules=1&id={new_role_id}
-#WEB role/delete id={new_role_id}
+
 
 ##WEB account/login username=admin&password=123456&captcha=7268
 #WEB rule/index
@@ -72,6 +72,9 @@ class Tester
 #WEB rule/delete
 #WEB rule/insert title=biaoti{new_rule_id}&key=biaozhi{new_rule_id}&pid=&href=&icon=layui-icon-login-wechat&type=1&weight=0
 #WEB rule/update title=biaoti{new_rule_id}a&key=biaozhi{new_rule_id}x&pid=&href=&icon=layui-icon-login-wechat&type=1&weight=0&id={new_rule_id}
+
+#WEB admin/delete id={new_admin_id}
+#WEB role/delete id={new_role_id}
 #WEB rule/delete id={new_rule_id}
 
 #WEB 
@@ -82,17 +85,9 @@ EOT;
         //*/
 
         $last_phase = \DuckAdmin\System\DuckAdminApp::Phase(\DuckAdmin\System\DuckAdminApp::class);
-        
-        $sql = "show table status where Name ='".\DuckAdmin\System\DuckAdminApp::_()->options['table_prefix'] ."admins'";
-        $new_admin_id = \DuckPhp\Component\DbManager::Db()->fetch($sql)["Auto_increment"];
-        
-        $sql = "show table status where Name ='".\DuckAdmin\System\DuckAdminApp::_()->options['table_prefix'] ."roles'";
-        $new_role_id = \DuckPhp\Component\DbManager::Db()->fetch($sql)["Auto_increment"];
-        
-        $sql = "show table status where Name ='".\DuckAdmin\System\DuckAdminApp::_()->options['table_prefix'] ."rules'";
-        $new_rule_id = \DuckPhp\Component\DbManager::Db()->fetch($sql)["Auto_increment"];
-        
-        //$sql = "select seq from sqlite_sequence where name = ?"
+        $new_admin_id = $this->getNextInsertId('admins');
+        $new_role_id = $this->getNextInsertId('roles');
+        $new_rule_id = $this->getNextInsertId('rules');
         
         //$list ="#WEB index?foroptions=1  OPTIONS\n";
         //$list = "#WEB account/logout  AJAX\n";
@@ -110,7 +105,7 @@ EOT;
     }
     private function getNextInsertId($table)
     {
-        $database_driver = '';
+        $database_driver = \DuckAdmin\System\DuckAdminApp::_()->options['database_driver'];
         if($database_driver ==='mysql'){
             $sql = "show table status where Name ='".\DuckAdmin\System\DuckAdminApp::_()->options['table_prefix'] .$table."'";
             $ret = \DuckPhp\Component\DbManager::Db()->fetch($sql)["Auto_increment"];
@@ -179,7 +174,6 @@ EOT;
     public function runAllBusiness()
     {
         ////[[[[
-        \DuckAdmin\Business\AccountBusiness::_()->getAdmin($admin_id);
         \DuckAdmin\Business\AccountBusiness::_()->getAccountInfo($admin);
         \DuckAdmin\Business\AccountBusiness::_()->login($username,$password);
         \DuckAdmin\Business\AccountBusiness::_()->canAccess($admin_id, $controller,  $action);

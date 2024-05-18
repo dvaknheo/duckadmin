@@ -15,11 +15,11 @@ class AdminAction
 {
     use ControllerHelperTrait;
     
-    public function checkLogin()
+    public function getCurrentAdminId()
     {
-        $admin = AdminSession::_()->getCurrentAdmin();
+        $admin = $this->getCurrentAdmin();
         Helper::ControllerThrowOn(!$admin,"需要登录",401);
-        return $admin;
+        return $admin['id'];
     }
     /**
      * 当前管理员
@@ -34,7 +34,7 @@ class AdminAction
     {
         return AdminSession::_()->setCurrentAdmin($admin);
     }
-    public function getCurrentAdminId()
+    public function getAdminIdBySession()
     {
         return AdminSession::_()->getCurrentAdminId();
     }

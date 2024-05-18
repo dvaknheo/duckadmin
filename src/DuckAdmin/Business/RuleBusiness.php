@@ -1,6 +1,7 @@
 <?php
 namespace DuckAdmin\Business;
 
+use DuckAdmin\Model\AdminRoleModel;
 use DuckAdmin\Model\RuleModel;
 use DuckAdmin\Model\RoleModel;
 
@@ -10,8 +11,10 @@ use DuckAdmin\Model\RoleModel;
 class RuleBusiness extends Base
 {
     
-    public function get($roles,$types)
+    public function get($admin_id, $types)
     {
+        $roles = AdminRoleModel::_()->getRoles($admin_id);
+        $roles = $roles ?? [];
         $rules = RoleModel::_()->getRules($roles);
         $items = RuleModel::_()->allRules();
         // 格式化数据
@@ -156,8 +159,10 @@ class RuleBusiness extends Base
     }
     
     ///////////////////////////////
-    public function permission($roles)
+    public function permission($admin_id)
     {
+        $roles = AdminRoleModel::_()->getRoles($admin_id);
+        $roles = $roles ?? [];
         $rules_strings = RoleModel::_()->getRules($roles);        // 权限按钮
         $rules = [];
         foreach ($rules_strings as $rule_string) {

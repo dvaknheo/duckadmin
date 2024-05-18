@@ -55,8 +55,8 @@ class RuleController extends Base
         $types = Helper::GET('type', '0,1');
         $types = is_string($types) ? explode(',', $types) : [0, 1];
         
-        $admin = AdminAction::_()->getCurrentAdmin();
-        $data = RuleBusiness::_()->get($admin['roles']??[],$types);
+        $admin_id = AdminAction::_()->getCurrentAdminId();
+        $data = RuleBusiness::_()->get($admin_id,$types);
         
         return Helper::Success($data);
     }
@@ -67,8 +67,8 @@ class RuleController extends Base
      */
     public function permission()
     {
-        $admin = AdminAction::_()->getCurrentAdmin();
-        $permissions = RuleBusiness::_()->permission($admin['roles']??[]);
+        $admin_id = AdminAction::_()->getCurrentAdminId();
+        $permissions = RuleBusiness::_()->permission($admin_id);
         return Helper::Success($permissions);
     }
     /**

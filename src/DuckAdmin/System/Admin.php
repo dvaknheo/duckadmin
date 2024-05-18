@@ -32,16 +32,10 @@ class Admin extends GlobalAdmin
     }
     public function canAccessCall($class, $method)
     {
-        $this->checkLogin();
-        //
-        return true;
+        return AdminAction::_()->checkAccess($class,$method);
     }
     public function checkLogin()
     {
-        // 这里如果没登录，我们跳转到 报错页面
-        Helper::assignExceptionHandler(ControllerException::class,function(){
-            Helper::Show302('');
-        });
         return AdminAction::_()->checkLogin();
     }
     ///////////////

@@ -25,7 +25,7 @@ class MainController extends Base
      */
     public function index()
     {
-        $admin_id = AdminAction::_()->getCurrentAdminId();
+        $admin_id = AdminAction::_()->getAdminIdBySession();
         if (!$admin_id) {
             Helper::Show([], 'account/login');
             return;

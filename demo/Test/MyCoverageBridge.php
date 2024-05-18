@@ -111,7 +111,7 @@ class MyCoverageBridge extends MyCoverage
         $post = Helper::POST();
         $post = http_build_query($post);
         $ajax = Helper::IsAjax()?'AJAX':'';
-        $ret =implode(";",[$uri,$post,$session_id,$method,$ajax]);
+        $ret =implode(";",[$uri,$post,$session_id,$method,$ajax,microtime()]);
         return $ret;
     }
     ////[[[[
@@ -270,8 +270,9 @@ class MyCoverageBridge extends MyCoverage
             'path'=>$server_path,
             'path_document'=>$this->options['test_path_document'],
             'port'=>$this->options['test_server_port'],
+            'background' =>true,
         ];
-        $server_options['background'] =true;
+        
         //if($this->options['test_new_server']){
             HttpServer::_(new HttpServer()); 
         //}

@@ -82,8 +82,8 @@ class AccountController extends Base
      */
     public function info()
     {
-        $admin = AdminAction::_()->getCurrentAdmin();
-        $data = AccountBusiness::_()->getAccountInfo($admin); //TODO 改成 admin_id
+        $admin_id = AdminAction::_()->getCurrentAdminId();
+        $data = AccountBusiness::_()->getAccountInfo($admin_id);
         
         return Helper::Success($data);
     }

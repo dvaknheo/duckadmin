@@ -11,19 +11,11 @@ use DuckAdmin\Model\RuleModel;
  */
 class AccountBusiness extends Base
 {
-    public function getAdmin($admin_id)
-    {
-        $admin = AdminModel::_()->getAdminById($admin_id); //这个函数没用，目前要和下面的合并用起来
-        
-        if (!$admin || $admin['status'] != 0) {
-            return null;
-        }
-        $admin['roles'] = AdminRoleModel::_()->getRoles($admin_id);
-        return $admin;
-    }
     /////////////
-    public function getAccountInfo($admin)
+    public function getAccountInfo($admin_id)
     {
+        $admin = AdminModel::_()->getAdminById($admin_id);
+        
         $info = [
             'id' => $admin['id'],
             'username' => $admin['username'],
@@ -37,13 +29,11 @@ class AccountBusiness extends Base
     }
     public function getDashBoardInfo($admin_id)
     {
-        return [];
+        return ['time_stamp'=>DATE(DATE_ATOM)];
     }
     public function login($username,$password)
     {
-        Helper::BusinessThrowOn(!$username, '用户名不能为空',1);
-        
-        //$this->checkLoginLimit($username);
+        Helper::BusinessThrowOn(!$username, '用户名不能为空',1);        
         $admin = AdminModel::_()->getAdminByName($username);
         Helper::BusinessThrowOn(!$admin,'账户不存在或密码错误');
         $flag = AdminModel::_()->checkPasswordByAdmin($admin, $password);
@@ -58,7 +48,6 @@ class AccountBusiness extends Base
 
         AdminModel::_()->updateLoginAt($admin['id']);
         
-        //$this->removeLoginLimit($username);
         //Helper::FireEvent([static::class,__LOGIN__], $admin);
         return $admin;
     }
