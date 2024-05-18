@@ -69,7 +69,7 @@ class AdminAction
         }else if($code == 403){
             return $this->exit403();
         }
-    }
+    } // @codeCoverageIgnore
     protected function isOptionsMethod()
     {
         return Helper::SERVER('REQUEST_METHOD','GET')==='OPTIONS'?true:false;
@@ -90,9 +90,9 @@ EOF;
     protected function exit403()
     {
         Helper::header('Forbidden',true,403);
-        Helper::Show('_sys/403');
+        Helper::Show([], '_sys/error_403');
         Helper::exit();
-    }
+    } // @codeCoverageIgnore
     public function doShowCaptcha()
     {
         return CaptchaAction::_()->init([

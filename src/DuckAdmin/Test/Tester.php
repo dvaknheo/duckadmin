@@ -44,8 +44,10 @@ class Tester
 #WEB admin/update
 #WEB admin/delete
 #WEB admin/insert roles=1&username=admin{new_admin_id}&nickname=the_admin{new_admin_id}&password=123456&email=youxiang{new_admin_id}&mobile=shouji{new_admin_id}
-#WEB admin/update roles=1&username=admin{new_admin_id}&nickname=the_admin_new{new_admin_id}&password=&email=xyouxiang{new_admin_id}&mobile=xshouji{new_admin_id}&id={new_admin_id}
-
+#WEB admin/update roles=-1&username=admin{new_admin_id}&nickname=the_admin_new{new_admin_id}&password=&email=xyouxiang{new_admin_id}&mobile=xshouji{new_admin_id}&id={new_admin_id}
+#WEB account/login username=admin{new_admin_id}&password=123456&captcha=7268
+#WEB admin/insert
+#WEB account/login username=admin&password=123456&captcha=7268
 
 #WEB config/index
 #WEB config/get
