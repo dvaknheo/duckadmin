@@ -51,7 +51,7 @@ class AccountController extends Base
         
         $flag = AdminAction::_()->doCheckCaptcha($captcha);
         if (Helper::SERVER('REMOTE_ADDR')!=='127.0.0.1') {
-            Helper::ControllerThrowOn(!$flag, '验证码错误',1); //@codeCoverageIgnore
+            Helper::ControllerThrowOn(!$flag, '验证码错误',1); // @codeCoverageIgnore
         }else{
             //__debug_log("skip captcha for test");
         }
@@ -70,7 +70,7 @@ class AccountController extends Base
     {
         AdminAction::_()->setCurrentAdmin([]);
         if(Helper::IsAjax()){
-            Helper::Success(0); //@codeCoverageIgnore
+            Helper::Success(0);
         }else{
             Helper::Show302(__url(''));
         }
@@ -101,7 +101,9 @@ class AccountController extends Base
     public function update()
     {
         AccountBusiness::_()->update(Helper::AdminId(),Helper::POST());
-        //$admin = AccountBusiness::_()->getAdmin($admin_id);
+        
+        // 更新数据需要重新载入
+        //$admin = AccountBusiness::_()->login($username, $password);
         //AdminAction::_()->setCurrentAdmin($admin);
         
         Helper::Success();

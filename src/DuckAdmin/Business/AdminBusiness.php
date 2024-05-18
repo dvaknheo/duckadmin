@@ -44,7 +44,7 @@ class AdminBusiness extends Base
             if (!empty($data[$this->dataLimitField])) {
                 $admin_id = $data[$this->dataLimitField];
                 if (!in_array($admin_id, Auth::getScopeAdminIds(true))) {
-                    throw new BusinessException('无数据权限');
+                    Helper::BusinessThrowOn(true,  '无数据权限');
                 }
             }
         }

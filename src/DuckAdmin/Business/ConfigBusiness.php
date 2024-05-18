@@ -84,7 +84,7 @@ class ConfigBusiness extends Base
     protected function filterColor(string $color): string
     {
         if (!preg_match('/\#[a-zA-Z]{0,6}/', $color)) {
-            throw new BusinessException('参数错误'); // 这个正则写错了
+            Helper::BusinessThrowOn(true, '颜色参数错误');
         }
         return $color;
     }
@@ -99,7 +99,7 @@ class ConfigBusiness extends Base
         $vars = (array)$var;
         array_walk_recursive($vars, function ($item) {
             if (is_string($item) && !preg_match('/^[0-9]+$/', $item)) {
-                throw new BusinessException('参数不合法');
+                Helper::BusinessThrowOn(true, '数字参数不合法'); //TODO 改成 PHP自己的验证
             }
         });
         return $var;
@@ -114,7 +114,7 @@ class ConfigBusiness extends Base
     protected static function filterUrlPath($var): string
     {
         if (!is_string($var) || !preg_match('/^[@\~a-zA-Z0-9_\-\/&?.]+$/', $var)) {
-            throw new BusinessException('参数不合法');
+           Helper::BusinessThrowOn(true, 'URL参数不合法'); //TODO 改成 PHP自己的验证
         }
         ////[[[[ 这里加上相对路径的处理
         if(substr($var,0,2)==='@/'){

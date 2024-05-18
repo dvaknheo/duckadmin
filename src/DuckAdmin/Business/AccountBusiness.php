@@ -13,7 +13,7 @@ class AccountBusiness extends Base
 {
     public function getAdmin($admin_id)
     {
-        $admin = AdminModel::_()->getAdminById($admin_id); 
+        $admin = AdminModel::_()->getAdminById($admin_id); //这个函数没用，目前要和下面的合并用起来
         
         if (!$admin || $admin['status'] != 0) {
             return null;
@@ -90,6 +90,8 @@ class AccountBusiness extends Base
         if (in_array($action, $noNeedLogin)) {
             return true;
         }
+        Helper::BusinessThrowOn(!$admin_id, $msg = '请登录', 401);
+        
         // 不需要鉴权
         if (in_array($action, $noNeedAuth)) {
             return true;

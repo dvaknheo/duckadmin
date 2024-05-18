@@ -158,7 +158,7 @@ class RuleBusiness extends Base
     ///////////////////////////////
     public function permission($roles)
     {
-        $rules_strings = RoleModel::_()->getRules($roles);
+        $rules_strings = RoleModel::_()->getRules($roles);        // 权限按钮
         $rules = [];
         foreach ($rules_strings as $rule_string) {
             if (!$rule_string) {

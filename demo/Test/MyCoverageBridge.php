@@ -110,7 +110,8 @@ class MyCoverageBridge extends MyCoverage
         $uri = Helper::SERVER('REQUEST_URI','');
         $post = Helper::POST();
         $post = http_build_query($post);
-        $ret =implode(";",[$uri,$post,$session_id,$method]);
+        $ajax = Helper::IsAjax()?'AJAX':'';
+        $ret =implode(";",[$uri,$post,$session_id,$method,$ajax]);
         return $ret;
     }
     ////[[[[
@@ -173,28 +174,16 @@ class MyCoverageBridge extends MyCoverage
             if(!$request){
                 continue;
             }
-
             if(substr($request,0,1)==='#'){
                 $this->readCommand($request);
                 continue;
             }
-            $this->startServer();
-            $url ="http://127.0.0.1:{$this->options['test_server_port']}".$this->options['test_homepage'].$request;
-            $data = $this->curl_file_get_contents([$url,'127.0.0.1'],$this->post);
-            if($this->options['test_echo_back']??false){
-                echo substr($data,0,100);
-            }
-            $this->post =[];
         }
         $this->stopServer();
         $this->doEnd();
     }
     protected function readCommand($request)
     {
-        if(substr($request,0,strlen('#POST '))==='#POST '){
-            $this->explainPost($request);
-            return;
-        }
         if(substr($request,0,2)==='##'){
             return;
         }
@@ -211,7 +200,7 @@ class MyCoverageBridge extends MyCoverage
     {
         return $ch;
     }
-    protected function curl_file_get_contents($url, $post =[],$is_ajax = flase)
+    protected function curl_file_get_contents($url, $post =[],$is_ajax = flase,$is_options =false)
     {
         $ch = curl_init();
         
@@ -237,6 +226,10 @@ class MyCoverageBridge extends MyCoverage
         if($is_ajax){
             $headers=['X-Requested-With: XMLHttpRequest'];
             curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        }
+        if($is_options){
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'OPTIONS');
+
         }
         if($this->session_id){
             curl_setopt($ch, CURLOPT_COOKIE, "PHPSESSID={$this->session_id}"); 
@@ -307,17 +300,13 @@ class MyCoverageBridge extends MyCoverage
             parse_str($poststr,$post);
         }
         $is_ajax = ($method ==='AJAX')?true:false;
+        $is_options = ($method ==='OPTIONS')?true:false;
         $url ="http://127.0.0.1:{$this->options['test_server_port']}".$this->options['test_homepage'].$uri;
-        $data = $this->curl_file_get_contents([$url,'127.0.0.1'],$post,$is_ajax);
+        $data = $this->curl_file_get_contents([$url,'127.0.0.1'],$post,$is_ajax,$is_options);
         if($this->options['test_echo_back']??false){
             echo substr($data,0,200);
         }
     }
-    protected function explainPost($request)
-    {
-        parse_str(substr($request,strlen('#POST ')),$post);
-        $this->post = $post;
-    } 
     protected function explainCall($command)
     {
         $flag = preg_match('/#CALL\s+([^@]+)@(\w+)/',$command,$m);

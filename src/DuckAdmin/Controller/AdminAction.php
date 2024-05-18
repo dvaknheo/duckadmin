@@ -17,7 +17,7 @@ class AdminAction
     
     public function checkLogin()
     {
-        $admin = $this->refresh_admin_session(true);
+        $admin = AdminSession::_()->getCurrentAdmin();
         Helper::ControllerThrowOn(!$admin,"需要登录",401);
         return $admin;
     }
@@ -38,67 +38,32 @@ class AdminAction
     {
         return AdminSession::_()->getCurrentAdminId();
     }
-    
-    /**
-     * 刷新当前管理员session
-     * @param bool $force
-     * @return void
-     */
-    protected function refresh_admin_session(bool $force = false)
-    {
-        $time_now = time();
-        $session_ttl = 2;
-        $admin = AdminSession::_()->getCurrentAdmin();
-        if(!$admin){
-            return null;
-        }
-        
-        $session_last_update_time = $admin['session_last_update_time'] ?? 0;
-        
-        
-        if (!$force && $time_now - $session_last_update_time < $session_ttl) {
-        
-            return null;
-        }
-        $admin = AccountBusiness::_()->getAdmin($admin['id']);
-        
-        if(!$admin){
-            return null;
-        }
-        
-        unset($admin['password']);
-        $admin['session_last_update_time'] = $time_now;
-        AdminSession::_()->setCurrentAdmin($admin);	
-        return $admin;
-    }
+
     ////////////////
     public function checkAccess($controller,$action)
     {
-        $code = 0;
-        $msg = '';
         try{
-            //$admin = $this->checkLogin(); // 这里不能用checklogin
             $admin_id =AdminSession::_()->getCurrentAdminId();
             AccountBusiness::_()->canAccess($admin_id, $controller, $action);
         } catch(\Exception $ex) {
             $this->onAuthException($ex);
-            return;
+            return; // @codeCoverageIgnore
         }
         $flag = $this->isOptionsMethod();
         if($flag){
-            return Helper::Show302('');
+            Helper::exit();
+            return; // @codeCoverageIgnore
         }
         return;
     }
     protected function onAuthException($ex)
     {
-        $code = $ex->getCode();
-        $msg = $ex->getMessage();
-        
         if (Helper::IsAjax()) {
-            Helper::ShowJson(['code' => $code, 'msg' => $msg, 'type' => 'error']);
+            Helper::ShowException($ex);
             Helper::exit();
+            return; // @codeCoverageIgnore
         }
+        $code = $ex->getCode();
         if($code == 401){
             return $this->exit401();
         }else if($code == 403){
@@ -121,7 +86,7 @@ EOF;
         Helper::header('Unauthorized',true,401);
         echo $response;
         Helper::exit();
-    }
+    } // @codeCoverageIgnore
     protected function exit403()
     {
         Helper::header('Forbidden',true,403);

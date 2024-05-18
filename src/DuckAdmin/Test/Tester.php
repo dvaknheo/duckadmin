@@ -32,8 +32,11 @@ class Tester
 #WEB account/password old_password=654321&password=123456&password_confirm=123456
 #WEB account/update
 #WEB account/logout
+#WEB account/logout  AJAX
 
 #WEB account/login username=admin&password=123456&captcha=7268
+#WEB admin/index?diffname  OPTIONS
+
 #WEB admin/index
 #WEB admin/select
 #WEB admin/insert
@@ -41,7 +44,7 @@ class Tester
 #WEB admin/delete
 #WEB admin/insert roles=1&username=admin{new_admin_id}&nickname=the_admin{new_admin_id}&password=123456&email=youxiang{new_admin_id}&mobile=shouji{new_admin_id}
 #WEB admin/update roles=1&username=admin{new_admin_id}&nickname=the_admin_new{new_admin_id}&password=&email=xyouxiang{new_admin_id}&mobile=xshouji{new_admin_id}&id={new_admin_id}
-#WEB admin/admin/delete id={new_admin_id}
+#WEB admin/delete id={new_admin_id}
 
 #WEB account/login username=admin&password=123456&captcha=7268
 #WEB config/index
@@ -91,7 +94,8 @@ EOT;
         
         //$sql = "select seq from sqlite_sequence where name = ?"
         
-        //$list ="#WEB account/dashboard  AJAX\n";
+        //$list ="#WEB index?foroptions=1  OPTIONS\n";
+        //$list = "#WEB account/logout  AJAX\n";
         $args = [
             'new_admin_id'=>$new_admin_id,
             'new_role_id'=>$new_role_id,
@@ -103,6 +107,20 @@ EOT;
         
         \DuckAdmin\System\DuckAdminApp::Phase($last_phase);
         return $list;
+    }
+    private function getNextInsertId($table)
+    {
+        $database_driver = '';
+        if($database_driver ==='mysql'){
+            $sql = "show table status where Name ='".\DuckAdmin\System\DuckAdminApp::_()->options['table_prefix'] .$table."'";
+            $ret = \DuckPhp\Component\DbManager::Db()->fetch($sql)["Auto_increment"];
+        }
+        if($database_driver ==='sqlite'){
+            $sql = "select seq from sqlite_sequence where name = ?";
+            $ret = \DuckPhp\Component\DbManager::Db()->fetchColumn($sql,$table);
+        }
+        return $ret;
+        
     }
     private function replace_string($str,$args)
     {

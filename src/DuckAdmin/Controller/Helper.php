@@ -8,19 +8,10 @@ namespace DuckAdmin\Controller;
 
 use DuckPhp\Helper\ControllerHelperTrait;
 
-use DuckAdmin\Business\AccountBusiness;
-use DuckAdmin\Controller\AdminSession;
-
 class Helper
 {
     use ControllerHelperTrait;
-    /*
-    public static function AdminId()
-    {
-        return AdminSession::_()->getCurrentAdminId();
-    }
-    */
-    
+
     public static function Success($data = [],$count = null)
     {
         return static::_()->_Success($data, $count);
@@ -42,6 +33,6 @@ class Helper
         $code = $ex->getCode();
         $msg = $ex->getMessage();
         if(!$code){$code = -1;}
-        return static::ShowJson(['code' => $code, 'msg' => $msg, 'type' => 'error'],false);
+        static::ShowJson(['code' => $code, 'msg' => $msg, 'type' => 'error']);
     }
 }

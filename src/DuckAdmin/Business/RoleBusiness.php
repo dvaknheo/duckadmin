@@ -20,9 +20,10 @@ class RoleBusiness extends Base
         $role_ids = CommonService::_()->getScopeRoleIds($my_ids, true);
         if (!$id) {
             $where['id'] = ['in', $role_ids];
-        } else{
-            Helper::BusinessThrowOn(!in_array($id, $role_ids),'无权限',1);
         }
+        
+        Helper::BusinessThrowOn($id && !in_array($id, $role_ids),'无权限');
+        
         [$data,$total]  = RoleModel::_()->doSelect($where, $field, $order,1,$limit);
         $data = CommonService::_()->doFormat($data, $total, $format, $limit);
         //file_put_contents(__DIR__.'/x.log',microtime(true) ."\n",FILE_APPEND);
@@ -33,12 +34,12 @@ class RoleBusiness extends Base
     {
         $pid = $data['pid'] ?? null;
         Helper::BusinessThrowOn(!$pid,'请选择父级角色组',1);
-        if (CommonService::_()->noRole($op_id, $pid, true)) {
-            Helper::BusinessThrowOn(true,'父级角色组超出权限范围',1);
-        }
-
+        $flag = CommonService::_()->noRole($op_id, $pid, true);
+        
+        Helper::BusinessThrowOn($flag, '父级角色组超出权限范围',1);
+        
         $this->checkRulesInput($pid, $data['rules'] ?? '');
-
+        
         $id = RoleModel::_()->addRole($data);
         return $id;
     }
@@ -51,9 +52,9 @@ class RoleBusiness extends Base
         $id = $role_id;
         $data = RoleModel::_()->inputFilter($input);
        
-        if (CommonService::_()->noRole($op_id, $role_id, true)) {
-            Helper::BusinessThrowOn(true,'无数据权限',1);
-        }
+        $flag = CommonService::_()->noRole($op_id, $role_id, true);
+        Helper::BusinessThrowOn($flag,'无数据权限',1);
+        
 
         $role = RoleModel::_()->getById($id);
         Helper::BusinessThrowOn(!$role,'数据不存在',1);
@@ -79,10 +80,7 @@ class RoleBusiness extends Base
         if (!$is_supper_role) {
             $this->checkRulesInput($pid, $data['rules'] ?? '');
         }
-
-
         RoleModel::_()->updateRole($id, $data);
-
         // 删除所有子角色组中已经不存在的权限
         if (!$is_supper_role) {
         
@@ -158,10 +156,8 @@ class RoleBusiness extends Base
         if ($rule_id_string === '*') {
             return;
         }
-        
-        $ext_rule =array_diff($rule_ids, explode(',', $rule_id_string));
-        if ($legal_rule_ids) {
-            Helper::BusinessThrowOn(true, '数据超出权限范围');
-        }
+        $legal_rule_ids = explode(',', $rule_id_string);
+        $ext_rule_ids = array_diff($rule_ids, $legal_rule_ids);
+        Helper::BusinessThrowOn($rule_ids, '数据超出权限范围');
     }
 }
