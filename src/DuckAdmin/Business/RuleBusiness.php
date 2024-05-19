@@ -14,8 +14,10 @@ class RuleBusiness extends Base
     public function get($admin_id, $types)
     {
         $roles = AdminRoleModel::_()->getRoles($admin_id);
+
         $roles = $roles ?? [];
         $rules = RoleModel::_()->getRules($roles);
+        //$rules =explode(',',$rules);
         $items = RuleModel::_()->allRules();
         // 格式化数据
         $formatted_items = [];
@@ -36,7 +38,7 @@ class RuleBusiness extends Base
         if (!in_array('*', $rules)) {
             $this->removeNotContain($tree_items, 'id', $rules);
         }
-        $this->removeNotContain($tree_items, 'type', $types);
+        //$this->removeNotContain($tree_items, 'type', $types);
         
         return Tree::arrayValues($tree_items);
     }

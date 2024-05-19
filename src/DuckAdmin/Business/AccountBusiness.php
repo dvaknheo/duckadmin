@@ -43,9 +43,6 @@ class AccountBusiness extends Base
         // change roles
         //////////////////////////////////////////
         unset($admin['password']);
-        
-        $admin['roles'] = AdminRoleModel::_()->getRoles($admin['id']);
-
         AdminModel::_()->updateLoginAt($admin['id']);
         
         //Helper::FireEvent([static::class,__LOGIN__], $admin);
@@ -63,13 +60,8 @@ class AccountBusiness extends Base
      */
     public function canAccess($admin_id, string $controller, string $action): bool
     {
-        
-        ////[[[[ 这段是控制器内的。
-        // 无控制器信息说明是函数调用，函数不属于任何控制器，鉴权操作应该在函数内部完成。
-        if (!$controller) {
-            return true;
-        }
         // 获取控制器鉴权信息
+        // 这段，如果反射失败呢。
         $class = new \ReflectionClass($controller);
         $properties = $class->getDefaultProperties();
         $noNeedLogin = $properties['noNeedLogin'] ?? [];
@@ -105,26 +97,17 @@ class AccountBusiness extends Base
             return true;
         }
 
-        // 如果action为index，规则里有任意一个以$controller开头的权限即可
-        // 这两段长得一样？
-        if (strtolower($action) === 'index') {
-            $rule = RuleModel::_()->checkWildRules($rule_ids,$controller);
-            Helper::BusinessThrowOn(!$rule, '无权限', 403);
-            return true;
-        }else{
-            // 查询是否有当前控制器的规则
-            $rule = RuleModel::_()->checkRules($rule_ids,$controller,$action);
-            Helper::BusinessThrowOn(!$rule, '无权限', 403);
-            return true;
-        }
+        $rule = RuleModel::_()->checkRules($rule_ids,$controller,$action);
+        Helper::BusinessThrowOn(!$rule, '无权限', 403);
+        return true;
     }
     public function update($admin_id, $data)
     {
-        if(!$data){
-            return [];
-        }
+        Helper::BusinessThrowOn(!$data, '没数据',1);
         AdminModel::_()->updateAdmin($admin_id,$data);
-        
+        $admin = AdminModel::_()->getAdminById($admin_id);
+        unset($admin['password']);
+        return $admin;
     }
     public function changePassword($admin_id, $old_password, $password, $password_cofirm)
     {

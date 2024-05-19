@@ -72,7 +72,7 @@ class AdminModel extends Base
     //// insert
     public function addFirstAdmin($username,$password)
     {
-        $sql="insert into `'TABLE'` (`username`, `password`, `nickname`, `created_at`, `updated_at`) values (?, ?, ?, ?, ?)";
+        $sql="insert into `'TABLE'` (`id`,`username`, `password`, `nickname`, `created_at`, `updated_at`) values (1, ?, ?, ?, ?, ?)";
         
         $password = $this->passwordHash($password);
         $time = date('Y-m-d H:i:s');
@@ -101,7 +101,6 @@ class AdminModel extends Base
     {
         $allow_column = [
             'nickname' => 'nickname',
-            'avatar' => 'avatar',
             'email' => 'email',
             'mobile' => 'mobile',
             'username' => 'username',

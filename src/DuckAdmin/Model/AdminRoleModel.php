@@ -14,7 +14,7 @@ class AdminRoleModel extends Base
 
     public function getRoles($admin_id)
     {
-        $sql="select role_id from `'TABLE'` where id = ?";
+        $sql="select role_id from `'TABLE'` where admin_id = ?";
         $data = $this->fetchAll($sql,$admin_id);
         return array_column($data,'role_id');
     }

@@ -30,7 +30,7 @@ class Tester
 #WEB account/password
 #WEB account/password old_password=123456&password=654321&password_confirm=654321
 #WEB account/password old_password=654321&password=123456&password_confirm=123456
-#WEB account/update
+#WEB account/update nickname=%E8%B6%85%E7%BA%A7%E7%AE%A1%E7%90%86%E5%91%98&email=112233a&mobile=22244b
 #WEB account/logout
 #WEB account/logout  AJAX
 
@@ -40,6 +40,7 @@ class Tester
 
 #WEB admin/index
 #WEB admin/select
+#WEB admin/select?format=select
 #WEB admin/insert
 #WEB admin/update
 #WEB admin/delete
@@ -49,14 +50,17 @@ class Tester
 #WEB admin/insert
 #WEB account/login username=admin&password=123456&captcha=7268
 
+##CALL 
 #WEB config/index
 #WEB config/get
 #WEB config/update
+#WEB config/update tab%5BkeepState%5D=on&tab%5Bsession%5D=on&tab%5Bmax%5D=30&tab%5Btitle%5D=%E4%BB%AA%E8%A1%A8%E7%9B%98&tab%5Bhref%5D=index%2Fdashboard&tab%5Bid%5D=0&tab%5Bindex%5D%5Bid%5D=0&tab%5Bindex%5D%5Bhref%5D=index%2Fdashboard&tab%5Bindex%5D%5Btitle%5D=%E4%BB%AA%E8%A1%A8%E7%9B%98
 
 
 ##WEB account/login username=admin&password=123456&captcha=7268
 #WEB role/index
 #WEB role/select
+#WEB role/select?format=tree
 #WEB role/rules
 #WEB role/insert
 #WEB role/update

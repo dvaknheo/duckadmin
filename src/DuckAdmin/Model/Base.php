@@ -121,7 +121,7 @@ class Base
     {
         if(App::Current()->options['database_driver'] === 'sqlite'){
             $sql = "pragma table_info(".$this->table().")";
-            $allow_column = self::Db()->fetchAll("desc `".$this->table()."`");
+            $allow_column = self::Db()->fetchAll($sql);
             $allow_column = array_column($allow_column, 'name', 'name');
             return $allow_column;
         }

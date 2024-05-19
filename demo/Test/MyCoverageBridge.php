@@ -105,13 +105,14 @@ class MyCoverageBridge extends MyCoverage
     }
     protected function getTestName()
     {
+        $time = date('ymdHis.',$_SERVER['REQUEST_TIME']).sprintf('%03d',($_SERVER['REQUEST_TIME_FLOAT']-(int)$_SERVER['REQUEST_TIME_FLOAT'])*1000);
         $method = Helper::SERVER('REQUEST_METHOD','GET');
         $session_id = Helper::COOKIE('PHPSESSID','');
         $uri = Helper::SERVER('REQUEST_URI','');
         $post = Helper::POST();
         $post = http_build_query($post);
         $ajax = Helper::IsAjax()?'AJAX':'';
-        $ret =implode(";",[$uri,$post,$session_id,$method,$ajax,microtime()]);
+        $ret =implode(";",[$time,$uri,$post,$session_id,$method,$ajax,microtime()]);
         return $ret;
     }
     ////[[[[

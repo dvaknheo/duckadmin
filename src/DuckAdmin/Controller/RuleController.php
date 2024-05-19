@@ -27,7 +27,9 @@ class RuleController extends Base
      */
     public function index()
     {
+        ob_start();
         Helper::Show([], 'rule/index');
+        ob_end_flush();exit;
     }
 
     /**

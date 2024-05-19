@@ -33,21 +33,15 @@ class RoleModel extends Base
     {
         $sql="select rules from `'TABLE'` where id in (". static::Db()->quoteIn($roles).')';
         $data = $this->fetchAll($sql);
-        return array_column($data,'rules');
-    }
-    public function hasSuperAdmin($roles)
-    {
-        $sql="select rules from `'TABLE'` where id in (" . static::Db()->quoteIn($roles).')';
-        $rules = $this->fetchColumn($sql);
-        
-        $rule_ids = [];
-        foreach ($rules as $rule_string) {
-            if (!$rule_string) {
-                continue;
-            }
-            $rule_ids = array_merge($rule_ids, explode(',', $rule_string));
+        $data = array_column($data,'rules');
+        $ret=[];
+        foreach($data as $v){
+            if(!$v){continue;}
+            $t=explode(',',$v);
+            $ret = array_merge($ret,$t);
         }
-        return $rule_ids;
+        //var_dump($ret);
+        return $ret;
     }
     
     public function getAllId()

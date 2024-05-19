@@ -38,25 +38,25 @@ class RuleModel extends Base
         $data = $this->fetchAll($sql);
         return $data;
     }
-    public function checkWildRules($rule_ids,$controller,$action)
-    {
-        $str = static::Db()->quoteIn($rule_ids);
-        $key = static::Db()->quote($controller);
-        $like = static::Db()->quote($controller.'@%');
-        
-        $sql = "select * from `'TABLE'` where id in $str and (key = $key  or key like $like)";
-        $data = $this->fetchColumn($sql);
-        return $data;
-    }
     public function checkRules($rule_ids,$controller,$action)
     {
-        // 根据 key 来判断权限
-        $str = static::Db()->quoteIn($ruls_ids);
-        $full = static::Db()->quote($controller.'@'.$action);
-        $controller = static::Db()->quote($controller);
-        
-        $sql = "select * from `'TABLE'` where id in $str and (key = $full  or key = $controller)";
-        $data = $this->fetchColumn($sql);
+        if (strtolower($action) === 'index') {
+            $str = static::Db()->quoteIn($rule_ids);
+            $key = static::Db()->quote($controller);
+            $like = static::Db()->quote($controller.'@%');
+            
+            $sql = "select * from `'TABLE'` where id in $str and (key = $key  or key like $like)";
+            $data = $this->fetchColumn($sql);
+            return $data;
+        } else {
+            // 根据 key 来判断权限
+            $str = static::Db()->quoteIn($ruls_ids);
+            $full = static::Db()->quote($controller.'@'.$action);
+            $controller = static::Db()->quote($controller);
+            
+            $sql = "select * from `'TABLE'` where id in $str and (key = $full  or key = $controller)";
+            $data = $this->fetchColumn($sql);
+        }
         return $data;
     }
     public function allRulesForTree()

@@ -100,11 +100,8 @@ class AccountController extends Base
      */
     public function update()
     {
-        AccountBusiness::_()->update(Helper::AdminId(),Helper::POST());
-        
-        // 更新数据需要重新载入
-        //$admin = AccountBusiness::_()->login($username, $password);
-        //AdminAction::_()->setCurrentAdmin($admin);
+        $admin = AccountBusiness::_()->update(Helper::AdminId(),Helper::POST());
+        AdminAction::_()->setCurrentAdmin($admin);
         
         Helper::Success();
     }
