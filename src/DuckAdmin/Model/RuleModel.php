@@ -45,16 +45,16 @@ class RuleModel extends Base
             $key = static::Db()->quote($controller);
             $like = static::Db()->quote($controller.'@%');
             
-            $sql = "select * from `'TABLE'` where id in $str and (key = $key  or key like $like)";
+            $sql = "select * from `'TABLE'` where id in ($str) and (`key` = $key  or `key` like $like)";
             $data = $this->fetchColumn($sql);
             return $data;
         } else {
             // 根据 key 来判断权限
-            $str = static::Db()->quoteIn($ruls_ids);
+            $str = static::Db()->quoteIn($ruls_ids??[]);
             $full = static::Db()->quote($controller.'@'.$action);
             $controller = static::Db()->quote($controller);
             
-            $sql = "select * from `'TABLE'` where id in $str and (key = $full  or key = $controller)";
+            $sql = "select * from `'TABLE'` where id in ($str) and (`key` = $full  or `key` = $controller)";
             $data = $this->fetchColumn($sql);
         }
         return $data;

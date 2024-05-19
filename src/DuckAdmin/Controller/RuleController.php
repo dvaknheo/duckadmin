@@ -18,7 +18,7 @@ class RuleController extends Base
      *
      * @var string[]
      */
-    protected $noNeedAuth = ['get', 'permission'];
+    protected $noNeedAuth = ['get', 'select','permission'];
 
 
     /**
@@ -27,9 +27,13 @@ class RuleController extends Base
      */
     public function index()
     {
-        ob_start();
+        \ob_start();
         Helper::Show([], 'rule/index');
-        ob_end_flush();exit;
+        $out1 = \ob_get_contents();
+        ob_end_clean();
+        echo $out1;
+        //var_dump(strlen($out1));
+        exit;
     }
 
     /**
