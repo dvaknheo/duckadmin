@@ -6,7 +6,7 @@
 
 require_once(__DIR__.'/../../vendor/autoload.php');
 
-include_once(__DIR__. '/../LocalInclude.php');
+@include_once(__DIR__. '/../LocalOverride.php');
 require_once(__DIR__. '/../DemoApp.php');
 require_once(__DIR__. '/../DemoAppWithDev.php');
 
