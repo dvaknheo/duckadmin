@@ -45,7 +45,10 @@ class MyCoverageBridge extends MyCoverage
 
         $prefix = App::Current()->options['cli_command_prefix']??App::Phase();
         $prefix = App::IsRoot()?'':$prefix;
-        Console::_()->regCommandClass($prefix, App::Phase(), [static::class]);
+        $classes = App::Current()->options['cli_command_classes'];
+        $classes[] = static::class;
+        //get_class(static::_());
+        Console::_()->regCommandClass($prefix, App::Phase(), $classes);
         App::OnEvent([App::Phase(),'onBeforeRun'],[static::class,'OnBeforeRun']);
         App::OnEvent([App::Phase(),'onAfterRun'],[static::class,'OnAfterRun']);
         \DuckPhp\Core\ExitException::Init();
