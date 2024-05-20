@@ -14,12 +14,15 @@ class DemoApp extends DuckPhp
       'is_debug' => true,
         'path' => __DIR__.'/',
         'cli_command_with_fast_installer' => true,  //for install command
+        
+        'controller_resource_prefix' => '/',  //for workerman local file
+        'path_resource' => 'public',          //for workerman local file
+        
         'app' => [
 //*
             \DuckAdmin\System\DuckAdminApp::class => [      // 后台管理系统
                 'controller_url_prefix' => 'app/admin/',    // 访问路径
-                'controller_resource_prefix' => 'res/',     // 资源文件前缀
-                //'controller_resource_prefix' => '/res/app/admin/',     // 资源文件前缀
+                'controller_resource_prefix' => '/res/app/admin/',     // 资源文件前缀
             ],
 //*/
             \DuckUser\System\DuckUserApp::class => [

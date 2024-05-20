@@ -33,7 +33,7 @@ class RuleController extends Base
         ob_end_clean();
         echo $out1;
         //var_dump(strlen($out1));
-        exit;
+        Helper::exit();
     }
 
     /**

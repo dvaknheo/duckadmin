@@ -32,7 +32,12 @@ class Helper
     {
         $code = $ex->getCode();
         $msg = $ex->getMessage();
+        
         if(!$code){$code = -1;}
-        static::ShowJson(['code' => $code, 'msg' => $msg, 'type' => 'error']);
+        $ret =['code' => $code, 'msg' => $msg, 'type' => 'error'];
+        if (__is_debug()) {
+            $ret['trace'] = $ex->getTrace();
+        }
+        static::ShowJson($ret);
     }
 }
