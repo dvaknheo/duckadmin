@@ -14,7 +14,7 @@ class UserController
 
     public function __construct()
     {
-        Helper::Admin()->checkAcess();
+        Helper::Admin()->checkAccess();
     }
     /**
      * 浏览
@@ -22,7 +22,8 @@ class UserController
      */
     public function action_index()
     {
-        Helper::Show([],'user/index');
+        list($data, $total) = UserBusiness::_()->getUserList([],Helper::PageNo());
+        Helper::Show($data,'user/index');
     }
 
     /**
@@ -32,8 +33,7 @@ class UserController
      */
     public function action_disable()
     {
-		//$post = Helper::POST();
-        $ret = UserBusiness::_()->changeUserStatus(Helper::AdminId(), $post['id']);
+        $ret = UserBusiness::_()->changeUserStatus(Helper::AdminId(), Helper::POST('id'));
 		Helper::ShowJson($ret);
     }
 

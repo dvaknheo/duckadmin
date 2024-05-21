@@ -13,7 +13,7 @@ class UserModel
     
     public function getUserList($conditions=[], $page = 1, $page_size = 10)
     {
-        var_dump("todo");
+        return [[],1];
     }
     public function changeUserStatus($id,$stat)
     {
