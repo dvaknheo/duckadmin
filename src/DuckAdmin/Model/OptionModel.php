@@ -21,7 +21,7 @@ class OptionModel extends Base
     {
         $data = $this->fetch("select * from `'TABLE'` where name='system_config'");
         if(!$data){
-            $flag = $this->execute("insert into `'TABLE'` ( value ) values( ? )" ,json_encode($value));
+            $flag = $this->execute("insert into `'TABLE'` ( name, value) values( 'system_config',? )" ,json_encode($value));
         }else{
             $flag = $this->execute("update `'TABLE'` set value = ? where name='system_config'" ,json_encode($value));
         }

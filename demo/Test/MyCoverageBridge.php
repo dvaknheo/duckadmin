@@ -79,8 +79,9 @@ class MyCoverageBridge extends MyCoverage
         //// save list
         $path_dump = $this->getSubPath('path_dump');
         @mkdir($path_dump);
-        $data =$this->getHttpStringToLog();
-        file_put_contents($path_dump.$this->options['group'].'.list',$data,FILE_APPEND); 
+        if($this->options['test_save_web_request_list'] ?? false){
+            file_put_contents($path_dump.$this->options['group'].'.list',$this->getHttpStringToLog()."\n",FILE_APPEND); 
+        }
         ////////////
         $this->doBegin();
     }
@@ -258,9 +259,9 @@ class MyCoverageBridge extends MyCoverage
             'http_app_class' =>get_class(App::Root()),
         ];
         
-        //if($this->options['test_new_server']){
+        if($this->options['test_new_server']){
             HttpServer::_(new HttpServer()); 
-        //}
+        }
         HttpServer::RunQuickly($server_options);
         //echo HttpServer::_()->getPid();
         sleep(1);// ugly
@@ -307,8 +308,7 @@ class MyCoverageBridge extends MyCoverage
         //// save list
         $path_dump = $this->getSubPath('path_dump');
         @mkdir($path_dump);
-        $data = $command ."\n";
-        file_put_contents($path_dump.$this->options['group'].'.list',$data,FILE_APPEND); 
+        file_put_contents($path_dump.$this->options['group'].'.list',$request ."\n",FILE_APPEND); 
         ////]]]]
         
         call_user_func($func); // TODO a=1&b=2 ... // 还是要拆分 ：： @ ,要反射

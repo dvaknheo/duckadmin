@@ -4,6 +4,7 @@ namespace DuckAdmin\Test;
 use DuckPhp\Foundation\SimpleSingletonTrait;
 use DuckAdmin\System\DuckAdminApp;
 use Demo\Test\MyCoverageBridge;
+use \DuckPhp\Component\DbManager;
 class Tester
 {
     use SimpleSingletonTrait;
@@ -16,15 +17,17 @@ class Tester
     }
     public function KickTestDirectory()
     {
-        $last_phase = DuckAdminApp::Phase();
-        return static::_()->_kickTestDirectory();
-        //DuckAdminApp::Phase($last_phase);
+        $last_phase = DuckAdminApp::Phase(DuckAdminApp::class);
+        static::_()->_kickTestDirectory();
+        DuckAdminApp::Phase($last_phase);
     }
     public function _kickTestDirectory()
     {
-        //$ = ;
-        $dir = __DIR__ .'/';
-        MyCoverageBridge::_()->getCoverage()->filter()->removeDirectoryFromWhitelist($dir);
+        // 这段无法生效是因为在web  call 不影响环境
+        $path = DuckAdminApp::_()->options['path'];
+        $filter = MyCoverageBridge::_()->getCoverage()->filter();
+        $filter->removeDirectoryFromWhitelist($path.'Test');
+        $filter->removeDirectoryFromWhitelist($path.'View');
     }
     public function getTestList()
     {
@@ -58,14 +61,16 @@ class Tester
 #WEB admin/update roles=-1&username=admin{new_admin_id}&nickname=the_admin_new{new_admin_id}&password=&email=xyouxiang{new_admin_id}&mobile=xshouji{new_admin_id}&id={new_admin_id}
 #WEB account/login username=admin{new_admin_id}&password=123456&captcha=7268
 #WEB admin/insert
+
 #WEB account/login username=admin&password=123456&captcha=7268
 
-##CALL 
+#CALL {static}::BeginConfigBusiness
+#WEB account/login username=admin&password=123456&captcha=7268
 #WEB config/index
 #WEB config/get
 #WEB config/update
-#WEB config/update tab%5BkeepState%5D=on&tab%5Bsession%5D=on&tab%5Bmax%5D=30&tab%5Btitle%5D=%E4%BB%AA%E8%A1%A8%E7%9B%98&tab%5Bhref%5D=index%2Fdashboard&tab%5Bid%5D=0&tab%5Bindex%5D%5Bid%5D=0&tab%5Bindex%5D%5Bhref%5D=index%2Fdashboard&tab%5Bindex%5D%5Btitle%5D=%E4%BB%AA%E8%A1%A8%E7%9B%98
-
+#WEB config/update bad%5Bskip%5D=on&tab%5BkeepState%5D=on&tab%5Bsession%5D=on&tab%5Bmax%5D=30&tab%5Btitle%5D=%E4%BB%AA%E8%A1%A8%E7%9B%98&tab%5Bhref%5D=index%2Fdashboard&tab%5Bid%5D=0&tab%5Bindex%5D%5Bid%5D=0&tab%5Bindex%5D%5Bhref%5D=index%2Fdashboard&tab%5Bindex%5D%5Btitle%5D=%E4%BB%AA%E8%A1%A8%E7%9B%98&colors%5B6%5D=bad
+#CALL {static}::EndConfigBusiness
 
 ##WEB account/login username=admin&password=123456&captcha=7268
 #WEB role/index
@@ -95,9 +100,9 @@ class Tester
 #WEB 
 #WEB account/logout
 #WEB index
-EOT;
-        //*/
 
+
+EOT;
         $last_phase = \DuckAdmin\System\DuckAdminApp::Phase(\DuckAdmin\System\DuckAdminApp::class);
         $new_admin_id = $this->getNextInsertId('admins');
         $new_role_id = $this->getNextInsertId('roles');
@@ -120,6 +125,47 @@ EOT;
         \DuckAdmin\System\DuckAdminApp::Phase($last_phase);
         return $list;
     }
+    public function BeginConfigBusiness()
+    {
+        $last_phase = DuckAdminApp::Phase(DuckAdminApp::class);
+        static::_()->_BeginConfigBusiness();
+        DuckAdminApp::Phase($last_phase);
+    }
+    public function _BeginConfigBusiness()
+    {
+        $table = DuckAdminApp::_()->options['table_prefix'] .'options';
+        $sql = "truncate `'TABLE'`";
+        $sql = str_replace("`'TABLE'`",$table,$sql);
+        $data = DbManager::Db()->execute($sql);
+        /*
+        if(!empty($data)){
+            $sql = "update `'TABLE'` set name ='system_config_bak' where name = 'system_config'";
+            $sql = str_replace("`'TABLE'`",$table,$sql);
+            $data = DbManager::Db()->execute($sql);
+        }
+        */
+    }
+    public function EndConfigBusiness()
+    {
+        $last_phase = DuckAdminApp::Phase(DuckAdminApp::class);
+        static::_()->_EndConfigBusiness();
+        DuckAdminApp::Phase($last_phase);
+    }
+    public function _EndConfigBusiness()
+    {
+        $table = DuckAdminApp::_()->options['table_prefix'] .'options';
+        /*
+        $sql = "select * from `'TABLE'` where name='system_config'";
+        $sql = str_replace("`'TABLE'`",$table,$sql);
+        $data = DbManager::Db()->fetch($sql);
+        if(empty($data)){
+            $sql = "update `'TABLE'` set name ='system_config' where name = 'system_config_bak'";
+            $sql = str_replace("`'TABLE'`",$table,$sql);
+            $data = DbManager::Db()->execute($sql);
+        }
+        */
+    }
+    ////////////////
     private function getNextInsertId($table)
     {
         $database_driver = \DuckAdmin\System\DuckAdminApp::_()->options['database_driver'];

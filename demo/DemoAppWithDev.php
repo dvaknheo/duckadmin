@@ -49,6 +49,11 @@ class DemoAppWithDev extends DemoApp
         //$str .= \DuckUser\Test\Tester::_()->getTestList();
         //$str .= \DuckUserManager\Test\Tester::_()->getTestList();
         //$str .= \SimpleBlog\Test\Tester::_()->getTestList();
+                
+        //path = \DuckAdmin\DuckAdminApp::_()->options['path'];
+        //$filter = MyCoverageBridge::_()->getCoverage()->filter();
+        //$filter->removeDirectoryFromWhitelist($path.'Test');
+        //$filter->removeDirectoryFromWhitelist($path.'View');
         
         return $str;
     }
