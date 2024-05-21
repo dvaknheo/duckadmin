@@ -27,13 +27,7 @@ class RuleController extends Base
      */
     public function index()
     {
-        \ob_start();
         Helper::Show([], 'rule/index');
-        $out1 = \ob_get_contents();
-        ob_end_clean();
-        echo $out1;
-        //var_dump(strlen($out1));
-        Helper::exit();
     }
 
     /**

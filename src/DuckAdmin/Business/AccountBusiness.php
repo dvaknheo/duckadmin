@@ -60,18 +60,21 @@ class AccountBusiness extends Base
      */
     public function canAccess($admin_id, string $controller, string $action): bool
     {
-        // 获取控制器鉴权信息
-        // 这段，如果反射失败呢。
-        $class = new \ReflectionClass($controller);
-        $properties = $class->getDefaultProperties();
-        $noNeedLogin = $properties['noNeedLogin'] ?? [];
-        $noNeedAuth = $properties['noNeedAuth'] ?? [];
-
+        // 根据反射获取控制器鉴权信息。 如果是 admincontroller
+        //try{
+            $class = new \ReflectionClass($controller);
+            $properties = $class->getDefaultProperties();
+            $noNeedLogin = $properties['noNeedLogin'] ?? [];
+            $noNeedAuth = $properties['noNeedAuth'] ?? [];
+        //}catch(\ReflectionException){
+            //Helper::BusinessThrowOn(true, '获取控制器失败', 403);
+        //}
+        
         // 不需要登录
         if (in_array($action, $noNeedLogin)) {
             return true;
         }
-        Helper::BusinessThrowOn(!$admin_id, $msg = '请登录', 401);
+        Helper::BusinessThrowOn(!$admin_id, $msg = '请登录1', 401);
         
         // 不需要鉴权
         if (in_array($action, $noNeedAuth)) {
@@ -82,23 +85,16 @@ class AccountBusiness extends Base
         ////[[[[
         
         $admin = AdminModel::_()->getAdminById($admin_id); 
-        Helper::BusinessThrowOn(!$admin, $msg = '请登录', 401);
+        Helper::BusinessThrowOn(!$admin, $msg = '请登录2', 401);
         Helper::BusinessThrowOn($admin['status'] != 0, $msg = '账户被禁用', 401);
         
         $roles = AdminRoleModel::_()->getRoles($admin_id);
-        Helper::BusinessThrowOn(!$roles,  '无权限', 403); //当前管理员无角色
-        ////]]]]
-
-        // 角色没有规则
         $rule_ids = RoleModel::_()->getRules($roles);
-        Helper::BusinessThrowOn(!$rule_ids,  '无权限', 403);
-        // 超级管理员
-        if (in_array('*', $rule_ids)){
-            return true;
-        }
-
+        
         $rule = RuleModel::_()->checkRules($rule_ids,$controller,$action);
-        Helper::BusinessThrowOn(!$rule, '无权限', 403);
+        //Helper::BusinessThrowOn(!$roles,  '当前管理员无角色', 403); //当前管理员无角色
+        //Helper::BusinessThrowOn(!$rule_ids,  '角色没有菜单', 403);
+        Helper::BusinessThrowOn(!$rule, '管理员没当前访问权限', 403);
         return true;
     }
     public function update($admin_id, $data)

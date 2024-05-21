@@ -2,6 +2,7 @@
 namespace SimpleBlog\Test;
 
 use DuckPhp\Foundation\SimpleSingletonTrait;
+use SimpleBlog\System\SimpleBlogApp;
 
 class Tester
 {
@@ -12,7 +13,7 @@ class Tester
         $list = <<<EOT
 #WEB 
 #WEB article/5
-#WEB 
+#WEB article/-1
 #WEB admin/index
 #WEB admin/articles
 #WEB admin/comments
@@ -21,9 +22,9 @@ class Tester
 app/admin/logout
 #WEB admin/comments
 EOT;
-        $prefix = \SimpleBlog\System\SimpleBlogApp::_()->options['controller_url_prefix'];
-        $list = str_replace('#WEB ',$prefix,$list);
-
+        $prefix = SimpleBlogApp::_()->options['controller_url_prefix'];
+        $list = str_replace('#WEB ','#WEB '.$prefix,$list);
+        
         return $list;
     }
 }

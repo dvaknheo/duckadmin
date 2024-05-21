@@ -35,7 +35,6 @@ class MyCoverageBridge extends MyCoverage
     }
     public function init(array $options, ?object $context = null)
     {
-
         parent::init($options, $context);
         $path = App::PathForRuntime();
         $this->options['path'] = $path;
@@ -43,12 +42,15 @@ class MyCoverageBridge extends MyCoverage
 
         $this->options['group'] = $this->watchingGetName();
 
+        // 这里抽成一个方法
         $prefix = App::Current()->options['cli_command_prefix']??App::Phase();
         $prefix = App::IsRoot()?'':$prefix;
         $classes = App::Current()->options['cli_command_classes'];
         $classes[] = static::class;
         //get_class(static::_());
         Console::_()->regCommandClass($prefix, App::Phase(), $classes);
+        //App::_()->regExtClass(static::class);
+        
         App::OnEvent([App::Phase(),'onBeforeRun'],[static::class,'OnBeforeRun']);
         App::OnEvent([App::Phase(),'onAfterRun'],[static::class,'OnAfterRun']);
         \DuckPhp\Core\ExitException::Init();
@@ -81,6 +83,10 @@ class MyCoverageBridge extends MyCoverage
         file_put_contents($path_dump.$this->options['group'].'.list',$data,FILE_APPEND); 
         ////////////
         $this->doBegin();
+    }
+    public function getCoverage()
+    {
+        return $this->coverage;
     }
     
     public function _OnAfterRun()
@@ -135,32 +141,6 @@ class MyCoverageBridge extends MyCoverage
     ////]]]]
     
     //////////////////
-    
-    private $phase_map =[];
-    private function get_all_namepace_phase_map()
-    {
-        $classes = PhaseContainer::GetContainerInstanceEx()->publics;
-        $phase_map =[];
-        foreach($classes as $class =>$_){
-            if(!isset($class::_()->options['namespace'])){continue;}
-            $phase_map[$class::_()->options['namespace'].'\\' ]= $class;
-        }
-        return $phase_map;
-    }
-    private function phaseFromClass($class)
-    {
-        if(!$this->phase_map){
-            $this->phase_map = $this->get_all_namepace_phase_map();
-        }
-        
-        foreach ($this->phase_map as $k=>$v) {
-            if(substr($class,0,strlen($k))===$k){
-                return $v;
-            }
-        }
-        return '';
-    }
-
     protected function replay()
     {
         $callback = $this->options['test_list_callback'];
@@ -312,16 +292,17 @@ class MyCoverageBridge extends MyCoverage
             echo substr($data,0,200);
         }
     }
-    protected function explainCall($command)
+    protected function explainCall($request)
     {
-        $flag = preg_match('/#CALL\s+([^@]+)@(\w+)/',$command,$m);
-        if(!$flag){ return; }
-        list($command,$class,$method) = $m;
-        $phase = $this->phaseFromClass($class);
+        //$flag = preg_match('/#CALL\s+([^@]+)@(\w+)/',$command,$m);
+        //if(!$flag){ return; }
+        @list($command,$func,$poststr)=explode(' ',$request);
+        if($command!=='#CALL'){return;}
+        
+        
         $this->options['name'] = $command;
         
         ////[[[[
-                
         //// save list
         $path_dump = $this->getSubPath('path_dump');
         @mkdir($path_dump);
@@ -329,9 +310,8 @@ class MyCoverageBridge extends MyCoverage
         file_put_contents($path_dump.$this->options['group'].'.list',$data,FILE_APPEND); 
         ////]]]]
         
-        $last_phase = App::Phase($phase);
-        $class::_()->$method(); // TODO a=1&b=2 ...
-        App::Phase($last_phase);
+        call_user_func($func); // TODO a=1&b=2 ... // 还是要拆分 ：： @ ,要反射
+        
     }
     
     /**
@@ -350,7 +330,6 @@ EOT;
             echo $str;
             return;
         }
-        $path = App::PathForRuntime();
         $p = Console::_()->getCliParameters();
         if($p['watch']??false){
             if($p['watch']===true){

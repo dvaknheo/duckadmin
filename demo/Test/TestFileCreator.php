@@ -198,4 +198,29 @@ class TestFileCreator extends ComponentBase
         file_put_contents(__DIR__.'/output.php',$template);
         
     }
+    
+    private $phase_map =[];
+    private function get_all_namepace_phase_map()
+    {
+        $classes = PhaseContainer::GetContainerInstanceEx()->publics;
+        $phase_map =[];
+        foreach($classes as $class =>$_){
+            if(!isset($class::_()->options['namespace'])){continue;}
+            $phase_map[$class::_()->options['namespace'].'\\' ]= $class;
+        }
+        return $phase_map;
+    }
+    public function phaseFromClass($class)
+    {
+        if(!$this->phase_map){
+            $this->phase_map = $this->get_all_namepace_phase_map();
+        }
+        
+        foreach ($this->phase_map as $k=>$v) {
+            if(substr($class,0,strlen($k))===$k){
+                return $v;
+            }
+        }
+        return '';
+    }
 }
