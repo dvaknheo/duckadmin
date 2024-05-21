@@ -40,8 +40,11 @@ class AdminAction
     }
 
     ////////////////
-    public function checkAccess($controller,$action)
+    public function checkAccess($class = null, $method = null,$url = null)
     {
+        $controller = $controller ?? Helper::getRouteCallingClass();
+        $action = $action ?? Helper::getRouteCallingMethod();
+        //$url = $url ?? Helper::getRouteCallingPath();
         try{
             $admin_id =AdminSession::_()->getCurrentAdminId();
             AccountBusiness::_()->canAccess($admin_id, $controller, $action);

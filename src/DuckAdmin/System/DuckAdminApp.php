@@ -23,6 +23,7 @@ class DuckAdminApp extends DuckPhp
         'namespace' => 'DuckAdmin',
         'controller_resource_prefix' => 'res/',  // 资源文件前缀
         'controller_method_prefix' => '',
+        'controller_class_adjust' => 'uc_class', // Admin/index => admin/index
         
         'exception_for_project'  => ProjectException::class,
         'exception_for_business'  => BusinessException::class,
@@ -35,13 +36,12 @@ class DuckAdminApp extends DuckPhp
         'need_install'=>true,
         'cli_command_with_fast_installer' => true,
         
-        'table_prefix' =>'wa_'
+        'table_prefix' =>'wa_',
+        
         
     ];
     protected function onPrepare()
     {
-        //默认的路由不符合我们这次的路由，换
-        Route::_(ProjectRoute::_());
         parent::onPrepare();
     }
     protected function onInited()

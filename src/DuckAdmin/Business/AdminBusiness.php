@@ -38,15 +38,12 @@ class AdminBusiness extends Base
         $flag = CommonService::_()->noRole($op_id,$role_ids, false);
         Helper::BusinessThrowOn($flag,'角色超出权限范围',1);
         
-        //$is_supper_admin = $this->isSupperAdmin($op_id);
-        // 这里要调整权限
-        if (false &&!Auth::isSupperAdmin() && $this->dataLimit) {
-            if (!empty($data[$this->dataLimitField])) {
-                $admin_id = $data[$this->dataLimitField];
-                if (!in_array($admin_id, Auth::getScopeAdminIds(true))) {
-                    Helper::BusinessThrowOn(true,  '无数据权限');
-                }
-            }
+        $is_supper_admin = CommonService::_()->isSupperAdmin($op_id);
+        if (!$is_supper_admin){
+            $scope_role_ids = AdminRoleModel::_()->rolesByAdmin($op_id);
+            $ext_roles = array_diff($role_ids, $scope_role_ids);
+            Helper::BusinessThrowOn($ext_roles,'只能改操作者下属的角色',1);
+            
         }
         $data = AdminModel::_()->inputFilter($input);
         $admin_id = AdminModel::_()->addAdmin($data);
@@ -75,9 +72,9 @@ class AdminBusiness extends Base
             $is_supper_admin = CommonService::_()->isSupperAdmin($op_id);
             if (!$is_supper_admin){
                 $same_roles = array_intersect($exist_role_ids, $scope_role_ids);
-                Helper::BusinessThrowOn(!$same_roles,'操作者无权限更改该记录',1);
+                Helper::BusinessThrowOn(!$same_roles,'被操作者和操作者有不同角色',1);
                 $ext_roles = array_diff($role_ids, $scope_role_ids);
-                Helper::BusinessThrowOn($ext_roles,'角色超出权限范围',1);
+                Helper::BusinessThrowOn($ext_roles,'只能改操作者下属的角色',1);
                 
             }
             AdminRoleModel::_()->updateAdminRole($admin_id, $exist_role_ids, $role_ids);

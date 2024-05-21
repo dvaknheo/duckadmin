@@ -56,11 +56,13 @@ class CommonService extends Base
      * @param $items
      * @return Response
      */
+    /* 没用上 
     protected function formatTableTree($items)
     {
         $tree = new Tree($items);
         return [$tree->getTree(),null];
     }
+    */
 
     /**
      * 格式化下拉列表

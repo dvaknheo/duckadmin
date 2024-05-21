@@ -14,12 +14,7 @@ class UserController
 
     public function __construct()
     {
-        $controller = Helper::getRouteCallingClass();
-        $action = Helper::getRouteCallingMethod();
-        
-		$flag = Helper::Admin()->canAccessCall($controller,$action);
-        
-        Helper::ControllerThrowOn(!$flag,"请登录");
+        Helper::Admin()->checkAcess();
     }
     /**
      * 浏览
@@ -38,7 +33,7 @@ class UserController
     public function action_disable()
     {
 		//$post = Helper::POST();
-		$ret = UserBusiness::_()->changeUserStatus(Helper::UserId(), $post['id']);
+        $ret = UserBusiness::_()->changeUserStatus(Helper::AdminId(), $post['id']);
 		Helper::ShowJson($ret);
     }
 

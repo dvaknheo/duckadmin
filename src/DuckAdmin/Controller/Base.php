@@ -31,9 +31,6 @@ class Base
         if(Helper::IsAjax()){
             Helper::assignExceptionHandler(\Exception::class,[Helper::class,'ShowException']);
         }
-        $controller = Helper::getRouteCallingClass();
-        $action = Helper::getRouteCallingMethod();
-        
-        AdminAction::_()->checkAccess($controller,$action);
+        AdminAction::_()->checkAccess();
     }
 }

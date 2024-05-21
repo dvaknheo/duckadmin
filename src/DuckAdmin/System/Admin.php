@@ -25,14 +25,9 @@ class Admin extends GlobalAdmin
     {
         return AdminAction::_()->getCurrentAdmin();
     }
-    public function canAccessUrl($url)
+    public function checkAccess($class = null, $method = null,$url = null)
     {
-        $this->checkLogin();
-        return true;
-    }
-    public function canAccessCall($class, $method)
-    {
-        return AdminAction::_()->checkAccess($class,$method);
+        return AdminAction::_()->checkAccess($controller, $action, $url);
     }
     public function checkLogin()
     {

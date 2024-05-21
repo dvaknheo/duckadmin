@@ -12,6 +12,7 @@ class adminController
 {
     public function __construct()
     {
+        //Helper::Admin()->checkAccess();
         Helper::Admin()->checkLogin();
        
         $data = [
@@ -56,7 +57,7 @@ class adminController
     {
         if(!Helper::POST()){
             $article = AdminBusiness::_()->getArticle(Helper::GET('id',0));
-            //Helper::ThrowOn(!$article, "找不到文章"); => TODO
+            Helper::ControllerThrowOn(!$article, "找不到文章");
             $article['title'] = __h($article['title']);
             $article['content'] = __h($article['content']);
             Helper::Show(get_defined_vars(), 'admin/article_update');

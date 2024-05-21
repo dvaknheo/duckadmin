@@ -255,6 +255,7 @@ class MyCoverageBridge extends MyCoverage
             'path_document'=>$this->options['test_path_document'],
             'port'=>$this->options['test_server_port'],
             'background' =>true,
+            'http_app_class' =>get_class(App::Root()),
         ];
         
         //if($this->options['test_new_server']){
