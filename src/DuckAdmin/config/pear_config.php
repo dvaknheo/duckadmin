@@ -3,7 +3,7 @@ array (
   'logo' => 
   array (
     'title' => 'DuckPhp Admin',
-    'image' => '@/logo.png',
+    'image' => '@/logo.png', // 这里我们要换成资源里的
   ),
   'menu' => 
   array (
@@ -26,7 +26,7 @@ array (
     'index' => 
     array (
       'id' => '0',
-      'href' => 'index/dashboard',
+      'href' => 'account/dashboard',
       'title' => '仪表盘',
     ),
   ),

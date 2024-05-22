@@ -6,20 +6,30 @@
 namespace DuckAdmin\System;
 
 use DuckPhp\Component\GlobalAdmin;
-use DuckPhp\Core\Phase;
 use DuckAdmin\Controller\AdminAction;
 use DuckAdmin\Controller\Helper;
 
 class Admin extends GlobalAdmin
 {
     //
+    public function action()
+    {
+        //override
+        return AdminAction::_()->action();
+    }
+    public function service()
+    {
+        //override
+        return null;
+        //return AdminService::_()->();
+    }
     public function current()
     {
         return AdminAction::CallInPhase(App::Phase());
     }
     public function id()
     {
-        return AdminAction::_()->getCurrentAdminId();
+        return AdminAction::_()->getCurrentAdmin()['id'];
     }
     public function data()
     {
@@ -31,7 +41,7 @@ class Admin extends GlobalAdmin
     }
     public function checkLogin()
     {
-        return AdminAction::_()->checkLogin();
+        return AdminAction::_()->getCurrentAdmin();
     }
     ///////////////
     public function urlForRegist($url_back = null, $ext = null)

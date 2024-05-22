@@ -8,6 +8,8 @@ namespace Demo;
 use DuckPhp\Core\Route;
 use DuckPhp\DuckPhp;
 use DuckPhp\Foundation\Helper;
+//use DuckPhp\Foundation\System\Helper;
+
 use Demo\Test\MyCoverageBridge;
 use Demo\Test\TestFileCreator;
 
@@ -30,7 +32,7 @@ class DemoAppWithDev extends DemoApp
             'test_new_server'=>true,
             'test_list_callback'=>[static::class,'GetTestList'],
         ];
-        
+        $this->options['ext_options_file']='config/DuckPhpApps_dev.config.php';
         $this->options['ext'][MyCoverageBridge::class] = $tester_options;
     }
     public function action_index()

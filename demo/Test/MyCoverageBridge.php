@@ -15,6 +15,8 @@ class MyCoverageBridge extends MyCoverage
 {
     //todo use  global singletonex to replace default singleton function
     public $options =[
+        'test_save_web_request_list' =>false,
+        'test_save_local_call_list' =>false,
         'test_server_port'=> 8080,
         'test_server_host'=> '',
         'test_homepage' =>'/index_dev.php/',
@@ -51,8 +53,8 @@ class MyCoverageBridge extends MyCoverage
         Console::_()->regCommandClass($prefix, App::Phase(), $classes);
         //App::_()->regExtClass(static::class);
         
-        App::OnEvent([App::Phase(),'onBeforeRun'],[static::class,'OnBeforeRun']);
-        App::OnEvent([App::Phase(),'onAfterRun'],[static::class,'OnAfterRun']);
+        Helper::OnEvent([App::Phase(),'onBeforeRun'],[static::class,'OnBeforeRun']);
+        Helper::OnEvent([App::Phase(),'onAfterRun'],[static::class,'OnAfterRun']);
         \DuckPhp\Core\ExitException::Init();
     }
     
@@ -73,6 +75,7 @@ class MyCoverageBridge extends MyCoverage
             //TODO console mode
             return;
         }
+        $watching_name = $this->watchingGetName();
         
         $this->options['name'] = $this->getTestName();
         
@@ -208,10 +211,13 @@ class MyCoverageBridge extends MyCoverage
             curl_setopt($ch, CURLOPT_POST, 1);
             curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post));
         }
+        $headers =[];
+        $headers[] = 'X-MyCoverageName: '.$this->watchingGetName();
+        $headers[] = 'X-MyCoverageName-Ext: '.'ABCCCCCCCCCC';
         if($is_ajax){
-            $headers=['X-Requested-With: XMLHttpRequest'];
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+            $headers[] = 'X-Requested-With: XMLHttpRequest';
         }
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         if($is_options){
             curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'OPTIONS');
 

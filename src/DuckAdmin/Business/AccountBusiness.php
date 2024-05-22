@@ -29,6 +29,7 @@ class AccountBusiness extends Base
     }
     public function getDashBoardInfo($admin_id)
     {
+        // 这里要显示的是现在是谁
         return ['time_stamp'=>DATE(DATE_ATOM)];
     }
     public function login($username,$password)

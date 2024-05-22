@@ -122,7 +122,7 @@ class ConfigBusiness extends Base
         if(preg_match('/^(https?:\/)?\//', $var)){
             return $var;
         }
-        return __url($var);
+        return $var;
         //return $var;
         ////]]]]
     }
