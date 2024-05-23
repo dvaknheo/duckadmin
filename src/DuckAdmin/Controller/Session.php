@@ -9,7 +9,7 @@ use DuckPhp\Foundation\SimpleSessionTrait;
 /**
  * 会话处理
  */
-class AdminSession
+class Session
 {
     use SimpleSessionTrait;
     public function getCurrentAdmin()

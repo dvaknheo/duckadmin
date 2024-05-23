@@ -9,7 +9,7 @@ namespace DuckAdmin\Controller;
 use DuckPhp\Helper\ControllerHelperTrait;
 
 use DuckAdmin\Business\AccountBusiness;
-use DuckAdmin\Controller\AdminSession;
+use DuckAdmin\Controller\Session;
 
 class AdminAction
 {
@@ -28,15 +28,15 @@ class AdminAction
      */
     public function getCurrentAdmin()
     {
-        return AdminSession::_()->getCurrentAdmin();
+        return Session::_()->getCurrentAdmin();
     }
     public function setCurrentAdmin($admin)
     {
-        return AdminSession::_()->setCurrentAdmin($admin);
+        return Session::_()->setCurrentAdmin($admin);
     }
     public function getAdminIdBySession()
     {
-        return AdminSession::_()->getCurrentAdminId();
+        return Session::_()->getCurrentAdminId();
     }
 
     ////////////////
@@ -46,7 +46,7 @@ class AdminAction
         $action = $action ?? Helper::getRouteCallingMethod();
         //$url = $url ?? Helper::getRouteCallingPath();
         try{
-            $admin_id =AdminSession::_()->getCurrentAdminId();
+            $admin_id =Session::_()->getCurrentAdminId();
             AccountBusiness::_()->canAccess($admin_id, $controller, $action);
         } catch(\Exception $ex) {
             $this->onAuthException($ex);
@@ -99,15 +99,15 @@ EOF;
     public function doShowCaptcha()
     {
         return CaptchaAction::_()->init([
-            'set_phrase_handler'=>[AdminSession::_(),'setPhrase'],
-            'get_phrase_handler'=>[AdminSession::_(),'getPhrase'],
+            'set_phrase_handler'=>[Session::_(),'setPhrase'],
+            'get_phrase_handler'=>[Session::_(),'getPhrase'],
         ])->doShowCaptcha();
     }
     public function doCheckCaptcha($captcha)
     {
         return CaptchaAction::_()->init([
-            'set_phrase_handler'=>[AdminSession::_(),'setPhrase'],
-            'get_phrase_handler'=>[AdminSession::_(),'getPhrase'],
+            'set_phrase_handler'=>[Session::_(),'setPhrase'],
+            'get_phrase_handler'=>[Session::_(),'getPhrase'],
         ])->doCheckCaptcha($captcha);
     }
 }
