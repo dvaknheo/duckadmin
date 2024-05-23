@@ -108,7 +108,6 @@ EOT;
         $new_role_id = $this->getNextInsertId('roles');
         $new_rule_id = $this->getNextInsertId('rules');
         
-        //$list ="#WEB index?foroptions=1  OPTIONS\n";
         //$list = "#WEB account/logout  AJAX\n";
         //$list ="#CALL {static}::KickTestDirectory\n";
         $static_class = static::class;

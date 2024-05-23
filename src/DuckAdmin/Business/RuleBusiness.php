@@ -96,16 +96,13 @@ class RuleBusiness extends Base
     
     public function selectRules($op_id, $input)
     {
-        //$this->syncRules();
+        //$this->syncRules(); //同步规则
         [$where, $format, $limit, $field, $order] = RuleModel::_()->selectInput($input);
         [$data,$total] = RuleModel::_()->doSelect($where, $field, $order,1,$limit);
         return CommonService::_()->doFormat($data, $total, $format, $limit);
         
     }
-    protected function mapClass($class)
-    {
-        return $class; // 把 plugin\xx\controller 改为我们相应的 controller
-    }
+
     /**
      * 根据类同步规则到数据库
      * @return void
@@ -116,7 +113,7 @@ class RuleBusiness extends Base
         $methods_in_db = [];
         $methods_in_files = [];
         foreach ($items as $item) {
-            $class = $this->mapClass($item['key']);
+            $class = $item['key'];
             
             //如果有@在内，那就继续
             if (strpos($class, '@')) {

@@ -7,7 +7,6 @@ namespace Demo\Test;
 
 use DuckPhp\Core\App;
 use DuckPhp\Core\Console;
-use DuckPhp\Core\PhaseContainer;
 use DuckPhp\Foundation\Helper;
 use DuckPhp\HttpServer\HttpServer;
 
@@ -19,17 +18,19 @@ class MyCoverageBridge extends MyCoverage
         'test_save_local_call_list' =>false,
         'test_server_port'=> 8080,
         'test_server_host'=> '',
-        'test_homepage' =>'/index_dev.php/',
+        'test_path_server'=>'',
         'test_path_document'=>'public',
+        'test_homepage' =>'/index_dev.php/',
+        
         'test_new_server'=>true,
         'test_list_callback'=>null,
         'test_report_direct'=>true,
         //'test_echo_back'=>true,
+        
     ];
     protected $is_save_session=false;
     protected $session_id='';
     protected $post =[];
-
     public function __construct()
     {
         $this->options = array_replace_recursive($this->options, (new parent())->options); //merge parent's options;
@@ -38,8 +39,9 @@ class MyCoverageBridge extends MyCoverage
     public function init(array $options, ?object $context = null)
     {
         parent::init($options, $context);
-        $path = App::PathForRuntime();
-        $this->options['path'] = $path;
+    
+        $this->options['path'] = Helper::PathForRuntime();
+        $this->options['test_path_server'] = Helper::PathForProject();
         $this->options['path_src'] = realpath(__DIR__.'/../../').'/src';
 
         $this->options['group'] = $this->watchingGetName();
@@ -55,7 +57,7 @@ class MyCoverageBridge extends MyCoverage
         
         Helper::OnEvent([App::Phase(),'onBeforeRun'],[static::class,'OnBeforeRun']);
         Helper::OnEvent([App::Phase(),'onAfterRun'],[static::class,'OnAfterRun']);
-        \DuckPhp\Core\ExitException::Init();
+        \DuckPhp\Core\ExitException::Init(); //__define(__ExitException);
     }
     
     public static function OnBeforeRun()
@@ -75,17 +77,24 @@ class MyCoverageBridge extends MyCoverage
             //TODO console mode
             return;
         }
-        $watching_name = $this->watchingGetName();
-        
-        $this->options['name'] = $this->getTestName();
-        
-        //// save list
-        $path_dump = $this->getSubPath('path_dump');
-        @mkdir($path_dump);
         if($this->options['test_save_web_request_list'] ?? false){
+            $path_dump = $this->getSubPath('path_dump');
+            @mkdir($path_dump);
             file_put_contents($path_dump.$this->options['group'].'.list',$this->getHttpStringToLog()."\n",FILE_APPEND); 
         }
+        
+        $watching_name = $this->watchingGetName();
+        
+        if($watching_name !== Helper::SERVER('HTTP_X_MYCOVERAGE_NAME','')) {
+            return;
+        }
+        $this->options['name'] = $this->getTestName();       
+        //// save list
+
+
+        $before_run = Helper::SERVER('HTTP_X_MYCOVERAGE_BEFORERUN','');
         ////////////
+        
         $this->doBegin();
     }
     public function getCoverage()
@@ -99,6 +108,10 @@ class MyCoverageBridge extends MyCoverage
             return;
         }
         ///////////////
+        $watching_name = $this->watchingGetName();
+        if($watching_name !== Helper::SERVER('HTTP_X_MYCOVERAGE_NAME','')) {
+            return;
+        }
         $this->doEnd();
     }
     protected function getHttpStringToLog()
@@ -119,13 +132,15 @@ class MyCoverageBridge extends MyCoverage
     protected function getTestName()
     {
         $time = date('ymdHis.',$_SERVER['REQUEST_TIME']).sprintf('%03d',($_SERVER['REQUEST_TIME_FLOAT']-(int)$_SERVER['REQUEST_TIME_FLOAT'])*1000);
+
         $method = Helper::SERVER('REQUEST_METHOD','GET');
+        
         $session_id = Helper::COOKIE('PHPSESSID','');
         $uri = Helper::SERVER('REQUEST_URI','');
         $post = Helper::POST();
         $post = http_build_query($post);
         $ajax = Helper::IsAjax()?'AJAX':'';
-        $ret =implode(";",[$time,$uri,$post,$session_id,$method,$ajax,microtime()]);
+        $ret =implode(";",[$time,$uri,$post,$session_id,$method,$ajax]);
         return $ret;
     }
     ////[[[[
@@ -212,8 +227,8 @@ class MyCoverageBridge extends MyCoverage
             curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post));
         }
         $headers =[];
-        $headers[] = 'X-MyCoverageName: '.$this->watchingGetName();
-        $headers[] = 'X-MyCoverageName-Ext: '.'ABCCCCCCCCCC';
+        $headers[] = 'X-MyCoverage-Name: '.$this->watchingGetName();
+        $headers[] = 'X-MyCoverage-BeforeRun: ';
         if($is_ajax){
             $headers[] = 'X-Requested-With: XMLHttpRequest';
         }
@@ -237,7 +252,6 @@ class MyCoverageBridge extends MyCoverage
             
             $flag = preg_match('/PHPSESSID=(\w+)/',$headers,$m);
             if($flag){
-
                 $this->session_id = $m[1];
                 $this->is_save_session = false;
             }
@@ -251,14 +265,14 @@ class MyCoverageBridge extends MyCoverage
     }
     ////[[[[
     protected $is_server_started=false;
+    
     protected function startServer()
     {
         if($this->is_server_started){
             return;
         }
-        $server_path = App::PathForProject();
         $server_options=[
-            'path'=>$server_path,
+            'path'=> $this->options['test_path_server'],
             'path_document'=>$this->options['test_path_document'],
             'port'=>$this->options['test_server_port'],
             'background' =>true,
@@ -269,8 +283,9 @@ class MyCoverageBridge extends MyCoverage
             HttpServer::_(new HttpServer()); 
         }
         HttpServer::RunQuickly($server_options);
-        //echo HttpServer::_()->getPid();
+        
         sleep(1);// ugly
+        echo static::class." HTTP SERVER PID = ".HttpServer::_()->getPid() ."\n";
         $this->is_server_started=true;
     }
     protected function stopServer()
@@ -358,12 +373,6 @@ EOT;
             $this->createReport($groups);
         }
         
-        var_dump(DATE(DATE_ATOM));
-    }
-
-    public function command_gentest()
-    {
-        //$routes = TestFileCreator::_()->genRunFile();
         var_dump(DATE(DATE_ATOM));
     }
     ////]]]]

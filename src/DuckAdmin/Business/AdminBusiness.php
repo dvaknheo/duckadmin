@@ -69,10 +69,10 @@ class AdminBusiness extends Base
             
             $role_ids = explode(',', $role_ids);
             $exist_role_ids = AdminRoleModel::_()->rolesByAdmin($admin_id);
-            $scope_role_ids = AdminRoleModel::_()->rolesByAdmin($op_id);
             
             $is_supper_admin = CommonService::_()->isSupperAdmin($op_id);
             if (!$is_supper_admin){
+                $scope_role_ids = AdminRoleModel::_()->rolesByAdmin($op_id); //getScopeRoleIds($op_id,false);
                 $same_roles = array_intersect($exist_role_ids, $scope_role_ids);
                 Helper::BusinessThrowOn(!$same_roles,'被操作者和操作者有不同角色',1);
                 $ext_roles = array_diff($role_ids, $scope_role_ids);

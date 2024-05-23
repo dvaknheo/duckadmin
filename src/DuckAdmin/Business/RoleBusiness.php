@@ -37,7 +37,6 @@ class RoleBusiness extends Base
         $flag = CommonService::_()->noRole($op_id, $pid, true);
         
         Helper::BusinessThrowOn($flag, '父级角色组超出权限范围',1);
-        
         $this->checkRulesInput($pid, $data['rules'] ?? '');
         
         $id = RoleModel::_()->addRole($data);
@@ -151,13 +150,15 @@ class RoleBusiness extends Base
         Helper::BusinessThrowOn(!$flag, '权限不存在');
 
         $rule_id_string = RoleModel::_()->getRulesByRoleId($role_id);
-        Helper::BusinessThrowOn($rule_id_string === '', '数据超出权限范围');
+        Helper::BusinessThrowOn($rule_id_string === '', '数据超出权限范围1');
         
         if ($rule_id_string === '*') {
-            return;
+            return; // 超级管理员，能给所有权限
         }
         $legal_rule_ids = explode(',', $rule_id_string);
+        
         $ext_rule_ids = array_diff($rule_ids, $legal_rule_ids);
-        Helper::BusinessThrowOn($rule_ids, '数据超出权限范围');
+
+        Helper::BusinessThrowOn(!empty($ext_rule_ids), '数据超出权限范围2');
     }
 }
