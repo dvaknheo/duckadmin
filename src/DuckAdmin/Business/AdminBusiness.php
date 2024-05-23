@@ -44,7 +44,7 @@ class AdminBusiness extends Base
         if (!$is_supper_admin){
             $scope_role_ids = AdminRoleModel::_()->rolesByAdmin($op_id);
             $ext_roles = array_diff($role_ids, $scope_role_ids);
-            Helper::BusinessThrowOn($ext_roles,'只能改操作者下属的角色',1);
+            Helper::BusinessThrowOn(!empty($ext_roles),'只能改操作者下属的角色'.implode(',',$ext_roles),1);
             
         }
         $data = AdminModel::_()->inputFilter($input);

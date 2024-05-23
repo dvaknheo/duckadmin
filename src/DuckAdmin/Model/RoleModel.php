@@ -101,7 +101,7 @@ class RoleModel extends Base
             $data['rules'] = implode(',', array_intersect(explode(',',$data['rules']),$rule_ids));
             $time = date('Y-m-d H:i:s');
             $data['updated_at'] = $time;
-            $this->update($id, $data, 'id');
+            $this->update($role_id, $data, 'id');
         }
     }
     

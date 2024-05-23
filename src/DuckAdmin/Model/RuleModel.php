@@ -47,14 +47,13 @@ class RuleModel extends Base
         if (strtolower($action) === 'index') {
             $str = static::Db()->quoteIn($rule_ids);
             $key = static::Db()->quote($controller);
-            $like = static::Db()->quote($controller.'@%');
+            $like = static::Db()->quote(str_replace("\\","\\\\",$controller).'@%'); // :(
             
             $sql = "select * from `'TABLE'` where id in ($str) and (`key` = $key  or `key` like $like)";
             $data = $this->fetchColumn($sql);
             return $data;
         } else {
-            // 根据 key 来判断权限
-            $str = static::Db()->quoteIn($ruls_ids??[]);
+            $str = static::Db()->quoteIn($rule_ids);
             $full = static::Db()->quote($controller.'@'.$action);
             $controller = static::Db()->quote($controller);
             
@@ -124,7 +123,7 @@ class RuleModel extends Base
         $sql = "update `'TABLE'` set pid=?, title=?, icon=?, updated_at=? where `key`=?";
         return $this->execute($sql, $pid, $menu['title'], $menu['icon']??null, $time, $key);
     }
-    public function addMenu($key,$menu)
+    public function addMenu($menu)
     {
         $time = date('Y-m-d H:i:s');
         $menu['created_at']=$time;
@@ -134,7 +133,7 @@ class RuleModel extends Base
         return static::Db()->lastInsertId();
     }
 
-    protected function get_children_ids($ids)
+    private function get_children_ids($ids)
     {
         //这个函数名字要改
         $sql ="select id from `'TABLE'` where pid in (" .static::Db()->quoteIn($ids) .")";
@@ -179,7 +178,7 @@ class RuleModel extends Base
             $pid = $old_menu['id'];
             $this->updateMenu($menu_tree['key'],$menu_tree);
         } else {
-            $pid = $this->addMenu($menu_tree['key'],$menu_tree);
+            $pid = $this->addMenu($menu_tree);
         }
         foreach ($children as $menu) {
             $menu['pid'] = $pid;

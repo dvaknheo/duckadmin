@@ -96,8 +96,11 @@ class RuleBusiness extends Base
     
     public function selectRules($op_id, $input)
     {
-        //$this->syncRules(); //同步规则
+        $this->syncRules(); //同步数据
+        
+        // 还要根据 role 来限制权限
         [$where, $format, $limit, $field, $order] = RuleModel::_()->selectInput($input);
+        
         [$data,$total] = RuleModel::_()->doSelect($where, $field, $order,1,$limit);
         return CommonService::_()->doFormat($data, $total, $format, $limit);
         
@@ -114,7 +117,6 @@ class RuleBusiness extends Base
         $methods_in_files = [];
         foreach ($items as $item) {
             $class = $item['key'];
-            
             //如果有@在内，那就继续
             if (strpos($class, '@')) {
                 $methods_in_db[$class] = $class;
@@ -128,20 +130,27 @@ class RuleBusiness extends Base
             $no_need_auth = array_merge($properties['noNeedLogin'] ?? [], $properties['noNeedAuth'] ?? []);
             $class = $reflection->getName();
             $pid = $item['id'];
-            $methods = $reflection->getMethods(\ReflectionMethod::IS_PUBLIC);
+            $methods = $reflection->getMethods();
             foreach ($methods as $method) {
+                if ($method->isConstructor()){continue;}
+                if ($method->isDestructor()){continue;}
+                if ($method->isStatic()){continue;}
+                if (!$method->isPublic()){continue;}
                 $method_name = $method->getName();
                 
-                if (strtolower($method_name) === 'index' || strpos($method_name, '__') === 0 || in_array($method_name, $no_need_auth)) {
+                //strtolower($method_name) === 'index' || 
+                if (in_array($method_name, $no_need_auth)) {
                     continue;
                 }
+                
                 $name = "$class@$method_name";
+                
                 $methods_in_files[$name] = $name;
                 $title = $this->getCommentFirstLine($method->getDocComment()) ?: $method_name;
                 
                 $menu = $items[$name] ?? [];
                 if (!$menu) {
-                    RuleModel::_()->addMenu($key,['pid'=>$pid,'key'=>$key,'title'=>$name,'type'=>2,]);
+                    RuleModel::_()->addMenu(['pid'=>$pid,'key'=>$name,'title'=>$title,'type'=>2]);
                     continue;
                 }
                 if ($menu['title'] != $title) {
@@ -181,7 +190,7 @@ class RuleBusiness extends Base
                 continue;
             }
             $code = str_replace('/', '.', trim($key, '/'));
-            $permissions[] = $code;
+            $permissions[] = 'app.admin.'.$code;
         }
         return $permissions;
     }
@@ -198,7 +207,7 @@ class RuleBusiness extends Base
         $flag = RuleModel::_()->findByKey($key);
         Helper::BusinessThrowOn($flag, "菜单标识 $key 已经存在", 1);
         
-        RuleModel::_()->addMenu($data['key'],$data);
+        RuleModel::_()->addMenu($data);
     }
     public function updateRule($op_id, $input)
     {

@@ -14,7 +14,7 @@ class MyCoverageBridge extends MyCoverage
 {
     //todo use  global singletonex to replace default singleton function
     public $options =[
-        'test_save_web_request_list' =>false,
+        'test_save_web_request_list' =>true,
         'test_save_local_call_list' =>false,
         'test_server_port'=> 8080,
         'test_server_host'=> '',

@@ -91,13 +91,12 @@ class AccountBusiness extends Base
         
         $roles = AdminRoleModel::_()->getRoles($admin_id);
         $rule_ids = RoleModel::_()->getRules($roles);
-        
         $rule = RuleModel::_()->checkRules($rule_ids,$controller,$action);
         //Helper::BusinessThrowOn(!$roles,  '当前管理员无角色', 403); //当前管理员无角色
         //Helper::BusinessThrowOn(!$rule_ids,  '角色没有菜单', 403);
         // 我们搞一下，如果 rule 里没有当前 , 如果是超级管理员，那么我们直接加，并且提醒跳转
         // 如果 不是管理员，那当然就没有了，提示错误为： 没加入权限
-        Helper::BusinessThrowOn(!$rule, '没当前访问权限', 403);
+        Helper::BusinessThrowOn(!$rule, '没当前访问权限1', 403);
         return true;
     }
     public function update($admin_id, $data)
