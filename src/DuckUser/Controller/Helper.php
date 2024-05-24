@@ -7,8 +7,6 @@
 namespace DuckUser\Controller;
 
 use DuckPhp\Helper\ControllerHelperTrait;
-use DuckPhp\Core\ExitException;
-use DuckPhp\Core\CoreHelper;
 class Helper
 {
     use ControllerHelperTrait;
@@ -20,6 +18,10 @@ class Helper
     public function csrfToken()
     {
         return Session::_()->csrfToken();
+    }
+    public function csrfField()
+    {
+        return Session::_()->csrfField();
     }
     
     public function checkCsrf()
@@ -33,13 +35,5 @@ class Helper
         
         $session_token =  Session::_()->getToken();
         //ControllerException::ThrowOn($token !== $session_token, "csrf_token 失败[$token !== $session_token]", 419);
-    }
-    public function isCsrfException($ex)
-    {
-        return is_a($ex, \Exception::class) && $ex->getCode=419;
-    }
-    public function csrfField()
-    {
-        return Session::_()->csrfField();
     }
 }

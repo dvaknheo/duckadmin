@@ -9,7 +9,7 @@ use DuckUser\Business\UserBusiness;
 
 class UserAction extends Base
 {
-    protected $user  =[];
+    protected $user  = [];
     public function __construct()
     {
         // must override me

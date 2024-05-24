@@ -48,15 +48,17 @@ class DemoAppWithDev extends DemoApp
     {
         $str = '';
         //$str .= \DuckAdmin\Test\Tester::_()->getTestList();
-        //$str .= \DuckUser\Test\Tester::_()->getTestList();
+        $str .= \DuckUser\Test\Tester::_()->getTestList();
         //$str .= \DuckUserManager\Test\Tester::_()->getTestList();
-        $str .= \SimpleBlog\Test\Tester::_()->getTestList();
+        //$str .= \SimpleBlog\Test\Tester::_()->getTestList();
                 
         //path = \DuckAdmin\DuckAdminApp::_()->options['path'];
         //$filter = MyCoverageBridge::_()->getCoverage()->filter();
         //$filter->removeDirectoryFromWhitelist($path.'Test');
         //$filter->removeDirectoryFromWhitelist($path.'View');
-        
+        //    public function removeDirectoryFromWhitelist(string $directory, string $suffix = '.php', string $prefix = ''): void
+        //    public function removeFileFromWhitelist(string $filename): void
+
         return $str;
     }
 }

@@ -8,7 +8,6 @@ use \DuckPhp\Component\DbManager;
 class Tester
 {
     use SimpleSingletonTrait;
-// backuptable ,restoretable
     public function runInConsole()
     {
         //$this->runExtBusiness();
