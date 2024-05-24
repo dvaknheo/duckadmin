@@ -3,7 +3,7 @@ namespace DuckAdmin\Test;
 
 use DuckPhp\Foundation\SimpleSingletonTrait;
 use DuckAdmin\System\DuckAdminApp;
-use Demo\Test\MyCoverageBridge;
+use Demo\Tester\MyCoverageBridge;
 use \DuckPhp\Component\DbManager;
 class Tester
 {
@@ -23,10 +23,10 @@ class Tester
     public function _kickTestDirectory()
     {
         // 这段无法生效是因为在web  call 不影响环境
-        $path = DuckAdminApp::_()->options['path'];
-        $filter = MyCoverageBridge::_()->getCoverage()->filter();
-        $filter->removeDirectoryFromWhitelist($path.'Test');
-        $filter->removeDirectoryFromWhitelist($path.'View');
+        //$path = DuckAdminApp::_()->options['path'];
+        //$filter = MyCoverageBridge::_()->getCoverage()->filter();
+        //$filter->removeDirectoryFromWhitelist($path.'Test');
+        //$filter->removeDirectoryFromWhitelist($path.'View');
     }
     public function getTestList()
     {

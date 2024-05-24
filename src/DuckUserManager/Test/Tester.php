@@ -10,7 +10,8 @@ class Tester
     {
         //#COMMAND FUNCTION_METHOD
         $list = <<<EOT
-
+#WEB index
+#WEB status
 EOT;
         $prefix = \DuckUserManager\System\DuckUserManagerApp::_()->options['controller_url_prefix'];
         $list = str_replace('#WEB ',$prefix,$list);

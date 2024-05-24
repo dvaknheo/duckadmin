@@ -33,7 +33,7 @@ class UserController
      * @param 
      * @return Response
      */
-    public function action_disable()
+    public function action_status()
     {
         $ret = UserBusiness::_()->changeUserStatus(Helper::AdminId(), Helper::POST('id'));
 		Helper::ShowJson($ret);

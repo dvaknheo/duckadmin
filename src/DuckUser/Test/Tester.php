@@ -66,6 +66,7 @@ $list = <<<EOT
 #WEB Home/password oldpassword=654321&newpassword=123456&newpassword_confirm=123456
 #WEB Home/password oldpassword=654321&newpassword=123456&newpassword_confirm=123456
 #CALL {static}::AfterTest
+
 EOT;
 
         $prefix = \DuckUser\System\DuckUserApp::_()->options['controller_url_prefix'];
