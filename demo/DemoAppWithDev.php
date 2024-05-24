@@ -13,9 +13,8 @@ use DuckPhp\Foundation\Helper;
 use Demo\Test\MyCoverageBridge;
 use Demo\Test\TestFileCreator;
 
-require_once(__DIR__. '/Test/MyCoverage.php');
-require_once(__DIR__. '/Test/MyCoverageBridge.php');
-require_once(__DIR__. '/Test/TestFileCreator.php');
+require_once(__DIR__. '/Tester/MyCoverage.php');
+require_once(__DIR__. '/Tester/MyCoverageBridge.php');
 
 class DemoAppWithDev extends DemoApp
 {
