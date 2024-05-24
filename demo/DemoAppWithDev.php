@@ -10,8 +10,8 @@ use DuckPhp\DuckPhp;
 use DuckPhp\Foundation\Helper;
 //use DuckPhp\Foundation\System\Helper;
 
-use Demo\Test\MyCoverageBridge;
-use Demo\Test\TestFileCreator;
+use Demo\Tester\MyCoverageBridge;
+use Demo\Tester\TestFileCreator;
 
 require_once(__DIR__. '/Tester/MyCoverage.php');
 require_once(__DIR__. '/Tester/MyCoverageBridge.php');

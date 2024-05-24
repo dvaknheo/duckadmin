@@ -11,8 +11,10 @@ class UserModel
 {
     use SimpleModelTrait;
     
-    public $table_name = "Users";
-
+    public function __construct()
+    {
+        $this->table_name = "Users";
+    }
     public function exsits($name)
     {
         $sql = "select count(*) as c from `'TABLE'` where username=?";

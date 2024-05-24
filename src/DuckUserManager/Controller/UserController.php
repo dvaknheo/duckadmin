@@ -24,7 +24,7 @@ class UserController
     {
         $list = UserBusiness::_()->getUserList([],Helper::PageNo());
         $data['list'] =$list['data'];
-        $data['pager'] = Helper::Pager($list['count']);
+        $data['pager'] = Helper::PagerHtml($list['count']);
         Helper::Show($data,'user/index');
     }
 

@@ -25,7 +25,7 @@ class MyCoverageBridge extends MyCoverage
         'test_new_server'=>true,
         'test_list_callback'=>null,
         'test_report_direct'=>true,
-        //'test_echo_back'=>true,
+        'test_echo_back'=>false,
         
     ];
     protected $is_save_session=false;

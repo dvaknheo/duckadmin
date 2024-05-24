@@ -2,6 +2,7 @@
 namespace DuckUser\Test;
 
 use DuckPhp\Foundation\SimpleSingletonTrait;
+use DuckPhp\Core\CoreHelper;
 
 class Tester
 {
@@ -9,23 +10,37 @@ class Tester
     
     public function getTestList()
     {
-        //#COMMAND FUNCTION_METHOD
-        $list = <<<EOT
-#WEB 
+$list = <<<EOT
+#WEB index
 #WEB register
-#WEB register name=aa1&password=123456&password_confirm=123456
+#WEB register name={username}&password=123456&password_confirm=123456
+#WEB register name={username}&ssssssssssssssssssssssamename=1
 #WEB Home/index
 #WEB logout
 #WEB index
 #WEB login
-#WEB login name={name}&password=123456
+#WEB login name={username}&password=nolllllllllllllllllllogin
+#WEB login name={username}&password=123456
 #WEB Home/index
 #WEB Home/password
 #WEB Home/password oldpassword=123456&newpassword=654321&newpassword_confirm=654321
 #WEB Home/password oldpassword=654321&newpassword=123456&newpassword_confirm=123456
+#WEB Home/password oldpassword=654321&newpassword=123456&newpassword_confirm=123456
 
 EOT;
+
+        $x = <<<EOT
+#WEB index
+#WEB register
+#WEB register name={username}&password=123456&password_confirm=123456
+EOT;
         $prefix = \DuckUser\System\DuckUserApp::_()->options['controller_url_prefix'];
+        
+        $args = [
+            'username' =>'uu1',
+        ];
+        $args ['static'] = static::class;
+        $list = CoreHelper::_()->formatString($list,$args);
         $list = str_replace('#WEB ','#WEB '.$prefix,$list);
         return $list;
     }
