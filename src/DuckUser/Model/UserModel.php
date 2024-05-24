@@ -6,6 +6,7 @@
 namespace DuckUser\Model;
 
 use DuckPhp\Foundation\SimpleModelTrait;
+use DuckPhp\Foundation\Model\Helper;
 
 class UserModel
 {
@@ -47,7 +48,7 @@ class UserModel
     public function getUsernames($user_ids)
     {
         if(empty($user_ids)){ return []; }
-        $user_ids = static::DbForRead()->quoteIn($user_ids);
+        $user_ids = Helper::DbForRead()->quoteIn($user_ids);
         $sql = "select id,username from `'TABLE'` where id in ($user_ids)";
         $data = $this->fetchAll($sql);
         $ret = [];

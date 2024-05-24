@@ -16,6 +16,7 @@ class UserAction extends Base
     }
     public function checkLogin()
     {
+        $this->current();
     }
     public function current()
     {

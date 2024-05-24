@@ -3,14 +3,53 @@ namespace DuckUser\Test;
 
 use DuckPhp\Foundation\SimpleSingletonTrait;
 use DuckPhp\Core\CoreHelper;
+use DuckPhp\Component\DbManager;
+use DuckUser\System\DuckUserApp;
+use DuckUser\Model\UserModel;
+use DuckUser\Controller\UserAction;
 
 class Tester
 {
     use SimpleSingletonTrait;
     
+    public function BeforeTest()
+    {
+        $phase = CoreHelper::_()->guessPhase(static::class);
+        CoreHelper::PhaseCall($phase,function(){
+            static::_()->_BeforeTest();
+        });
+    }
+    public function _BeforeTest()
+    {
+        $table = UserModel::_()->table();
+        $sql = "delete from $table where username = ?";
+        $ret = DbManager::Db()->execute($sql,'user_test');
+    }
+    public function AfterTest()
+    {
+        $phase = CoreHelper::_()->guessPhase(static::class);
+        CoreHelper::PhaseCall($phase,function(){
+            static::_()->_AfterTest();
+        });
+    }
+    public function _AfterTest()
+    {
+        $table = UserModel::_()->table();
+        $sql = "select id from $table where username = ?";
+        $id = DbManager::Db()->fetchColumn($sql,'user_test');
+        UserAction::_()->getUsernames([$id]);
+        try{
+            UserAction::_()->checkLogin();
+        }catch(\Exception $ex){}
+
+        $table = UserModel::_()->table();
+        $sql = "delete from $table where username = ?";
+        $ret = DbManager::Db()->execute($sql,'user_test');
+    }
     public function getTestList()
     {
 $list = <<<EOT
+#CALL {static}::BeforeTest
 #WEB index
 #WEB register
 #WEB register name={username}&password=123456&password_confirm=123456
@@ -26,18 +65,13 @@ $list = <<<EOT
 #WEB Home/password oldpassword=123456&newpassword=654321&newpassword_confirm=654321
 #WEB Home/password oldpassword=654321&newpassword=123456&newpassword_confirm=123456
 #WEB Home/password oldpassword=654321&newpassword=123456&newpassword_confirm=123456
-
+#CALL {static}::AfterTest
 EOT;
 
-        $x = <<<EOT
-#WEB index
-#WEB register
-#WEB register name={username}&password=123456&password_confirm=123456
-EOT;
         $prefix = \DuckUser\System\DuckUserApp::_()->options['controller_url_prefix'];
         
         $args = [
-            'username' =>'uu1',
+            'username' =>'user_test',
         ];
         $args ['static'] = static::class;
         $list = CoreHelper::_()->formatString($list,$args);
