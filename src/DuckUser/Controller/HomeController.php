@@ -29,7 +29,7 @@ class HomeController extends Base
                 $new_pass = Helper::POST('newpassword','');
                 $confirm_pass = Helper::POST('newpassword_confirm','');
                 
-                ControllerException::ThrowOn($new_pass !== $confirm_pass, '重复密码不一致');
+                Helper::ControllerThrowOn($new_pass !== $confirm_pass, '重复密码不一致');
                 UserBusiness::_()->changePassword($uid, $old_pass, $new_pass);
                 
                 $error = "密码修改完毕"; 

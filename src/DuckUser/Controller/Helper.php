@@ -29,7 +29,7 @@ class Helper
         $domain = Helper::Domain(true).'/';
         $token = Helper::Post('_token');
         
-        ControllerException::ThrowOn((substr($referer, 0, strlen($domain)) !== $domain), "CRSF", 419);
+        Helper::ControllerThrowOn((substr($referer, 0, strlen($domain)) !== $domain), "CRSF", 419);
         
         $session_token =  Session::_()->getToken();
         //ControllerException::ThrowOn($token !== $session_token, "csrf_token 失败[$token !== $session_token]", 419);

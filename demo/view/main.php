@@ -39,16 +39,16 @@ duckuser 则是附带的用户系统
 demo 这个工程 ，演示了如何使用第三方的 duckphp 工程作为 库
 
 （\SimpleBlog\System\SimpleBlogApp::class）
-<a href="<?=__url('blog/')?>">一个简单的博客系统</a> 这个是接入其他前后台管理系统的一个应用案例。
+<a href="<?=$url_blog?>">一个简单的博客系统</a> 这个是接入其他前后台管理系统的一个应用案例。
 
-（\DuckUser\System\DuckUserApp::class） <a href="<?=__url('user/')?>">用户基本注册登录页面在这里</a>
+（\DuckUser\System\DuckUserApp::class） <a href="<?=$url_user?>">用户基本注册登录页面在这里</a>
 这是个很简陋的用户系统。提供了基本的用户接口。这个用户系统对应的
 
 （\DuckAdmin\System\DuckAdminApp::class） 
-<a href="<?=__url('app/admin/index')?>">管理后台入口在这里</a> 
+<a href="<?=$url_admin?>">管理后台入口在这里</a> 
 这个管理后台，模仿的是 webman admin 的后台， 并不完美，缺乏现在常见管理后台登录再跳转回来等的功能
 
-（\DuckUserManager\System\DuckUserManagerApp::class）<a href="<?=__url('app/admin/User/index')?>">用户管理后台在这里</a>
+（\DuckUserManager\System\DuckUserManagerApp::class）<a href="<?=$url_user_manager?>">用户管理后台在这里</a>
 很简陋的用户管理系统。 (需要后台登录之后才能访问)，没整合 webman admin 的用户管理后台。
 
 

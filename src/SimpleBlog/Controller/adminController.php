@@ -12,8 +12,7 @@ class adminController
 {
     public function __construct()
     {
-        //Helper::Admin()->checkAccess();
-        Helper::Admin()->checkLogin();
+        Helper::Admin()->checkAccess();
        
         $data = [
             'url_articles' => 'admin/articles',

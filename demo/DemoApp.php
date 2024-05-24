@@ -58,8 +58,14 @@ class DemoApp extends DuckPhp
     }
     public function action_index()
     {
-        // route: /  just show page;
-        Helper::Show([],'main');
+        // 这个页面是首页，我们整合欢迎页面入本类
+        $data = [];
+        $data['url_blog'] = __url(\SimpleBlog\System\SimpleBlogApp::_()->options['controller_url_prefix']);
+        $data['url_user'] = __url(\DuckUser\System\DuckUserApp::_()->options['controller_url_prefix']);
+        $data['url_admin'] = __url(\DuckAdmin\System\DuckAdminApp::_()->options['controller_url_prefix']);
+        $data['url_user_manager'] = __url(\DuckUserManager\System\DuckUserManagerApp::_()->options['controller_url_prefix']);
+        
+        Helper::Show($data,'main');
     }
     public function onInit()
     {
