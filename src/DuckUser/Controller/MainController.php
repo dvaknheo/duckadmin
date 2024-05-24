@@ -6,8 +6,6 @@
 namespace DuckUser\Controller;
 
 use DuckUser\Business\UserBusiness;
-use DuckUser\Controller\UserAction;
-
 
 class MainController extends Base
 {

@@ -20,12 +20,12 @@ class Tester
 #WEB login name=aa1&password=123456
 #WEB Home/index
 #WEB Home/password
-#WEB #WEB Home/password oldpassword=123456&newpassword=654321&newpassword_confirm=654321
-#WEB #WEB Home/password oldpassword=654321&newpassword=123456&newpassword_confirm=123456
+#WEB Home/password oldpassword=123456&newpassword=654321&newpassword_confirm=654321
+#WEB Home/password oldpassword=654321&newpassword=123456&newpassword_confirm=123456
 
 EOT;
         $prefix = \DuckUser\System\DuckUserApp::_()->options['controller_url_prefix'];
-        $list = str_replace('#WEB ',$prefix,$list);
+        $list = str_replace('#WEB ','#WEB '.$prefix,$list);
         return $list;
     }
 }

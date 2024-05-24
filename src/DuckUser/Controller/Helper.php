@@ -12,20 +12,9 @@ use DuckPhp\Core\CoreHelper;
 class Helper
 {
     use ControllerHelperTrait;
-    public static function isExitException($ex)
-    {
-        return \is_a($ex,ExitException::class);
-    }
-    
     public function goHome()
     {
-        try{
-            Helper::Show302(UserAction::_()->urlForHome());
-        }catch(\Exception $ex){
-            if($this->isExitException($ex)){
-                throw $ex;
-            }
-        }
+        Helper::Show302(UserAction::_()->urlForHome());
         return;
     }
     public function csrfToken()

@@ -17,6 +17,11 @@ class DuckUserApp extends DuckPhp
         'exception_reporter' => ExceptionReporter::class,
         'class_user' => User::class,
         
+        'exception_for_project'  => ProjectException::class,
+        'exception_for_business'  => BusinessException::class,
+        'exception_for_controller'  => ControllerException::class,
+        'exception_reporter' =>  ExceptionReporter::class,
+        
         'need_install'=>true,
         'database_driver'=>'sqlite',
         'local_database' =>true,
@@ -25,6 +30,6 @@ class DuckUserApp extends DuckPhp
         'home_url' => 'Home/index',
         
         //'table_prefix' => '',   // 表前缀
-        //'session_prefix' => '',  // Session 前缀
+        'session_prefix' => 'duckuser_',  // Session 前缀
     ];
 }
