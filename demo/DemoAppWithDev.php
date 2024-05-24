@@ -48,9 +48,9 @@ class DemoAppWithDev extends DemoApp
     {
         $str = '';
         //$str .= \DuckAdmin\Test\Tester::_()->getTestList();
-        $str .= \DuckUser\Test\Tester::_()->getTestList();
+        //$str .= \DuckUser\Test\Tester::_()->getTestList();
         //$str .= \DuckUserManager\Test\Tester::_()->getTestList();
-        //$str .= \SimpleBlog\Test\Tester::_()->getTestList();
+        $str .= \SimpleBlog\Test\Tester::_()->getTestList();
                 
         //path = \DuckAdmin\DuckAdminApp::_()->options['path'];
         //$filter = MyCoverageBridge::_()->getCoverage()->filter();

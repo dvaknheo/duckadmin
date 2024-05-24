@@ -10,10 +10,16 @@ use DuckPhp\Foundation\SimpleModelTrait;
 class UserModel
 {
     use SimpleModelTrait;
-    
-    public function getUserList($conditions=[], $page = 1, $page_size = 10)
+    public function __construct()
     {
-        return [[],1];
+        $this->table_name ="Users";
+    }
+    
+    public function getUserList($where=[], $page = 1, $page_size = 10)
+    {
+     
+        $ret = $this->getList($where, $page, $page_size);
+        return $ret;
     }
     public function changeUserStatus($id,$stat)
     {

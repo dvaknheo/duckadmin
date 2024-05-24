@@ -10,23 +10,25 @@
         <!-- 数据表格 -->
         <div class="layui-card">
             <div class="layui-card-body">
-<table width="100%">
+<table width="100%" border="1">
 <tr>
 	<th>ID</th>
 	<th>用户名</th>
 	<th>禁用/启用</th>
 </tr>
 <?php
-    $list =[];
-foreach ($list as $v) {?>
+foreach ($list as $v) {
+?>
 <tr>
 	<td><?=$v['id']?></td>
-	<td><?=$v['title']?></td>
+	<td><?=$v['username']?></td>
 	<td><a href="<?=$v['url_edit']?>">编辑</a></td>
 </tr>
 <?php }?>
 </table>
             </div>
         </div>
+        <div>分页:<?=$pager?></div>
+
     </body>
 </html>
