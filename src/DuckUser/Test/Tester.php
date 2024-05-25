@@ -14,7 +14,7 @@ class Tester
     
     public function BeforeTest()
     {
-        $phase = CoreHelper::_()->guessPhase(static::class);
+        $phase = CoreHelper::_()->getAppClassByComponent(static::class);
         CoreHelper::PhaseCall($phase,function(){
             static::_()->_BeforeTest();
         });
@@ -27,7 +27,7 @@ class Tester
     }
     public function AfterTest()
     {
-        $phase = CoreHelper::_()->guessPhase(static::class);
+        $phase = CoreHelper::_()->getAppClassByComponent(static::class);
         CoreHelper::PhaseCall($phase,function(){
             static::_()->_AfterTest();
         });
