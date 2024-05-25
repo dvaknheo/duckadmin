@@ -32,7 +32,7 @@ class ArticleBusiness extends Base
         $ids = array_column($data['data'],'id');
         $names = !empty($ids)? Helper::_()->getUsernames($ids) :[];
         foreach($comments as &$v){
-            $v['username']= $names[$v['user_id']];
+            $v['username']= $names[$v['id']];
         }
         unset($v);
         

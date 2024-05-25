@@ -9,13 +9,4 @@ use DuckPhp\Foundation\ExceptionReporterTrait;
 class ExceptionReporter
 {
     use ExceptionReporterTrait;
-    
-    public function onProjectException($ex = null)
-    {
-        //
-    }
-    public function onUserException($ex = null)
-    {
-        //
-    }
 }

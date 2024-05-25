@@ -12,8 +12,8 @@ class Tester
         //#COMMAND FUNCTION_METHOD
         $list = <<<EOT
 #WEB 
-#WEB article/5
-#WEB article/-1
+#WEB article/2
+#WEB article/999999999999999
 #WEB admin/index
 #WEB admin/articles
 #WEB admin/comments

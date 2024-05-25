@@ -72,7 +72,7 @@ class AccountController extends Base
         if(Helper::IsAjax()){
             Helper::Success(0);
         }else{
-            Helper::Show302(__url(''));
+            Helper::Show302(__url('index'));
         }
     }
 

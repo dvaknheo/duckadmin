@@ -16,7 +16,7 @@ class AdminAction
     use ControllerHelperTrait;
     
     public function getCurrentAdminId()
-    {
+    {    
         $admin = $this->getCurrentAdmin();
         Helper::ControllerThrowOn(!$admin,"需要登录",401);
         return $admin['id'];
@@ -40,18 +40,21 @@ class AdminAction
     }
 
     ////////////////
-    public function checkAccess($class = null, $method = null,$url = null)
+    public function checkAccess($controller = null, $action = null,$url = null)
     {
         $controller = $controller ?? Helper::getRouteCallingClass();
         $action = $action ?? Helper::getRouteCallingMethod();
-        //$url = $url ?? Helper::getRouteCallingPath();
+        $url = $url ?? Helper::PathInfo();
+        
         try{
-            $admin_id =Session::_()->getCurrentAdminId();
+            $admin_id = Session::_()->getCurrentAdminId();
             AccountBusiness::_()->canAccess($admin_id, $controller, $action);
         } catch(\Exception $ex) {
             $this->onAuthException($ex);
             return; // @codeCoverageIgnore
         }
+                
+
         $flag = $this->isOptionsMethod();
         if($flag){
             Helper::exit();
@@ -72,6 +75,9 @@ class AdminAction
         }else if($code == 403){
             return $this->exit403();
         }
+
+        Helper::Show302('index');
+        Helper::exit();
     } // @codeCoverageIgnore
     protected function isOptionsMethod()
     {
@@ -79,13 +85,16 @@ class AdminAction
     }
     protected function exit401()
     {
+        $url = __url('index');
         $response = <<<EOF
 <script>
 if (self !== top) {
     parent.location.reload();
 }
 </script>
+<meta http-equiv=refresh content=5;url="$url">
 EOF;
+ 
         Helper::header('Unauthorized',true,401);
         echo $response;
         Helper::exit();

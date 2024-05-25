@@ -6,14 +6,16 @@
 
 namespace SimpleBlog\Controller;
 
-use SimpleBlog\Business\AdminBusiness;
 use SimpleBlog\Business\ArticleBusiness;
+use SimpleBlog\Business\AdminBusiness;
 class adminController
 {
     public function __construct()
     {
-        Helper::Admin()->checkAccess();
-       
+        $controller = Helper::getRouteCallingClass();
+        $action = Helper::getRouteCallingMethod();
+        $path = Helper::PathInfo();
+        Helper::Admin()->checkAccess($controller,$action, __url($path));
         $data = [
             'url_articles' => 'admin/articles',
             'url_comments' => 'admin/comments',
@@ -85,6 +87,11 @@ class adminController
     public function action_comments()
     {
         list($list, $total) = AdminBusiness::_()->getCommentList(Helper::PageNo());
+         
+        $list = Helper::_()->recordsetUrl($list, [
+            'url_edit' => 'admin/article_edit?id={id}',
+            'url_delete' => 'admin/delete_comments?id={id}',
+        ]);
         Helper::Show(get_defined_vars());
     }
     public function action_delete_comments()
