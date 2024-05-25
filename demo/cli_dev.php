@@ -8,6 +8,5 @@ require_once(__DIR__. '/DemoAppWithDev.php');
 $options=[
 ];
 
-//\DuckPhp\HttpServer\HttpServer::_(\WorkermanHttpd\WorkermanHttpd::_()); //要不要放到  App 里？
-\Demo\DemoApp::_(\Demo\DemoAppWithDev::_()); // TODO override 模式有问题。
-\Demo\DemoAppWithDev::RunQuickly($options);
+\Demo\DemoApp::_(\Demo\DemoAppWithDev::_());
+\Demo\DemoApp::RunQuickly($options);

@@ -13,5 +13,5 @@ require_once(__DIR__. '/../DemoAppWithDev.php');
 $options=[
     // ...
 ];
-//\Demo\DemoApp::_(\Demo\DemoAppWithDev::());   //-- 这模式有问题，
-\Demo\DemoAppWithDev::RunQuickly($options);
+\Demo\DemoApp::_(\Demo\DemoAppWithDev::_());
+\Demo\DemoApp::RunQuickly($options);

@@ -67,9 +67,14 @@ class DemoApp extends DuckPhp
         
         Helper::Show($data,'main');
     }
-    public function onInit()
+    public function onPrepare()
     {
-        parent::onInit();
+        \DuckPhp\HttpServer\HttpServer::_(\WorkermanHttpd\WorkermanHttpd::_());
+        parent::onInited();
+    }
+    public function onInited()
+    {
+        parent::onInited();
         // You Codes,
     }
     

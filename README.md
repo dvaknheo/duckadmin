@@ -8,40 +8,39 @@
 `DuckAdmin` 是个使用 `DuckPhp` 框架的库，你的工程使用`DuckPhp` 的所有功能，不需要魔改。
 
 `DuckAdmin` 只做了公司员工结构的基本代码，通用业务。你可以在这之上添加更多符合公司业务的功能。
-
-## 快速安装
-
-基本需求： mysql sqlite
-
-### demo 的安装
+## 演示
+演示需求需求： mysql sqlite
 
 ```
 composer install dvaknheo/duckamin 
 cd demo
 php cli.php run
 ```
-按照提示设置数据库
+得到欢迎页面，
 ```
-Database Setting:
+php cli.php install # 安装数据库等完善功能
+```
+`cli_dev.php` `index_dev.php` 是开发测试的版本
 
-```
 ### 正常作为库引入
 
+
 ```
-composer install dvaknheo/duckamin 
+composer require dvaknheo/duckphp
+composer require dvaknheo/duckamin 
+./vendor/bin/duckphp new   # 创建你的工程
 ```
 
-根据 demo 的 DemoApp.php 填写相关代码
+模仿 demo 的 DemoApp.php 填写 `src/System\App.php`
+
 ```php
 
-class MyApp extends DuckPhp
+class App extends DuckPhp
 {
     public $options = [
-        'is_debug' => true,
         'path' => __DIR__.'/',
         
         'cli_command_with_fast_installer' => true,
-        'namespace_controller' => '\\',
         'app' => [
             \DuckAdmin\System\DuckAdminApp::class => [      // 后台管理系统
                 'controller_url_prefix' => 'app/admin/',    // 访问路径
@@ -50,9 +49,6 @@ class MyApp extends DuckPhp
             ],
         ],
     ];
-    public function __construct()
-    {
-    }
 }
 ```
 安装程序
@@ -63,7 +59,7 @@ php cli.php install
 ```
 php cli.php run
 ```
-访问 127.0.0.1:8080
+访问 127.0.0.1:8080/app/admin/ 打开管理后台。
 
 ## 高级问题
 
@@ -78,6 +74,8 @@ php cli.php run
 `demo/view/DuckUser` 目录 就是demo工程调整后的视图
 
 ### 使用 API
+使用 `DuckPhp\Foundation\Helper::Admin()` 获得 Admin 对象，
+使用 `DuckPhp\Foundation\Helper::User()` 获得 User 通用对象，
 
 ### 修改实现
 
