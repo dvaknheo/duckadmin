@@ -40,23 +40,17 @@ class MyCoverageBridge extends MyCoverage
     {
         parent::init($options, $context);
     
-        $this->options['path'] = Helper::PathForRuntime();
-        $this->options['test_path_server'] = Helper::PathForProject();
+        $this->options['path'] = Helper::PathOfRuntime();
+        $this->options['test_path_server'] = Helper::PathOfProject();
         $this->options['path_src'] = realpath(__DIR__.'/../../').'/src';
 
         $this->options['group'] = $this->watchingGetName();
 
         // 这里抽成一个方法
-        $prefix = App::Current()->options['cli_command_prefix']??App::Phase();
-        $prefix = App::IsRoot()?'':$prefix;
-        $classes = App::Current()->options['cli_command_classes'];
-        $classes[] = static::class;
-        //get_class(static::_());
-        Console::_()->regCommandClass($prefix, App::Phase(), $classes);
-        //App::_()->regExtClass(static::class);
-        
+        Helper::regExtCommandClass(static::class);
         Helper::OnEvent([App::Phase(),'onBeforeRun'],[static::class,'OnBeforeRun']);
         Helper::OnEvent([App::Phase(),'onAfterRun'],[static::class,'OnAfterRun']);
+        
         \DuckPhp\Core\ExitException::Init(); //__define(__ExitException);
     }
     

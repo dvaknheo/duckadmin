@@ -102,7 +102,7 @@ class Tester
 
 
 EOT;
-        $last_phase = \DuckAdmin\System\DuckAdminApp::Phase(\DuckAdmin\System\DuckAdminApp::class);
+        $last_phase = DuckAdminApp::Phase(DuckAdminApp::class);
         $new_admin_id = $this->getNextInsertId('admins');
         $new_role_id = $this->getNextInsertId('roles');
         $new_rule_id = $this->getNextInsertId('rules');
@@ -118,9 +118,9 @@ EOT;
         ];
         $list = $this->replace_string($list,$args);
         
-        $prefix = \DuckAdmin\System\DuckAdminApp::_()->options['controller_url_prefix'];
+        $prefix = DuckAdminApp::_()->options['controller_url_prefix'];
         $list = str_replace('#WEB ','#WEB '.$prefix,$list);
-        \DuckAdmin\System\DuckAdminApp::Phase($last_phase);
+        DuckAdminApp::Phase($last_phase);
         return $list;
     }
     public function BeginConfigBusiness()
@@ -166,7 +166,7 @@ EOT;
     ////////////////
     private function getNextInsertId($table)
     {
-        $database_driver = \DuckAdmin\System\DuckAdminApp::_()->options['database_driver'];
+        $database_driver = DuckAdminApp::_()->options['database_driver'];
         if($database_driver ==='mysql'){
             $sql = "show table status where Name ='".\DuckAdmin\System\DuckAdminApp::_()->options['table_prefix'] .$table."'";
             $ret = \DuckPhp\Component\DbManager::Db()->fetch($sql)["Auto_increment"];

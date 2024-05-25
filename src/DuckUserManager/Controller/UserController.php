@@ -14,7 +14,10 @@ class UserController
 
     public function __construct()
     {
-        Helper::Admin()->checkAccess();
+        $controller =  Helper::getRouteCallingClass();
+        $action =  Helper::getRouteCallingMethod();
+        $url = __url(Helper::PathInfo());
+        Helper::Admin()->checkAccess($controller, $action, $url);
     }
     /**
      * 浏览
@@ -24,7 +27,7 @@ class UserController
     {
         $list = UserBusiness::_()->getUserList([],Helper::PageNo());
         $data['list'] =$list['data'];
-        $data['pager'] = Helper::PagerHtml($list['count']);
+        $data['pager'] = Helper::PageHtml($list['count']);
         Helper::Show($data,'user/index');
     }
 

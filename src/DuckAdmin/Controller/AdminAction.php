@@ -15,10 +15,14 @@ class AdminAction
 {
     use ControllerHelperTrait;
     
+    protected $admin = null;
     public function getCurrentAdminId()
-    {    
-        $admin = $this->getCurrentAdmin();
-        Helper::ControllerThrowOn(!$admin,"需要登录",401);
+    {
+        if ($this->admin) {
+            return $this->admin['id'];
+        }
+        $this->admin = $this->getCurrentAdmin();
+        Helper::ControllerThrowOn(!$this->admin,"需要登录",401);
         return $admin['id'];
     }
     /**
@@ -53,8 +57,6 @@ class AdminAction
             $this->onAuthException($ex);
             return; // @codeCoverageIgnore
         }
-                
-
         $flag = $this->isOptionsMethod();
         if($flag){
             Helper::exit();
@@ -75,7 +77,6 @@ class AdminAction
         }else if($code == 403){
             return $this->exit403();
         }
-
         Helper::Show302('index');
         Helper::exit();
     } // @codeCoverageIgnore
