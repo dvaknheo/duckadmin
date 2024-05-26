@@ -27,7 +27,6 @@ class DuckUserApp extends DuckPhp
         
         'need_install'=>true,
         'database_driver'=>'sqlite',
-        //'local_database' =>true,
         'cli_command_with_fast_installer' => true,
         
         /////////////////

@@ -22,7 +22,6 @@ class SimpleBlogApp extends DuckPhp
         ],
         
         'need_install'=>true,
-        'local_database'=>true,
         'database_driver'=>'sqlite',
         
         'cli_command_with_fast_installer' => true,

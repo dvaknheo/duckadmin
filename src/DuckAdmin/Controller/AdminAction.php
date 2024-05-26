@@ -23,7 +23,7 @@ class AdminAction
         }
         $this->admin = $this->getCurrentAdmin();
         Helper::ControllerThrowOn(!$this->admin,"需要登录",401);
-        return $admin['id'];
+        return $this->admin['id'];
     }
     /**
      * 当前管理员

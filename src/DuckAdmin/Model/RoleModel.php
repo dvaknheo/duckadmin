@@ -29,9 +29,9 @@ class RoleModel extends Base
         return parent::inputFilter($data);
     }
 
-    public function getRules($roles)
+    public function getRules($role_ids)
     {
-        $sql="select rules from `'TABLE'` where id in (". static::Db()->quoteIn($roles).')';
+        $sql="select rules from `'TABLE'` where id in (". static::Db()->quoteIn($role_ids).')';
         $data = $this->fetchAll($sql);
         $data = array_column($data,'rules');
         $ret=[];
@@ -40,8 +40,12 @@ class RoleModel extends Base
             $t=explode(',',$v);
             $ret = array_merge($ret,$t);
         }
-        //var_dump($ret);
         return $ret;
+    }
+    public function hasSuper($role_ids)
+    {
+        $rules = $this->getRules($role_ids);
+        return $rules && in_array('*', $rules);
     }
     
     public function getAllId()

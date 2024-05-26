@@ -75,9 +75,34 @@ php cli.php run
 
 ### 使用 API
 使用 `DuckPhp\Foundation\Helper::Admin()` 获得 Admin 对象，
+
 使用 `DuckPhp\Foundation\Helper::User()` 获得 User 通用对象，
 
 ### 修改实现
 
+## 测试
+进入 demo 目录
+```
+php cli_dev.php testgroup --watch w1 --replay --report
+```
+demo/runtime 里查看结果
+## 问答
+
+问：DuckAdmin 为什么采用命令行方式安装，而不是 web 安装？
+
+答：因为命令行权限> Web 权限，用这等方法可以避免 web 用户获取不必要的权限
+
+问： 有没有手动加子应用的的方法：
+
+比如我想在我的工程里
+
+`php cli.php require DuckAdmin/System/DuckAdminApp`
+
+这样把 DuckAdmin 加进去
+
+答：考虑过，不过这容易出现： 这东西是从哪里来的。 所以还是手动配置你的 app 吧（考虑 选项里加一句 allow_install_sub_app_quickly
 
 ## TODO
+
+
+

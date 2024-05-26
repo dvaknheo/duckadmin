@@ -89,7 +89,7 @@ class AccountBusiness extends Base
         Helper::BusinessThrowOn(!$admin, $msg = '请登录2', 401);
         Helper::BusinessThrowOn($admin['status'] != 0, $msg = '账户被禁用', 401);
         
-        $roles = AdminRoleModel::_()->getRoles($admin_id);
+        $roles = AdminRoleModel::_()->getRoleIds($admin_id);
         $rule_ids = RoleModel::_()->getRules($roles);
         $rule = RuleModel::_()->checkRules($rule_ids,$controller,$action);
         //Helper::BusinessThrowOn(!$roles,  '当前管理员无角色', 403); //当前管理员无角色

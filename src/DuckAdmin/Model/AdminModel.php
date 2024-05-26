@@ -46,6 +46,16 @@ class AdminModel extends Base
         }
         return $ret;
     }
+    public function foo($id, $input)
+    {
+        [$where, $format, $limit, $field, $order, $page] = AdminModel::_()->selectInput($input);
+        
+        // 这里要限定属于自己的 role 下的
+        
+        [$items,$total] = AdminModel::_()->doSelect($where, $field, $order,$page,$limit);
+        
+    }
+    
 
     public function getAdminByName($username)
     {

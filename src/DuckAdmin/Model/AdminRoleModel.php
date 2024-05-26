@@ -12,26 +12,38 @@ class AdminRoleModel extends Base
 {
     protected $table_name = 'admin_roles';
 
-    public function getRoles($admin_id)
+    public function getRoleIds($admin_id)
     {
         $sql="select role_id from `'TABLE'` where admin_id = ?";
         $data = $this->fetchAll($sql,$admin_id);
         return array_column($data,'role_id');
     }
-    public function addFirstRole($admin_id)
-    {
-        $sql = "insert into `'TABLE'` (`role_id`, `admin_id`) values (?,?)";
-        $data = $this->execute($sql,1,$admin_id);
-    }
     public function getAdminRoles($admin_ids)
     {
-        $sql= "select * from `'TABLE'` where admin_id in (".static::Db()->quoteIn($admin_ids).")";
+        $sql= "select admin_id,role_id from `'TABLE'` where admin_id in (".static::Db()->quoteIn($admin_ids).")";
         $roles = $this->fetchAll($sql);
         $roles_map = [];
         foreach ($roles as $role) {
             $roles_map[$role['admin_id']][] = $role['role_id'];
         }
         return $roles_map;
+    }
+    public function rolesByAdminId($admin_id)
+    {
+        $sql="select role_id from `'TABLE'` where admin_id = ?";
+        $data = $this->fetchAll($sql,$admin_id);
+        return array_column($data,'role_id');
+    }
+    public function adminIdByRoles($roles)
+    {
+        $sql="select admin_id from `'TABLE'` where role_id in (".static::Db()->quoteIn($roles).")";
+        $data = $this->fetchAll($sql);
+        return array_column($data,'admin_id');
+    }
+    public function addFirstRole($admin_id)
+    {
+        $sql = "insert into `'TABLE'` (`role_id`, `admin_id`) values (?,?)";
+        $data = $this->execute($sql,1,$admin_id);
     }
     public function renew($admin_id,$role_ids)
     {
@@ -64,10 +76,5 @@ class AdminRoleModel extends Base
                 $this->execute($sql,$role_id,$admin_id);
             }
     }
-    public function rolesByAdmin($admin_id)
-    {
-        $sql="select role_id from `'TABLE'` where admin_id = ?";
-        $data = $this->fetchAll($sql,$admin_id);
-        return array_column($data,'role_id');
-    }
+
 }
