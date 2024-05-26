@@ -167,4 +167,19 @@ class MyCoverage
     {
         return include $file;
     }
+    ////[[[[
+    protected function watchingBegin($name)
+    {
+        file_put_contents($this->options['path'].'MyCoverage.watching.txt',$name);
+    }
+    protected function watchingEnd()
+    {
+        @unlink($this->options['path'].'MyCoverage.watching.txt');
+    }
+    protected function watchingGetName()
+    {
+        $group = @file_get_contents($this->options['path'].'MyCoverage.watching.txt');
+        return $group;    
+    }
+    ////]]]]
 }
