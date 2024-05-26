@@ -51,7 +51,7 @@ class AdminRoleModel extends Base
         $this->execute($sql,$admin_id);
         foreach ($role_ids as $id) {
             $sql = "insert into `'TABLE'` (`role_id`, `admin_id`) values (?,?)";
-            $data = $this->execute($sql,1,$admin_id);
+            $data = $this->execute($sql,$id, $admin_id);
         }
     }
     public function deleteByAdminIds($ids)

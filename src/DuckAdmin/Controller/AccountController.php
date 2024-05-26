@@ -83,7 +83,6 @@ class AccountController extends Base
     public function info()
     {
         $admin_id = AdminAction::_()->getCurrentAdminId();
-var_dump($admin_id);
         $data = AccountBusiness::_()->getAccountInfo($admin_id);
         
         return Helper::Success($data);
