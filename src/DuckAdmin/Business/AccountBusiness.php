@@ -12,17 +12,13 @@ use DuckAdmin\Model\RuleModel;
 class AccountBusiness extends Base
 {
     /////////////
-    protected function isSuper($op_id)
-    {
-        $op_role_ids = AdminRoleModel::_()->rolesByAdminId($op_id);
-        $is_super = RoleModel::_()->hasSuper($op_role_ids);
-        return $is_super;
-    }
     public function getAccountInfo($admin_id)
     {
         $admin = AdminModel::_()->getAdminById($admin_id);
         
-        $is_super = 
+        $op_role_ids = AdminRoleModel::_()->rolesByAdminId($admin_id);
+        $is_super = RoleModel::_()->hasSuper($op_role_ids);
+        
         $info = [
             'id' => $admin['id'],
             'username' => $admin['username'],

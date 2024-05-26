@@ -28,10 +28,7 @@ class RuleModel extends Base
         return parent::inputFilter($data);
     }
 
-    public function isSuper($rules)
-    {
-        return $rules && in_array('*', $rules);
-    }
+
     public function allRules()
     {
         $sql = "select * from `'TABLE'` order by weight desc";
@@ -139,25 +136,6 @@ class RuleModel extends Base
         $sql ="select id from `'TABLE'` where pid in (" .static::Db()->quoteIn($ids) .")";
         $data = $this->fetchAll($sql);
         return array_column($data,'id');
-    }
-    /**
-     * 删除菜单
-     * @param $key
-     * @return void
-     */
-    public function deleteAll($key)
-    {
-        $item = $this->findByKey($key);
-        if (!$item) {
-            return;
-        }
-        // 子规则一起删除
-        $delete_ids = $children_ids = [$item['id']];
-        while($children_ids) {
-            $children_ids = $this->get_children_ids($children_ids);
-            $delete_ids = array_merge($delete_ids, $children_ids);
-        }
-        $this->dropByIds($delete_ids);
     }
     /**
      * 导入菜单

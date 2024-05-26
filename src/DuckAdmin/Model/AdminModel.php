@@ -30,30 +30,18 @@ class AdminModel extends Base
         }
         return $data;
     }
-    
-    //// select
-    public function selectInput($data): array
+    public function showAdmins($input,$is_super,$child_admin_ids)
     {
-        // 隔离BaseModel 的调用
-        return parent::selectInput($data);
-    }
-    public function doSelect(array $where, string $field = null, string $order= 'desc' ,$page=1,$page_size=10)
-    {
-        // 这里要去除密码行
-        $ret =parent::doSelect($where, $field, $order,$page,$page_size);
+        [$where, $format, $limit, $field, $order, $page] = parent::selectInput($input);
+        
+        if(!$is_super){
+            $where['id'] = ['in', $child_admin_ids];// 这里要限定属于自己的 role 下的
+        }
+        $ret = parent::doSelect($where, $field, $order,$page,$limit);
         foreach($ret[0] as &$v){
-            unset($v['password']);
+            unset($v['password']); // 这里要去除密码行
         }
         return $ret;
-    }
-    public function foo($id, $input)
-    {
-        [$where, $format, $limit, $field, $order, $page] = AdminModel::_()->selectInput($input);
-        
-        // 这里要限定属于自己的 role 下的
-        
-        [$items,$total] = AdminModel::_()->doSelect($where, $field, $order,$page,$limit);
-        
     }
     
 

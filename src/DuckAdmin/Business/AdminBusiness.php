@@ -11,22 +11,19 @@ class AdminBusiness extends Base
 {
     public function showAdmins($op_id,$input)
     {
-        [$where, $format, $limit, $field, $order, $page] = AdminModel::_()->selectInput($input);
-        
+        $child_admin_ids =[];
         list($is_super, $child_role_ids) = $this->getIsSuperAndChildRoleIds($op_id);
         if(!$is_super){
             $child_admin_ids = AdminRoleModel::_()->adminIdByRoles($child_role_ids);
-            $where['id'] =['in',$child_admin_ids ];  // 限定当前role ，或者该改成子查询
         }
-        [$items,$total] = AdminModel::_()->doSelect($where, $field, $order,$page,$limit);
+        [$items,$total] = AdminModel::_()->showAdmins($input,$is_super,$child_admin_ids);
         
-        
-        // 后处理
+        // 后处理1
         if ('select' ===  ($input['format']??null)) {
             return CommonService::_()->formatSelect($items,$format,$limit);
         }
         
-        // 后处理
+        // 后处理2
         $roles_map = AdminRoleModel::_()->getAdminRoles(array_column($items, 'id'));
         foreach ($items as $index => $item) {
             $admin_id = $item['id'];
