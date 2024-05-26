@@ -12,17 +12,24 @@ use DuckAdmin\Model\RuleModel;
 class AccountBusiness extends Base
 {
     /////////////
+    protected function isSuper($op_id)
+    {
+        $op_role_ids = AdminRoleModel::_()->rolesByAdminId($op_id);
+        $is_super = RoleModel::_()->hasSuper($op_role_ids);
+        return $is_super;
+    }
     public function getAccountInfo($admin_id)
     {
         $admin = AdminModel::_()->getAdminById($admin_id);
         
+        $is_super = 
         $info = [
             'id' => $admin['id'],
             'username' => $admin['username'],
             'nickname' => $admin['nickname'],
             'email' => $admin['email'],
             'mobile' => $admin['mobile'],
-            'isSupperAdmin' =>CommonService::_()->isSupperAdmin($admin['id']?$admin['id']:0), //TODO
+            'isSupperAdmin' =>$is_super,
         ];
         
         return $info;
@@ -89,7 +96,7 @@ class AccountBusiness extends Base
         Helper::BusinessThrowOn(!$admin, $msg = '请登录2', 401);
         Helper::BusinessThrowOn($admin['status'] != 0, $msg = '账户被禁用', 401);
         
-        $roles = AdminRoleModel::_()->getRoleIds($admin_id);
+        $roles = AdminRoleModel::_()->rolesByAdminId($admin_id);
         $rule_ids = RoleModel::_()->getRules($roles);
         $rule = RuleModel::_()->checkRules($rule_ids,$controller,$action);
         //Helper::BusinessThrowOn(!$roles,  '当前管理员无角色', 403); //当前管理员无角色

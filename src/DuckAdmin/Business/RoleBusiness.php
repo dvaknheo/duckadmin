@@ -13,11 +13,8 @@ class RoleBusiness extends Base
     public function selectRoles($op_id,$id,$input)
     {
         //这里折腾好久
-        //return [['name' => '超级管理员','value'=>1]];
-        //file_put_contents(__DIR__.'/x.log',microtime(true) ."\n",FILE_APPEND);
         [$where, $format, $limit, $field, $order] = RoleModel::_()->selectInput($input);
-        $my_ids = AdminRoleModel::_()->getRoleIds($op_id);
-        $role_ids = CommonService::_()->getScopeRoleIds($my_ids, true);
+        $role_ids = $this->getMyChildrenRoleIds($op_id);
         if (!$id) {
             $where['id'] = ['in', $role_ids];
         }
@@ -26,7 +23,6 @@ class RoleBusiness extends Base
         
         [$data,$total]  = RoleModel::_()->doSelect($where, $field, $order,1,$limit);
         $data = CommonService::_()->doFormat($data, $total, $format, $limit);
-        //file_put_contents(__DIR__.'/x.log',microtime(true) ."\n",FILE_APPEND);
         return $data;
         
     }
@@ -34,9 +30,9 @@ class RoleBusiness extends Base
     {
         $pid = $data['pid'] ?? null;
         Helper::BusinessThrowOn(!$pid,'请选择父级角色组',1);
-        $flag = CommonService::_()->noRole($op_id, $pid, true);
+        $flag = $this->isInMyChildrenRole($op_id, $pid, true);
         
-        Helper::BusinessThrowOn($flag, '父级角色组超出权限范围',1);
+        Helper::BusinessThrowOn(!$flag, '父级角色组超出权限范围',1);
         $this->checkRulesInput($pid, $data['rules'] ?? '');
         
         $id = RoleModel::_()->addRole($data);
@@ -51,8 +47,8 @@ class RoleBusiness extends Base
         $id = $role_id;
         $data = RoleModel::_()->inputFilter($input);
        
-        $flag = CommonService::_()->noRole($op_id, $role_id, true);
-        Helper::BusinessThrowOn($flag,'无数据权限',1);
+        $flag = $this->isInMyChildrenRole($op_id, $role_id, true);
+        Helper::BusinessThrowOn(!$flag,'无数据权限',1);
         
 
         $role = RoleModel::_()->getById($id);
@@ -69,9 +65,9 @@ class RoleBusiness extends Base
             $pid = $data['pid'];
             Helper::BusinessThrowOn(!$pid,'请选择父级角色组',1);
             Helper::BusinessThrowOn($pid == $id,'父级不能是自己',1);
-            if (CommonService::_()->noRole($op_id, $role_id, true)) {
-                Helper::BusinessThrowOn(true,'父级超出权限范围',1);
-            }
+            $flag = $this->isInMyChildrenRole($op_id, $role_id, true);
+            Helper::BusinessThrowOn(!$flag,'父级超出权限范围',1);
+            
         } else {
             $pid = $role['pid'];
         }
@@ -100,8 +96,8 @@ class RoleBusiness extends Base
         $ids=is_array($ids)?$ids:[$ids];
         Helper::BusinessThrowOn(in_array(1, $ids), '无法删除超级管理员角色');
         
-        $flag = CommonService::_()->noRole($op_id,$ids);
-        Helper::BusinessThrowOn($flag ,'无删除权限',1);
+        $flag = $this->isInMyChildrenRole($op_id,$ids);
+        Helper::BusinessThrowOn(!$flag ,'无删除权限',1);
         
         $tree = new Tree(RoleModel::_()->getAll());
         $descendants = $tree->getDescendant($ids);
@@ -117,8 +113,8 @@ class RoleBusiness extends Base
         if (empty($role_id)) {
             return [];
         }
-        $flag = CommonService::_()->noRole($op_id, $role_id, true);
-        Helper::BusinessThrowOn($flag,'角色组超出权限范围',1);
+        $flag = $this->isInMyChildrenRole($op_id, $role_id, true);
+        Helper::BusinessThrowOn(!$flag,'角色组超出权限范围',1);
         
         
         $rule_id_string = RoleModel::_()->getRulesByRoleId($role_id);
@@ -160,5 +156,34 @@ class RoleBusiness extends Base
         $ext_rule_ids = array_diff($rule_ids, $legal_rule_ids);
 
         Helper::BusinessThrowOn(!empty($ext_rule_ids), '数据超出权限范围2');
+    }
+    
+    protected function isInMyChildrenRole($admin_id,$role_id,bool $with_self = false)
+    {
+        $role_id = is_array($role_id)?$role_id:[$role_id];
+        
+        $roles = AdminRoleModel::_()->rolesByAdminId($admin_id);
+        $is_super = RoleModel::_()->hasSuper($roles);
+        if($is_super){
+            return true; 
+        }
+        
+        $roles = RoleModel::_()->getAll();
+        $tree = new Tree($roles);
+        $descendants = $tree->getDescendant($role_ids, $with_self);
+        $children_role_ids = array_column($descendants, 'id');
+        
+        $ext_role_ids = array_diff($role_id, $children_role_ids);
+        
+        return empty($ext_role_ids) ? true : false;
+    }
+    protected function getMyChildrenRoleIds($op_id)
+    {
+        $op_role_ids = AdminRoleModel::_()->rolesByAdminId($op_id);
+        $with_self = false;
+        $tree = new Tree(RoleModel::_()->getAll());
+        $descendants = $tree->getDescendant($op_role_ids, true);
+        $all_role_ids = array_column($descendants, 'id');    
+        return $all_role_ids;
     }
 }

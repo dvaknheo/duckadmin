@@ -13,7 +13,7 @@ class Tester
         $list = <<<EOT
 #WEB 
 #WEB article/2
-#WEB article/999999999999999
+#WEB article/9999999
 #WEB admin/index
 #WEB admin/articles
 #WEB admin/comments

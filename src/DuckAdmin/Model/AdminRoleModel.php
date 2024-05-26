@@ -12,7 +12,7 @@ class AdminRoleModel extends Base
 {
     protected $table_name = 'admin_roles';
 
-    public function getRoleIds($admin_id)
+    public function rolesByAdminId($admin_id)
     {
         $sql="select role_id from `'TABLE'` where admin_id = ?";
         $data = $this->fetchAll($sql,$admin_id);
@@ -27,12 +27,6 @@ class AdminRoleModel extends Base
             $roles_map[$role['admin_id']][] = $role['role_id'];
         }
         return $roles_map;
-    }
-    public function rolesByAdminId($admin_id)
-    {
-        $sql="select role_id from `'TABLE'` where admin_id = ?";
-        $data = $this->fetchAll($sql,$admin_id);
-        return array_column($data,'role_id');
     }
     public function adminIdByRoles($roles)
     {

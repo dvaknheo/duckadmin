@@ -91,44 +91,4 @@ class CommonService extends Base
         return [$items, $total];
     }
     /////////////////////////////////////////////////////
-    public function noRole($admin_id,$role_id,bool $with_self = false)
-    {
-        if(!$this->isSupperAdmin((int)$admin_id)){
-            return false;
-        }
-        $roles = AdminRoleModel::_()->getRoleIds($admin_id);
-
-        $role_id=is_array($role_id)?$role_id:[$role_id];
-        if(array_diff($role_id, $this->getScopeRoleIds($roles, $with_self))){
-            return true;
-        }else{
-            return false;
-        }
-    }
-    public function isSupperAdmin(int $admin_id = 0): bool
-    {
-        Helper::BusinessThrowOn($admin_id==0,'参数错误，请指定管理员');
-        $roles = AdminRoleModel::_()->getRoleIds($admin_id);
-        $rules = RoleModel::_()->getRules($roles);
-        return RuleModel::_()->isSuper($rules); 
-    }
-    /**
-     * 获取权限范围内的所有角色id
-     * @param bool $with_self
-     * @return array
-     */
-    public function getScopeRoleIds($role_ids,  bool $with_self = false): array
-    {
-        //$role_ids = $admin['roles'];
-        
-        $rules = RoleModel::_()->getRules($role_ids);
-        if (RuleModel::_()->isSuper($rules)) {
-            return RoleModel::_()->getAllId();
-        }
-        $roles = RoleModel::_()->getAll();
-        
-        $tree = new Tree($roles);
-        $descendants = $tree->getDescendant($role_ids, $with_self);
-        return array_column($descendants, 'id');
-    }
 }

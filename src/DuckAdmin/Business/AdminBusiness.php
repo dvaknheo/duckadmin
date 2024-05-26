@@ -108,12 +108,12 @@ class AdminBusiness extends Base
     }
     protected function getIsSuperAndChildRoleIds($op_id)
     {
+        $with_self = false;
         $op_role_ids = AdminRoleModel::_()->rolesByAdminId($op_id);
         $is_super = RoleModel::_()->hasSuper($op_role_ids);
         if($is_super){
             return [true, []];
         }
-        $with_self = false;
         $tree = new Tree(RoleModel::_()->getAll());
         $descendants = $tree->getDescendant($op_role_ids, $with_self);
         $child_role_ids = array_column($descendants, 'id');    

@@ -13,7 +13,7 @@ class RuleBusiness extends Base
     
     public function get($admin_id, $types)
     {
-        $roles = AdminRoleModel::_()->getRoleIds($admin_id);
+        $roles = AdminRoleModel::_()->rolesByAdminId($admin_id);
 
         $roles = $roles ?? [];
         $rules = RoleModel::_()->getRules($roles);
@@ -169,7 +169,7 @@ class RuleBusiness extends Base
     ///////////////////////////////
     public function permission($admin_id)
     {
-        $roles = AdminRoleModel::_()->getRoleIds($admin_id);
+        $roles = AdminRoleModel::_()->rolesByAdminId($admin_id);
         $roles = $roles ?? [];
         $rules_strings = RoleModel::_()->getRules($roles);        // 权限按钮
         $rules = [];
