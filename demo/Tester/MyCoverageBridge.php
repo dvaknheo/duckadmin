@@ -71,16 +71,16 @@ class MyCoverageBridge extends MyCoverage
             //TODO console mode
             return;
         }
-        $watching_name = $this->watchingGetName();
-        if($watching_name !== Helper::SERVER('HTTP_X_MYCOVERAGE_NAME','')) {
-            return;
-        }
+
         if($this->options['test_save_web_request_list'] ?? false){
             $path_dump = $this->getSubPath('path_dump');
             @mkdir($path_dump);
             file_put_contents($path_dump.$this->options['group'].'.list',$this->getHttpStringToLog()."\n",FILE_APPEND); 
         }
-        
+        $watching_name = $this->watchingGetName();
+        if($watching_name !== Helper::SERVER('HTTP_X_MYCOVERAGE_NAME','')) {
+            return;
+        }
 
         $this->options['name'] = $this->getTestName();       
         //// save list
@@ -437,6 +437,7 @@ class MyCoverageBridge extends MyCoverage
 --watch {name}
 --stop
 --replay
+--call SomeApp/Test/Tester@runX
 --report [a b c]
 EOT;
             echo $str;
@@ -448,6 +449,7 @@ EOT;
                 $p['watch'] = DATE('Y_m_d_H_i_s');
             }
             $this->watchingBegin($p['watch']);
+            $this->options['group']=$p['watch'];
             echo "watching {$p['watch']}\n";
         }
         if($p['stop']??false){
@@ -456,6 +458,21 @@ EOT;
         if($p['replay']??false){
             $this->replay();
         }
+        if($p['call']??false){
+            if(is_string($p['call'])){
+                $command = $p['call'];
+                $this->options['name'] = 'call '.$command;
+                $func=str_replace('/','\\',$command);
+                $this->doBegin();
+                try{
+                    $this->callHandler($func);
+                }catch(\Throwabl $ex){var_dump($ex);}
+                $this->doEnd();
+            }
+        }
+        
+        
+        
         
         if($p['report']??false){
             echo "reporting...\n";
