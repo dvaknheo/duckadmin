@@ -65,20 +65,20 @@ class AccountBusiness extends Base
     public function canAccess($admin_id, string $controller, string $action): bool
     {
         // 根据反射获取控制器鉴权信息。 如果是 admincontroller
-        //try{
+        try{
             $class = new \ReflectionClass($controller);
             $properties = $class->getDefaultProperties();
             $noNeedLogin = $properties['noNeedLogin'] ?? [];
             $noNeedAuth = $properties['noNeedAuth'] ?? [];
-        //}catch(\ReflectionException){
-            //Helper::BusinessThrowOn(true, '获取控制器失败', 403);
-        //}
+        }catch(\ReflectionException $ex){
+            Helper::BusinessThrowOn(true, '访问错误', 403);
+        }
         
         // 不需要登录
         if (in_array($action, $noNeedLogin)) {
             return true;
         }
-        Helper::BusinessThrowOn(!$admin_id, $msg = '请登录1', 401);
+        Helper::BusinessThrowOn(!$admin_id, $msg = '请登录', 401);
         
         // 不需要鉴权
         if (in_array($action, $noNeedAuth)) {
@@ -89,17 +89,18 @@ class AccountBusiness extends Base
         ////[[[[
         
         $admin = AdminModel::_()->getAdminById($admin_id); 
-        Helper::BusinessThrowOn(!$admin, $msg = '请登录2', 401);
+        Helper::BusinessThrowOn(!$admin, $msg = '登录已经过期', 302);
         Helper::BusinessThrowOn($admin['status'] != 0, $msg = '账户被禁用', 401);
         
         $roles = AdminRoleModel::_()->rolesByAdminId($admin_id);
         $rule_ids = RoleModel::_()->getRules($roles);
         $rule = RuleModel::_()->checkRules($rule_ids,$controller,$action);
-        //Helper::BusinessThrowOn(!$roles,  '当前管理员无角色', 403); //当前管理员无角色
-        //Helper::BusinessThrowOn(!$rule_ids,  '角色没有菜单', 403);
-        // 我们搞一下，如果 rule 里没有当前 , 如果是超级管理员，那么我们直接加，并且提醒跳转
-        // 如果 不是管理员，那当然就没有了，提示错误为： 没加入权限
-        Helper::BusinessThrowOn(!$rule, '没当前访问权限1', 403);
+        if (in_array('*', $rule_ids)){
+            return true;
+        }
+        
+        Helper::BusinessThrowOn(empty($rule), '你没有权限', 403);
+        
         return true;
     }
     public function update($admin_id, $data)

@@ -18,12 +18,11 @@ class AdminAction
     protected $admin = null;
     public function getCurrentAdminId()
     {
-        if ($this->admin) {
-            return $this->admin['id'];
-        }
-        $this->admin = $this->getCurrentAdmin();
-        Helper::ControllerThrowOn(!$this->admin,"需要登录",401);
-        return $this->admin['id'];
+        return $this->getCurrentAdmin()['id'];
+    }
+    public function getCurrentAdminName()
+    {
+        return $this->getCurrentAdmin()['username'];
     }
     /**
      * 当前管理员
@@ -32,7 +31,12 @@ class AdminAction
      */
     public function getCurrentAdmin()
     {
-        return Session::_()->getCurrentAdmin();
+        if ($this->admin) {
+            return $this->admin;
+        }
+        $this->admin = Session::_()->getCurrentAdmin();
+        Helper::ControllerThrowOn(!$this->admin,"需要登录",401);
+        return $this->admin;
     }
     public function setCurrentAdmin($admin)
     {
@@ -52,6 +56,7 @@ class AdminAction
         
         try{
             $admin_id = Session::_()->getCurrentAdminId();
+            $admin_id = $admin_id ? $admin_id :0;
             AccountBusiness::_()->canAccess($admin_id, $controller, $action);
         } catch(\Exception $ex) {
             $this->onAuthException($ex);

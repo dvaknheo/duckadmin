@@ -63,6 +63,16 @@ EOT;
 
         return $list;
     }
+    public function testGetCurrentAdminId()
+    {
+        try{
+        $v1 = \DuckAdmin\Controller\AdminAction::_()->getCurrentAdminName();
+        $v2 = \DuckAdmin\Controller\AdminAction::_()->getCurrentAdminName();
+        \DuckAdmin\Controller\AdminAction::_()->checkAccess(__CLASS__,__FUNCTION__);
+        }catch(\Exception $ex){
+            return;
+        }
+    }
     public function getTestList()
     {
         $list = <<<EOT
@@ -75,6 +85,12 @@ EOT;
 #WEB account/login username=admin&password=123456&captcha=7268
 #WEB account/info
 #WEB account/dashboard
+#SETWEB OPTIONS
+#WEB account/info?seetheoptions
+
+#SETWEB _ _ {static}@testGetCurrentAdminId
+#WEB index?s=testGetCurrentAdminId
+
 #WEB account/index
 #WEB account/captcha
 #WEB account/password
