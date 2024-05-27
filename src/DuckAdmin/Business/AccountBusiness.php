@@ -71,7 +71,7 @@ class AccountBusiness extends Base
             $noNeedLogin = $properties['noNeedLogin'] ?? [];
             $noNeedAuth = $properties['noNeedAuth'] ?? [];
         }catch(\ReflectionException $ex){
-            Helper::BusinessThrowOn(true, '访问错误', 403);
+            Helper::BusinessThrowOn(true, '访问错误', 302);
         }
         
         // 不需要登录

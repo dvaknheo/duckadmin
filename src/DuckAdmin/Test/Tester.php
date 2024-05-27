@@ -66,11 +66,16 @@ EOT;
     public function testGetCurrentAdminId()
     {
         try{
-        $v1 = \DuckAdmin\Controller\AdminAction::_()->getCurrentAdminName();
-        $v2 = \DuckAdmin\Controller\AdminAction::_()->getCurrentAdminName();
-        \DuckAdmin\Controller\AdminAction::_()->checkAccess(__CLASS__,__FUNCTION__);
+            $v1 = \DuckAdmin\Controller\AdminAction::_()->getCurrentAdminName();
+            $v2 = \DuckAdmin\Controller\AdminAction::_()->getCurrentAdminName();
+            \DuckAdmin\Controller\AdminAction::_()->checkAccess(__CLASS__,__FUNCTION__);
         }catch(\Exception $ex){
-            return;
+            //return;
+        }
+        try{
+            \DuckAdmin\Controller\AdminAction::_()->checkAccess('noexist',__FUNCTION__);
+        }catch(\Exception $ex){
+            //return;
         }
     }
     public function getTestList()
