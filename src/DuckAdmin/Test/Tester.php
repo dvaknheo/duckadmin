@@ -1,10 +1,14 @@
 <?php
 namespace DuckAdmin\Test;
 
+use DuckPhp\Foundation\Helper;
+use DuckPhp\Component\DbManager;
+use DuckPhp\Core\PhaseContainer;
 use DuckPhp\Foundation\SimpleSingletonTrait;
 use DuckAdmin\System\DuckAdminApp;
 use Demo\Tester\MyCoverageBridge;
-use \DuckPhp\Component\DbManager;
+
+
 class Tester
 {
     use SimpleSingletonTrait;
@@ -254,6 +258,39 @@ EOT;
         return $ret;
     }
     public function runExtBusiness()
+    {
+        PhaseContainer::GetContainer()->createLocalObject(DbManager::class);
+        $options = [
+                'database_driver' =>  'sqlite',
+                'database_list' => 
+                array (
+                  0 => 
+                  array (
+                    'dsn' => 'sqlite:DuckAdminOnlyForInstall.db',
+                    'username' => '',
+                    'password' => '',
+                  ),
+                ),
+        ];
+        DbManager::_()->init($options);
+        
+        $file=DuckAdminApp::_()->getOverrideableFile('config', 'sqlite.sql');
+        $sql = file_get_contents($file);
+        $sqls = explode(";\n", ''.$sql);
+        foreach ($sqls as $sql) {
+            if (empty($sql)) {
+                continue;
+            }
+            $flag = DbManager::Db()->execute($sql);
+        }
+        
+        $username = 'admin';
+        $password = '123456';
+        $password_confirm = '123456';
+        \DuckAdmin\Business\InstallBusiness::_()->install($username,$password,$password_confirm);
+        unlink(Helper::PathOfRuntime().'DuckAdminOnlyForInstall.db');
+    }
+    public function runExtBusiness2()
     {
         ////[[[[
             $admin_id = 2;

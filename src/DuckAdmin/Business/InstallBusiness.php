@@ -26,13 +26,7 @@ class InstallBusiness extends Base
         $menus =  Helper::Config('menu',null,[]);
         RuleModel::_()->importMenu($menus);
         
-        try{
-            $admin_id = AdminModel::_()->addFirstAdmin($username, $password);
-            AdminRoleModel::_()->addFirstRole($admin_id);
-            return true;
-        }catch(\Throwable $ex){
-            var_dump($ex);
-            return false;
-        }
+        $admin_id = AdminModel::_()->addFirstAdmin($username, $password);
+        AdminRoleModel::_()->addFirstRole($admin_id);
     }
 }
