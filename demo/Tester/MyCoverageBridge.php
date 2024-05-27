@@ -385,7 +385,7 @@ class MyCoverageBridge extends MyCoverage
         }
         if(!$function){
             $app = Helper::getAppClassByComponent($class);
-            $last_phase = App::Phase($app::_()->getOveridingClass());
+            $last_phase = App::Phase($app::_()->getOverridingClass());
             if($type === '@'){
                 $object = $class::_();
             }else if($type === '->'){
