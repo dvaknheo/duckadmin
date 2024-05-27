@@ -71,23 +71,25 @@ class MyCoverageBridge extends MyCoverage
             //TODO console mode
             return;
         }
+        $watching_name = $this->watchingGetName();
+        if($watching_name !== Helper::SERVER('HTTP_X_MYCOVERAGE_NAME','')) {
+            return;
+        }
         if($this->options['test_save_web_request_list'] ?? false){
             $path_dump = $this->getSubPath('path_dump');
             @mkdir($path_dump);
             file_put_contents($path_dump.$this->options['group'].'.list',$this->getHttpStringToLog()."\n",FILE_APPEND); 
         }
         
-        $watching_name = $this->watchingGetName();
-        
-        if($watching_name !== Helper::SERVER('HTTP_X_MYCOVERAGE_NAME','')) {
-            return;
-        }
+
         $this->options['name'] = $this->getTestName();       
         //// save list
 
 
         $before_run = Helper::SERVER('HTTP_X_MYCOVERAGE_BEFORERUN','');
-        ////////////
+        if($before_run){
+            $this->doBeforeRun($before_run);
+        }
         
         $this->doBegin();
     }
@@ -105,6 +107,11 @@ class MyCoverageBridge extends MyCoverage
         $watching_name = $this->watchingGetName();
         if($watching_name !== Helper::SERVER('HTTP_X_MYCOVERAGE_NAME','')) {
             return;
+        }
+        
+        $after_run = Helper::SERVER('HTTP_X_MYCOVERAGE_BEFORERUN','');
+        if($after_run){
+            $this->doAfterRun($after_run);
         }
         $this->doEnd();
     }
@@ -137,23 +144,29 @@ class MyCoverageBridge extends MyCoverage
         $ret =implode(";",[$time,$uri,$post,$session_id,$method,$ajax]);
         return $ret;
     }
-    ////[[[[
-    protected function watchingBegin($name)
+    public function doBeforeRun($handler)
     {
-        file_put_contents($this->options['path'].'MyCoverage.watching.txt',$name);
+        if($handler === 'AJAX'){
+            $_SERVER['HTTP_X_REQUESTED_WITH']='XMLHttpRequest';
+            return;
+        }else if($handler === 'OPTIONS'){
+            $_SERVER['REQUEST_METHOD'] = 'OPTIONS';
+            return;
+        }
+        $this->callHandler($handler);
     }
-    protected function watchingEnd()
+    public function doAfterRun($handler)
     {
-        @unlink($this->options['path'].'MyCoverage.watching.txt');
+        $this->callHandler($handler);
     }
-    protected function watchingGetName()
+    protected function callHandler($handler)
     {
-        $group = @file_get_contents($this->options['path'].'MyCoverage.watching.txt');
-        return $group;    
+        //
     }
-    ////]]]]
-    
     //////////////////
+    protected function cleanClientStatus()
+    {
+    }
     protected function replay()
     {
         $callback = $this->options['test_list_callback'];
@@ -162,31 +175,26 @@ class MyCoverageBridge extends MyCoverage
         
         $this->is_save_session = true;
         $this->session_id = '';
-        $this->post = [];
         
         $this->doBegin();
         
         foreach($test_list as $line){
-            $request =trim($line);
-            if(!$request){
-                continue;
-            }
-            if(substr($request,0,1)==='#'){
-                $this->readCommand($request);
-                continue;
-            }
+            $this->readCommand($line);
         }
         $this->stopServer();
         $this->doEnd();
     }
     protected function readCommand($request)
     {
+        $request = trim($request);
+        if(!$request){
+            return;
+        }
         if(substr($request,0,2)==='##'){
             return;
         }
         if(substr($request,0,strlen('#CALL '))==='#CALL '){
             $this->explainCall($request);
-            // 我们这里写入命令，调用方法， Phase 要怎么处理呢？
         }
         if(substr($request,0,strlen('#WEB '))==='#WEB '){
             $this->explainWeb($request);
@@ -195,9 +203,16 @@ class MyCoverageBridge extends MyCoverage
 
     public function prepareCurl($ch)
     {
+        //'#CURL_HOOK  before after'
+        
+        // #WEB_HOOK before after
+        // #WEB / intx 
         return $ch;
     }
-    protected function curl_file_get_contents($url, $post =[],$is_ajax = flase,$is_options =false)
+    public function postpareCurl($ch)
+    {
+    }
+    protected function curl_file_get_contents($url, $post =[],$is_ajax = flase,$is_options =false,$ext='')
     {
         $ch = curl_init();
         
@@ -222,7 +237,9 @@ class MyCoverageBridge extends MyCoverage
         }
         $headers =[];
         $headers[] = 'X-MyCoverage-Name: '.$this->watchingGetName();
-        $headers[] = 'X-MyCoverage-BeforeRun: ';
+        if($ext){
+            $headers[] = 'X-MyCoverage-BeforeRun: '.$ext;
+        }
         if($is_ajax){
             $headers[] = 'X-Requested-With: XMLHttpRequest';
         }
@@ -303,8 +320,9 @@ class MyCoverageBridge extends MyCoverage
         }
         $is_ajax = ($method ==='AJAX')?true:false;
         $is_options = ($method ==='OPTIONS')?true:false;
+        
         $url ="http://127.0.0.1:{$this->options['test_server_port']}".$this->options['test_homepage'].$uri;
-        $data = $this->curl_file_get_contents([$url,'127.0.0.1'],$post,$is_ajax,$is_options);
+        $data = $this->curl_file_get_contents([$url,'127.0.0.1'],$post,$is_ajax,$is_options,$method);
         if($this->options['test_echo_back']??false){
             echo substr($data,0,200);
         }
@@ -312,10 +330,8 @@ class MyCoverageBridge extends MyCoverage
     protected function explainCall($request)
     {
         //$flag = preg_match('/#CALL\s+([^@]+)@(\w+)/',$command,$m);
-        //if(!$flag){ return; }
         @list($command,$func,$poststr)=explode(' ',$request);
         if($command!=='#CALL'){return;}
-        
         
         $this->options['name'] = $command;
         
@@ -326,7 +342,7 @@ class MyCoverageBridge extends MyCoverage
         file_put_contents($path_dump.$this->options['group'].'.list',$request ."\n",FILE_APPEND); 
         ////]]]]
         
-        call_user_func($func); // TODO a=1&b=2 ... // 还是要拆分 ：： @ ,要反射
+        $this->callHandler($func,$poststr);
         
     }
     
