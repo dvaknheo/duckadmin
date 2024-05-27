@@ -274,7 +274,7 @@ class MyCoverageBridge extends MyCoverage
         $this->prepareCurl($ch);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
         $data = curl_exec($ch);
-        
+        $this->headers=[];
         if($this->is_save_session){
             $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
             $headers = substr($data, 0, $header_size);

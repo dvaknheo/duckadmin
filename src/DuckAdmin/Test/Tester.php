@@ -8,26 +8,14 @@ use \DuckPhp\Component\DbManager;
 class Tester
 {
     use SimpleSingletonTrait;
-    public function runInConsole()
-    {
-        //$this->runExtBusiness();
-        //$this->runExtModel();
-        //$this->runExtExtract();
-    }
-    public static function KickTestDirectory()
-    {
-        $last_phase = DuckAdminApp::Phase(DuckAdminApp::class);
-        static::_()->_kickTestDirectory();
-        DuckAdminApp::Phase($last_phase);
-    }
 
-    public function _kickTestDirectory()
+    public function beginTest()
     {
-        // 这段无法生效是因为在web  call 不影响环境
-        //$path = DuckAdminApp::_()->options['path'];
-        //$filter = MyCoverageBridge::_()->getCoverage()->filter();
-        //$filter->removeDirectoryFromWhitelist($path.'Test');
-        //$filter->removeDirectoryFromWhitelist($path.'View');
+        //
+    }
+    public function endTest()
+    {
+        //
     }
     public function preCurl($ch,$name)
     {
@@ -52,9 +40,17 @@ class Tester
     public function getTestList2()
     {
         $list = <<<EOT
-#CALL {static}::localCall
-#SETWEB {static}@preCurl {static}@preWebCall {static}@postWebCall {static}@postCurl
 #WEB index
+#SETWEB AJAX
+#WEB account/dashboard
+#WEB account/dashboard
+#WEB index
+#WEB account/logout
+#SETWEB AJAX
+#WEB account/logout
+#WEB account/login username=admin&password=123456&captcha=7268
+#SETWEB OPTIONS
+#WEB admin/index?diffname
 
 EOT;
         $static_class = static::class;
@@ -62,14 +58,18 @@ EOT;
             'static' => $static_class,
         ];
         $list = $this->replace_string($list,$args);
+        $prefix = DuckAdminApp::_()->options['controller_url_prefix'];
+        $list = str_replace('#WEB ','#WEB '.$prefix,$list);
+
         return $list;
     }
     public function getTestList()
     {
         $list = <<<EOT
-#CALL {static}::KickTestDirectory
+#CALL {static}@beginTest
 ##SETWEB preCurl preWebCall postWebCall postCurl
 #SETWEB AJAX
+#WEB account/dashboard
 #WEB account/dashboard
 #WEB account/login
 #WEB account/login username=admin&password=123456&captcha=7268
@@ -88,7 +88,7 @@ EOT;
 #WEB account/dashboard
 #WEB account/login username=admin&password=123456&captcha=7268
 #SETWEB OPTIONS
-#WEB admin/index?diffname
+#WEB admin/index?seetheoptions
 
 #WEB admin/index
 #WEB admin/select
@@ -131,7 +131,6 @@ EOT;
 #WEB rule/delete
 #WEB rule/insert title=biaoti{new_rule_id}&key=biaozhi{new_rule_id}&pid=&href=&icon=layui-icon-login-wechat&type=1&weight=0
 #WEB rule/update title=biaoti{new_rule_id}a&key=biaozhi{new_rule_id}x&pid=&href=&icon=layui-icon-login-wechat&type=1&weight=0&id={new_rule_id}
-##TODO 我们创建个 role， rule 以完成其他 business 测试
 #WEB admin/delete id={new_admin_id}
 #WEB role/delete id={new_role_id}
 #WEB rule/delete id={new_rule_id}
@@ -140,6 +139,7 @@ EOT;
 #WEB account/logout
 #WEB index
 
+#CALL {static}@beginTest
 
 EOT;
         $last_phase = DuckAdminApp::Phase(DuckAdminApp::class);
@@ -236,24 +236,6 @@ EOT;
     {
         ////[[[[
 
-        \DuckAdmin\Business\AccountBusiness::_()->canAccess($admin_id, $controller,  $action);
-        \DuckAdmin\Business\AdminBusiness::_()->updateAdmin($op_id,$input);
-        \DuckAdmin\Business\AdminBusiness::_()->deleteAdmin($op_id, $ids);
-
-        \DuckAdmin\Business\ConfigBusiness::_()->getDefaultConfig();
-        \DuckAdmin\Business\ConfigBusiness::_()->updateConfig($post);
-
-        \DuckAdmin\Business\InstallBusiness::_()->install($username,$password,$password_confirm);
-        
-        \DuckAdmin\Business\RoleBusiness::_()->updateRole($op_id, $input);
-        \DuckAdmin\Business\RoleBusiness::_()->deleteRole($op_id, $ids);
-        \DuckAdmin\Business\RoleBusiness::_()->tree($op_id, $role_id);
-
-        \DuckAdmin\Business\RuleBusiness::_()->get($roles,$types);
-        \DuckAdmin\Business\RuleBusiness::_()->permission($roles);
-        \DuckAdmin\Business\RuleBusiness::_()->insertRule($op_id, $input);
-        \DuckAdmin\Business\RuleBusiness::_()->updateRule($op_id, $input);
-        \DuckAdmin\Business\RuleBusiness::_()->controllerToUrlPath($controller_class);
         ////]]]]
         // CommonService, Tree
     }
@@ -261,23 +243,6 @@ EOT;
     {
         ////[[[[
 
-        \DuckAdmin\Model\AdminModel::_()->hasAdmins();
-        \DuckAdmin\Model\AdminModel::_()->addFirstAdmin($username,$password);
-        \DuckAdmin\Model\AdminRoleModel::_()->addFirstRole($admin_id);
-
-        \DuckAdmin\Model\OptionModel::_()->setSystemConfig($value);
-
-        \DuckAdmin\Model\RoleModel::_()->updateRoleMore($descendant_role_ids,$rule_ids);
-        \DuckAdmin\Model\RoleModel::_()->addFirstRole();
-
-
-        \DuckAdmin\Model\RuleModel::_()->checkRules($rule_ids,$controller,$action);
-        \DuckAdmin\Model\RuleModel::_()->allRulesForTree();
-        \DuckAdmin\Model\RuleModel::_()->updateTitleByKey($name,$title);
-        \DuckAdmin\Model\RuleModel::_()->deleteAll($key);
-        \DuckAdmin\Model\RuleModel::_()->importMenu( $menu_tree);
-        \DuckAdmin\Model\RuleModel::_()->getKeysByIds($rules);
-        \DuckAdmin\Model\RuleModel::_()->getAllByKey();
         ////]]]]
     }
     public function runAllExtract()
