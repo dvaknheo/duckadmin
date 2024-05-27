@@ -38,7 +38,7 @@ class RuleBusiness extends Base
         if (!in_array('*', $rules)) {
             $this->removeNotContain($tree_items, 'id', $rules);
         }
-        //$this->removeNotContain($tree_items, 'type', $types);
+        $this->removeNotContain($tree_items, 'type', $types);
         
         return Tree::arrayValues($tree_items);
     }

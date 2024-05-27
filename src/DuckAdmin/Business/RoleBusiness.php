@@ -170,7 +170,7 @@ class RoleBusiness extends Base
         
         $roles = RoleModel::_()->getAll();
         $tree = new Tree($roles);
-        $descendants = $tree->getDescendant($role_ids, $with_self);
+        $descendants = $tree->getDescendant($role_id, $with_self);
         $children_role_ids = array_column($descendants, 'id');
         
         $ext_role_ids = array_diff($role_id, $children_role_ids);

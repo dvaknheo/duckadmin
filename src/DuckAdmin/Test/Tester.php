@@ -256,10 +256,14 @@ EOT;
     public function runExtBusiness()
     {
         ////[[[[
-$admin_id = 2;
-$op_id = $admin_id;
-\DuckAdmin\Business\AccountBusiness::_()->canAccess($admin_id,\DuckAdmin\Controller\AdminController::class,'index');
-\DuckAdmin\Business\AdminBusiness ::_()->showAdmins($op_id,[]);
+            $admin_id = 2;
+            $op_id = $admin_id;
+            \DuckAdmin\Business\AccountBusiness::_()->canAccess($admin_id,\DuckAdmin\Controller\AdminController::class,'index');
+            \DuckAdmin\Business\AdminBusiness ::_()->showAdmins($op_id,[]);
+            \DuckAdmin\Business\RoleBusiness ::_()->tree($op_id,3);
+            \DuckAdmin\Business\RuleBusiness ::_()->get($op_id,[0,1]);
+            \DuckAdmin\Business\RuleBusiness ::_()->permission($op_id);
+            
 
         ////]]]]
         // CommonService, Tree
