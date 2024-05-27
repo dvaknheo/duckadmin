@@ -88,7 +88,7 @@ class MyCoverageBridge extends MyCoverage
 
         $before_run = Helper::SERVER('HTTP_X_MYCOVERAGE_BEFORERUN','');
         if($before_run){
-            $this->doBeforeRun($before_run);
+            $this->callHandler($before_run);
         }
         
         $this->doBegin();
@@ -109,9 +109,10 @@ class MyCoverageBridge extends MyCoverage
             return;
         }
         
-        $after_run = Helper::SERVER('HTTP_X_MYCOVERAGE_BEFORERUN','');
+        $after_run = Helper::SERVER('HTTP_X_MYCOVERAGE_AFTERRUN','');
         if($after_run){
-            $this->doAfterRun($after_run);
+            $this->callHandler($after_run);
+
         }
         $this->doEnd();
     }
@@ -144,39 +145,34 @@ class MyCoverageBridge extends MyCoverage
         $ret =implode(";",[$time,$uri,$post,$session_id,$method,$ajax]);
         return $ret;
     }
-    public function doBeforeRun($handler)
+    protected function callHandler($handler,$ext_args=[])
     {
-        if($handler === 'AJAX'){
-            $_SERVER['HTTP_X_REQUESTED_WITH']='XMLHttpRequest';
-            return;
-        }else if($handler === 'OPTIONS'){
-            $_SERVER['REQUEST_METHOD'] = 'OPTIONS';
+        if(!isset($handler)){
             return;
         }
-        $this->callHandler($handler);
-    }
-    public function doAfterRun($handler)
-    {
-        $this->callHandler($handler);
-    }
-    protected function callHandler($handler)
-    {
-        //
+        $handler = trim($handler);
+        //$handler = "DuckAdmin\\Test\\Tester@_justTest?parameter=d";
+        $flag = preg_match('/^(([a-zA-Z0-9_\x7f-\xff\\\\]+)(\:\:|\@|\->)([a-zA-Z0-9_\x7f-\xff]+)|([a-zA-Z0-9_\x7f-\xff]+))(\?(\S*))?$/' ,$handler,$m);
+        if(!$flag){ 
+            return false;
+        }
+        @list($_0,$_1,$class,$type,$method,$function,$_6,$parameters)=$m;
+        return $this->callObject($class,$method,$type,$function,$parameters,$ext_args);
     }
     //////////////////
     protected function cleanClientStatus()
     {
+        $this->is_save_session = true;
+        $this->session_id = '';
     }
     protected function replay()
     {
         $callback = $this->options['test_list_callback'];
         $test_list = \call_user_func($callback);
-        $test_list = explode("\n",$test_list);
-        
-        $this->is_save_session = true;
-        $this->session_id = '';
+        $test_list = \explode("\n",$test_list);
         
         $this->doBegin();
+        $this->cleanClientStatus();
         
         foreach($test_list as $line){
             $this->readCommand($line);
@@ -199,20 +195,54 @@ class MyCoverageBridge extends MyCoverage
         if(substr($request,0,strlen('#WEB '))==='#WEB '){
             $this->explainWeb($request);
         }
+        if(substr($request,0,strlen('#SETWEB '))==='#SETWEB '){
+            $this->explainSetWeb($request);
+        }
     }
 
+    protected $pre_curl;
+    protected $post_curl;
+    protected $pre_webcall;
+    protected $post_webcall;
     public function prepareCurl($ch)
     {
-        //'#CURL_HOOK  before after'
+        $this->headers[] = 'X-MyCoverage-Name: '.$this->watchingGetName();
+        if($this->pre_webcall){
+            $this->headers[] = 'X-MyCoverage-BeforeRun: '.$this->pre_webcall;
+            $this->pre_webcall=null;
+        }
+        if($this->post_webcall){
+            $this->headers[] = 'X-MyCoverage-AfterRun: '.$this->post_webcall;
+            $this->post_webcall=null;
+        }
+        $pre_curl =$this->pre_curl;
+        $this->pre_curl = null;
         
-        // #WEB_HOOK before after
-        // #WEB / intx 
+        //////////////////////////
+        if(!$pre_curl  || $pre_curl ==='_'){
+            return $ch;
+        }
+
+        if($pre_curl ==='AJAX'){
+            $this->headers[] = 'X-Requested-With: XMLHttpRequest';
+            return $ch;
+        }
+        if($pre_curl ==='OPTIONS'){
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'OPTIONS');
+            return $ch;
+        }
+        $this->callHandler($pre_curl, [$ch,'pre']);
         return $ch;
     }
     public function postpareCurl($ch)
     {
+        $post_curl = $this->post_curl;
+        $this->post_curl = null;
+        
+        $this->callHandler($post_curl, [$ch,'post']);
     }
-    protected function curl_file_get_contents($url, $post =[],$is_ajax = flase,$is_options =false,$ext='')
+    protected $headers =[];
+    protected function curl_file_get_contents($url, $post =[],$is_ajax = flase,$is_options =false)
     {
         $ch = curl_init();
         
@@ -226,7 +256,8 @@ class MyCoverageBridge extends MyCoverage
         }
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+        //curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1); 
+        
         if($this->is_save_session){
             curl_setopt($ch, CURLOPT_HEADER, 1);
         }
@@ -235,38 +266,26 @@ class MyCoverageBridge extends MyCoverage
             curl_setopt($ch, CURLOPT_POST, 1);
             curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post));
         }
-        $headers =[];
-        $headers[] = 'X-MyCoverage-Name: '.$this->watchingGetName();
-        if($ext){
-            $headers[] = 'X-MyCoverage-BeforeRun: '.$ext;
-        }
-        if($is_ajax){
-            $headers[] = 'X-Requested-With: XMLHttpRequest';
-        }
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        if($is_options){
-            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'OPTIONS');
-
-        }
+        /////////
         if($this->session_id){
             curl_setopt($ch, CURLOPT_COOKIE, "PHPSESSID={$this->session_id}"); 
         }
         
-        
         $this->prepareCurl($ch);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
         $data = curl_exec($ch);
         
         if($this->is_save_session){
             $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
             $headers = substr($data, 0, $header_size);
             $data = substr($data, $header_size);
-            
             $flag = preg_match('/PHPSESSID=(\w+)/',$headers,$m);
             if($flag){
                 $this->session_id = $m[1];
                 $this->is_save_session = false;
             }
         }
+        $this->postpareCurl($ch);
         echo $url; echo ' ' ; echo http_build_query($post);
         echo "\n";
         //echo $data;
@@ -329,8 +348,7 @@ class MyCoverageBridge extends MyCoverage
     }
     protected function explainCall($request)
     {
-        //$flag = preg_match('/#CALL\s+([^@]+)@(\w+)/',$command,$m);
-        @list($command,$func,$poststr)=explode(' ',$request);
+        @list($command,$func)=explode(' ',$request);
         if($command!=='#CALL'){return;}
         
         $this->options['name'] = $command;
@@ -342,15 +360,78 @@ class MyCoverageBridge extends MyCoverage
         file_put_contents($path_dump.$this->options['group'].'.list',$request ."\n",FILE_APPEND); 
         ////]]]]
         
-        $this->callHandler($func,$poststr);
+        $this->callHandler($func);
         
     }
-    
+    protected function explainSetweb($request)
+    {
+        @list($command,$pre_curl,$pre_webcall,$post_webcall,$post_curl)=explode(' ',$request);
+        if($command!=='#SETWEB'){return;}
+        
+        $this->pre_curl = ($pre_curl==='_')?null:$pre_curl;
+        $this->pre_webcall = ($pre_webcall==='_')?null:$pre_webcall;
+        $this->post_webcall = ($post_webcall==='_')?null:$post_webcall;
+        $this->post_curl = ($post_curl==='_')?null:$post_curl;
+        return;
+    }
+    ////////////////////////////////////////////////////////////////////////////
+    public function callObject($class,$method,$type,$function,$poststr,$args = [])
+    {
+        $input = [];
+        
+        
+        if($poststr){
+            parse_str($poststr,$input);
+        }
+        if(!$function){
+            $app = Helper::getAppClassByComponent($class);
+            $last_phase = App::Phase($app::_()->phase);
+            
+            if($type === '@'){
+                $object = $class::_();
+            }else if($type === '->'){
+                $object = new $class;
+            }else if($type === '::'){
+                $object = $class;
+            }
+            $reflect = new \ReflectionMethod($object, $method);
+        }else{
+            $reflect = new \ReflectionFunction($function);
+        }
+        
+        $params = $reflect->getParameters();
+        foreach ($params as $i => $param) {
+            $name = $param->getName();
+            if (isset($input[$name])) {
+                $args[$i] = $input[$name];
+            } elseif ($param->isDefaultValueAvailable() && !isset($args[$i])) {
+                $args[$i] = $param->getDefaultValue();
+            } elseif (!isset($args[$i])) {
+                throw new \ReflectionException("Command Need Parameter: {$name}\n", -2);
+            }
+        }
+        $ret = $reflect->invokeArgs(is_object($object)? $object:null, $args);
+        if(!$function){
+            App::Phase($last_phase);
+        }
+        return $ret;
+    }
     /**
      * tests group. use --help for more.
      */
     public function command_testgroup()
     {
+        /*
+        $handler = "DuckAdmin\\Test\\Tester@_justTest?parameter=d";
+        $flag = preg_match('/^(([a-zA-Z0-9_\x7f-\xff\\\\]+)(\:\:|\@|\->)([a-zA-Z0-9_\x7f-\xff]+)|([a-zA-Z0-9_\x7f-\xff]+))(\?(\S*))?$/' ,$handler,$m);
+        if(!$flag){ die("BAD");}
+        list($_0,$_1,$class,$type,$method,$function,$_6,$parameters)=$m;
+
+        $this->callObject($class,$method,$type,$function,$parameters);
+        //$t= compact($_0,$_1,$class,$type,$method,$function,$_6,$paramter);
+        //var_dump($t);
+        exit;
+        */
         $p = Console::_()->getCliParameters();
         if($p['help']??false){
             $str = <<<EOT

@@ -12,7 +12,7 @@ class Tester
 {
     use SimpleSingletonTrait;
     
-    public function BeforeTest()
+    public static function BeforeTest()
     {
         $phase = CoreHelper::_()->getAppClassByComponent(static::class);
         CoreHelper::PhaseCall($phase,function(){
@@ -25,7 +25,7 @@ class Tester
         $sql = "delete from $table where username = ?";
         $ret = DbManager::Db()->execute($sql,'user_test');
     }
-    public function AfterTest()
+    public static function AfterTest()
     {
         $phase = CoreHelper::_()->getAppClassByComponent(static::class);
         CoreHelper::PhaseCall($phase,function(){

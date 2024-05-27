@@ -14,12 +14,13 @@ class Tester
         //$this->runExtModel();
         //$this->runExtExtract();
     }
-    public function KickTestDirectory()
+    public static function KickTestDirectory()
     {
         $last_phase = DuckAdminApp::Phase(DuckAdminApp::class);
         static::_()->_kickTestDirectory();
         DuckAdminApp::Phase($last_phase);
     }
+
     public function _kickTestDirectory()
     {
         // 这段无法生效是因为在web  call 不影响环境
@@ -28,11 +29,48 @@ class Tester
         //$filter->removeDirectoryFromWhitelist($path.'Test');
         //$filter->removeDirectoryFromWhitelist($path.'View');
     }
+    public function preCurl($ch,$name)
+    {
+        __var_log(__METHOD__);
+    }
+    public function postCurl($ch,$name)
+    {
+        __var_log(__METHOD__);
+    }
+    public function preWebCall()
+    {
+        __var_log(__METHOD__);
+    }
+    public function postWebCall()
+    {
+        __var_log(__METHOD__);
+    }
+    public static function localCall()
+    {
+        __var_log(__METHOD__);
+    }
+    public function getTestList2()
+    {
+        $list = <<<EOT
+#CALL {static}::localCall
+#SETWEB {static}@preCurl {static}@preWebCall {static}@postWebCall {static}@postCurl
+#WEB index
+
+EOT;
+        $static_class = static::class;
+        $args = [
+            'static' => $static_class,
+        ];
+        $list = $this->replace_string($list,$args);
+        return $list;
+    }
     public function getTestList()
     {
         $list = <<<EOT
 #CALL {static}::KickTestDirectory
-#WEB account/dashboard  AJAX
+##SETWEB preCurl preWebCall postWebCall postCurl
+#SETWEB AJAX
+#WEB account/dashboard
 #WEB account/login
 #WEB account/login username=admin&password=123456&captcha=7268
 #WEB account/info
@@ -44,11 +82,13 @@ class Tester
 #WEB account/password old_password=654321&password=123456&password_confirm=123456
 #WEB account/update nickname=%E8%B6%85%E7%BA%A7%E7%AE%A1%E7%90%86%E5%91%98&email=112233a&mobile=22244b
 #WEB account/logout
-#WEB account/logout  AJAX
+#SETWEB AJAX
+#WEB account/logout
 
 #WEB account/dashboard
 #WEB account/login username=admin&password=123456&captcha=7268
-#WEB admin/index?diffname  OPTIONS
+#SETWEB OPTIONS
+#WEB admin/index?diffname
 
 #WEB admin/index
 #WEB admin/select
@@ -123,7 +163,7 @@ EOT;
         DuckAdminApp::Phase($last_phase);
         return $list;
     }
-    public function BeginConfigBusiness()
+    public static function BeginConfigBusiness()
     {
         $last_phase = DuckAdminApp::Phase(DuckAdminApp::class);
         static::_()->_BeginConfigBusiness();
@@ -143,7 +183,7 @@ EOT;
         }
         */
     }
-    public function EndConfigBusiness()
+    public static function EndConfigBusiness()
     {
         $last_phase = DuckAdminApp::Phase(DuckAdminApp::class);
         static::_()->_EndConfigBusiness();
