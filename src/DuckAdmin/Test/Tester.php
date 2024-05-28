@@ -257,16 +257,17 @@ EOT;
         
         return $ret;
     }
-    public function runExtBusiness()
+    public function runInstallBusiness()
     {
         PhaseContainer::GetContainer()->createLocalObject(DbManager::class);
+        $db_file = 'DuckAdminOnlyForInstall.db';
         $options = [
                 'database_driver' =>  'sqlite',
                 'database_list' => 
                 array (
                   0 => 
                   array (
-                    'dsn' => 'sqlite:DuckAdminOnlyForInstall.db',
+                    'dsn' => 'sqlite:'.$db_file,
                     'username' => '',
                     'password' => '',
                   ),
@@ -288,10 +289,35 @@ EOT;
         $password = '123456';
         $password_confirm = '123456';
         \DuckAdmin\Business\InstallBusiness::_()->install($username,$password,$password_confirm);
-        unlink(Helper::PathOfRuntime().'DuckAdminOnlyForInstall.db');
+        //unlink(Helper::PathOfRuntime().$db_file);
+    }
+    public function runExtBusiness()
+    {
+        ///pid=1&name=jsm1&rules=2%2C3%2C4%2C6%2C8%2C9
+        ///pid=2&name=jsm2&rules=8%2C9
+        ///admin/insert roles=2&username=gly1&nickname=guanliyuan1&password=123456&email=&mobile=
+        DbManager::_()->options['database_log_sql_query']=true;
+        $op_id =1;
+        $input = ['pid'=>'1','name'=>'jsm1','rules'=>'2,3,4,6,8,9'];
+        $new_role1 = \DuckAdmin\Business\RoleBusiness::_()->insertRole($op_id,$input);
+        var_dump($new_role1);
+        $input = ['pid'=>$new_role1,'name'=>'jsm2','rules'=>'8,9'];        
+        $new_role2 =\DuckAdmin\Business\RoleBusiness::_()->insertRole($op_id,$input);
+        var_dump($new_role2);
+        $admin_id =\DuckAdmin\Business\AdminBusiness ::_()->addAdmin($op_id,['roles'=>$new_role1,'username'=>'ua_'.$new_role1,'nickname'=>'na_'.$new_role1, 'password'=>'123456','email'=>'','mobile'=>'']);
+        $op_id = $admin_id;
+        $child_admin_id = \DuckAdmin\Business\AdminBusiness ::_()->addAdmin($op_id,['roles'=>$new_role2,'username'=>'ua_'.$new_role2,'nickname'=>'na_'.$new_role2, 'password'=>'123456','email'=>'','mobile'=>'']);
+        var_dump($child_admin_id);
+        
+        $flag = \DuckAdmin\Business\AdminBusiness ::_()->updateAdmin($op_id,['id'=>$child_admin_id,'roles'=>$new_role2,'username'=>'u_a'.$new_role2,'nickname'=>'na_'.$new_role2, 'password'=>'123456','email'=>'','mobile'=>'']);
+        var_dump($flag);
+        \DuckAdmin\Business\AdminBusiness ::_()->deleteAdmin($op_id,$child_admin_id);
+        var_dump("DONE");
+        // 我们增加两个 role ，然后 addadmin ，然后再处理 rule.
     }
     public function runExtBusiness2()
     {
+        // 这段补充非超级管理员下的查看操作。
         ////[[[[
             $admin_id = 2;
             $op_id = $admin_id;
@@ -308,7 +334,11 @@ EOT;
     public function runExtModel()
     {
         ////[[[[
-
+/*
+/index_dev.php/app/admin/role/insert pid=1&name=jsm1&rules=2%2C3%2C4%2C6%2C8%2C9
+/index_dev.php/app/admin/role/insert pid=2&name=jsm2&rules=8%2C9
+/index_dev.php/app/admin/admin/insert roles=2&username=gly1&nickname=guanliyuan1&password=123456&email=&mobile=
+*/
         ////]]]]
     }
     public function runAllExtract()
