@@ -164,7 +164,12 @@ EOT;
 #WEB account/logout
 #WEB index
 
-#CALL {static}@beginTest
+
+#CALL {static}@runExtBusiness2
+#CALL {static}@runExtBusiness
+#CALL {static}@runInstallBusiness
+
+#CALL {static}@endTest
 
 EOT;
         $last_phase = DuckAdminApp::Phase(DuckAdminApp::class);
@@ -260,7 +265,7 @@ EOT;
     public function runInstallBusiness()
     {
         PhaseContainer::GetContainer()->createLocalObject(DbManager::class);
-        $db_file = 'DuckAdminOnlyForInstall.db';
+        $db_file = 'DuckAdminXxx.db';
         $options = [
                 'database_driver' =>  'sqlite',
                 'database_list' => 
