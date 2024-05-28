@@ -301,7 +301,7 @@ EOT;
         $input = ['pid'=>'1','name'=>'jsm1','rules'=>'2,3,4,6,8,9'];
         $new_role1 = \DuckAdmin\Business\RoleBusiness::_()->insertRole($op_id,$input);
         var_dump($new_role1);
-        $input = ['pid'=>$new_role1,'name'=>'jsm2','rules'=>'8,9'];        
+        $input = ['pid'=>$new_role1,'name'=>'jsm2','rules'=>'8,9'];
         $new_role2 =\DuckAdmin\Business\RoleBusiness::_()->insertRole($op_id,$input);
         var_dump($new_role2);
         $admin_id =\DuckAdmin\Business\AdminBusiness ::_()->addAdmin($op_id,['roles'=>$new_role1,'username'=>'ua_'.$new_role1,'nickname'=>'na_'.$new_role1, 'password'=>'123456','email'=>'','mobile'=>'']);
@@ -312,8 +312,26 @@ EOT;
         $flag = \DuckAdmin\Business\AdminBusiness ::_()->updateAdmin($op_id,['id'=>$child_admin_id,'roles'=>$new_role2,'username'=>'u_a'.$new_role2,'nickname'=>'na_'.$new_role2, 'password'=>'123456','email'=>'','mobile'=>'']);
         var_dump($flag);
         \DuckAdmin\Business\AdminBusiness ::_()->deleteAdmin($op_id,$child_admin_id);
-        var_dump("DONE");
+        
+        \DuckAdmin\Business\RoleBusiness ::_()->tree($admin_id,$new_role1);
+        \DuckAdmin\Business\RoleBusiness ::_()->tree($admin_id,$new_role2);
+        
+        //\DuckAdmin\Business\RoleBusiness ::_()->updateRole(1,$new_role2);
+        
+        $input = ['id'=>'1','name'=>'jsm2','rules'=>'*'];
+        \DuckAdmin\Business\RoleBusiness ::_()->updateRole(1,$input);
+        
+        $input = ['pid'=>$new_role1,'name'=>'jsm2','rules'=>''];
+        $input['id']=$new_role2;
+        \DuckAdmin\Business\RoleBusiness ::_()->updateRole(1,$input);
+        $input['rules']='';
+        //\DuckAdmin\Business\RoleBusiness ::_()->updateRole(1,$input);
+        \DuckAdmin\Business\RoleBusiness ::_()->tree($admin_id,$new_role2);
+        \DuckAdmin\Business\RoleBusiness ::_()->deleteRole(1,$new_role1);
         // 我们增加两个 role ，然后 addadmin ，然后再处理 rule.
+        
+        
+        \DuckAdmin\Business\AdminBusiness ::_()->deleteAdmin(1,$admin_id);
     }
     public function runExtBusiness2()
     {

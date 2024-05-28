@@ -73,7 +73,7 @@ class RoleBusiness extends Base
         }
 
         if (!$is_supper_role) {
-            $this->checkRulesInput($pid, $data['rules'] ?? '');
+            $this->checkRulesInput($pid, $data['rules'] ?? '');// 只有超级管理员是不能改，只能添加删除改名
         }
         RoleModel::_()->updateRole($id, $data);
         // 删除所有子角色组中已经不存在的权限
@@ -102,7 +102,7 @@ class RoleBusiness extends Base
         $tree = new Tree(RoleModel::_()->getAll());
         $descendants = $tree->getDescendant($ids);
         if ($descendants) {
-            $ids = array_merge($ids, array_column($descendants, 'id'));
+            $ids = array_merge($ids, array_column($descendants, 'id')); //连同子role 一起删除
         }
 
         RoleModel::_()->deleteByIds($ids);
