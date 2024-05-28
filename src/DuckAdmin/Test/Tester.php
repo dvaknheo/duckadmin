@@ -309,9 +309,16 @@ EOT;
         $child_admin_id = \DuckAdmin\Business\AdminBusiness ::_()->addAdmin($op_id,['roles'=>$new_role2,'username'=>'ua_'.$new_role2,'nickname'=>'na_'.$new_role2, 'password'=>'123456','email'=>'','mobile'=>'']);
         var_dump($child_admin_id);
         
+        
+        \DuckAdmin\Business\RuleBusiness::_()->get($admin_id,[0,1]);
+        \DuckAdmin\Business\RuleBusiness::_()->permission($admin_id);
+        
         $flag = \DuckAdmin\Business\AdminBusiness ::_()->updateAdmin($op_id,['id'=>$child_admin_id,'roles'=>$new_role2,'username'=>'u_a'.$new_role2,'nickname'=>'na_'.$new_role2, 'password'=>'123456','email'=>'','mobile'=>'']);
         var_dump($flag);
-        \DuckAdmin\Business\AdminBusiness ::_()->deleteAdmin($op_id,$child_admin_id);
+        
+        \DuckAdmin\Business\RuleBusiness::_()->get($child_admin_id,[0,1]);
+        
+        //\DuckAdmin\Business\AdminBusiness ::_()->deleteAdmin($op_id,$child_admin_id);
         
         \DuckAdmin\Business\RoleBusiness ::_()->tree($admin_id,$new_role1);
         \DuckAdmin\Business\RoleBusiness ::_()->tree($admin_id,$new_role2);
@@ -327,6 +334,10 @@ EOT;
         $input['rules']='';
         //\DuckAdmin\Business\RoleBusiness ::_()->updateRole(1,$input);
         \DuckAdmin\Business\RoleBusiness ::_()->tree($admin_id,$new_role2);
+        
+        \DuckAdmin\Business\RuleBusiness::_()->permission($child_admin_id);
+        
+        \DuckAdmin\Business\AdminBusiness ::_()->deleteAdmin($op_id,$child_admin_id);
         \DuckAdmin\Business\RoleBusiness ::_()->deleteRole(1,$new_role1);
         // 我们增加两个 role ，然后 addadmin ，然后再处理 rule.
         
