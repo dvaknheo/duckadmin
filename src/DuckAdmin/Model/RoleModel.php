@@ -48,12 +48,12 @@ class RoleModel extends Base
         return $rules && in_array('*', $rules);
     }
     
-    public function getAllId()
-    {
-        $sql="select id from `'TABLE'`";
-        $data = $this->fetchAll($sql);
-        return array_column($data,'id');
-    }
+    //public function getAllId()
+    //{
+    //    $sql="select id from `'TABLE'`";
+    //    $data = $this->fetchAll($sql);
+    //    return array_column($data,'id');
+    //}
     public function getAll()
     {
         $sql="select * from `'TABLE'`";
