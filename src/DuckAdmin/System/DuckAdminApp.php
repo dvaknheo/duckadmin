@@ -32,7 +32,8 @@ class DuckAdminApp extends DuckPhp
         
         'class_admin'=> Admin::class,
         
-        'database_driver'=>'mysql',
+        //'database_driver'=>'mysql',
+        'database_driver'=>'sqlite',
         'need_install'=>true,
         'cli_command_with_fast_installer' => true,
         

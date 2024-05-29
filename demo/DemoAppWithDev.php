@@ -30,14 +30,27 @@ class DemoAppWithDev extends DemoApp
             'test_path_document'=>'public',
             'test_new_server'=>true,
             'test_list_callback'=>[static::class,'GetTestList'],
+            'test_before_after_web'=>[static::class,'BeforeWeb'],
+            'test_before_after_web'=>[static::class,'AfterWeb'],
         ];
         $this->options['ext_options_file']='config/DuckPhpApps_dev.config.php';
         $this->options['ext'][MyCoverageBridge::class] = $tester_options;
+        
+        
+        $this->options['database_driver']='sqlite';
     }
     public function action_index()
     {
         var_dump("dev");
         parent::action_index();
+    }
+    public static function BeforeWeb()
+    {
+        return static::_()->_BeforeWeb();
+    }
+    public static function AfterWeb()
+    {
+        return static::_()->_AfterWeb();
     }
     public static function GetTestList()
     {
@@ -59,5 +72,13 @@ class DemoAppWithDev extends DemoApp
         //    public function removeFileFromWhitelist(string $filename): void
 
         return $str;
+    }
+    public function _BeforeWeb()
+    {
+        //
+    }
+    public function _AfterWeb()
+    {
+        //
     }
 }
