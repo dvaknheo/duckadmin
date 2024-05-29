@@ -37,7 +37,7 @@ class DuckAdminApp extends DuckPhp
         'need_install'=>true,
         'cli_command_with_fast_installer' => true,
         
-        'table_prefix' =>'wa_',
+        'table_prefix' =>'da_',
         
         
     ];
