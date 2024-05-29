@@ -59,7 +59,7 @@ class AdminModel extends Base
     
     public function hasAdmins()
     {
-        return $this->fetchColumn("select count(*) as c from wa_admins");
+        return $this->fetchColumn("select count(*) as c from `'TABLE'`");
     }
     //// delete
     public function deleteByIds($ids)
