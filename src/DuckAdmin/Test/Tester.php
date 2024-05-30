@@ -202,16 +202,21 @@ EOT;
     public function _BeginConfigBusiness()
     {
         $table = DuckAdminApp::_()->options['table_prefix'] .'options';
-        $sql = "truncate `'TABLE'`";
-        $sql = str_replace("`'TABLE'`",$table,$sql);
-        $data = DbManager::Db()->execute($sql);
-        /*
-        if(!empty($data)){
-            $sql = "update `'TABLE'` set name ='system_config_bak' where name = 'system_config'";
+        
+        $database_driver = DuckAdminApp::_()->options['database_driver'];
+        if($database_driver ==='mysql'){
+            $sql = "truncate `'TABLE'`";
+            $sql = str_replace("`'TABLE'`",$table,$sql);
+            $data = DbManager::Db()->execute($sql);
+        }else {
+            $sql = "delete from `'TABLE'`";
+            $sql = str_replace("`'TABLE'`",$table,$sql);
+            $data = DbManager::Db()->execute($sql);
+            
+            $sql = "delete from sqlite_sequence where name = ?";
             $sql = str_replace("`'TABLE'`",$table,$sql);
             $data = DbManager::Db()->execute($sql);
         }
-        */
     }
     public static function EndConfigBusiness()
     {
@@ -264,6 +269,7 @@ EOT;
     }
     public function runInstallBusiness()
     {
+        return;
         PhaseContainer::GetContainer()->createLocalObject(DbManager::class);
         $db_file = 'DuckAdminXxx.db';
         $options = [
@@ -353,14 +359,14 @@ EOT;
     {
         // 这段补充非超级管理员下的查看操作。
         ////[[[[
-            $admin_id = 2;
-            $op_id = $admin_id;
-            \DuckAdmin\Business\AccountBusiness::_()->canAccess($admin_id,\DuckAdmin\Controller\AdminController::class,'index');
-            \DuckAdmin\Business\AdminBusiness ::_()->showAdmins($op_id,[]);
-            \DuckAdmin\Business\RoleBusiness ::_()->tree($op_id,3);
-            \DuckAdmin\Business\RuleBusiness ::_()->get($op_id,[0,1]);
-            \DuckAdmin\Business\RuleBusiness ::_()->permission($op_id);
-            
+        $admin_id = 1;
+        $op_id = $admin_id;
+        \DuckAdmin\Business\AccountBusiness::_()->canAccess($admin_id,\DuckAdmin\Controller\AdminController::class,'index');
+        \DuckAdmin\Business\AdminBusiness ::_()->showAdmins($op_id,[]);
+        \DuckAdmin\Business\RoleBusiness ::_()->tree($op_id,3);
+        \DuckAdmin\Business\RuleBusiness ::_()->get($op_id,[0,1]);
+        \DuckAdmin\Business\RuleBusiness ::_()->permission($op_id);
+        
 
         ////]]]]
         // CommonService, Tree

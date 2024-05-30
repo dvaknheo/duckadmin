@@ -68,7 +68,7 @@ class AccountController extends Base
      */
     public function logout()
     {
-        AdminAction::_()->setCurrentAdmin([]);
+        AdminAction::_()->logout();
         if(Helper::IsAjax()){
             Helper::Success(0);
         }else{
@@ -82,7 +82,7 @@ class AccountController extends Base
      */
     public function info()
     {
-        $admin_id = AdminAction::_()->getCurrentAdminId();
+        $admin_id = Helper::AdminId();
         $data = AccountBusiness::_()->getAccountInfo($admin_id);
         
         return Helper::Success($data);

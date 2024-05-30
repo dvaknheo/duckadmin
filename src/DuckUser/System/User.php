@@ -5,46 +5,9 @@
  */
 namespace DuckUser\System;
 
-use DuckPhp\Component\GlobalUser;
+use DuckPhp\GlobalUser\GlobalUser;
 use DuckUser\Controller\UserAction;
 
-class User extends GlobalUser
+class User extends UserAction
 {
-    public function current()
-    {
-        //return UserAction::CallInPhase(App::Phase());
-    }
-    public function id()
-    {
-        return UserAction::_()->current()->id();
-    }
-    public function data()
-    {
-        return UserAction::_()->current()->data();
-    }
-    public function checkLogin()
-    {
-        return UserAction::_()->current();
-    }
-    public function getUsernames($ids)
-    {
-        return UserAction::_()->getUsernames($ids);
-    }
-    ///////////////
-    public function urlForRegist($url_back = null, $ext = null)
-    {
-        return UserAction::_()->urlForRegist($url_back, $ext);
-    }
-    public function urlForLogin($url_back = null, $ext = null)
-    {
-        return UserAction::_()->urlForLogin($url_back, $ext);
-    }
-    public function urlForLogout($url_back = null, $ext = null)
-    {
-        return UserAction::_()->urlForLogout($url_back, $ext);
-    }
-    public function urlForHome($url_back = null, $ext = null)
-    {
-        return UserAction::_()->urlForHome($url_back, $ext);
-    }
 }

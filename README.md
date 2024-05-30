@@ -102,6 +102,10 @@ demo/runtime 里查看结果
 
 答：考虑过，不过这容易出现： 这东西是从哪里来的。 所以还是手动配置你的 app 吧（考虑 选项里加一句 allow_install_sub_app_quickly
 
+测试
+`php cli_dev.php testgroup  --watch testname --replay --report`
+testname 会在 runtime 目录底下生成 test_coverage/testname
+
 ## TODO
 
 

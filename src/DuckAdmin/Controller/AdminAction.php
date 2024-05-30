@@ -6,30 +6,28 @@
 
 namespace DuckAdmin\Controller;
 
-use DuckPhp\Helper\ControllerHelperTrait;
+use DuckPhp\Component\ZCallTrait;
+use DuckPhp\Core\SingletonTrait;
+use DuckPhp\Core\App;
+use DuckPhp\GlobalAdmin\AdminActionInterface;
 
 use DuckAdmin\Business\AccountBusiness;
+use DuckAdmin\Business\AdminService;
 use DuckAdmin\Controller\Session;
 
-class AdminAction
+class AdminAction implements AdminActionInterface
 {
-    use ControllerHelperTrait;
+    use SingletonTrait;
+    use ZCallTrait;
     
     protected $admin = null;
-    public function getCurrentAdminId()
-    {
-        return $this->getCurrentAdmin()['id'];
-    }
-    public function getCurrentAdminName()
-    {
-        return $this->getCurrentAdmin()['username'];
-    }
+    
     /**
      * 当前管理员
      * @param null|array|string $fields
      * @return array|mixed|null
      */
-    public function getCurrentAdmin()
+    protected function getCurrentAdmin()
     {
         if ($this->admin) {
             return $this->admin;
@@ -48,10 +46,10 @@ class AdminAction
     }
 
     ////////////////
-    public function checkAccess($controller = null, $action = null,$url = null)
+    public function checkAccess($class = null, $method = null,$url = null)
     {
-        $controller = $controller ?? Helper::getRouteCallingClass();
-        $action = $action ?? Helper::getRouteCallingMethod();
+        $controller = $class ?? Helper::getRouteCallingClass();
+        $action = $method ?? Helper::getRouteCallingMethod();
         $url = $url ?? Helper::PathInfo();
         
         try{
@@ -124,5 +122,54 @@ EOF;
             'set_phrase_handler'=>[Session::_(),'setPhrase'],
             'get_phrase_handler'=>[Session::_(),'getPhrase'],
         ])->doCheckCaptcha($captcha);
+    }
+    /////////////////
+    //@override
+
+    //@override
+    public function id()
+    {
+        return $this->getCurrentAdmin()['id'];
+    }
+    //@override
+    public function name()
+    {
+        return $this->getCurrentAdmin()['username'];
+    }
+    //@override
+    public function service()
+    {
+        return AdminService::_Z();
+    }
+    //@override
+    public function login(array $post)
+    {
+        throw new \Exception('no implement');
+    }
+    //@override
+    public function logout()
+    {
+        $this->admin = [];
+        Session::_()->setCurrentAdmin($admin);
+    }
+    //@override
+    public function isSuper()
+    {
+        throw new \Exception('todo');
+    }
+    //@override
+    public function urlForLogin($url_back = null, $ext = null)
+    {
+        return __url("");
+    }
+    //@override
+    public function urlForLogout($url_back = null, $ext = null)
+    {
+        return __url("account/logout");
+    }
+    //@override
+    public function urlForHome($url_back = null, $ext = null)
+    {
+        return __url("");
     }
 }

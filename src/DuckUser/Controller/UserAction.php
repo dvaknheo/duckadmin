@@ -5,21 +5,22 @@
  */
 namespace DuckUser\Controller;
 
+use DuckPhp\GlobalUser\UserActionInterface;
+
 use DuckUser\Business\UserBusiness;
 
-class UserAction extends Base
+class UserAction extends Base implements UserActionInterface
 {
-    protected $user  = [];
+    protected $user = null;
     public function __construct()
     {
         // must override me
     }
-    public function checkLogin()
-    {
-        $this->current();
-    }
     public function current()
     {
+        if ($this->user) {
+            return $this->user;
+        }
         $user = Session::_()->getCurrentUser();
         Helper::ControllerThrowOn(!$user, '请登录');
         $this->user = $user;
@@ -29,18 +30,11 @@ class UserAction extends Base
     {
         return $this->user['id'];
     }
-    public function data()
+    public function name()
     {
-            $user = Session::_()->getCurrentUser();
-
-        return $user;
+        return $this->user['username'];
     }
-    public function register($post)
-    {
-        $user = UserBusiness::_()->register($post);
-        Session::_()->setCurrentUser($user);
-    }
-    public function login($post)
+    public function login(array $post)
     {
         $user = UserBusiness::_()->login($post);
         Session::_()->setCurrentUser($user);
@@ -49,15 +43,12 @@ class UserAction extends Base
     {
         Session::_()->unsetCurrentUser();
     }
-    public function getUsernames($ids)
+    public function regist(array $post)
     {
-        return UserBusiness::_()->getUsernames($ids);
+        $user = UserBusiness::_()->register($post);
+        Session::_()->setCurrentUser($user);
     }
-    ///////////////////
-    public function urlForRegist($url_back = null, $ext = null)
-    {
-        return __url('register');
-    }
+    ///////////////
     public function urlForLogin($url_back = null, $ext = null)
     {
         return __url($url_back? "login?b=".__url($url_back):"login");
@@ -69,6 +60,10 @@ class UserAction extends Base
     public function urlForHome($url_back = null, $ext = null)
     {
         return __url('Home/index');
+    }
+    public function urlForRegist($url_back = null, $ext = null)
+    {
+        return __url('register');
     }
     
 }
