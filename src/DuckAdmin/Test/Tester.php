@@ -168,9 +168,8 @@ EOT;
 #SETWEB _ _ {static}@runExtActions
 #WEB index
 
-#CALL {static}@runExtBusiness2
 #CALL {static}@runExtBusiness
-##CALL {static}@runInstallBusiness
+#CALL {static}@runInstallBusiness
 
 #CALL {static}@endTest
 EOT;
@@ -275,7 +274,8 @@ EOT;
         $prefix = DuckAdminApp::_()->options['table_prefix'];
         
         PhaseContainer::GetContainer()->createLocalObject(DbManager::class);
-        $db_file = 'database.db';
+        $db_file = 'database_autodel.db';
+        @unlink(Helper::PathOfRuntime().$db_file);
         $options = [
                 'database_driver' =>  'sqlite',
                 'database_list' => 
@@ -306,7 +306,7 @@ EOT;
         $password = '123456';
         $password_confirm = '123456';
         \DuckAdmin\Business\InstallBusiness::_()->install($username,$password,$password_confirm);
-        //unlink(Helper::PathOfRuntime().$db_file);
+        @unlink(Helper::PathOfRuntime().$db_file);
     }
     public function runExtActions()
     {
@@ -326,28 +326,34 @@ EOT;
     }
     public function runExtBusiness()
     {
-        return;
+        
         ///pid=1&name=jsm1&rules=2%2C3%2C4%2C6%2C8%2C9
         ///pid=2&name=jsm2&rules=8%2C9
         ///admin/insert roles=2&username=gly1&nickname=guanliyuan1&password=123456&email=&mobile=
-        DbManager::_()->options['database_log_sql_query']=true;
-        $op_id =1;
+        //DbManager::_()->options['database_log_sql_query']=true;
+        $root_id =1;
         $input = ['pid'=>'1','name'=>'jsm1','rules'=>'2,3,4,6,8,9'];
-        $new_role1 = \DuckAdmin\Business\RoleBusiness::_()->insertRole($op_id,$input);
+        $new_role1 = \DuckAdmin\Business\RoleBusiness::_()->insertRole($root_id,$input);
         var_dump($new_role1);
         $input = ['pid'=>$new_role1,'name'=>'jsm2','rules'=>'8,9'];
-        $new_role2 =\DuckAdmin\Business\RoleBusiness::_()->insertRole($op_id,$input);
+        $new_role2 =\DuckAdmin\Business\RoleBusiness::_()->insertRole($root_id,$input);
         var_dump($new_role2);
-        $admin_id =\DuckAdmin\Business\AdminBusiness ::_()->addAdmin($op_id,['roles'=>$new_role1,'username'=>'ua_'.$new_role1,'nickname'=>'na_'.$new_role1, 'password'=>'123456','email'=>'','mobile'=>'']);
-        $op_id = $admin_id;
-        $child_admin_id = \DuckAdmin\Business\AdminBusiness ::_()->addAdmin($op_id,['roles'=>$new_role2,'username'=>'ua_'.$new_role2,'nickname'=>'na_'.$new_role2, 'password'=>'123456','email'=>'','mobile'=>'']);
+        $admin_id =\DuckAdmin\Business\AdminBusiness ::_()->addAdmin($root_id,['roles'=>$new_role1,'username'=>'ua_'.$new_role1,'nickname'=>'na_'.$new_role1, 'password'=>'123456','email'=>'','mobile'=>'']);
+        \DuckAdmin\Business\AccountBusiness::_()->canAccess($admin_id,\DuckAdmin\Controller\AdminController::class,'index');
+        
+        \DuckAdmin\Business\AdminBusiness ::_()->showAdmins($admin_id,[]);
+
+        
+        $child_admin_id = \DuckAdmin\Business\AdminBusiness ::_()->addAdmin($admin_id,['roles'=>$new_role2,'username'=>'ua_'.$new_role2,'nickname'=>'na_'.$new_role2, 'password'=>'123456','email'=>'','mobile'=>'']);
+        
+        
         var_dump($child_admin_id);
         
         
         \DuckAdmin\Business\RuleBusiness::_()->get($admin_id,[0,1]);
         \DuckAdmin\Business\RuleBusiness::_()->permission($admin_id);
         
-        $flag = \DuckAdmin\Business\AdminBusiness ::_()->updateAdmin($op_id,['id'=>$child_admin_id,'roles'=>$new_role2,'username'=>'u_a'.$new_role2,'nickname'=>'na_'.$new_role2, 'password'=>'123456','email'=>'','mobile'=>'']);
+        $flag = \DuckAdmin\Business\AdminBusiness ::_()->updateAdmin($admin_id,['id'=>$child_admin_id,'roles'=>$new_role2,'username'=>'u_a'.$new_role2,'nickname'=>'na_'.$new_role2, 'password'=>'123456','email'=>'','mobile'=>'']);
         var_dump($flag);
         
         \DuckAdmin\Business\RuleBusiness::_()->get($child_admin_id,[0,1]);
@@ -359,44 +365,33 @@ EOT;
         
         //\DuckAdmin\Business\RoleBusiness ::_()->updateRole(1,$new_role2);
         
-        $input = ['id'=>'2','name'=>'jsm2','rules'=>'*'];
-        \DuckAdmin\Business\RoleBusiness ::_()->updateRole(1,$input);
+        $input = ['id'=>'1','name'=>'超级管理员','rules'=>'1,2'];
+        \DuckAdmin\Business\RoleBusiness ::_()->updateRole($root_id,$input);
         
         $input = ['pid'=>$new_role1,'name'=>'jsm2','rules'=>''];
         $input['id']=$new_role2;
-        \DuckAdmin\Business\RoleBusiness ::_()->updateRole(1,$input);
+        \DuckAdmin\Business\RoleBusiness ::_()->updateRole($root_id,$input);
+        unset($input['pid']);
+        \DuckAdmin\Business\RoleBusiness ::_()->updateRole($root_id,$input);
         $input['rules']='';
         //\DuckAdmin\Business\RoleBusiness ::_()->updateRole(1,$input);
         \DuckAdmin\Business\RoleBusiness ::_()->tree($admin_id,$new_role2);
         
         \DuckAdmin\Business\RuleBusiness::_()->permission($child_admin_id);
         
-        \DuckAdmin\Business\AdminBusiness ::_()->deleteAdmin($op_id,$child_admin_id);
-        \DuckAdmin\Business\RoleBusiness ::_()->deleteRole(1,$new_role1);
+        
+        
+        
+        
+        // 清理现场
+        \DuckAdmin\Business\AdminBusiness ::_()->deleteAdmin($admin_id,$child_admin_id);
+        \DuckAdmin\Business\RoleBusiness ::_()->deleteRole($root_id,$new_role1);
         // 我们增加两个 role ，然后 addadmin ，然后再处理 rule.
         
         
-        \DuckAdmin\Business\AdminBusiness ::_()->deleteAdmin(1,$admin_id);
+        \DuckAdmin\Business\AdminBusiness ::_()->deleteAdmin($root_id,$admin_id);
     }
-    public function runExtBusiness2()
-    {
-        return;
-        // 这段补充非超级管理员下的查看操作。
-        ////[[[[
-        $admin_id = 1;
-        $op_id = $admin_id;
-        
-        \DuckAdmin\Business\AccountBusiness::_()->canAccess($admin_id,\DuckAdmin\Controller\AdminController::class,'index');
-        
-        \DuckAdmin\Business\AdminBusiness ::_()->showAdmins($op_id,[]);
-        \DuckAdmin\Business\RoleBusiness ::_()->tree($op_id,3);
-        \DuckAdmin\Business\RuleBusiness ::_()->get($op_id,[0,1]);
-        \DuckAdmin\Business\RuleBusiness ::_()->permission($op_id);
-        
 
-        ////]]]]
-        // CommonService, Tree
-    }
     public function runExtModel()
     {
         ////[[[[
