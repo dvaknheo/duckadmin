@@ -70,8 +70,8 @@ EOT;
     public function testGetCurrentAdminId()
     {
         try{
-            $v1 = \DuckAdmin\Controller\AdminAction::_()->getCurrentAdminName();
-            $v2 = \DuckAdmin\Controller\AdminAction::_()->getCurrentAdminName();
+            $v1 = \DuckAdmin\Controller\AdminAction::_()->id();
+            $v2 = \DuckAdmin\Controller\AdminAction::_()->name();
             \DuckAdmin\Controller\AdminAction::_()->checkAccess(__CLASS__,__FUNCTION__);
         }catch(\Exception $ex){
             //return;
@@ -269,9 +269,10 @@ EOT;
     }
     public function runInstallBusiness()
     {
-        return;
+        $prefix = DuckAdminApp::_()->options['table_prefix'];
+        
         PhaseContainer::GetContainer()->createLocalObject(DbManager::class);
-        $db_file = 'DuckAdminXxx.db';
+        $db_file = 'DuckAdminzz3.db';
         $options = [
                 'database_driver' =>  'sqlite',
                 'database_list' => 
@@ -289,10 +290,12 @@ EOT;
         $file=DuckAdminApp::_()->getOverrideableFile('config', 'sqlite.sql');
         $sql = file_get_contents($file);
         $sqls = explode(";\n", ''.$sql);
+        
         foreach ($sqls as $sql) {
             if (empty($sql)) {
                 continue;
             }
+            $sql = str_replace(' `'.'', ' `'.$prefix,  ''.$sql);
             $flag = DbManager::Db()->execute($sql);
         }
         
@@ -300,7 +303,7 @@ EOT;
         $password = '123456';
         $password_confirm = '123456';
         \DuckAdmin\Business\InstallBusiness::_()->install($username,$password,$password_confirm);
-        //unlink(Helper::PathOfRuntime().$db_file);
+        unlink(Helper::PathOfRuntime().$db_file);
     }
     public function runExtBusiness()
     {

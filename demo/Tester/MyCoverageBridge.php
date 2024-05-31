@@ -473,7 +473,6 @@ EOT;
         
         
         
-        
         if($p['report']??false){
             echo "reporting...\n";
             $groups = is_array($p['report'])?$p['report']:[];
