@@ -15,7 +15,6 @@ class Tester
 
     public function beginTest()
     {
-        //
     }
     public function endTest()
     {
@@ -165,12 +164,15 @@ EOT;
 #WEB index
 
 
+#WEB account/login username=admin&password=123456&captcha=7268
+#SETWEB _ _ {static}@runExtActions
+#WEB index
+
 #CALL {static}@runExtBusiness2
 #CALL {static}@runExtBusiness
-#CALL {static}@runInstallBusiness
+##CALL {static}@runInstallBusiness
 
 #CALL {static}@endTest
-
 EOT;
         $last_phase = DuckAdminApp::Phase(DuckAdminApp::class);
         $new_admin_id = $this->getNextInsertId('admins');
@@ -248,7 +250,8 @@ EOT;
         }
         if($database_driver ==='sqlite'){
             $sql = "select seq from sqlite_sequence where name = ?";
-            $ret = \DuckPhp\Component\DbManager::Db()->fetchColumn($sql,$table);
+            $ret = \DuckPhp\Component\DbManager::Db()->fetchColumn($sql,\DuckAdmin\System\DuckAdminApp::_()->options['table_prefix'] .$table);
+            $ret =(int)$ret+1;
         }
         return $ret;
         
@@ -272,7 +275,7 @@ EOT;
         $prefix = DuckAdminApp::_()->options['table_prefix'];
         
         PhaseContainer::GetContainer()->createLocalObject(DbManager::class);
-        $db_file = 'DuckAdminzz3.db';
+        $db_file = 'database.db';
         $options = [
                 'database_driver' =>  'sqlite',
                 'database_list' => 
@@ -303,10 +306,27 @@ EOT;
         $password = '123456';
         $password_confirm = '123456';
         \DuckAdmin\Business\InstallBusiness::_()->install($username,$password,$password_confirm);
-        unlink(Helper::PathOfRuntime().$db_file);
+        //unlink(Helper::PathOfRuntime().$db_file);
+    }
+    public function runExtActions()
+    {
+        \DuckAdmin\Controller\AdminAction::_()->urlForLogin();
+        \DuckAdmin\Controller\AdminAction::_()->urlForLogout();
+        \DuckAdmin\Controller\AdminAction::_()->urlForHome();
+        
+        try{
+        \DuckAdmin\Controller\AdminAction::_()->service();
+        }catch(\Throwable $ex){}
+        try{
+        \DuckAdmin\Controller\AdminAction::_()->login([]);
+        }catch(\Throwable $ex){}
+        try{
+        \DuckAdmin\Controller\AdminAction::_()->isSuper();
+        }catch(\Throwable $ex){}
     }
     public function runExtBusiness()
     {
+        return;
         ///pid=1&name=jsm1&rules=2%2C3%2C4%2C6%2C8%2C9
         ///pid=2&name=jsm2&rules=8%2C9
         ///admin/insert roles=2&username=gly1&nickname=guanliyuan1&password=123456&email=&mobile=
@@ -339,7 +359,7 @@ EOT;
         
         //\DuckAdmin\Business\RoleBusiness ::_()->updateRole(1,$new_role2);
         
-        $input = ['id'=>'1','name'=>'jsm2','rules'=>'*'];
+        $input = ['id'=>'2','name'=>'jsm2','rules'=>'*'];
         \DuckAdmin\Business\RoleBusiness ::_()->updateRole(1,$input);
         
         $input = ['pid'=>$new_role1,'name'=>'jsm2','rules'=>''];
@@ -360,11 +380,14 @@ EOT;
     }
     public function runExtBusiness2()
     {
+        return;
         // 这段补充非超级管理员下的查看操作。
         ////[[[[
         $admin_id = 1;
         $op_id = $admin_id;
+        
         \DuckAdmin\Business\AccountBusiness::_()->canAccess($admin_id,\DuckAdmin\Controller\AdminController::class,'index');
+        
         \DuckAdmin\Business\AdminBusiness ::_()->showAdmins($op_id,[]);
         \DuckAdmin\Business\RoleBusiness ::_()->tree($op_id,3);
         \DuckAdmin\Business\RuleBusiness ::_()->get($op_id,[0,1]);
@@ -377,11 +400,6 @@ EOT;
     public function runExtModel()
     {
         ////[[[[
-/*
-/index_dev.php/app/admin/role/insert pid=1&name=jsm1&rules=2%2C3%2C4%2C6%2C8%2C9
-/index_dev.php/app/admin/role/insert pid=2&name=jsm2&rules=8%2C9
-/index_dev.php/app/admin/admin/insert roles=2&username=gly1&nickname=guanliyuan1&password=123456&email=&mobile=
-*/
         ////]]]]
     }
     public function runAllExtract()
