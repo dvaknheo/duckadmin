@@ -173,7 +173,7 @@ class RuleBusiness extends Base
     {
         $roles = AdminRoleModel::_()->rolesByAdminId($admin_id); 
         $roles = $roles ?? [];
-        $rules_strings = RoleModel::_()->getRules($roles);   var_dump("-",$admin_id,$roles,$rules_strings);     // 权限按钮
+        $rules_strings = RoleModel::_()->getRules($roles);
         $rules = [];
         foreach ($rules_strings as $rule_string) {
             if (!$rule_string) {
@@ -189,7 +189,7 @@ class RuleBusiness extends Base
         $permissions = [];
         foreach ($keys as $key) {
             if (!$key = $this->controllerToUrlPath($key)) {
-                continue;
+                continue; // @codeCoverageIgnore
             }
             $code = str_replace('/', '.', trim($key, '/'));
             $permissions[] = 'app.admin.'.$code;

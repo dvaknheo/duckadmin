@@ -387,6 +387,11 @@ EOT;
         
         \DuckAdmin\Business\RuleBusiness::_()->selectRules($root_id,[]);
         
+        //删除后自动添加回来
+        $str='DuckAdmin\Controller\AdminController@update';
+        $sql = "delete from $table where `key`= ? limit 1";
+        $flag = DbManager::Db()->execute($sql,$str);
+        \DuckAdmin\Business\RuleBusiness::_()->selectRules($root_id,[]);
         
         $table = \DuckAdmin\System\DuckAdminApp::_()->options['table_prefix'].'roles';
 
@@ -396,18 +401,48 @@ EOT;
         $sql = "update $table set rules ='' where id = ?";
         $flag = DbManager::Db()->execute($sql,$new_role2);
         
-        
+        \DuckAdmin\Business\RuleBusiness::_()->permission($admin_id);
+
         
         // 清理现场
         \DuckAdmin\Business\AdminBusiness ::_()->deleteAdmin($admin_id,$child_admin_id);
         \DuckAdmin\Business\RoleBusiness ::_()->deleteRole($root_id,$new_role1); //$new_role2是$new_role1 的子role 连同删除
         // 我们增加两个 role ，然后 addadmin ，然后再处理 rule.
         \DuckAdmin\Business\AdminBusiness ::_()->deleteAdmin($root_id,$admin_id);
+        $this->runTestTree();
+        $this->runExtModel();
+        
+    }
+    protected $tree_data =[];
+    public function toArray()
+    {
+        return $this->tree_data;
+    }
+    public function runTestTree()
+    {
+        \DuckAdmin\Business\Tree::arrayValues([]);
+        $this->tree_data=[];
+        $tree =new \DuckAdmin\Business\Tree($this);
+        $tree->getDescendant([4]);
+        $tree->getTree([],\DuckAdmin\Business\Tree::EXCLUDE_ANCESTORS);
+        $this->tree_data=[
+            ['id'=>'1','pid'=>0,'name'=>'a'],
+            ['id'=>'2','pid'=>1,'name'=>'b'],
+            ['id'=>'3','pid'=>1,'name'=>'c'],
+        ];
+        $tree =new \DuckAdmin\Business\Tree($this);
+        $tree->getDescendant([]);
+        $tree->getTree([4],\DuckAdmin\Business\Tree::EXCLUDE_ANCESTORS);
+        $tree->getTree([1],\DuckAdmin\Business\Tree::EXCLUDE_ANCESTORS);
+        $tree->getTree([4],1111);
+
     }
 
     public function runExtModel()
     {
         ////[[[[
+        $menus =  Helper::Config('menu',null,[]);
+        \DuckAdmin\Model\RuleModel::_()->importMenu($menus);
         ////]]]]
     }
     public function runAllExtract()

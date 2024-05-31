@@ -45,9 +45,9 @@ class RuleModel extends Base
             $str = static::Db()->quoteIn($rule_ids);
             $key = static::Db()->quote($controller);
             if($this->driver() === 'sqlite'){
-                $like = static::Db()->quote(str_replace("\\","\\",$controller).'@%'); // :(
-            }else{
-                $like = static::Db()->quote(str_replace("\\","\\\\",$controller).'@%'); // :(
+                $like = static::Db()->quote(str_replace("\\","\\",$controller).'@%');
+            }else if($this->driver() === 'mysql'){
+                $like = static::Db()->quote(str_replace("\\","\\\\",$controller).'@%'); // @codeCoverageIgnore
             }
             
             $sql = "select * from `'TABLE'` where id in ($str) and (`key` = $key  or `key` like $like)";
@@ -186,7 +186,7 @@ class RuleModel extends Base
         if($this->driver() === 'sqlite'){
             $sql ="select * from `'TABLE'` where `key` like '%\\%'";
         }else{
-            $sql ="select * from `'TABLE'` where `key` like '%\\\\\\\\%'"; // 这要8个\ 猜猜看为什么 // @code
+            $sql ="select * from `'TABLE'` where `key` like '%\\\\\\\\%'"; /* 这要8个\ 猜猜看为什么*/ // @codeCoverageIgnore
         }
         $data = $this->fetchAll($sql);
         $ret=[];
