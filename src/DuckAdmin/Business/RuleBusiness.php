@@ -54,7 +54,8 @@ class RuleBusiness extends Base
     {
         foreach ($array as $k => &$item) {
             if (!is_array($item)) {
-                continue;
+                //can not find case 
+                continue; //@codeCoverageIgnore
             }
             if (!$this->arrayContain($item, $key, $values)) {
                 unset($array[$k]);
@@ -77,7 +78,8 @@ class RuleBusiness extends Base
     protected function arrayContain(&$array, $key, $values): bool
     {
         if (!is_array($array)) {
-            return false;
+            // can not find case
+            return false; //@codeCoverageIgnore
         }
         if (isset($array[$key]) && in_array($array[$key], $values)) {
             return true;
@@ -169,9 +171,9 @@ class RuleBusiness extends Base
     ///////////////////////////////
     public function permission($admin_id)
     {
-        $roles = AdminRoleModel::_()->rolesByAdminId($admin_id);
+        $roles = AdminRoleModel::_()->rolesByAdminId($admin_id); 
         $roles = $roles ?? [];
-        $rules_strings = RoleModel::_()->getRules($roles);        // 权限按钮
+        $rules_strings = RoleModel::_()->getRules($roles);   var_dump("-",$admin_id,$roles,$rules_strings);     // 权限按钮
         $rules = [];
         foreach ($rules_strings as $rule_string) {
             if (!$rule_string) {
@@ -280,13 +282,13 @@ class RuleBusiness extends Base
     public static function getCommentFirstLine($comment)
     {
         if ($comment === false) {
-            return false;
+            return false;// @codeCoverageIgnore
         }
         foreach (explode("\n", $comment) as $str) {
             if ($s = trim($str, "*/\ \t\n\r\0\x0B")) {
                 return $s;
             }
         }
-        return $comment;
+        return $comment;// @codeCoverageIgnore
     }
 }

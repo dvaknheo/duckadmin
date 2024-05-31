@@ -5,13 +5,18 @@
  */
 
 namespace DuckAdmin\Model;
+use DuckPhp\Component\DbManager;
+
 /**
  * 菜单模型
  */
 class RuleModel extends Base
 {
     public $table_name = 'rules';
-    
+    protected function driver()
+    {
+        return DbManager::_()->options['database_driver'];
+    }
     public function selectInput($data): array
     {
         // 隔离BaseModel 的调用
@@ -28,7 +33,6 @@ class RuleModel extends Base
         return parent::inputFilter($data);
     }
 
-
     public function allRules()
     {
         $sql = "select * from `'TABLE'` order by weight desc";
@@ -40,7 +44,11 @@ class RuleModel extends Base
         if (strtolower($action) === 'index') {
             $str = static::Db()->quoteIn($rule_ids);
             $key = static::Db()->quote($controller);
-            $like = static::Db()->quote(str_replace("\\","\\\\",$controller).'@%'); // :(
+            if($this->driver() === 'sqlite'){
+                $like = static::Db()->quote(str_replace("\\","\\",$controller).'@%'); // :(
+            }else{
+                $like = static::Db()->quote(str_replace("\\","\\\\",$controller).'@%'); // :(
+            }
             
             $sql = "select * from `'TABLE'` where id in ($str) and (`key` = $key  or `key` like $like)";
             $data = $this->fetchColumn($sql);
@@ -96,7 +104,7 @@ class RuleModel extends Base
     }
     ////////////////////////////////////////////
     
-    public function updateTitleByKey($name,$title)
+    public function updateTitleByKey($key,$title)
     {
         $time = date('Y-m-d H:i:s');
         $sql = "update `'TABLE'` set title=?, updated_at=? where `key`=?";
@@ -175,66 +183,16 @@ class RuleModel extends Base
     }
     public function getAllByKey()
     {
-        $sql ="select * from `'TABLE'` where `key` like '%\\\\\\\\%'"; // 这要8个\ 猜猜看为什么
+        if($this->driver() === 'sqlite'){
+            $sql ="select * from `'TABLE'` where `key` like '%\\%'";
+        }else{
+            $sql ="select * from `'TABLE'` where `key` like '%\\\\\\\\%'"; // 这要8个\ 猜猜看为什么 // @code
+        }
         $data = $this->fetchAll($sql);
         $ret=[];
         foreach($data as $v){
             $ret[$v['key']]=$v;
         }
         return $ret;
-    }	
-    ///////////////////////
-    ////////////////
-    /**
-     * 获取菜单中某个(些)字段的值
-     * @param $menu
-     * @param null $column
-     * @param null $index
-     * @return array|mixed
-     */
-    public static function column($menu, $column = null, $index = null)
-    {
-        $values = [];
-        if (is_numeric(key($menu)) && !isset($menu['key'])) {
-            foreach ($menu as $item) {
-                $values = array_merge($values, static::column($item, $column, $index));
-            }
-            return $values;
-        }
-
-        $children = $menu['children'] ?? [];
-        unset($menu['children']);
-        if ($column === null) {
-            if ($index) {
-                $values[$menu[$index]] = $menu;
-            } else {
-                $values[] = $menu;
-            }
-        } else {
-            if (is_array($column)) {
-                $item = [];
-                foreach ($column as $f) {
-                    $item[$f] = $menu[$f] ?? null;
-                }
-                if ($index) {
-                    $values[$menu[$index]] = $item;
-                } else {
-                    $values[] = $item;
-                }
-            } else {
-                $value = $menu[$column] ?? null;
-                if ($index) {
-                    $values[$menu[$index]] = $value;
-                } else {
-                    $values[] = $value;
-                }
-            }
-        }
-        foreach ($children as $child) {
-            $values = array_merge($values, static::column($child, $column, $index));
-        }
-        return $values;
     }
-    
-
 }

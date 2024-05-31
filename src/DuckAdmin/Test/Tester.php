@@ -153,8 +153,10 @@ EOT;
 #WEB rule/insert
 #WEB rule/update
 #WEB rule/delete
-#WEB rule/insert title=biaoti{new_rule_id}&key=biaozhi{new_rule_id}&pid=&href=&icon=layui-icon-login-wechat&type=1&weight=0
+#WEB rule/insert title=biaoti{new_rule_id}&key=biaozhi{new_rule_id}&pid=&href=&icon=layui-icon-login-wechat&weight=0
 #WEB rule/update title=biaoti{new_rule_id}a&key=biaozhi{new_rule_id}x&pid=&href=&icon=layui-icon-login-wechat&type=1&weight=0&id={new_rule_id}
+#WEB rule/update title=biaoti{new_rule_id}a&key=biaozhi{new_rule_id}x&pid=&href=&icon=layui-icon-login-wechat&type=1&weight=0&id={new_rule_id}&pid=0
+
 #WEB admin/delete id={new_admin_id}
 #WEB role/delete id={new_role_id}
 #WEB rule/delete id={new_rule_id}
@@ -354,7 +356,6 @@ EOT;
         \DuckAdmin\Business\RuleBusiness::_()->permission($admin_id);
         
         $flag = \DuckAdmin\Business\AdminBusiness ::_()->updateAdmin($admin_id,['id'=>$child_admin_id,'roles'=>$new_role2,'username'=>'u_a'.$new_role2,'nickname'=>'na_'.$new_role2, 'password'=>'123456','email'=>'','mobile'=>'']);
-        var_dump($flag);
         
         \DuckAdmin\Business\RuleBusiness::_()->get($child_admin_id,[0,1]);
         
@@ -373,22 +374,34 @@ EOT;
         \DuckAdmin\Business\RoleBusiness ::_()->updateRole($root_id,$input);
         unset($input['pid']);
         \DuckAdmin\Business\RoleBusiness ::_()->updateRole($root_id,$input);
-        $input['rules']='';
-        //\DuckAdmin\Business\RoleBusiness ::_()->updateRole(1,$input);
         \DuckAdmin\Business\RoleBusiness ::_()->tree($admin_id,$new_role2);
         
         \DuckAdmin\Business\RuleBusiness::_()->permission($child_admin_id);
         
+        //改一下 title sym
+        $table = \DuckAdmin\System\DuckAdminApp::_()->options['table_prefix'].'rules';
+        $sql = "select id from $table where type =2 order by id desc limit 1";
+        $id =DbManager::Db()->fetchColumn($sql);;
+        $sql = "update $table set title ='--' where id = ?";
+        $flag = DbManager::Db()->execute($sql,$id);
         
+        \DuckAdmin\Business\RuleBusiness::_()->selectRules($root_id,[]);
+        
+        
+        $table = \DuckAdmin\System\DuckAdminApp::_()->options['table_prefix'].'roles';
+
+        $sql = "update $table set rules =',,' where id = ?";
+        $flag = DbManager::Db()->execute($sql,$new_role2);
+        \DuckAdmin\Business\RuleBusiness::_()->permission($child_admin_id);
+        $sql = "update $table set rules ='' where id = ?";
+        $flag = DbManager::Db()->execute($sql,$new_role2);
         
         
         
         // 清理现场
         \DuckAdmin\Business\AdminBusiness ::_()->deleteAdmin($admin_id,$child_admin_id);
-        \DuckAdmin\Business\RoleBusiness ::_()->deleteRole($root_id,$new_role1);
+        \DuckAdmin\Business\RoleBusiness ::_()->deleteRole($root_id,$new_role1); //$new_role2是$new_role1 的子role 连同删除
         // 我们增加两个 role ，然后 addadmin ，然后再处理 rule.
-        
-        
         \DuckAdmin\Business\AdminBusiness ::_()->deleteAdmin($root_id,$admin_id);
     }
 
