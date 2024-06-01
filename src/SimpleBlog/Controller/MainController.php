@@ -15,12 +15,14 @@ class MainController
     }
     public function action_index()
     {
+    
         $url_reg = Helper::User()->urlForRegist();
-        
         $url_login = Helper::User()->urlForLogin();
         $url_logout = Helper::User()->urlForLogout();
         $url_admin = __url('admin/index');
-        $user = Helper::_()->getUserData();
+        
+        $user_id = Helper::UserId(false);
+        $user_name = Helper::UserName(false);
         list($articles, $total) = ArticleBusiness::_()->getRecentArticle(Helper::PageNo());
         
         $articles = Helper::_()->recordsetH($articles, ['title']);
@@ -34,14 +36,15 @@ class MainController
         $id = (int)$id;
         
         $article = ArticleBusiness::_()->getArticleFullInfo($id, Helper::PageNo(), Helper::PageWindow());
-        if (!$article) {
+        if (empty($article)) {
             Helper::Show404();
             return;
         }
         $article['comments'] = Helper::_()->recordsetH($article['comments'], ['content','username']);
         $html_pager = Helper::PageHtml($article['comments_total']);
         $url_add_comment = __url('addcomment');
-        $user = Helper::_()->getUserData();
+        $user_id = Helper::UserId(false);
+
         $url_login_to_commment = Helper::User()->UrlForLogin(__url("article/$id"));
         Helper::Show(get_defined_vars(), 'article');
     }

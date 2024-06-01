@@ -26,13 +26,16 @@ class ArticleBusiness extends Base
     public function getArticleFullInfo($id, $page = 1, $page_size = 10)
     {
         $art = ArticleModel::_()->get($id);
+        if(!$art){
+            return [];
+        }
         $data = CommentModel::_()->getListByArticle($id, $page, $page_size);
         
         $comments = $data['data'];
         $ids = array_column($data['data'],'id');
-        $names = !empty($ids)? Helper::_()->getUsernames($ids) :[];
+        $names = Helper::UserService()->batchGetUsernames($ids);
         foreach($comments as &$v){
-            $v['username']= $names[$v['id']];
+            $v['username']= $names[$v['id']]??'--';
         }
         unset($v);
         

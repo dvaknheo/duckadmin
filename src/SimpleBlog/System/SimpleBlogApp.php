@@ -30,14 +30,4 @@ welcome to use SimpleBlog
 EOT
         ,
     ];
-    public function onInit()
-    {
-        //
-    }
-    public function onInstall()
-    {
-    }
-    public function onInstalled()
-    {
-    }
 }

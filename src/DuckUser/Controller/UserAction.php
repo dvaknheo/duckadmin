@@ -26,18 +26,31 @@ class UserAction extends Base implements UserActionInterface
         $this->user = $user;
         return $this->user;
     }
-    public function id():int
+    public function id($check_login = true):int
     {
-        return (int)$this->current()['id'];
+        if($check_login){
+            return (int)$this->current()['id'];
+        }
+        try{
+            return (int)$this->current()['id'];
+        }catch(\Exception $ex){
+            return 0;
+        }
     }
-    public function name():string
+    public function name($check_login = true):string
     {
-        
-        return $this->current()['username'];
+        if($check_login){
+            return $this->current()['username'];
+        }
+        try{
+            return $this->current()['username'];
+        }catch(\Exception $ex){
+            return '';
+        }
     }
     public function service()
     {
-        return;
+        return UserBusiness::_Z();
     }
     public function login(array $post)
     {

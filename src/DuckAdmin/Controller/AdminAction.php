@@ -127,14 +127,28 @@ EOF;
     //@override
 
     //@override
-    public function id()
+    public function id($check_login = true):int
     {
-        return $this->getCurrentAdmin()['id'];
+        if($check_login){
+            return (int)$this->getCurrentAdmin()['id'];
+        }
+        try{
+            return (int)$this->getCurrentAdmin()['id'];
+        }catch(\Exception $ex){
+            return 0;
+        }
     }
     //@override
-    public function name()
+    public function name($check_login = true):string
     {
-        return $this->getCurrentAdmin()['username'];
+        if($check_login){
+            return $this->getCurrentAdmin()['username'];
+        }
+        try{
+            return $this->getCurrentAdmin()['username'];
+        }catch(\Exception $ex){
+            return '';
+        }
     }
     //@override
     public function service()

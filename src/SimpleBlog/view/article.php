@@ -20,7 +20,7 @@
 </fieldset>
 <fieldset>
 	<legend>添加评论</legend>
-<?php if ($user) {?>
+<?php if ($user_id) {?>
 	<form method="post" action="<?=$url_add_comment?>">
 		<input name="article_id" type="hidden"  value="<?=$article['id']?>">
 		<textarea name="content"></textarea>
