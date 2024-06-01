@@ -16,7 +16,7 @@ class CommentModel extends Base
         $data = $this->fetchAll($sql, $article_id);
         $sql = "SELECT count(*) as c from `'TABLE'`";
         $total = $this->fetchColumn($sql);
-        return ['data'=>$data,'count'=>$total];
+        return [$total, $data];
     }
     public function addData($user_id, $article_id, $content)
     {
@@ -29,6 +29,7 @@ class CommentModel extends Base
     }
     public function getList($where=[] ,$page =1 ,$page_size =10)
     {
+        $where['deleted_at'] = $where['deleted_at']??false;
         return parent::getList($where, $page, $page_size);
     }
 }

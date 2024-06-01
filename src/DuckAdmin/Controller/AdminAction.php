@@ -164,7 +164,7 @@ EOF;
     public function logout()
     {
         $this->admin = [];
-        Session::_()->setCurrentAdmin($admin);
+        Session::_()->setCurrentAdmin([]);
     }
     //@override
     public function isSuper()

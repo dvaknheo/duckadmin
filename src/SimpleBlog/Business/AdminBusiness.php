@@ -11,7 +11,6 @@ use SimpleBlog\Model\CommentModel;
 
 class AdminBusiness extends Base
 {
-
     //////////各种读取列表
     public function getArticle($id)
     {
@@ -20,37 +19,39 @@ class AdminBusiness extends Base
     }
     public function getCommentList($page = 1, $page_size = 10)
     {
-        $ret = CommentModel::_()->getList([], $page, $page_size);
-        $ret = [$ret['data'],$ret['count']];
-        return $ret;
-    }
-    public function getLogList($page = 1, $page_size = 10)
-    {
-        $ret = ActionLogModel::_()->getList([], $page, $page_size);
-        $ret = [$ret['data'],$ret['count']];
-        return $ret;
+        [$total,$data] = CommentModel::_()->getList([], $page, $page_size);
+        
+        $ids = array_column($data,'user_id');
+        $names = Helper::UserService()->batchGetUsernames($ids);
+        $titles = ArticleModel::_()->batchGetTitles(array_column($data,'article_id'));
+        foreach($data as &$v){
+            $v['username']= $names[$v['user_id']]??'--';
+            $v['title']= $titles[$v['article_id']]??'--';
+        }
+        unset($v);
+        return [$total,$data];
     }
     //////////各种操作
     public function addArticle($title, $content)
     {
         $id = ArticleModel::_()->addData($title, $content);
-        ActionLogModel::_()->log("添加文章 {$id}", "添加文章");
+        //Helper::AdminService()->log("添加文章 {$id}", "添加文章");
         return $id;
     }
     public function updateArticle($id, $title, $content)
     {
         $ret = ArticleModel::_()->updateData($id, $title, $content);
-        ActionLogModel::_()->log("编辑 ID 为 {$id},原标题，原内容，更改后标题，更改后内容", "编辑文章");
+        //Helper::AdminService()->log("编辑 ID 为 {$id},原标题，原内容，更改后标题，更改后内容", "编辑文章");
     }
     public function deleteArticle($id)
     {
         $ret = ArticleModel::_()->delete($id);
-        ActionLogModel::_()->log("删除 {$id}，结果", "删除文章");
+        //Helper::AdminService()->log("删除 {$id}，结果", "删除文章");
     }
     ///
     public function deleteComment($id)
     {
-        $ret = ArticleModel::_()->delete($id);
-        ActionLogModel::_()->log("删除 {$id}，结果", "删除评论");
+        $ret = CommentModel::_()->delete($id);
+        //Helper::AdminService()->log("删除 {$id}，结果", "删除评论");
     }
 }

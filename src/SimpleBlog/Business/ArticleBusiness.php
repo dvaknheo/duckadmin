@@ -12,15 +12,11 @@ class ArticleBusiness extends Base
 {
     public function getRecentArticle()
     {
-        $ret = ArticleModel::_()->getList([], 1, 10);
-        $ret = [$ret['data'],$ret['count']];
-        return $ret;
+        return ArticleModel::_()->getList([], 1, 10);
     }
     public function getArticleList($page = 1, $page_size = 10)
     {
         $ret = ArticleModel::_()->getList([], $page, $page_size);
-        
-        $ret = [$ret['data'],$ret['count']];
         return $ret;
     }
     public function getArticleFullInfo($id, $page = 1, $page_size = 10)
@@ -29,10 +25,9 @@ class ArticleBusiness extends Base
         if(!$art){
             return [];
         }
-        $data = CommentModel::_()->getListByArticle($id, $page, $page_size);
+        [$total,$comments] = CommentModel::_()->getListByArticle($id, $page, $page_size);
         
-        $comments = $data['data'];
-        $ids = array_column($data['data'],'user_id');
+        $ids = array_column($comments,'user_id');
         $names = Helper::UserService()->batchGetUsernames($ids);
         foreach($comments as &$v){
             $v['username']= $names[$v['user_id']]??'--';
@@ -40,7 +35,7 @@ class ArticleBusiness extends Base
         unset($v);
         
         $art['comments'] = $comments;
-        $art['comments_total'] = $data['count'];
+        $art['comments_total'] = $total;
         return $art;
     }
 }

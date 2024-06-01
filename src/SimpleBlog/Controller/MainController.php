@@ -23,7 +23,7 @@ class MainController
         
         $user_id = Helper::UserId(false);
         $user_name = Helper::UserName(false);
-        list($articles, $total) = ArticleBusiness::_()->getRecentArticle(Helper::PageNo());
+        [$total, $articles] = ArticleBusiness::_()->getRecentArticle(Helper::PageNo());
         
         $articles = Helper::_()->recordsetH($articles, ['title']);
         $articles = Helper::_()->recordsetUrl($articles, ['url' => 'article/{id}']);

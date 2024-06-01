@@ -25,9 +25,9 @@ class UserController
      */
     public function action_index()
     {
-        $list = UserBusiness::_()->getUserList([],Helper::PageNo());
-        $data['list'] =$list['data'];
-        $data['pager'] = Helper::PageHtml($list['count']);
+        [$total, $list]= UserBusiness::_()->getUserList([],Helper::PageNo());
+        $data['list'] =$list;
+        $data['pager'] = Helper::PageHtml($total);
         Helper::Show($data,'user/index');
     }
 

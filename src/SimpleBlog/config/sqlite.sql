@@ -1,10 +1,3 @@
-CREATE TABLE `ActionLogs` (
-	"id"	INTEGER,
-	"contents"	TEXT,
-	"type"	TEXT,
-	"created_at"	TEXT,
-	PRIMARY KEY("id" AUTOINCREMENT)
-);
 CREATE TABLE `Articles` (
 	"id"	INTEGER,
 	"title"	TEXT,
@@ -24,4 +17,3 @@ CREATE TABLE `Comments` (
 	"deleted_at"	TEXT,
 	PRIMARY KEY("id" AUTOINCREMENT)
 );
-

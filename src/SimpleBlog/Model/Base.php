@@ -24,7 +24,6 @@ class Base
     }
     public function delete($id)
     {
-        //override as public
         $date = date('Y-m-d H:i:s');
         $sql = "update `'TABLE'` set deleted_at=? where id=? ";
         $ret = $this->execute($sql, $date, $id);
@@ -32,18 +31,24 @@ class Base
     }
     protected function getList($where = [], int $page = 1, int $page_size = 10)
     {
+        $include_del = $where['deleted_at'] ??false;
+        if(!$include_del){
+           unset($where['deleted_at']);
+        }
+        
         $sql_where = self::DbForRead()->quoteAndArray($where);
         $sql_where = $sql_where?:' TRUE ';
         
-        if(!empty($where['deleted_at'])){
-            $sql_where .=" deleted_at is null";  // ugly
+        if(!$include_del){
+            $sql_where .="and deleted_at is null";  // ugly
         }
-        
         $sql = "SELECT * from `'TABLE'` where $sql_where order by id desc";
         $sql = $this->prepare($sql);
         
         $total = self::DbForRead()->fetchColumn(self::SqlForCountSimply($sql));
         $data = self::DbForRead()->fetchAll(self::SqlForPager($sql, $page, $page_size));
-        return ["count" => $total,'data' => $data];
+        
+        
+        return [$total, $data];
     }
 }

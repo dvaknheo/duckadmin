@@ -51,10 +51,7 @@ class UserModel
         $user_ids = Helper::DbForRead()->quoteIn($user_ids);
         $sql = "select id,username from `'TABLE'` where id in ($user_ids)";
         $data = $this->fetchAll($sql);
-        $ret = [];
-        foreach ($data as $v) {
-            $ret[$v['id']] = $v['username'];
-        }
+        $ret = array_column($data,'username','id');
         return $ret;
     }
     public function verifyPassword($user, $password)

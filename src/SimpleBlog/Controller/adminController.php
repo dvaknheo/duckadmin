@@ -38,7 +38,7 @@ class adminController
     public function action_articles()
     {
         $url_add = __url('admin/article_add');
-        list($list, $total) = ArticleBusiness::_()->getArticleList(Helper::PageNo());
+        [$count,$list]= ArticleBusiness::_()->getArticleList(Helper::PageNo());
         $list = Helper::_()->recordsetUrl($list, [
             'url_edit' => 'admin/article_edit?id={id}',
             'url_delete' => 'admin/article_delete?id={id}',
@@ -67,26 +67,17 @@ class adminController
         AdminBusiness::_()->updateArticle(Helper::POST('id'), Helper::POST('title'), Helper::POST('content'));
         Helper::Show302('admin/articles');
     }
-    public function do_action_article_delete()
+    public function action_article_delete()
     {
+        if(!Helper::POST()){
+            return;
+        }
         AdminBusiness::_()->deleteArticle(Helper::POST('id'));
         Helper::Show302('admin/articles');
     }
-
-    public function action_logs()
-    {
-        list($list, $total) = AdminBusiness::_()->getLogList(Helper::PageNo());
-        
-        $list = Helper::_()->recordsetUrl($list, [
-            'url_edit' => 'admin/article_edit?id={id}',
-            'url_delete' => 'admin/article_delete?id={id}',
-        ]);
-        
-        Helper::Show(get_defined_vars());
-    }
     public function action_comments()
     {
-        list($list, $total) = AdminBusiness::_()->getCommentList(Helper::PageNo());
+        [$total,$list] = AdminBusiness::_()->getCommentList(Helper::PageNo());
          
         $list = Helper::_()->recordsetUrl($list, [
             'url_edit' => 'admin/article_edit?id={id}',
@@ -96,7 +87,7 @@ class adminController
     }
     public function action_delete_comments()
     {
-        AdminBusiness::_()->deleteComment(Helper::POST('id'));
+        AdminBusiness::_()->deleteComment(Helper::GET('id'));
         Helper::Show302('admin/comments');
     }
 }

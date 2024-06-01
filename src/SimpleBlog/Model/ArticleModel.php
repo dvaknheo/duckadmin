@@ -5,6 +5,8 @@
  */
 namespace SimpleBlog\Model;
 
+use DuckPhp\Foundation\Model\Helper;
+
 class ArticleModel extends Base
 {
     public $table_name = "Articles";
@@ -17,12 +19,23 @@ class ArticleModel extends Base
         
         return parent::add($data);
     }
+    public function batchGetTitles($ids)
+    {
+        if(empty($ids)){ return []; }
+        $ids = Helper::DbForRead()->quoteIn($ids);
+        
+        $sql = "select id,title from `'TABLE'` where id in ($ids)";
+        $data = $this->fetchAll($sql);
+        $ret = array_column($data,'title','id');
+        return $ret;
+    }
     public function get($id)
     {
         return parent::get($id);
     }
     public function getList($where=[] ,$page =1 ,$page_size =10)
     {
+        //$where['deleted_at'] = $where['deleted_at']??false;
         return parent::getList($where, $page, $page_size);
     }
     public function updateData($id, $title, $content)
