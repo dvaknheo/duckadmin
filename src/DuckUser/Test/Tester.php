@@ -35,11 +35,11 @@ class Tester
     public function _AfterTest()
     {
         $table = UserModel::_()->table();
-        $sql = "select id from $table where username = ?";
-        $id = DbManager::Db()->fetchColumn($sql,'user_test');
-        UserAction::_()->getUsernames([$id]);
+        $sql = "select id from $table order by id desc  limit 1";
+        $id = DbManager::Db()->fetchColumn($sql);
+        UserAction::_()->batchGetUsernames([$id]);
         try{
-            UserAction::_()->checkLogin();
+            //UserAction::_()->checkLogin();
         }catch(\Exception $ex){}
 
         $table = UserModel::_()->table();

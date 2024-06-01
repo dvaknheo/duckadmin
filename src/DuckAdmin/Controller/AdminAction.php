@@ -172,4 +172,8 @@ EOF;
     {
         return __url("");
     }
+    public function log(string $string, ?string $type = null)
+    {
+        return;
+    }
 }

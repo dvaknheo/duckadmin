@@ -21,9 +21,8 @@ class Base
         
         $csrf_token = Helper::_()->csrfToken();
         $csrf_field = Helper::_()->csrfField();
-         
-        $user = UserAction::_()->data();
-        $user_name = $user['username'] ?? '';
+        
+        $user_name = Helper::UserName();
         Helper::setViewHeadFoot('home/inc-head','home/inc-foot');
         Helper::assignViewData(get_defined_vars());
     }

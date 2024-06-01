@@ -7,6 +7,7 @@ namespace DuckUser\Business;
 
 use DuckPhp\Foundation\Business\Helper;
 use DuckPhp\Foundation\SimpleBusinessTrait;
+use DuckUser\Model\UserModel;
 
 /**
  * 我们偷懒，把 BusinessHelper 集成进这里,基类我们也不要了，毕竟只有一个
@@ -66,5 +67,8 @@ class UserBusiness
         
         UserModel::_()->updatePassword($uid, $new_password);
     }
-
+    public function batchGetUsernames($ids)
+    {
+        return UserModel::_()->batchGetUsernames($ids);
+    }
 }

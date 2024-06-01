@@ -32,7 +32,7 @@ class MainController extends Base
             return;
         }
         try {
-            $user = UserAction::_()->register($post);
+            $user = UserAction::_()->regist($post);
             Helper::_()->goHome();
         } catch (\Exception $ex) {
             $error = $ex->getMessage();

@@ -12,7 +12,8 @@ class HomeController extends Base
     public function __construct()
     {
         parent::__construct();
-        $user = Helper::User();
+        
+        //$user = Helper::User();
     }
     public function action_index()
     {

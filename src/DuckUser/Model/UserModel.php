@@ -45,7 +45,7 @@ class UserModel
         
         return $user;
     }
-    public function getUsernames($user_ids)
+    public function batchGetUsernames($user_ids)
     {
         if(empty($user_ids)){ return []; }
         $user_ids = Helper::DbForRead()->quoteIn($user_ids);

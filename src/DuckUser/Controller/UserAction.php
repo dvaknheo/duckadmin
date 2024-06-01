@@ -24,15 +24,20 @@ class UserAction extends Base implements UserActionInterface
         $user = Session::_()->getCurrentUser();
         Helper::ControllerThrowOn(!$user, '请登录');
         $this->user = $user;
-        return $this;
+        return $this->user;
     }
-    public function id()
+    public function id():int
     {
-        return $this->user['id'];
+        return (int)$this->current()['id'];
     }
-    public function name()
+    public function name():string
     {
-        return $this->user['username'];
+        
+        return $this->current()['username'];
+    }
+    public function service()
+    {
+        return;
     }
     public function login(array $post)
     {
@@ -49,21 +54,25 @@ class UserAction extends Base implements UserActionInterface
         Session::_()->setCurrentUser($user);
     }
     ///////////////
-    public function urlForLogin($url_back = null, $ext = null)
+    public function urlForLogin($url_back = null, $ext = null):string
     {
         return __url($url_back? "login?b=".__url($url_back):"login");
     }
-    public function urlForLogout($url_back = null, $ext = null)
+    public function urlForLogout($url_back = null, $ext = null):string
     {
         return __url('logout');
     }
-    public function urlForHome($url_back = null, $ext = null)
+    public function urlForHome($url_back = null, $ext = null):string
     {
         return __url('Home/index');
     }
-    public function urlForRegist($url_back = null, $ext = null)
+    public function urlForRegist($url_back = null, $ext = null):string
     {
         return __url('register');
+    }
+    public function batchGetUsernames($ids)
+    {
+        return UserBusiness::_()->batchGetUsernames($ids);
     }
     
 }
