@@ -15,8 +15,10 @@ class SimpleBlogApp extends DuckPhp
         'namespace' => 'SimpleBlog',
         
         'exception_reporter' =>  ExceptionReporter::class,
+        'exception_for_project'  => ProjectException::class,
         'exception_for_business'  => ProjectException::class,
         'exception_for_controller'  => ProjectException::class,
+        
         'rewrite_map' => [
             '~article/(\d+)/?(\d+)?' => 'article?id=$1&page=$2',
         ],

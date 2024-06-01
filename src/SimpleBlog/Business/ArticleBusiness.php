@@ -32,10 +32,10 @@ class ArticleBusiness extends Base
         $data = CommentModel::_()->getListByArticle($id, $page, $page_size);
         
         $comments = $data['data'];
-        $ids = array_column($data['data'],'id');
+        $ids = array_column($data['data'],'user_id');
         $names = Helper::UserService()->batchGetUsernames($ids);
         foreach($comments as &$v){
-            $v['username']= $names[$v['id']]??'--';
+            $v['username']= $names[$v['user_id']]??'--';
         }
         unset($v);
         
