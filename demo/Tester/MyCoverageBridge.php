@@ -28,6 +28,7 @@ class MyCoverageBridge extends MyCoverage
         'test_after_replay'=>null,
         'test_report_direct'=>true,
         'test_echo_back'=>false,
+        'test_on_report'=>null,
         
     ];
     protected $is_save_session=false;
@@ -95,10 +96,7 @@ class MyCoverageBridge extends MyCoverage
         
         $this->doBegin();
     }
-    public function getCoverage()
-    {
-        return $this->coverage;
-    }
+
     
     public function _OnAfterRun()
     {
@@ -479,8 +477,6 @@ EOT;
                 $this->doEnd();
             }
         }
-        
-        
         
         if($p['report']??false){
             echo "reporting...\n";

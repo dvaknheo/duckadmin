@@ -20,6 +20,7 @@ class MyCoverage
         'path_report' => 'test_reports',
         'group'=>'',
         'name'=>'',
+        'test_on_report'=>null,
     ];
     public $is_inited = false;
     
@@ -110,6 +111,10 @@ class MyCoverage
         (new ReportOfPHP)->process($this->coverage, $path_dump.$file.'.php');
         //$this->coverage = null;
     }
+    public function getCoverage()
+    {
+        return $this->coverage;
+    }
     public function createReport($groups =[])
     {
         $path_src = $this->getSubPath('path_src');
@@ -148,11 +153,13 @@ class MyCoverage
                 $t = static::include_file($file);    //@codeCoverageIgnore
                 $coverage->merge($t);   //@codeCoverageIgnore
             }
-            (new ReportOfHtmlOfFacade)->process($coverage, $path_report);
         }
-        
-        
-        $report = $coverage->getReport();
+        $this->coverage = $coverage;
+        if($this->options['test_on_report']){
+            ($this->options['test_on_report'])();
+        }
+        (new ReportOfHtmlOfFacade)->process($coverage, $path_report);
+        $report =$coverage->getReport();
         $lines_tested = $report->getNumExecutedLines();
         $lines_total = $report->getNumExecutableLines();
         $lines_percent = sprintf('%0.2f%%', $lines_tested / $lines_total * 100);

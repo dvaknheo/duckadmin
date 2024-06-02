@@ -39,6 +39,7 @@ class DemoAppWithDev extends DemoApp
             'test_before_after_web'=>[static::class,'AfterWebTest'],
             'test_before_replay'=>[static::class,'BeforeReplayTest'],
             'test_after_replay'=>[static::class,'AfterReplayTest'],
+            'test_on_report'=>[static::class,'OnReport'],
         ];
         $this->options['ext_options_file']='config/DuckPhpApps_dev.config.php';
         $this->options['ext'][MyCoverageBridge::class] = $tester_options;
@@ -85,7 +86,10 @@ class DemoAppWithDev extends DemoApp
     {
         return static::_()->_AfterReplayTest();
     }
-
+    public static function OnReport()
+    {
+        return static::_()->_OnReport();
+    }
     public function installTest()
     {
         @unlink($this->options['ext_options_file']);
@@ -143,5 +147,44 @@ EOT;
     public function _AfterReplayTest()
     {
         $this->cleanAll();
+    }
+    protected function in_paths($paths,$file)
+    {
+        foreach($paths as $v){
+            if($v === substr($file,0,strlen($v))){
+                return true;
+            }
+        }
+        return false;
+    }
+    public function _OnReport()
+    {
+        return;
+        $coverage = MyCoverageBridge::_()->getCoverage();
+        $path = realpath(\DuckUser\System\DuckUserApp::_()->options['path']).'/';
+        
+        $paths[]=$path.'Test/';
+        //$paths[]=$path.'view/';
+        //$paths[]=$path.'Controller/';
+        
+        $data = $coverage->getData();
+        $new_data = [];
+        foreach($data as $file =>$v){
+            if($this->in_paths($paths,$file)){
+                continue;
+            }
+            $new_data[$file] = $v;
+        }
+        $filter = MyCoverageBridge::_()->getCoverage()->filter();
+        $filter->removeDirectoryFromWhitelist($path.'Test/');
+        //$filter->removeDirectoryFromWhitelist($path.'View');
+        $coverage->setData($data);
+        $filter = MyCoverageBridge::_()->getCoverage()->filter();
+        $filter->removeDirectoryFromWhitelist($path.'Test/');
+        return;
+        //$coverage = MyCoverageBridge::_()->getCoverage();
+        
+        $path = realpath(\DuckUser\System\DuckUserApp::_()->options['path']).'/';
+        //var_dump($path);
     }
 }
