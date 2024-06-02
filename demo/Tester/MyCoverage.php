@@ -146,7 +146,6 @@ class MyCoverage
             foreach ($files as $file) {
                 // 要重复两遍才能 100% ，所以 ignore 得了，使用 include 会导致一个 Bug 。
                 $t = static::include_file($file);    //@codeCoverageIgnore
-                if(is_int($t)){ var_dump($file); exit;continue;}
                 $coverage->merge($t);   //@codeCoverageIgnore
             }
             (new ReportOfHtmlOfFacade)->process($coverage, $path_report);

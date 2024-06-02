@@ -37,6 +37,8 @@ class DemoAppWithDev extends DemoApp
             'test_list_callback'=>[static::class,'GetTestList'],
             'test_before_after_web'=>[static::class,'BeforeWebTest'],
             'test_before_after_web'=>[static::class,'AfterWebTest'],
+            'test_before_replay'=>[static::class,'BeforeReplayTest'],
+            'test_after_replay'=>[static::class,'AfterReplayTest'],
         ];
         $this->options['ext_options_file']='config/DuckPhpApps_dev.config.php';
         $this->options['ext'][MyCoverageBridge::class] = $tester_options;
@@ -75,22 +77,21 @@ class DemoAppWithDev extends DemoApp
     {
         return static::_()->_GetTestList();
     }
+    public static function BeforeReplayTest()
+    {
+        return static::_()->_BeforeReplayTest();
+    }
+    public static function AfterReplayTest()
+    {
+        return static::_()->_AfterReplayTest();
+    }
+
     public function installTest()
     {
         @unlink($this->options['ext_options_file']);
         $this->options['ext_options_file_enable']=true;
-        
         $db_file = 'db_fortest.db';
         @unlink(Helper::PathOfRuntime().$db_file);
-        
-        /*
-        //@unlink($this->options['ext_options_file']);
-        //ExtOptionsLoader::$all_ext_options=[];
-
-        unset($this->options['database_list']);
-        DbManager::_()->options['database_list']=[];
-        //Console::_()->options['cli_readlines_logfile']=Helper::PathOfRuntime().'DuckPhpApps_test.log2';
-        */
         $input = <<<EOT
 {$db_file}
 n
@@ -103,9 +104,16 @@ EOT;
         FastInstaller::_()->doInstall(); // App::_()->callConsole('install');
         var_dump(DATE(DATE_ATOM));
     }
+    public function cleanAll()
+    {
+        @unlink($this->options['ext_options_file']);
+        $this->options['ext_options_file_enable']=true;
+        $db_file = 'db_fortest.db';
+        @unlink(Helper::PathOfRuntime().$db_file);
+    }
     public function _GetTestList()
     {
-        $this->installTest();
+        
         $str ='';
         //$str .= \DuckAdmin\Test\Tester::_()->getTestList();
         $str .= \DuckUser\Test\Tester::_()->getTestList();
@@ -128,20 +136,12 @@ EOT;
     {
         //
     }
-    public static function BeforeReplayTest()
-    {
-        return static::_()->_BeforeReplayTest();
-    }
-    public static function AfterReplayTest()
-    {
-        return static::_()->_AfterReplayTest();
-    }
     public function _BeforeReplayTest()
     {
-        //
+        $this->installTest();
     }
     public function _AfterReplayTest()
     {
-        //
+        $this->cleanAll();
     }
 }

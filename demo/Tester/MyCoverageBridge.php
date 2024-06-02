@@ -24,6 +24,8 @@ class MyCoverageBridge extends MyCoverage
         
         'test_new_server'=>true,
         'test_list_callback'=>null,
+        'test_before_replay'=>null,
+        'test_after_replay'=>null,
         'test_report_direct'=>true,
         'test_echo_back'=>false,
         
@@ -169,8 +171,11 @@ class MyCoverageBridge extends MyCoverage
     {
         $this->cleanClientStatus();
         $this->doBegin();
-        $this->options['name'] = 'getList';
         
+        $this->options['name'] = 'replay';
+        if($this->options['test_before_replay']){
+            ($this->options['test_before_replay'])();
+        }
         $callback = $this->options['test_list_callback'];
         $test_list = \call_user_func($callback);
         $test_list = \explode("\n",$test_list);
@@ -179,6 +184,10 @@ class MyCoverageBridge extends MyCoverage
             $this->readCommand($line);
         }
         $this->stopServer();
+        
+        if($this->options['test_after_replay']){
+            ($this->options['test_after_replay'])();
+        }
         $this->doEnd();
     }
     protected function readCommand($request)
@@ -296,7 +305,6 @@ class MyCoverageBridge extends MyCoverage
     }
     ////[[[[
     protected $is_server_started=false;
-    
     protected function startServer()
     {
         if($this->is_server_started){
