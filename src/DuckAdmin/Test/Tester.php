@@ -171,7 +171,6 @@ EOT;
 #WEB index
 
 #CALL {static}@runExtBusiness
-#CALL {static}@runInstallBusiness
 
 #CALL {static}@endTest
 EOT;
@@ -270,45 +269,6 @@ EOT;
         $ret = str_replace(array_keys($a), array_values($a), $str);
         
         return $ret;
-    }
-    public function runInstallBusiness()
-    {
-        $prefix = DuckAdminApp::_()->options['table_prefix'];
-        
-        PhaseContainer::GetContainer()->createLocalObject(DbManager::class);
-        $db_file = 'database_autodel.db';
-        @unlink(Helper::PathOfRuntime().$db_file);
-        $options = [
-                'database_driver' =>  'sqlite',
-                'database_list' => 
-                array (
-                  0 => 
-                  array (
-                    'dsn' => 'sqlite:'.$db_file,
-                    'username' => '',
-                    'password' => '',
-                  ),
-                ),
-        ];
-        DbManager::_()->init($options);
-        
-        $file=DuckAdminApp::_()->getOverrideableFile('config', 'sqlite.sql');
-        $sql = file_get_contents($file);
-        $sqls = explode(";\n", ''.$sql);
-        
-        foreach ($sqls as $sql) {
-            if (empty($sql)) {
-                continue;
-            }
-            $sql = str_replace(' `'.'', ' `'.$prefix,  ''.$sql);
-            $flag = DbManager::Db()->execute($sql);
-        }
-        
-        $username = 'admin';
-        $password = '123456';
-        $password_confirm = '123456';
-        \DuckAdmin\Business\InstallBusiness::_()->install($username,$password,$password_confirm);
-        @unlink(Helper::PathOfRuntime().$db_file);
     }
     public function runExtActions()
     {

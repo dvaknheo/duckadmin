@@ -167,12 +167,13 @@ class MyCoverageBridge extends MyCoverage
     }
     protected function replay()
     {
+        $this->cleanClientStatus();
+        $this->doBegin();
+        $this->options['name'] = 'getList';
+        
         $callback = $this->options['test_list_callback'];
         $test_list = \call_user_func($callback);
         $test_list = \explode("\n",$test_list);
-        
-        $this->doBegin();
-        $this->cleanClientStatus();
         
         foreach($test_list as $line){
             $this->readCommand($line);

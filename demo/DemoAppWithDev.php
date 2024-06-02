@@ -5,13 +5,18 @@
  */
 namespace Demo;
 
-use DuckPhp\Core\Route;
-use DuckPhp\DuckPhp;
-use DuckPhp\Foundation\Helper;
-//use DuckPhp\Foundation\System\Helper;
-
 use Demo\Tester\MyCoverageBridge;
 use Demo\Tester\TestFileCreator;
+use DuckPhp\Component\ExtOptionsLoader;
+use DuckPhp\Component\DbManager;
+use DuckPhp\Core\Route;
+use DuckPhp\Core\Console;
+use DuckPhp\DuckPhp;
+use DuckPhp\Foundation\Helper;
+use DuckPhp\FastInstaller\FastInstaller;
+//use DuckPhp\Foundation\System\Helper;
+
+
 
 require_once(__DIR__. '/Tester/MyCoverage.php');
 require_once(__DIR__. '/Tester/MyCoverageBridge.php');
@@ -30,8 +35,8 @@ class DemoAppWithDev extends DemoApp
             'test_path_document'=>'public',
             'test_new_server'=>true,
             'test_list_callback'=>[static::class,'GetTestList'],
-            'test_before_after_web'=>[static::class,'BeforeWeb'],
-            'test_before_after_web'=>[static::class,'AfterWeb'],
+            'test_before_after_web'=>[static::class,'BeforeWebTest'],
+            'test_before_after_web'=>[static::class,'AfterWebTest'],
         ];
         $this->options['ext_options_file']='config/DuckPhpApps_dev.config.php';
         $this->options['ext'][MyCoverageBridge::class] = $tester_options;
@@ -43,27 +48,70 @@ class DemoAppWithDev extends DemoApp
     {
         var_dump("dev");
         parent::action_index();
+        
     }
-    public static function BeforeWeb()
+    public function onPrepare()
     {
-        return static::_()->_BeforeWeb();
+        //Helper::SERVER('HTTP_X_MYCOVERAGE_NAME','');
+        $flag1 = $_SERVER['argv'][1] ?? '';
+        $flag2 = $_SERVER['HTTP_X_MYCOVERAGE_NAME'] ?? '';
+        if($flag1 ==='testgroup' || $flag2){
+            $this->options['ext_options_file'] = 'runtime/DuckPhpApps_test.config.php';
+        }
+        if($flag1 ==='testgroup'){
+            $this->options['ext_options_file_enable'] =false;
+        }
+        return parent::onPrepare();
     }
-    public static function AfterWeb()
+    public static function BeforeWebTest()
     {
-        return static::_()->_AfterWeb();
+        return static::_()->_BeforeWebTest();
+    }
+    public static function AfterWebTest()
+    {
+        return static::_()->_AfterWebTest();
     }
     public static function GetTestList()
     {
         return static::_()->_GetTestList();
     }
-    public static function _GetTestList()
+    public function installTest()
     {
-        $str = '';
+        @unlink($this->options['ext_options_file']);
+        $this->options['ext_options_file_enable']=true;
+        
+        $db_file = 'db_fortest.db';
+        @unlink(Helper::PathOfRuntime().$db_file);
+        
+        /*
+        //@unlink($this->options['ext_options_file']);
+        //ExtOptionsLoader::$all_ext_options=[];
+
+        unset($this->options['database_list']);
+        DbManager::_()->options['database_list']=[];
+        //Console::_()->options['cli_readlines_logfile']=Helper::PathOfRuntime().'DuckPhpApps_test.log2';
+        */
+        $input = <<<EOT
+{$db_file}
+n
+admin
+123456
+123456
+
+EOT;
+        Console::_()->readLinesFill($input);
+        FastInstaller::_()->doInstall(); // App::_()->callConsole('install');
+        var_dump(DATE(DATE_ATOM));
+    }
+    public function _GetTestList()
+    {
+        $this->installTest();
+        $str ='';
         //$str .= \DuckAdmin\Test\Tester::_()->getTestList();
-        //$str .= \DuckUser\Test\Tester::_()->getTestList();
+        $str .= \DuckUser\Test\Tester::_()->getTestList();
+        //$str .= \SimpleBlog\Test\Tester::_()->getTestList();
         //$str .= \DuckUserManager\Test\Tester::_()->getTestList();
-        $str .= \SimpleBlog\Test\Tester::_()->getTestList();
-                
+        
         //path = \DuckAdmin\DuckAdminApp::_()->options['path'];
         //$filter = MyCoverageBridge::_()->getCoverage()->filter();
         //$filter->removeDirectoryFromWhitelist($path.'Test');
@@ -73,11 +121,26 @@ class DemoAppWithDev extends DemoApp
 
         return $str;
     }
-    public function _BeforeWeb()
+    public function _BeforeWebTest()
+    {
+    }
+    public function _AfterWebTest()
     {
         //
     }
-    public function _AfterWeb()
+    public static function BeforeReplayTest()
+    {
+        return static::_()->_BeforeReplayTest();
+    }
+    public static function AfterReplayTest()
+    {
+        return static::_()->_AfterReplayTest();
+    }
+    public function _BeforeReplayTest()
+    {
+        //
+    }
+    public function _AfterReplayTest()
     {
         //
     }
