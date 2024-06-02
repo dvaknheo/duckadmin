@@ -54,13 +54,13 @@ $list = <<<EOT
 #WEB register
 #WEB register name={username}&password=123456&password_confirm=123456
 #WEB register name={username}&ssssssssssssssssssssssamename=1
-#WEB Home/index
+#WEB Home/index?_r=1
 #WEB logout
 #WEB index
 #WEB login
 #WEB login name={username}&password=nolllllllllllllllllllogin
 #WEB login name={username}&password=123456
-#WEB Home/index
+#WEB Home/index?_r=2
 #WEB Home/password
 #WEB Home/password oldpassword=123456&newpassword=654321&newpassword_confirm=654321
 #WEB Home/password oldpassword=654321&newpassword=123456&newpassword_confirm=123456

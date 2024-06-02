@@ -59,9 +59,9 @@ class DemoAppWithDev extends DemoApp
     }
     public function onPrepare()
     {
+        parent::onPrepare();
+        MyCoverageBridge::_()->init($this->options['ext'][MyCoverageBridge::class]);
         MyCoverageBridge::_()->onAppPrepare();
-
-        return parent::onPrepare();
     }
     
 }

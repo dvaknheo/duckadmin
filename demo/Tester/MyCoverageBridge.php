@@ -98,7 +98,7 @@ class MyCoverageBridge extends MyCoverage
     }
     public function onAppPrepare()
     {
-        $app = App::Current();
+        $app = App::_();
         if(MyCoverageBridge::_()->isInHttpTest()){
             $app->options['ext_options_file'] = 'runtime/DuckPhpApps_test.config.php';
         } else if (MyCoverageBridge::_()->isInCliTest()){
@@ -109,7 +109,9 @@ class MyCoverageBridge extends MyCoverage
     public function isInHttpTest()
     {
         $watching_name = $this->watchingGetName();
-        if($watching_name === Helper::SERVER('HTTP_X_MYCOVERAGE_NAME','')) {
+        $server_name = Helper::SERVER('HTTP_X_MYCOVERAGE_NAME',''); // do not use this;
+        //$server_name = $_SERVER['HTTP_X_MYCOVERAGE_NAME']??'';
+        if($watching_name === $server_name) {
             return true;
         }
         return false;
