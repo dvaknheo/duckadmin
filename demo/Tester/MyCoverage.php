@@ -159,7 +159,7 @@ class MyCoverage
             ($this->options['test_on_report'])();
         }
         (new ReportOfHtmlOfFacade)->process($coverage, $path_report);
-        $report =$coverage->getReport();
+        $report =$this->coverage->getReport();
         $lines_tested = $report->getNumExecutedLines();
         $lines_total = $report->getNumExecutableLines();
         $lines_percent = sprintf('%0.2f%%', $lines_tested / $lines_total * 100);

@@ -80,8 +80,8 @@ class MyCoverageBridge extends MyCoverage
             @mkdir($path_dump);
             file_put_contents($path_dump.$this->options['group'].'.list',$this->getHttpStringToLog()."\n",FILE_APPEND); 
         }
-        $watching_name = $this->watchingGetName();
-        if($watching_name !== Helper::SERVER('HTTP_X_MYCOVERAGE_NAME','')) {
+        
+        if(!$this->isInHttpTest()) {
             return;
         }
 
@@ -96,8 +96,35 @@ class MyCoverageBridge extends MyCoverage
         
         $this->doBegin();
     }
-
-    
+    public function onAppPrepare()
+    {
+        $app = App::Current();
+        if(MyCoverageBridge::_()->isInHttpTest()){
+            $app->options['ext_options_file'] = 'runtime/DuckPhpApps_test.config.php';
+        } else if (MyCoverageBridge::_()->isInCliTest()){
+            $app->options['ext_options_file'] = 'runtime/DuckPhpApps_test.config.php';
+            $app->options['ext_options_file_enable'] = false;
+        }
+    }
+    public function isInHttpTest()
+    {
+        $watching_name = $this->watchingGetName();
+        if($watching_name === Helper::SERVER('HTTP_X_MYCOVERAGE_NAME','')) {
+            return true;
+        }
+        return false;
+    }
+    public function isInCliTest()
+    {
+        if (PHP_SAPI === 'cli' && App::Current()->options['cli_enable']) {
+            $argv = Helper::SERVER('argv',[]);
+            $cmd = $argv[1]??'NULL';
+            if($cmd ==='testgroup'){
+                return true;
+            }
+        }
+        return false;
+    }
     public function _OnAfterRun()
     {
         if (PHP_SAPI === 'cli' && App::Current()->options['cli_enable']) {
