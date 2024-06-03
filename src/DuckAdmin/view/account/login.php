@@ -43,6 +43,9 @@
         <script src="<?=__res('component/layui/layui.js')?>"></script>
         <script src="<?=__res('component/pear/pear.js')?>"></script>
         <script>
+         var url_back=<?=json_encode($url_back)?>;
+       </script>
+        <script>
             layui.use(['form', 'button', 'popup', 'layer', 'theme', 'admin'], function() {
 
                 var $ = layui.$, layer = layui.layer, form = layui.form;
@@ -61,7 +64,12 @@
                             layer.closeAll('loading');
                             if (!res.code) {
                                 layui.popup.success('登录成功', function () {
-                                    location.reload();
+                                    //location.reload();
+                                    if(url_back){
+                                        location.href = url_back;
+                                    }else{
+                                        location.reload();
+                                    }
                                 })
                             } else {
                                 layui.popup.failure(res.msg, function () {

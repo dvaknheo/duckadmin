@@ -89,14 +89,14 @@ class AdminAction implements AdminActionInterface
     }
     protected function exit401()
     {
-        $url = __url('index');
+        $url = __url('index').'?back_url='.Helper::PathInfo();
         $response = <<<EOF
 <script>
 if (self !== top) {
     parent.location.reload();
 }
 </script>
-<meta http-equiv=refresh content=5;url="$url">
+<meta http-equiv=refresh content=3;url="$url">
 EOF;
  
         Helper::header('Unauthorized',true,401);
