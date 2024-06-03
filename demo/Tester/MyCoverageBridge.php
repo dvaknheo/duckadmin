@@ -49,12 +49,13 @@ class MyCoverageBridge extends MyCoverage
 
         $this->options['group'] = $this->watchingGetName();
 
-        // 这里抽成一个方法
         Helper::regExtCommandClass(static::class);
         Helper::OnEvent([App::Phase(),'onBeforeRun'],[static::class,'OnBeforeRun']);
         Helper::OnEvent([App::Phase(),'onAfterRun'],[static::class,'OnAfterRun']);
         
         \DuckPhp\Core\ExitException::Init(); //__define(__ExitException);
+        
+        return $this;
     }
     
     public static function OnBeforeRun()

@@ -3,7 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-namespace Demo\Test;
+namespace Demo\Tester;
 
 use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
@@ -14,10 +14,25 @@ use DuckPhp\Foundation\Helper;
 
 class TestFileCreator extends ComponentBase
 {
+    public $options =[
+        'aa'=>'bb'
+    ];
+    public function __construct()
+    {
+        //$this->options = array_replace_recursive($this->options, (new parent())->options); //merge parent's options;
+        parent::__construct();
+    }
+    public function init(array $options, ?object $context = null)
+    {
+        parent::init($options, $context);
+        Helper::regExtCommandClass(static::class);
+        return $this;
+    }
+
     //////////////////////////
     protected function get_component_path($component,$base_file = 'Base')
     {
-
+            // \\DuckAdmin\\   xxxx\\DuckAdmin\\system\\AA.php $file DuckAdmin
         $base_class = App::Current()->options['namespace']."\\{$component}\\{$base_file}";
         $ref = new \ReflectionClass($base_class);
         $path = dirname($ref->getFilename()).'/';
@@ -57,10 +72,12 @@ class TestFileCreator extends ComponentBase
         $path = $this->get_component_path($component);
         $files = $this->get_all_component_classes_files($path,$component);
         $namespace = App::Current()->options['namespace']."\\{$component}\\";
+        var_dump($files);
         $data =[];
         foreach($files as $file){
             $data[]= $this->getComponentTestString($path,$file,$namespace);
         }
+        var_dump($data);exit;
         return implode("\n",$data)."\n";
     }
     ////////////////[[[[[[[[[[[
@@ -114,8 +131,8 @@ class TestFileCreator extends ComponentBase
         }
         return $ret;
     }
-
-    protected function pathInfoFromClassAndMethod($class, $method, $adjuster = null)
+    ////[[[[
+    public function pathInfoFromClassAndMethod($class, $method, $adjuster = null)
     {
         $class_postfix = Route::_()->options['controller_class_postfix'];
         $method_prefix = Route::_()->options['controller_method_prefix'];
@@ -125,23 +142,23 @@ class TestFileCreator extends ComponentBase
         $controller_path_ext = Route::_()->options['controller_path_ext'];
         $controller_url_prefix = Route::_()->options['controller_url_prefix'];
         
-        $namespace_prefix = Route::_()->getControllerNamespacePrefix();
         
+        $namespace_prefix = Route::_()->getControllerNamespacePrefix();
         if(substr($class,0,strlen($namespace_prefix))!== $namespace_prefix){
             return null;
         }
-        if(substr($class,-strlen($class_postfix))!== $class_postfix){
+         
+        if($class_postfix && substr($class,-strlen($class_postfix))!== $class_postfix){
             return null;
         }
         $first = substr($class,strlen($namespace_prefix),0-strlen($class_postfix));
         
-
         if($adjuster){
             $first = call_user_func($adjuster, $first);
         }
         
         if($method_prefix && substr($method,0,strlen($method_prefix))!==$method_prefix){
-            return null; // TODO do_
+            return null; // TODO do_action
         }
         $last = substr($method,strlen($method_prefix));
         
@@ -151,16 +168,123 @@ class TestFileCreator extends ComponentBase
         if($first===$controller_welcome_class){
             return $controller_url_prefix.$last.$controller_path_ext;
         }
+        [$first, $method] = $this->doControllerClassAdjust($first, $method);
+        
         return $controller_url_prefix.$first. '/' .$last.$controller_path_ext;
         
     }
-    /////////////////]]]]]]]]]]
+    
+    protected function doControllerClassAdjust($first, $method)
+    {
+        $adj = is_array(Route::_()->options['controller_class_adjust']) ? Route::_()->options['controller_class_adjust'] : explode(';', Route::_()->options['controller_class_adjust']);
+        if(!$adj){ return [$first,$method];}
+        foreach ($adj as $v) {
+            if ($v === 'uc_method') {
+                $method = ucfirst($method);
+            } elseif ($v === 'uc_class') {
+                $blocks = explode('/',$first);
+                $w = array_pop($blocks);
+                $w = lcfirst($w);
+                array_push($blocks, $w);
+                $first = implode('/',$blocks);
+            } elseif ($v === 'uc_full_class') {
+                $blocks = explode('/',$first);
+                array_map('lcfirst', $blocks);
+                $first = implode('/',$blocks);
+            }
+        }
+        return [$first,$method];
+    }
+    protected function getAllControllerClasses()
+    {
+        $prefix = Route::_()->getControllerNamespacePrefix();
+        $classToTest[]  = Route::_()->options['controller_welcome_class'].Route::_()->options['controller_class_postfix'];
+        $classToTest[] = 'Helper';
+        $classToTest[] = 'Base';
+        $path ='';
+        foreach($classToTest as $base_class) {
+            try{
+                $class = $prefix.$base_class;
+                $path = dirname((new \ReflectionClass($class))->getFileName()).'/';
+                
+            }catch(\ReflectionException $ex){
+                continue;
+            }
+            break;
+        }
+        if(!$path){
+            $namespace = App::Current()->options['namespace'];
+            $base_app = App::Current()->getOverridingClass();
+            if(substr($prefix,0,strlen($namespace.'\\'))===$namespace.'\\'){
+                $reflect = new \ReflectionClass($base_app);
+                $filename =$reflect->getFileName();
+                $filename_relative = str_replace('\\','/',$base_app).'.php';
+                $base_path = substr($filename,0,-strlen($filename_relative));
+                $path=$base_path.str_replace('\\','/',$prefix);
+            }
+        }
+        if(!$path){
+            return [];
+        }
+        $directory = new \RecursiveDirectoryIterator($path, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS);
+        $iterator = new \RecursiveIteratorIterator($directory);
+        $files = \iterator_to_array($iterator, false);
+        
+        $ret = [];
+        foreach ($files as $file) {
+            if(substr($file,-strlen('.php'))!=='.php'){continue;};
+            $key = substr($file,strlen($path),-strlen('.php'));
+            $key = str_replace('/','\\',$prefix.$key);
+            $ret[$key] = $file;
+        }
+        return $ret;
+    }
+    protected function getControllerMethods($full_class,$adjuster = null)
+    {
+        try{
+            $ref = new \ReflectionClass($full_class);
+            
+            $methods = $ref->getMethods(\ReflectionMethod::IS_PUBLIC);
+        }catch(\ReflectionException $ex){
+            return [];
+        }
+        
+        $ret =[];
+        foreach($methods as $method){
+            if($method->isStatic()){continue;}
+            if($method->isConstructor()){continue;}
+            $function = $method->getName();
+            $path_info = $this->pathInfoFromClassAndMethod($full_class, $function, $adjuster);
+            if(!isset($path_info)){continue;}
+            $ret[$full_class.'->'.$function]=$path_info;
+        }
+        return $ret;
+    }
+    public function getRoutePathInfoMap($adjuster=null)
+    {
+        $controllers = $this->getAllControllerClasses();
+        $ret =[];
+        foreach($controllers as $class=>$file){
+            $ret = array_merge($ret,$this->getControllerMethods($class,$adjuster));
+        }
+        return $ret;
+    }
+    public function getRoutePathInfoMapWithChildren($adjuster = null)
+    {
+        $ret = $this->getRoutePathInfoMap($adjuster);
+        Helper::recursiveApps(
+            $ret,
+            function ($app_class, &$ret)use($adjuster) {
+                $data = $this->getRoutePathInfoMap($adjuster);
+                $ret = array_merge($ret,$data );
+            }
+        );
+        return $ret;
+    }
+    
     public function command_foo2()
     {
-        $last_phase = App::Phase(\DuckAdmin\System\DuckAdminApp::class);
-        $str = $this->getAllComponentTestTemplate('Controller');
-        echo $str;
-        App::Phase($last_phase);
+        $ret = $this->getRoutePathInfoMap();
     }
     public function listAllRoutes($adjuster=null)
     {

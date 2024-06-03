@@ -6,7 +6,7 @@
 namespace Demo;
 
 use Demo\Tester\MyCoverageBridge;
-//use Demo\Tester\TestFileCreator;
+use Demo\Tester\TestFileCreator;
 use Demo\Test\MyTester;
 
 use DuckPhp\Component\ExtOptionsLoader;
@@ -20,7 +20,7 @@ use DuckPhp\FastInstaller\FastInstaller;
 
 require_once(__DIR__. '/Tester/MyCoverage.php');
 require_once(__DIR__. '/Tester/MyCoverageBridge.php');
-require_once(__DIR__. '/Test/MyTester.php');
+require_once(__DIR__. '/Tester/TestFileCreator.php');
 
 class DemoAppWithDev extends DemoApp
 {
@@ -47,7 +47,7 @@ class DemoAppWithDev extends DemoApp
         ];
         $this->options['ext_options_file']='config/DuckPhpApps_dev.config.php';
         $this->options['ext'][MyCoverageBridge::class] = $tester_options;
-        
+        $this->options['ext'][TestFileCreator::class] = ['not_empty'=>true];
         
         $this->options['database_driver']='sqlite';
     }

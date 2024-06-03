@@ -69,11 +69,10 @@ EOT;
     }
     public function _GetTestList()
     {
-        
         $str ='';
-        //$str .= \DuckAdmin\Test\Tester::_()->getTestList();
+        $str .= \DuckAdmin\Test\Tester::_()->getTestList();
         $str .= \DuckUser\Test\Tester::_()->getTestList();
-        //$str .= \SimpleBlog\Test\Tester::_()->getTestList();
+        $str .= \SimpleBlog\Test\Tester::_()->getTestList();
         //$str .= \DuckUserManager\Test\Tester::_()->getTestList();
         
         //path = \DuckAdmin\DuckAdminApp::_()->options['path'];

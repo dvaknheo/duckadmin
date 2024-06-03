@@ -6,14 +6,12 @@
 namespace DuckUser\Controller;
 
 use DuckUser\Business\UserBusiness;
-
-class HomeController extends Base
+use DuckPhp\GlobalUser\UserControllerInterface;
+class HomeController extends Base implements UserControllerInterface
 {
     public function __construct()
     {
         parent::__construct();
-        
-        //$user = Helper::User();
     }
     public function action_index()
     {

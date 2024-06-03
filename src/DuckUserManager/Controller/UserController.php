@@ -3,12 +3,13 @@ namespace DuckUserManager\Controller;
 
 use DuckPhp\Foundation\Controller\Helper;
 use DuckPhp\Foundation\SimpleControllerTrait;
+use DuckPhp\GlobalAdmin\AdminControllerInterface;
 use DuckUserManager\Business\UserBusiness;
 
 /**
  * 管理员列表 
  */
-class UserController
+class UserController implements AdminControllerInterface
 {
     use SimpleControllerTrait;
 
