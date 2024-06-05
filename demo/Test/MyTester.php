@@ -3,9 +3,9 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-namespace Demo\Test;
+namespace DuckAdminDemo\Test;
 
-use Demo\Tester\MyCoverageBridge;
+use DuckAdminDemo\Tester\MyCoverageBridge;
 use DuckPhp\Component\ExtOptionsLoader;
 use DuckPhp\Component\DbManager;
 use DuckPhp\Core\Console;

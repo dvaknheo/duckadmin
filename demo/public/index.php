@@ -12,4 +12,4 @@ require_once(__DIR__. '/../DemoApp.php');
 $options=[
     // ...
 ];
-\Demo\DemoApp::RunQuickly($options);
+\DuckAdminDemo\DemoApp::RunQuickly($options);

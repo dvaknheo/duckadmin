@@ -1,6 +1,4 @@
 # DuckAdmin
-正在不断开发中，暂时没稳定可运行版本。
-说明不一定对
 ## 简介
 
 `DuckAdmin` 是二次开发的基线库，注意，是基线库，而不是基线工程。
@@ -9,7 +7,7 @@
 
 `DuckAdmin` 只做了公司员工结构的基本代码，通用业务。你可以在这之上添加更多符合公司业务的功能。
 ## 演示
-演示需求需求： mysql sqlite
+演示需求需求：  sqlite
 
 ```
 composer install dvaknheo/duckamin 
@@ -26,31 +24,27 @@ php cli.php install # 安装数据库等完善功能
 
 
 ```
-composer require dvaknheo/duckphp
 composer require dvaknheo/duckamin 
-./vendor/bin/duckphp new   # 创建你的工程
+
 ```
 
-模仿 demo 的 DemoApp.php 填写 `src/System\App.php`
+// index.php
 
 ```php
 
-class App extends DuckPhp
-{
-    public $options = [
-        'path' => __DIR__.'/',
-        
-        'cli_command_with_fast_installer' => true,
-        'app' => [
-            \DuckAdmin\System\DuckAdminApp::class => [      // 后台管理系统
-                'controller_url_prefix' => 'app/admin/',    // 访问路径
-                'controller_resource_prefix' => 'res/',     // 资源文件前缀
-                
-            ],
+$options = [
+    'app' => [
+        \DuckAdmin\System\DuckAdminApp::class => [      // 后台管理系统
+            'controller_url_prefix' => 'app/admin/',    // 访问路径
+            'controller_resource_prefix' => 'res/',     // 资源文件前缀
+            
         ],
-    ];
-}
+    ],
+];
+DuckPhp::RunQuickly([]);
 ```
+打开  `index.php/app/admin/index` 页面
+
 安装程序
 ```
 php cli.php install

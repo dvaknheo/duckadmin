@@ -3,24 +3,12 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-namespace Demo;
+namespace DuckAdminDemo;
 
-use Demo\Tester\MyCoverageBridge;
-use Demo\Tester\TestFileCreator;
-use Demo\Test\MyTester;
+use DuckAdminDemo\Tester\MyCoverageBridge;
+use DuckAdminDemo\Tester\TestFileCreator;
+use DuckAdminDemo\Test\MyTester;
 
-use DuckPhp\Component\ExtOptionsLoader;
-use DuckPhp\Component\DbManager;
-use DuckPhp\Core\Route;
-use DuckPhp\Core\Console;
-use DuckPhp\DuckPhp;
-use DuckPhp\FastInstaller\FastInstaller;
-
-
-
-require_once(__DIR__. '/Tester/MyCoverage.php');
-require_once(__DIR__. '/Tester/MyCoverageBridge.php');
-require_once(__DIR__. '/Tester/TestFileCreator.php');
 
 class DemoAppWithDev extends DemoApp
 {

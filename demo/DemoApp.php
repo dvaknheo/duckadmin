@@ -3,7 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-namespace Demo;
+namespace DuckAdminDemo;
 
 use DuckPhp\DuckPhp;
 use DuckPhp\Foundation\Controller\Helper;

@@ -5,6 +5,7 @@
  */
 namespace DuckUser\Controller;
 
+use DuckPhp\Core\App;
 use DuckUser\Business\UserBusiness;
 
 class MainController extends Base
@@ -48,13 +49,22 @@ class MainController extends Base
         if (!$post) {
             $csrf_field = Helper::_()->csrfField();
             $url_login = UserAction::_()->urlForLogin();
-            
+            $back_url = Helper::GET('b','');
             Helper::Show(get_defined_vars(),'login');
             return;
         }
         try {
             UserAction::_()->login($post);
-            Helper::_()->goHome();
+            $back_url = Helper::GET('b','');
+            
+            if(!$back_url){
+                Helper::_()->goHome();
+            }else{
+                $last_phase = App::Phase(App::Root());
+                $back_url = __url($back_url);
+                Helper::Show302($back_url);
+                App::Phase($last_phase);
+            }
         } catch (\Exception $ex) {
             $error = $ex->getMessage();
             $name =  __h( Helper::POST('name', ''));

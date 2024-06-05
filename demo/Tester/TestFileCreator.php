@@ -3,7 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-namespace Demo\Tester;
+namespace DuckAdminDemo\Tester;
 
 use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
