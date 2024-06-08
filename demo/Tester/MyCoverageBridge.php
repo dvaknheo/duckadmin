@@ -22,10 +22,9 @@ class MyCoverageBridge extends MyCoverage
         'test_path_document'=>'public',
         'test_homepage' =>'/index_dev.php/',
         
+        'test_callback_class'=>null,
         'test_new_server'=>true,
-        'test_list_callback'=>null,
-        'test_before_replay'=>null,
-        'test_after_replay'=>null,
+
         'test_report_direct'=>true,
         'test_echo_back'=>false,
         'test_on_report'=>null,
@@ -104,7 +103,7 @@ class MyCoverageBridge extends MyCoverage
             $app->options['ext_options_file'] = 'runtime/DuckPhpApps_test.config.php';
         } else if (MyCoverageBridge::_()->isInCliTest()){
             $app->options['ext_options_file'] = 'runtime/DuckPhpApps_test.config.php';
-            $app->options['ext_options_file_enable'] = false;
+            //$app->options['ext_options_file_enable'] = false;
         }
     }
     public function isInHttpTest()
@@ -204,8 +203,8 @@ class MyCoverageBridge extends MyCoverage
         if($this->options['test_before_replay']){
             ($this->options['test_before_replay'])();
         }
-        $callback = $this->options['test_list_callback'];
-        $test_list = \call_user_func($callback);
+        ($this->options['test_list_callback'])::BeforeReplayTest();
+        $test_list = ($this->options['test_list_callback'])::GetList();
         $test_list = \explode("\n",$test_list);
         
         foreach($test_list as $line){
@@ -213,10 +212,12 @@ class MyCoverageBridge extends MyCoverage
         }
         $this->stopServer();
         
-        if($this->options['test_after_replay']){
-            ($this->options['test_after_replay'])();
-        }
+        ($this->options['test_list_callback'])::AfterReplayTest();
         $this->doEnd();
+    }
+    protected function onBeforeReport()
+    {
+        ($this->options['test_list_callback'])::OnReport();
     }
     protected function readCommand($request)
     {

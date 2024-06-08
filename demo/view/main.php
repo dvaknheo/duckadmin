@@ -8,7 +8,7 @@
 	<body>
 <div class="layui-header" style ="background-color:#5FB878;padding:1em;">
     <div>
-        <h1>DuckAdmin</h1><span> DuckPhp 的演示</span>
+        <h1>DuckAdmin Demo</h1><span> DuckPhp 的演示</span>
     </div>
 </div>
   <div class="layui-container">
@@ -17,26 +17,27 @@
     <div class="layui-row " style="border-left:1px solid;border-right:1px solid;padding:1em;">
 		<div class="layui-col-md8" >
 <!-- -->
-<h1>欢迎使用 DuckAdmin</h1>
+<h1>欢迎使用 DuckAdmin Demo</h1>
 <pre>
-恭喜你已经把后台跑起来了
+恭喜你已经把后台跑起来了.
+demo 这个工程 ，演示了如何使用第三方的 duckphp 工程作为 库
 但你不应该把本项目当成 `composer project` 来做二次开发，而是应该当成 `composer library` 引入。
 然后分别使用组件
+
+初始用户名是 admin 密码是 123456. sqlite 数据库地址是 runtime/database.db。
+
+如果你要重新安装，请运行  `php cli.php install --force`
+或者
+</pre>
 <pre>
 composer require dvaknheo/duckadmin
-</pre>
-
-你一定会见过很多后台系统，都是在那基础上搞二次开发。
-如果你实在你太懒，对代码里的 DuckPhpDemo 命名空间足够无视，你也可以和他们那样搞。
-但是，这将不是个符合 duckphp 思维的项目。
-
 demo 只是给你提供了如何使用 duckadmin 这个库的方法。
 
 duckadmin 这个 composer library 里 src/DuckAdmin 是个现成的管理模块。
 你应该像 demo 那样使用他。
 
 duckuser 则是附带的用户系统
-demo 这个工程 ，演示了如何使用第三方的 duckphp 工程作为 库
+
 
 （\SimpleBlog\System\SimpleBlogApp::class）
 <a href="<?=$url_blog?>">一个简单的博客系统</a> 这个是接入其他前后台管理系统的一个应用案例。
@@ -54,8 +55,6 @@ demo 这个工程 ，演示了如何使用第三方的 duckphp 工程作为 库
 
 
 </pre>
-
-测试方面
 
   </div>
 <div class="layui-footer" style ="background-color:#FAFAFA;padding:1em;text-align:center;">

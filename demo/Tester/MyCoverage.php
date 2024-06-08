@@ -155,19 +155,23 @@ class MyCoverage
             }
         }
         $this->coverage = $coverage;
-        if($this->options['test_on_report']){
-            ($this->options['test_on_report'])();
-        }
-        (new ReportOfHtmlOfFacade)->process($coverage, $path_report);
-        $report =$this->coverage->getReport();
+        $this->onBeforeReport();
+        (new ReportOfHtmlOfFacade)->process($this->coverage, $path_report);
+        $report = $this->coverage->getReport();
         $lines_tested = $report->getNumExecutedLines();
         $lines_total = $report->getNumExecutableLines();
         $lines_percent = sprintf('%0.2f%%', $lines_tested / $lines_total * 100);
+        
+        $this->coverage = null; 
         return [
             'lines_tested' => $lines_tested,
             'lines_total' => $lines_total,
             'lines_percent' => $lines_percent,
         ];
+    }
+    protected function onBeforeReport()
+    {
+        //
     }
     protected static function include_file($file)
     {
