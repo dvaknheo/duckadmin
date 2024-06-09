@@ -48,15 +48,46 @@ class MyCoverageBridge extends MyCoverage
 
         $this->options['group'] = $this->watchingGetName();
 
-        Helper::regExtCommandClass(static::class);
+        Helper::regExtCommandClass(static::class); // 
         Helper::OnEvent([App::Phase(),'onBeforeRun'],[static::class,'OnBeforeRun']);
         Helper::OnEvent([App::Phase(),'onAfterRun'],[static::class,'OnAfterRun']);
+        //Helper::OnEvent([App::Phase(),'onInit'],[static::class,'OnAfterRun']); registcommand
         
         \DuckPhp\Core\ExitException::Init(); //__define(__ExitException);
         
         return $this;
     }
-    
+    public function onAppPrepare()
+    {
+        $app = App::_();
+        if(MyCoverageBridge::_()->isInHttpTest()){
+            $app->options['ext_options_file'] = 'runtime/DuckPhpApps_test.config.php';
+        } else if (MyCoverageBridge::_()->isInCliTest()){
+            $app->options['ext_options_file'] = 'runtime/DuckPhpApps_test.config.php';
+            //$app->options['ext_options_file_enable'] = false;
+        }
+    }
+    public function isInHttpTest()
+    {
+        $watching_name = $this->watchingGetName();
+        $server_name = Helper::SERVER('HTTP_X_MYCOVERAGE_NAME',''); // do not use this;
+        //$server_name = $_SERVER['HTTP_X_MYCOVERAGE_NAME']??'';
+        if($watching_name === $server_name) {
+            return true;
+        }
+        return false;
+    }
+    public function isInCliTest()
+    {
+        if (PHP_SAPI === 'cli' && App::Current()->options['cli_enable']) {
+            $argv = Helper::SERVER('argv',[]);
+            $cmd = $argv[1]??'NULL';
+            if($cmd ==='testgroup'){
+                return true;
+            }
+        }
+        return false;
+    }
     public static function OnBeforeRun()
     {
         return static::_()->_OnBeforeRun();
@@ -96,37 +127,7 @@ class MyCoverageBridge extends MyCoverage
         
         $this->doBegin();
     }
-    public function onAppPrepare()
-    {
-        $app = App::_();
-        if(MyCoverageBridge::_()->isInHttpTest()){
-            $app->options['ext_options_file'] = 'runtime/DuckPhpApps_test.config.php';
-        } else if (MyCoverageBridge::_()->isInCliTest()){
-            $app->options['ext_options_file'] = 'runtime/DuckPhpApps_test.config.php';
-            //$app->options['ext_options_file_enable'] = false;
-        }
-    }
-    public function isInHttpTest()
-    {
-        $watching_name = $this->watchingGetName();
-        $server_name = Helper::SERVER('HTTP_X_MYCOVERAGE_NAME',''); // do not use this;
-        //$server_name = $_SERVER['HTTP_X_MYCOVERAGE_NAME']??'';
-        if($watching_name === $server_name) {
-            return true;
-        }
-        return false;
-    }
-    public function isInCliTest()
-    {
-        if (PHP_SAPI === 'cli' && App::Current()->options['cli_enable']) {
-            $argv = Helper::SERVER('argv',[]);
-            $cmd = $argv[1]??'NULL';
-            if($cmd ==='testgroup'){
-                return true;
-            }
-        }
-        return false;
-    }
+
     public function _OnAfterRun()
     {
         if (PHP_SAPI === 'cli' && App::Current()->options['cli_enable']) {
@@ -200,11 +201,9 @@ class MyCoverageBridge extends MyCoverage
         $this->doBegin();
         
         $this->options['name'] = 'replay';
-        if($this->options['test_before_replay']){
-            ($this->options['test_before_replay'])();
-        }
-        ($this->options['test_list_callback'])::BeforeReplayTest();
-        $test_list = ($this->options['test_list_callback'])::GetList();
+
+        ($this->options['test_callback_class'])::BeforeReplayTest();
+        $test_list = ($this->options['test_callback_class'])::GetTestList();
         $test_list = \explode("\n",$test_list);
         
         foreach($test_list as $line){
@@ -212,12 +211,12 @@ class MyCoverageBridge extends MyCoverage
         }
         $this->stopServer();
         
-        ($this->options['test_list_callback'])::AfterReplayTest();
+        ($this->options['test_callback_class'])::AfterReplayTest();
         $this->doEnd();
     }
     protected function onBeforeReport()
     {
-        ($this->options['test_list_callback'])::OnReport();
+        ($this->options['test_callback_class'])::OnReport();
     }
     protected function readCommand($request)
     {
@@ -456,7 +455,7 @@ class MyCoverageBridge extends MyCoverage
     /**
      * tests group. use --help for more.
      */
-    public function command_testgroup()
+    public function command_duckcover()
     {
         /*
         $handler = "DuckAdmin\\Test\\Tester@_justTest?parameter=d";
@@ -513,6 +512,8 @@ EOT;
             echo "reporting...\n";
             $groups = is_array($p['report'])?$p['report']:[];
             $this->createReport($groups);
+            //$path_report = $this->getSubPath('path_report');
+            echo "reporting...\n";
         }
         
         var_dump(DATE(DATE_ATOM));

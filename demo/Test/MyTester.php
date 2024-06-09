@@ -67,6 +67,7 @@ EOT;
         $db_file = 'db_fortest.db';
         @unlink(Helper::PathOfRuntime().$db_file);
     }
+
     public function _GetTestList()
     {
         $str ='';

@@ -7,16 +7,24 @@ namespace DuckAdminDemo;
 
 use DuckPhp\DuckPhp;
 use DuckPhp\Foundation\Controller\Helper;
+use DuckAdminDemo\Tester\MyCoverageBridge;
+use DuckAdminDemo\Test\MyTester;
 
 class DemoApp extends DuckPhp
 {
     public $options = [
-      'is_debug' => true,
-        'path' => __DIR__.'/',
+        'is_debug' => true,
         'cli_command_with_fast_installer' => true,  //for install command
+        
+        'path' => __DIR__.'/',
+        'namespace' => 'DuckAdminDemo',
         
         'controller_resource_prefix' => '/',  //for workerman local file
         'path_resource' => 'public',          //for workerman local file
+        
+        'database_driver' => 'sqlite',
+        'duckadmin_demo_enable_test' => true,
+        'duckadmin_demo_enable_workerman' => true,
         
         'app' => [
 //*
@@ -44,7 +52,7 @@ class DemoApp extends DuckPhp
     ];
     public function __construct()
     {
-        // embed welcomepage
+        // embed welcomepage to this class
         $path = explode('\\', static::class);
         $short_class = array_pop($path);
         $ext_options =  [
@@ -58,29 +66,57 @@ class DemoApp extends DuckPhp
     }
     public function action_index()
     {
-        // 这个页面是首页，我们整合欢迎页面入本类
+        // index page
         $data = [];
         $data['url_blog'] = __url(\SimpleBlog\System\SimpleBlogApp::_()->options['controller_url_prefix']) . 'index';
         $data['url_user'] = __url(\DuckUser\System\DuckUserApp::_()->options['controller_url_prefix']) . 'index';
         $data['url_admin'] = __url(\DuckAdmin\System\DuckAdminApp::_()->options['controller_url_prefix']) . 'index';
         $data['url_user_manager'] = __url(\DuckUserManager\System\DuckUserManagerApp::_()->options['controller_url_prefix']) . 'index';
         
+        $data ['duckadmin_demo_enable_test'] = $this->options['duckadmin_demo_enable_test'];
+        
         Helper::Show($data,'main');
     }
     public function onPrepare()
     {
-        \DuckPhp\HttpServer\HttpServer::_(\WorkermanHttpd\WorkermanHttpd::_());
-        parent::onInited();
+        parent::onPrepare();
+        
+        if ($this->options['duckadmin_demo_enable_workerman']) {
+            \DuckPhp\HttpServer\HttpServer::_(\WorkermanHttpd\WorkermanHttpd::_());
+        }
+        if ($this->options['duckadmin_demo_enable_test']) {
+            $this->enableTest();
+        }
     }
     public function onInited()
     {
         parent::onInited();
-        // You Codes,
+        // You Codes Here.
+        if ($this->options['duckadmin_demo_enable_test']) {
+            $this->enableTest(); //TODO
+            //MyCoverageBridge::registCommand();
+        }
     }
     
     public function command_hello()
     {
         // show a command demo
         echo "From this time, you never be alone~\n";
+    }
+    protected function enableTest()
+    {
+        // for coverage test
+        $path_src = realpath(__DIR__.'/../../src/').'/';
+        $path_src = realpath(__DIR__.'/../src/').'/';
+        $tester_options = [
+            'path_src'=> $path_src,
+            'test_server_port'=> 8080,
+            'test_homepage' =>'/index.php/',
+            'test_path_document'=>'public',
+            'test_new_server'=>true,
+            
+            'test_callback_class'=> MyTester::class,
+        ];
+        MyCoverageBridge::_()->init($tester_options)->onAppPrepare();
     }
 }

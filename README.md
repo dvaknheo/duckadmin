@@ -3,11 +3,7 @@
 
 `DuckAdmin` 是二次开发的基线库，注意，是基线库，而不是基线工程。
 
-
-
 `DuckAdmin` 只做了公司员工结构的基本代码，通用业务。你可以在这之上添加更多符合公司业务的功能。
-
-
 
 甚至还带有 覆盖测试的库。
 
@@ -25,27 +21,19 @@ SimpleBlog 演示了 管理员
 
 ## 演示 demo
 
-演示需求：  sqlite
-
-clone 本工程。
+扩展需求：  sqlite
 
 ```
+composer require dvaknheo/duckadmin
+cd ./vendor/dvaknheo/duckadmin
 cd demo
-php cli.php install # 根据提示安装
-php cli.php run  # 然后访问页面
+php cli.php run
 ```
-访问 `http://127.0.0.1:8080/app/admin/` 打开管理后台
-
-`cli_dev.php` `index_dev.php` 是开发测试的版本
+访问 `http://127.0.0.1:8080/` 打开管理后台
 
 ### 实际应用
-参考 demo
-composer 引入
-```
-composer require dvaknheo/duckamin 
 
 ```
-
 修改你的 index.php
 
 ```php
@@ -54,7 +42,6 @@ $options = [
     'app' => [
         \DuckAdmin\System\DuckAdminApp::class => [      // 后台管理系统
             'controller_url_prefix' => 'app/admin/',    // 访问路径
-            'controller_resource_prefix' => 'res/',     // 资源文件前缀
             
         ],
     ],
@@ -141,5 +128,34 @@ Helper::Admin() 就是
 如果你实在你太懒，对代码里的 DuckPhpDemo 命名空间足够无视，你也可以和他们那样搞。
 但是，这将不是个符合 duckphp 思维的项目。
 
+Demo
+```
+├── System/DemoApp.php
+├── Test
+│   └── MyTester.php
+├── cli.php
+├── config
+│   └── DuckPhpSettings.config.php.sample
+├── public
+│   └── index.php
+├── runtime
+│   └── database.db
+└── view
+    ├── DuckAdmin
+    │   └── account
+    │       └── login.php
+    ├── DuckUser
+    │   ├── Home
+    │   │   ├── inc-foot.php
+    │   │   ├── inc-head.php
+    │   │   ├── index.php
+    │   │   └── password.php
+    │   ├── inc-foot.php
+    │   ├── inc-head.php
+    │   ├── login.php
+    │   ├── main.php
+    │   └── register.php
+    └── main.php
+```
 
 
