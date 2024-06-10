@@ -3,7 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-namespace DuckAdminDemo\Tester;
+namespace DuckCoverage;
 
 interface MyCoverageBridgeCBInterface
 {

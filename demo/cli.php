@@ -5,4 +5,4 @@ require_once(__DIR__.'/../vendor/autoload.php');
 $options=[
 ];
 
-\DuckAdminDemo\DemoApp::RunQuickly($options);
+\DuckAdminDemo\System\DemoApp::RunQuickly($options);

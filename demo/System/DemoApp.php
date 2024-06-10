@@ -3,11 +3,11 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-namespace DuckAdminDemo;
+namespace DuckAdminDemo\System;
 
 use DuckPhp\DuckPhp;
 use DuckPhp\Foundation\Controller\Helper;
-use DuckAdminDemo\Tester\MyCoverageBridge;
+use DuckCoverage\MyCoverageBridge;
 use DuckAdminDemo\Test\MyTester;
 
 class DemoApp extends DuckPhp
@@ -16,7 +16,7 @@ class DemoApp extends DuckPhp
         'is_debug' => true,
         'cli_command_with_fast_installer' => true,  //for install command
         
-        'path' => __DIR__.'/',
+        'path' => __DIR__.'/../',
         'namespace' => 'DuckAdminDemo',
         
         'controller_resource_prefix' => '/',  //for workerman local file
@@ -107,7 +107,6 @@ class DemoApp extends DuckPhp
     {
         // for coverage test
         $path_src = realpath(__DIR__.'/../../src/').'/';
-        $path_src = realpath(__DIR__.'/../src/').'/';
         $tester_options = [
             'path_src'=> $path_src,
             'test_server_port'=> 8080,
