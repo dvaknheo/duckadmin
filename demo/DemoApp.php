@@ -81,9 +81,11 @@ class DemoApp extends DuckPhp
     {
         parent::onPrepare();
         
+        //use workerman
         if ($this->options['duckadmin_demo_enable_workerman']) {
             \DuckPhp\HttpServer\HttpServer::_(\WorkermanHttpd\WorkermanHttpd::_());
         }
+        //enable test;
         if ($this->options['duckadmin_demo_enable_test']) {
             $this->enableTest();
         }
@@ -92,12 +94,10 @@ class DemoApp extends DuckPhp
     {
         parent::onInited();
         // You Codes Here.
-        if ($this->options['duckadmin_demo_enable_test']) {
-            $this->enableTest(); //TODO
-            //MyCoverageBridge::registCommand();
-        }
     }
-    
+    /**
+     * show a hello world in console.
+     */
     public function command_hello()
     {
         // show a command demo
@@ -117,6 +117,7 @@ class DemoApp extends DuckPhp
             
             'test_callback_class'=> MyTester::class,
         ];
+        // this is specail. must before init;
         MyCoverageBridge::_()->init($tester_options)->onAppPrepare();
     }
 }

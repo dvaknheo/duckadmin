@@ -48,7 +48,8 @@ class MyCoverageBridge extends MyCoverage
 
         $this->options['group'] = $this->watchingGetName();
 
-        Helper::regExtCommandClass(static::class); // 
+        Helper::OnEvent([App::Phase(),'onInit'],[static::class,'OnAppInit']);
+        
         Helper::OnEvent([App::Phase(),'onBeforeRun'],[static::class,'OnBeforeRun']);
         Helper::OnEvent([App::Phase(),'onAfterRun'],[static::class,'OnAfterRun']);
         //Helper::OnEvent([App::Phase(),'onInit'],[static::class,'OnAfterRun']); registcommand
@@ -88,6 +89,10 @@ class MyCoverageBridge extends MyCoverage
         }
         return false;
     }
+    public static function OnAppInit()
+    {
+        return static::_()->_OnAppInit();
+    }
     public static function OnBeforeRun()
     {
         return static::_()->_OnBeforeRun();
@@ -95,6 +100,10 @@ class MyCoverageBridge extends MyCoverage
     public function OnAfterRun()
     {
         return static::_()->_OnAfterRun();
+    }
+    public function _OnAppInit()
+    {
+        Helper::regExtCommandClass(static::class);
     }
     public function _OnBeforeRun()
     {
@@ -476,6 +485,7 @@ class MyCoverageBridge extends MyCoverage
 --replay
 --call SomeApp/Test/Tester@runX
 --report [a b c]
+
 EOT;
             echo $str;
             return;
@@ -511,9 +521,13 @@ EOT;
         if($p['report']??false){
             echo "reporting...\n";
             $groups = is_array($p['report'])?$p['report']:[];
+            $time_begin = microtime(true);
+            $path_group = $this->getReportPath($groups);
             $this->createReport($groups);
-            //$path_report = $this->getSubPath('path_report');
-            echo "reporting...\n";
+            $time_end = microtime(true);
+            $time_cost = $time_end - $time_begin;
+            $time_cost = sprintf('%0.3f',$time_cost);
+            echo "time_cost   : $time_cost seconds \noutput path : $path_group \n";
         }
         
         var_dump(DATE(DATE_ATOM));

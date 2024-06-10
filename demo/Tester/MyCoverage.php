@@ -115,24 +115,32 @@ class MyCoverage
     {
         return $this->coverage;
     }
-    public function createReport($groups =[])
+    protected function getReportPath($groups)
     {
-        $path_src = $this->getSubPath('path_src');
-        $path_dump = $this->getSubPath('path_dump');
         $path_report = $this->getSubPath('path_report');
-        
-        
-        if(empty($groups)){
+        if(!$this->options['test_report_direct']){
+            if(empty($groups)){
             $groups =[$this->options['group']];
         }
-        if(!$this->options['test_report_direct']){
             if(count($groups)===1){
                 $path_report = $path_report. $groups[0];
             }else{
                 $path_report = $path_report. DATE('y-m-d');
             }
         }
+        return $path_report;
+    }
+    protected $path_report = null;
+    
+    public function createReport($groups =[])
+    {
+        $path_src = $this->getSubPath('path_src');
+        $path_dump = $this->getSubPath('path_dump');
         
+        
+        
+        $path_report=$this->getReportPath($groups);
+        $this->path_report = $path_report;
         $coverage = new CodeCoverage();
         $coverage->filter()->addDirectoryToWhitelist($path_src);
         $coverage->setTests([
