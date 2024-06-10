@@ -83,7 +83,7 @@ class MyCoverageBridge extends MyCoverage
         if (PHP_SAPI === 'cli' && App::Current()->options['cli_enable']) {
             $argv = Helper::SERVER('argv',[]);
             $cmd = $argv[1]??'NULL';
-            if($cmd ==='testgroup'){
+            if($cmd ==='duckcover'){
                 return true;
             }
         }

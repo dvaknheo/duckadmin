@@ -24,7 +24,7 @@ demo 这个工程 ，演示了如何使用第三方的 duckphp 工程作为 库
 但你不应该把本项目当成 `composer project` 来做二次开发，而是应该当成 `composer library` 引入。
 然后分别使用组件
 
-初始用户名是 admin 密码是 123456. sqlite 数据库地址是 runtime/database.db。
+sqlite 数据库地址是 runtime/database.db。
 
 如果你要重新安装，请运行  `php cli.php install --force`
 或者
@@ -47,10 +47,10 @@ duckuser 则是附带的用户系统
 
 （\DuckAdmin\System\DuckAdminApp::class） 
 <a href="<?=$url_admin?>">管理后台入口在这里</a> 
-这个管理后台，模仿的是 webman admin 的后台， 并不完美，缺乏现在常见管理后台登录再跳转回来等的功能
+这个管理后台，模仿的是 webman admin 的后台，初始用户名是 admin 密码是 123456
 
 （\DuckUserManager\System\DuckUserManagerApp::class）<a href="<?=$url_user_manager?>">用户管理后台在这里</a>
-很简陋的用户管理系统。 (需要后台登录之后才能访问)，没整合 webman admin 的用户管理后台。
+很简陋的用户管理系统。 (需要后台登录之后才能访问)。
 
 
 
