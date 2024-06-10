@@ -20,7 +20,8 @@
             "DuckAdmin\\": "src/DuckAdmin",
             "DuckUserManager\\": "src/DuckUserManager",
             "DuckUser\\": "src/DuckUser",
-            "SimpleBlog\\": "src/SimpleBlog"
+            "SimpleBlog\\": "src/SimpleBlog",
+            "DuckCoverage\\": "src/DuckCoverage"
         }
     },
     "require": {
