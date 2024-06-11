@@ -30,22 +30,22 @@ class DemoApp extends DuckPhp
 //*
             \DuckAdmin\System\DuckAdminApp::class => [      // 后台管理系统
                 'controller_url_prefix' => 'app/admin/',    // 访问路径
-                'controller_resource_prefix' => '/res/app/admin/',     // 资源文件前缀
+                'controller_resource_prefix' => 'res/',     // 资源文件前缀
             ],
 //*/
             \DuckUser\System\DuckUserApp::class => [
                 'controller_url_prefix' => 'user/',             // 访问路径
-                'controller_resource_prefix' => '/res/user',    // 资源文件前缀
+                'controller_resource_prefix' => 'res/',    // 资源文件前缀
             ],
 //*/
             \DuckUserManager\System\DuckUserManagerApp::class => [
                 'controller_url_prefix' => 'app/admin/',            // 访问路径
-                'controller_resource_prefix' => '/res/app/admin/',  // 资源文件前缀
+                'controller_resource_prefix' => 'res/',  // 资源文件前缀
             ],
 //*/
             \SimpleBlog\System\SimpleBlogApp::class => [
                 'controller_url_prefix' => 'blog/',                 // 访问路径
-                'controller_resource_prefix' => '/res/blog',        // 资源文件前缀
+                'controller_resource_prefix' => 'res/',        // 资源文件前缀
             ],
 //*/
         ],

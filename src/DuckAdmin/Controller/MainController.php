@@ -29,10 +29,12 @@ class MainController extends Base
         $admin_id = AdminAction::_()->getAdminIdBySession();
         if (!$admin_id) {
             $url_back = Helper::GET('back_url','');
-            $last_phase = App::Phase(App::Root()->getOverridingClass());
+            $url_back = $url_back === '/' ? '': $url_back;
+            if($url_back){
+                $last_phase = App::Phase(App::Root()->getOverridingClass());
                 $url_back = __url(ltrim($url_back,'/'));
-            App::Phase($last_phase);
-            
+                App::Phase($last_phase);
+            }
             Helper::Show(['url_back'=>$url_back], 'account/login');
             return;
         }

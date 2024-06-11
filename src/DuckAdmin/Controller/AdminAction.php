@@ -53,6 +53,7 @@ class AdminAction implements AdminActionInterface
         $url = $url ?? Helper::PathInfo();
         
         try{
+            //__var_log($_SESSION?? null);
             $admin_id = Session::_()->getCurrentAdminId();
             $admin_id = $admin_id ? $admin_id :0;
             AccountBusiness::_()->canAccess($admin_id, $controller, $action);
