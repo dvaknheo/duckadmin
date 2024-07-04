@@ -22,14 +22,13 @@
 ## 演示 demo
 扩展需求：  sqlite
 
-
 ```
 composer require dvaknheo/duckadmin
-cd ./vendor/dvaknheo/duckadmin
-cd demo
+cd ./vendor/dvaknheo/duckadmin/demo
 php cli.php run
 ```
-访问 `http://127.0.0.1:8080/` 打开管理后台
+
+访问 `http://127.0.0.1:8080/` 打开 Demo
 
 ###
 
@@ -57,6 +56,8 @@ $options = [
     'app' => [
         \DuckAdmin\System\DuckAdminApp::class => [      // 后台管理系统
             'controller_url_prefix' => 'app/admin/',    // 访问路径
+            // 'database_driver' =>'mysql',  // 如果你想改为 mysql 驱动
+            //... 其他配置
             
         ],
     ],
@@ -75,12 +76,13 @@ php cli.php run
 ```
 访问 http://127.0.0.1:8080/app/admin/index 打开管理后台。
 
-演示的管理后台包括 后台系统， 用户系统， 一个应用例子，和一个用户管理例子。
+这里只是 DuckAdmin 后台，不包括demo里的用户系统，用户管理，而博客例子
 
-## 高级话题
+## 二次开发
 
 ### 前置知识
-一些 duckphp 框架的知识
+
+一些 duckphp 框架的基础知识不再这里重复
 
 ### 调整选项
 
@@ -96,7 +98,7 @@ DuckAdmin 支持 sqlite /mysql 两种模式的数据库 你可以在选项里切
 
 所以我们有了`controller_resource_prefix` 选项。
 
-那资源文件在哪里呢？  DuckAdmin/res 目录之下。
+那资源文件在哪里呢？  `src/DuckAdmin/res` 目录之下。
 
 你可以设置这个选项为完整的 http 路径，而不使用默认的
 
@@ -104,13 +106,15 @@ DuckAdmin 支持 sqlite /mysql 两种模式的数据库 你可以在选项里切
 
 资源文件安装要点
 
-因为扯到安装 ，我们设置  controller_resource_prefix ，克隆文件的必要性
+因为扯到安装 ，我们设置 `controller_resource_prefix` ，克隆文件的必要性
 
 ### 接管视图
 
 `demo/view/DuckAdmin` 目录 就是demo工程调整后的视图
 
 ### 使用 API
+
+在你的工程里
 
 使用 `DuckPhp\Foundation\Helper::Admin()` 获得 Admin 对象，
 `AdminId($check_login)` , `AdminName($check_login)`  则是获取当前Id, 管理员名称
@@ -119,9 +123,15 @@ DuckAdmin 支持 sqlite /mysql 两种模式的数据库 你可以在选项里切
 使用 `DuckPhp\Foundation\Helper::User()` 获得 User 通用对象，
 具体看 DuckPhp的文档， `DuckPhp\GlobalUser\GlobalUser` 的类介绍。
 
-### 修改实现
+### 修改现有实现
 
-## 覆盖测试测试
+在 duckphp 框架的基础知识，不
+
+### 高级
+
+菜单和权限。 如何在我的控制器里，加入菜单。 参考 demo 里 用户管理系统 的实现
+
+### 覆盖测试测试
 ```
 cd demo
 php cli.php duckcover  --watch testname --replay --report
@@ -142,12 +152,8 @@ testname 会在 demo/runtime 目录底下生成 test_coverage 生成报告
 
 `php cli.php require DuckAdmin/System/DuckAdminApp`
 
-这样把 DuckAdmin 加进去
-
-答：考虑过，不过这容易出现： 这东西是从哪里来的。 所以还是手动配置你的 app 吧（考虑 选项里加一句 `allow_ext_app`
-
-测试
-
+可以
+ 
 ### 其他非 DuckPhp 框架代码如何整合 DuckAdmin 的管理后台系统
 
 DuckAdminDemoApp::init([]); 之后
@@ -159,6 +165,11 @@ Helper::AdminId(); Helper::AdminName();
 你一定会见过很多后台系统，都是在那基础上搞二次开发。
 如果你实在你太懒，对代码里的 DuckPhpDemo 命名空间足够无视，你也可以和他们那样搞。
 但是，这将不是个符合 duckphp 思维的项目。
+
+缺乏 valido 验证系统 本来用 thinkphp 的应该可以，可惜太过复杂，后面版本又专一
+
+缺乏 表单生成器， 这其实不重要。
+
 
 ## Demo 的文件结构
 

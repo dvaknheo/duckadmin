@@ -34,12 +34,28 @@ class DuckAdminApp extends DuckPhp
         
         //'database_driver'=>'mysql',
         'database_driver'=>'sqlite',
+        //'database_driver_providers'=>['sqlite','mysql'],
         'need_install'=>true,
         'cli_command_with_fast_installer' => true,
         
         'table_prefix' =>'da_',
         
-        
+        'install_input_desc' => "
+设置超级管理员：
+----
+默认管理员：[{username}]
+默认密码  ：[{password}]
+重复密码  ：[{password_confirm}]
+
+",
+        'install_options'=>[
+            'username'=>'admin',
+            'password'=>'123456',
+            'password_confirm'=>'123456',
+        ],
+        'install_callback' => [
+            __CLASS__, 'OnInstall',
+        ],
     ];
     protected function onPrepare()
     {
@@ -49,37 +65,12 @@ class DuckAdminApp extends DuckPhp
     {
         parent::onInited();
     }
-    public function onInstall()
+    public function OnInstall($input_options)
     {
-        // for FastInstaller
-        $desc =<<<EOT
-设置超级管理员：
-----
-默认管理员：[{username}]
-默认密码  ：[{password}]
-重复密码  ：[{password_confirm}]
-
-EOT;
-        $input_options = [
-            'username'=>'admin',
-            'password'=>'123456',
-            'password_confirm'=>'123456',
-        ];
-        while(true){
-            try{
-                $input_options = Console::_()->readLines($input_options, $desc);
-                $this->doInstall($input_options['username'],$input_options['password'],$input_options['password_confirm']);
-            }catch(\Exception $ex){
-                echo "----\n";
-                echo $ex->getMessage();
-                echo "\n";
-                continue;
-            }
-            break;
-        };
+        return static::_()->_OnInstall($input_options);
     }
-    protected function doInstall($username,$password,$password_confirm)
+    public function _OnInstall($input_options)
     {
-        InstallBusiness::_()->install($username,$password,$password_confirm);
+        InstallBusiness::_()->install($input_options['username'], $input_options['password'], $input_options['password_confirm']);
     }
 }
