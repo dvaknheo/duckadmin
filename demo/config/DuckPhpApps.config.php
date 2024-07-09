@@ -6,7 +6,7 @@ return array (
     array (
       0 => 
       array (
-        'dsn' => 'sqlite:database.db',
+        'dsn' => 'sqlite:demodb.db',
         'username' => '',
         'password' => '',
       ),
