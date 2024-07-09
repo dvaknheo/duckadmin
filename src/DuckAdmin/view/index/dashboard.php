@@ -12,8 +12,8 @@
 	<body class="pear-container">
 		<div>
             <pre>
-                重载 MainController::dashboard 以获得数据。
-                MainController::_(MyController::_());
+                重载 AccountController::dashboard 以获得数据。
+                AccountController::_(MyAccountController::_());
                 
                 重载这个页面以设置你的系统
             </pre>

@@ -47,6 +47,19 @@ php cli.php install ## --force 可以强制执行 --help 查看参数
 
 ## 实际应用
 
+### 从零开始
+```
+composer require dvaknheo/duckphp
+./vendor/bin/duckphp install
+php cli.php require DuckAdmin/System/DuckAdminApp
+php cli.php require DuckAdmin/System/DuckAdminApp
+php cli.php require DuckAdmin/System/DuckAdminApp
+php cli.php require DuckAdmin/System/DuckAdminApp
+
+```
+
+### 第二种方案
+
 ```
 修改你的 index.php
 
@@ -65,11 +78,12 @@ $options = [
 DuckPhp::RunQuickly([]);
 ```
 
-## 安装程序
+运行
+```
+php cli.php require DuckAdmin/System/DuckAdminApp
+```
 
-```
-php cli.php install ## --force 可以强制执行 --help 查看参数
-```
+## 安装程序
 运行
 ```
 php cli.php run

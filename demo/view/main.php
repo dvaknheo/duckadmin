@@ -38,6 +38,9 @@ duckadmin 这个 composer library 里 src/DuckAdmin 是个现成的管理模块�
 
 duckuser 则是附带的用户系统
 
+（\DuckAdmin\System\DuckAdminApp::class） 
+<a href="<?=$url_admin?>">管理后台入口在这里</a> 
+这个管理后台，模仿的是 webman admin 的后台，初始用户名是 admin 密码是 123456
 
 （\SimpleBlog\System\SimpleBlogApp::class）
 <a href="<?=$url_blog?>">一个简单的博客系统</a> 这个是接入其他前后台管理系统的一个应用案例。
@@ -45,9 +48,6 @@ duckuser 则是附带的用户系统
 （\DuckUser\System\DuckUserApp::class） <a href="<?=$url_user?>">用户基本注册登录页面在这里</a>
 这是个很简陋的用户系统。提供了基本的用户接口。这个用户系统对应的
 
-（\DuckAdmin\System\DuckAdminApp::class） 
-<a href="<?=$url_admin?>">管理后台入口在这里</a> 
-这个管理后台，模仿的是 webman admin 的后台，初始用户名是 admin 密码是 123456
 
 （\DuckUserManager\System\DuckUserManagerApp::class）<a href="<?=$url_user_manager?>">用户管理后台在这里</a>
 很简陋的用户管理系统。 (需要后台登录之后才能访问)。

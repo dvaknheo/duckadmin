@@ -36,6 +36,7 @@ class DuckAdminApp extends DuckPhp
         'database_driver'=>'sqlite',
         //'database_driver_providers'=>['sqlite','mysql'],
         'need_install'=>true,
+        'error_need_install' =>'_sys/error_need_install',
         'cli_command_with_fast_installer' => true,
         
         'table_prefix' =>'da_',
