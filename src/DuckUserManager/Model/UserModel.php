@@ -14,7 +14,6 @@ class UserModel
     {
         $this->table_name ="Users";
     }
-    
     public function getUserList($where=[], $page = 1, $page_size = 10)
     {
      

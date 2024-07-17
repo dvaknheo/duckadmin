@@ -10,6 +10,8 @@
         <!-- 数据表格 -->
         <div class="layui-card">
             <div class="layui-card-body">
+切换到现实全部
+切换到正常
 <table width="100%" border="1">
 <tr>
 	<th>ID</th>
@@ -22,13 +24,12 @@ foreach ($list as $v) {
 <tr>
 	<td><?=$v['id']?></td>
 	<td><?=$v['username']?></td>
-	<td><a href="<?=$v['url_edit']?>">编辑</a></td>
+	<td><a href="<?=$v['url_delete']?>">删除</a></td>
 </tr>
 <?php }?>
 </table>
             </div>
         </div>
         <div>分页:<?=$pager?></div>
-
     </body>
 </html>

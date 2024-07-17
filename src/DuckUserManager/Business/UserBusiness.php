@@ -17,9 +17,13 @@ class UserBusiness
         //我们这里要加个显示被禁用的用户等
         return UserModel::_()->getUserList($conditions, $page, $page_size);
     }
-    public function changeUserStatus($id,$stat)
+    public function deleteUser($admin_id,$id)
+    {
+        $ret = UserModel::G()->disable($id);
+        //ActionLogModel::_()->log("禁用 {$id}，结果", "调整用户");
+    }
+    public function unDeleteUser($admin_id,$id)
     {
         //$ret = UserModel::G()->disable($id);
-        //ActionLogModel::_()->log("禁用 {$id}，结果", "调整用户");
     }
 }
