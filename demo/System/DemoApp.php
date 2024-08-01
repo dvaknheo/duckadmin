@@ -94,6 +94,8 @@ class DemoApp extends DuckPhp
     {
         parent::onInited();
         // You Codes Here.
+        //if(databasefilenoe eexits) create databasefile
+        // run install
     }
     /**
      * show a hello world in console.

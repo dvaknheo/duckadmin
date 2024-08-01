@@ -96,6 +96,46 @@ php cli.php run
 
 这里只是 DuckAdmin 后台，不包括demo里的用户系统，用户管理，而博客例子
 
+## 第三种模式
+
+你自己的工程里加:
+//composer require dvaknheo/duckadmin
+
+
+```
+<?php
+//index.php
+$options = [
+    'skip_404'=>true,
+    //...
+    // 'allow_require_ext_app' => true,
+    'app' => [
+            \DuckAdmin\System\DuckAdminApp::class => [      // 后台管理系统
+                'controller_url_prefix' => 'app/admin/',    // 访问路径
+                // 'database_driver' =>'mysql',  // 如果你想改为 mysql 驱动
+                //... 其他配置
+                
+            ],
+        ],
+    ];
+];
+
+$flag = DuckPhp::RunQuickly($options);
+
+if($flag){return;}
+
+// DuckPhp::
+ 
+
+```
+
+使用 `DuckPhp\Foundation\Helper::Admin()` 获得 Admin 对象，
+`AdminId($check_login)` , `AdminName($check_login)`  则是获取当前Id, 管理员名称
+具体看 DuckPhp的文档， `DuckPhp\GlobalAdmin\GlobalAdmin` 的类介绍。
+
+使用 `DuckPhp\Foundation\Helper::User()` 获得 User 通用对象，
+具体看 DuckPhp的文档， `DuckPhp\GlobalUser\GlobalUser` 的类介绍。
+
 ## 二次开发
 
 ### 前置知识
