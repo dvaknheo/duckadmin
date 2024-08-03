@@ -26,16 +26,13 @@ demo 这个工程 ，演示了如何使用第三方的 duckphp 工程作为 库
 
 sqlite 数据库地址是 runtime/database.db。
 
-如果你要重新安装，请运行  `php cli.php install --force`
+如果你要重新安装，请运行  `php cli.php install`
 或者
 </pre>
 <pre>
-composer require dvaknheo/duckadmin
 demo 只是给你提供了如何使用 duckadmin 这个库的方法。
-
 duckadmin 这个 composer library 里 src/DuckAdmin 是个现成的管理模块。
 你应该像 demo 那样使用他。
-
 duckuser 则是附带的用户系统
 
 （\DuckAdmin\System\DuckAdminApp::class） 
@@ -55,7 +52,7 @@ duckuser 则是附带的用户系统
 
 
 </pre>
-
+<a href="main.php">另一个简洁版本</a>
   </div>
 <div class="layui-footer" style ="background-color:#FAFAFA;padding:1em;text-align:center;">
 感谢 <a href="https://www.layui.com/"> LayUI </a> 前端支持，为我这个不懂得好看的能勉强做出来

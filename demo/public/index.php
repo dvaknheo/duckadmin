@@ -8,7 +8,7 @@ $file = __DIR__.'/../../vendor/autoload.php';
 if(is_file($file)){
  require_once $file;
 }else{
-    $file = __DIR__.'/../../../../vendor/autoload.php';
+    $file = __DIR__.'/../../../../autoload.php';
     if(is_file($file)){
         require_once $file;
     }

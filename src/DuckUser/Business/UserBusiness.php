@@ -45,7 +45,7 @@ class UserBusiness
         $password = $form['password'];
         $user = UserModel::_()->getUserByUsername($username);
         Helper::BusinessThrowOn(empty($user), "用户不存在");
-        Helper::BusinessThrowOn(!empty($user['delete_at']), "用户已不存在");
+        Helper::BusinessThrowOn(!empty($user['deleted_at']), "用户已不存在");
         
         $flag = UserModel::_()->verifyPassword($user, $password);
         Helper::BusinessThrowOn(!$flag, "密码错误");

@@ -19,8 +19,9 @@ class UserBusiness
     }
     public function deleteUser($admin_id,$id)
     {
-        $ret = UserModel::G()->disable($id);
-        //ActionLogModel::_()->log("禁用 {$id}，结果", "调整用户");
+        //ActionLogModel::_()->log("{$admin_id}禁用 {$id}，结果", "调整用户");
+        $ret = UserModel::_()->deleteUser($id);
+        return $ret;
     }
     public function unDeleteUser($admin_id,$id)
     {

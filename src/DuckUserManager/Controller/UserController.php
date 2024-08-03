@@ -32,10 +32,11 @@ class UserController implements AdminControllerInterface
         
         $list2 =[];
         foreach($list as $v){
+            $t =[];
             $t['id'] = $v['id'];
             $t['username'] = __h($v['username']);
-            $hash = $this->getHash($t['id']);
-            $t['url_delete'] = __url('delete?id='.$v['id'].'&hash='.$hash);
+            $hash = $this->getHash($v['id']);
+            $t['url_delete'] = __url('user/delete?id='.$v['id'].'&hash='.$hash);
             $list2[]=$t;
         }
         
@@ -55,15 +56,15 @@ class UserController implements AdminControllerInterface
         $hash = Helper::Get('hash');
         $id = Helper::Get('id');
         
-        $this->checkHash($id);
+        $this->checkHash($id,$hash);
         
-        $ret = UserBusiness::_()->changeUserStatus(Helper::AdminId(), $id);
+        $ret = UserBusiness::_()->deleteUser(Helper::AdminId(), $id);
 		Helper::ShowJson($ret);
     }
     protected function getHash($id)
     {
         $session_id = SystemWrapper::session_id();
-        return md5($session_id.$v['id']);
+        return md5($session_id.$id);
     }
     protected function checkHash($id,$hash)
     {
