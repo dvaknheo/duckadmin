@@ -5,6 +5,9 @@
  */
 namespace DuckAdminDemo\System;
 
+
+use DuckPhp\Component\DbManager;
+use DuckPhp\Core\CoreHelper;
 use DuckPhp\DuckPhp;
 use DuckPhp\Foundation\Controller\Helper;
 use DuckCoverage\MyCoverageBridge;
@@ -92,10 +95,36 @@ class DemoApp extends DuckPhp
     }
     public function onInited()
     {
+        $this->checkDemoDb(); // if no default sqlite db file ，create it
+        
         parent::onInited();
         // You Codes Here.
-        //if(databasefilenoe eexits) create databasefile
-        // run install
+    }
+    protected function checkDemoDb()
+    {
+        $dsn = $this->options['database_list'][0]['dsn']??null;
+        if ($dsn !=='sqlite:demodb.db') {
+            return;
+        }
+        $file = realpath(CoreHelper::PathOfRuntime()). '/demodb.db';
+        if(is_file($file)){
+            return;
+        }
+            $sqlfile = 'demodb.sql';
+        $full_file = $this->extendFullFile($this->options['path'], $this->options['path_config']??'config', $sqlfile);
+        
+        $sql = file_get_contents($full_file);
+        $sqls = explode(";\n", ''.$sql);
+        foreach ($sqls as $sql) {
+            if (empty($sql)) {
+                continue;
+            }
+            if ($this->options['sql_dump_debug_show_sql']??false) {
+                echo $sql;
+                echo ";\n";
+            }
+            $flag = DbManager::Db()->execute($sql);
+        }
     }
     /**
      * show a hello world in console.
