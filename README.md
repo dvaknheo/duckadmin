@@ -39,39 +39,43 @@ demo 里
 
 动态配置文件保存在 `vendor/dvaknheo/duckadmin/demo/config/DuckPhpApps.config.php`
 
-删除这两个，可重新执行安装程序。
+删除这两个，可重新执行下列安装程序。
 
 ```
 php cli.php install ## --force 可以强制执行 --help 查看参数
 ```
 
+## 正常使用模式
+### 第一种模式：新建 duckphp 工程并应用。
+当你想复制 demo 例子，不想做任何操作，执行以下命令
 
-## 实际应用
-
-### 复制 demo 的效果
 
 ```
-composer require dvaknheo/duckphp
-./vendor/bin/duckphp install
 composer require dvaknheo/duckadmin
+./vendor/bin/duckphp install
+#todo sed // 'allow_require_ext_app' => true,
 php cli.php require DuckAdmin/System/DuckAdminApp
 php cli.php require DuckUser/System/DuckUserApp
 php cli.php require SimpleBlog/System/SimpleBlogApp
 php cli.php require DuckUserMangager/System/DuckUserMangagerApp
+php cli.php run
 
 ```
+访问 http://127.0.0.1:8080/app/admin/index 打开管理后台。
+
+
+### 第二种模式，手动修改 duckphp工程嵌入
+
 零代码虽然舒服，但不是最后解决方案
 
+当你熟悉了 duckphp 工程结构之后。
 
-### 第二种方案
-
-```
-修改你的 System/App.php
+在你的duckphp工程里修改你的 System/App.php 相关 配置
 
 ```php
     public $options = [
         //...
-        // 'allow_require_ext_app' => true,
+
         'app' => [
                 \DuckAdmin\System\DuckAdminApp::class => [      // 后台管理系统
                     'controller_url_prefix' => 'app/admin/',    // 访问路径
@@ -82,12 +86,7 @@ php cli.php require DuckUserMangager/System/DuckUserMangagerApp
             ],
         ];
 ```
-运行
-```
-php cli.php require DuckAdmin/System/DuckAdminApp
-```
 
-## 安装程序
 运行
 ```
 php cli.php run
@@ -96,19 +95,19 @@ php cli.php run
 
 这里只是 DuckAdmin 后台，不包括demo里的用户系统，用户管理，而博客例子
 
-## 第三种模式
 
-你自己的工程里加:
-//composer require dvaknheo/duckadmin
+### 第三种模式：独立工程嵌入
 
+当你要给个没有后台系统的  php-fpm 工程里使用。
 
+ `composer require dvaknheo/duckadmin`
+
+在你的 fpm 入口文件里添加代码：
 ```
 <?php
 //index.php
 $options = [
     'skip_404'=>true,
-    //...
-    // 'allow_require_ext_app' => true,
     'app' => [
             \DuckAdmin\System\DuckAdminApp::class => [      // 后台管理系统
                 'controller_url_prefix' => 'app/admin/',    // 访问路径
@@ -124,19 +123,17 @@ $flag = DuckPhp::RunQuickly($options);
 
 if($flag){return;}
 
-// DuckPhp::
+$admin_id = \DuckPhp\Foundation\Helper::AdminId(false);
  
+//your code here
 
 ```
-
-使用 `DuckPhp\Foundation\Helper::Admin()` 获得 Admin 对象，
-`AdminId($check_login)` , `AdminName($check_login)`  则是获取当前Id, 管理员名称
-具体看 DuckPhp的文档， `DuckPhp\GlobalAdmin\GlobalAdmin` 的类介绍。
-
-使用 `DuckPhp\Foundation\Helper::User()` 获得 User 通用对象，
-具体看 DuckPhp的文档， `DuckPhp\GlobalUser\GlobalUser` 的类介绍。
+可以看出，多了 skip_404 选项。 当返回404 的时候，自行处理其他业务
+这里得到的 admin_id 就是登录后获得的id.
 
 ## 二次开发
+
+
 
 ### 前置知识
 
@@ -200,23 +197,13 @@ testname 会在 demo/runtime 目录底下生成 test_coverage 生成报告
  
 ### 其他非 DuckPhp 框架代码如何整合 DuckAdmin 的管理后台系统
 
-DuckAdminDemoApp::init([]); 之后
-
-Helper::Admin() 就是管理员对象，
-Helper::AdminId(); Helper::AdminName();
-
 ### 登录事件管理
 暂缺
 
-## TODO
-
-
-缺乏 valido 验证系统 本来用 thinkphp 的应该可以，可惜太过复杂，后面版本又专一
-
-缺乏 表单生成器， 这其实不重要。
 
 
 ## Demo 的文件结构
+
 
 ```
 ├── System
@@ -260,3 +247,9 @@ Test 是测试覆盖
 runtime 是数据库文件
 
 
+## TODO
+
+
+缺乏 validor 验证系统 本来用 thinkphp 的应该可以，可惜太过复杂，后面版本又专一
+
+缺乏 表单生成器， 这其实不重要。

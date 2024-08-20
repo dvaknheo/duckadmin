@@ -102,6 +102,10 @@ class DemoApp extends DuckPhp
     }
     protected function checkDemoDb()
     {
+        //这里对测试程序造成干扰
+        if ($this->options['duckadmin_demo_enable_test']) {
+            return;
+        }
         $dsn = $this->options['database_list'][0]['dsn']??null;
         if ($dsn !=='sqlite:demodb.db') {
             return;

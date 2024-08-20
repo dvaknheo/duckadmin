@@ -30,17 +30,20 @@ class UserController implements AdminControllerInterface
         $all = Helper::GET('all',false);
         [$total, $list]= UserBusiness::_()->getUserList(['all'=>$all],Helper::PageNo());
         
-        $list2 =[];
+        $users =[];
         foreach($list as $v){
+            $hash = $this->getHash($v['id']);
             $t =[];
             $t['id'] = $v['id'];
             $t['username'] = __h($v['username']);
-            $hash = $this->getHash($v['id']);
+            
+            $t['is_deleted'] = $v['deleted_at']?true:false;
             $t['url_delete'] = __url('user/delete?id='.$v['id'].'&hash='.$hash);
-            $list2[]=$t;
+            $t['url_undelete'] = __url('user/undelete?id='.$v['id'].'&hash='.$hash);
+            $users[]=$t;
         }
         
-        $data['list'] =$list2;
+        $data['users'] =$users;
         $data['pager'] = Helper::PageHtml($total);
         
         Helper::Show($data,'user/index');
@@ -59,8 +62,24 @@ class UserController implements AdminControllerInterface
         $this->checkHash($id,$hash);
         
         $ret = UserBusiness::_()->deleteUser(Helper::AdminId(), $id);
-		Helper::ShowJson($ret);
+		Helper::Show302('user/index');
     }
+    /**
+     * 还原
+     * @param 
+     * @return Response
+     */
+    public function action_undelete()
+    {
+        $hash = Helper::Get('hash');
+        $id = Helper::Get('id');
+        
+        $this->checkHash($id,$hash);
+        
+        $ret = UserBusiness::_()->unDeleteUser(Helper::AdminId(), $id);
+		Helper::Show302('user/index');
+    }
+    
     protected function getHash($id)
     {
         $session_id = SystemWrapper::session_id();

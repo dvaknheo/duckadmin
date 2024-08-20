@@ -25,6 +25,8 @@ class UserBusiness
     }
     public function unDeleteUser($admin_id,$id)
     {
+        $ret = UserModel::_()->unDeleteUser($id);
+        return $ret;
         //$ret = UserModel::G()->disable($id);
     }
 }

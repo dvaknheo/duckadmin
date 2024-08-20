@@ -30,6 +30,13 @@ class UserModel
     public function deleteUser($id)
     {
         $sql = "UPDATE `'TABLE'` SET deleted_at = ? WHERE id =? AND deleted_at IS NULL";
-        $sql = $this->execute($sql,date('Y-m-d H:i:s'),$id);
+        $ret = $this->execute($sql,date('Y-m-d H:i:s'),$id);
+        return $ret;
+    }
+    public function unDeleteUser($id)
+    {
+        $sql = "UPDATE `'TABLE'` SET deleted_at = NULL WHERE id =?"; //AND deleted_at IS NOT NULL
+        $ret = $this->execute($sql,$id);
+        return $ret;
     }
 }

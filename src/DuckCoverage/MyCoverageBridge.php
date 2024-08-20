@@ -468,29 +468,20 @@ class MyCoverageBridge extends MyCoverage
     {
         /*
         $handler = "DuckAdmin\\Test\\Tester@_justTest?parameter=d";
-        $flag = preg_match('/^(([a-zA-Z0-9_\x7f-\xff\\\\]+)(\:\:|\@|\->)([a-zA-Z0-9_\x7f-\xff]+)|([a-zA-Z0-9_\x7f-\xff]+))(\?(\S*))?$/' ,$handler,$m);
-        if(!$flag){ die("BAD");}
-        list($_0,$_1,$class,$type,$method,$function,$_6,$parameters)=$m;
-
-        $this->callObject($class,$method,$type,$function,$parameters);
-        //$t= compact($_0,$_1,$class,$type,$method,$function,$_6,$paramter);
-        //var_dump($t);
-        exit;
         */
         $p = Console::_()->getCliParameters();
-        if($p['help']??false){
+        if($p['help']??false || count($p)===1){
             $str = <<<EOT
+--replay
+--report [a b c]
+--call SomeApp/Test/Tester@runX
 --watch {name}
 --stop
---replay
---call SomeApp/Test/Tester@runX
---report [a b c]
 
 EOT;
             echo $str;
             return;
         }
-        $p = Console::_()->getCliParameters();
         if($p['watch']??false){
             if($p['watch']===true){
                 $p['watch'] = DATE('Y_m_d_H_i_s');
@@ -520,7 +511,9 @@ EOT;
         
         if($p['report']??false){
             echo "reporting...\n";
-            $groups = is_array($p['report'])?$p['report']:[];
+            
+            $groups = is_array($p['report'])?$p['report']:[$this->options['group']];
+            
             $time_begin = microtime(true);
             $path_group = $this->getReportPath($groups);
             $this->createReport($groups);
@@ -529,8 +522,7 @@ EOT;
             $time_cost = sprintf('%0.3f',$time_cost);
             echo "time_cost   : $time_cost seconds \noutput path : $path_group \n";
         }
-        
-        var_dump(DATE(DATE_ATOM));
+        //var_dump(__FILE__,__LINE__,DATE(DATE_ATOM));
     }
     ////]]]]
 }

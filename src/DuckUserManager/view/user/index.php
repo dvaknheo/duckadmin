@@ -10,8 +10,19 @@
         <!-- 数据表格 -->
         <div class="layui-card">
             <div class="layui-card-body">
-切换到现实全部
-切换到正常
+<?php
+    if($is_all){
+?>
+        当前显示未删除用户<a href="">切换到显示全部</a>
+<?php
+    }else{
+?>
+        当前显示所有用户<a href="">切换到正常模式</a>
+<?php
+    }
+?>
+
+
 <table width="100%" border="1">
 <tr>
 	<th>ID</th>
@@ -19,14 +30,28 @@
 	<th>禁用/启用</th>
 </tr>
 <?php
-foreach ($list as $v) {
+foreach ($users as $v) {
 ?>
 <tr>
 	<td><?=$v['id']?></td>
 	<td><?=$v['username']?></td>
-	<td><a href="<?=$v['url_delete']?>">删除</a></td>
+	<td>
+<?php
+    if($v['is_deleted']){
+?>
+        <a href="<?=$v['url_delete']?>">删除</a>
+<?php
+    }else{
+?>
+        <a href="<?=$v['url_undelete']?>">还原</a>
+<?php
+    }
+?>
+    </td>
 </tr>
-<?php }?>
+<?php
+}
+?>
 </table>
             </div>
         </div>
