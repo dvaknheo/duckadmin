@@ -82,19 +82,18 @@ class UserController implements AdminControllerInterface
     protected function getHash($id)
     {
         @session_start();
-        //Call to undefined method DuckPhp\Foundation\Controller\Helper::SESSION()
         $hash_id = Helper::SESSION('hash',null);
         $hash_id = $hash_id??mt_rand(1,999999);
         $_SESSION['hash']=$hash_id;
-        return md5($hash_id.$id);
+        return md5($hash_id.'|'.$id);
     }
     protected function checkHash($id,$hash)
     {
         @session_start();
         $hash_id = Helper::SESSION('hash',null);
-        Helper::ControllerThrowOn($hash_id===null,'校检失败!');
-        $new_hash = md5($hash_id.$id);
-        Helper::ControllerThrowOn($new_hash!==$hash,'校检失败');
+        Helper::ControllerThrowOn($hash_id===null,"校[$id, $hash, $new_hash]检失败!");
+        $new_hash = md5($hash_id.'|'.$id);
+        Helper::ControllerThrowOn($new_hash!==$hash,"校 [$id, $hash, $new_hash] 检失败");
     }
 
 }
