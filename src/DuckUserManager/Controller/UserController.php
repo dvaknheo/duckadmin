@@ -1,8 +1,7 @@
 <?php
 namespace DuckUserManager\Controller;
 
-use DuckPhp\Core\SystemWrapper;
-use DuckPhp\Foundation\Controller\Helper;
+use DuckPhp\Foundation\Helper;
 use DuckPhp\Foundation\SimpleControllerTrait;
 use DuckPhp\GlobalAdmin\AdminControllerInterface;
 use DuckUserManager\Business\UserBusiness;
@@ -45,7 +44,7 @@ class UserController implements AdminControllerInterface
         
         $data['users'] =$users;
         $data['pager'] = Helper::PageHtml($total);
-        
+        $data['is_all'] =$all?true:false;
         Helper::Show($data,'user/index');
     }
 
@@ -82,13 +81,19 @@ class UserController implements AdminControllerInterface
     
     protected function getHash($id)
     {
-        $session_id = SystemWrapper::session_id();
-        return md5($session_id.$id);
+        @session_start();
+        //Call to undefined method DuckPhp\Foundation\Controller\Helper::SESSION()
+        $hash_id = Helper::SESSION('hash',null);
+        $hash_id = $hash_id??mt_rand(1,999999);
+        $_SESSION['hash']=$hash_id;
+        return md5($hash_id.$id);
     }
     protected function checkHash($id,$hash)
     {
-        $session_id = SystemWrapper::session_id();
-        $new_hash = md5($session_id.$id);
+        @session_start();
+        $hash_id = Helper::SESSION('hash',null);
+        Helper::ControllerThrowOn($hash_id===null,'校检失败!');
+        $new_hash = md5($hash_id.$id);
         Helper::ControllerThrowOn($new_hash!==$hash,'校检失败');
     }
 
