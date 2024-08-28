@@ -5,16 +5,11 @@
  */
 namespace DuckAdminDemo\Test;
 
-use DuckAdminDemo\Tester\MyCoverageBridge;
-use DuckPhp\Component\ExtOptionsLoader;
-use DuckPhp\Component\DbManager;
-use DuckPhp\Core\Console;
 use DuckPhp\Core\App;
-use DuckPhp\DuckPhp;
+use DuckPhp\Core\Console;
 use DuckPhp\Foundation\SimpleSingletonTrait;
 use DuckPhp\Foundation\Helper;
 use DuckPhp\FastInstaller\FastInstaller;
-//use DuckPhp\Foundation\System\Helper;
 
 class MyTester
 {
@@ -71,18 +66,13 @@ EOT;
     public function _GetTestList()
     {
         $str ='';
+        //$str.="_BeforeReplayTest";
         $str .= \DuckAdmin\Test\Tester::_()->getTestList();
         $str .= \DuckUser\Test\Tester::_()->getTestList();
         $str .= \SimpleBlog\Test\Tester::_()->getTestList();
-        //$str .= \DuckUserManager\Test\Tester::_()->getTestList();
+        $str .= \DuckUserManager\Test\Tester::_()->getTestList();
         
-        //path = \DuckAdmin\DuckAdminApp::_()->options['path'];
-        //$filter = MyCoverageBridge::_()->getCoverage()->filter();
-        //$filter->removeDirectoryFromWhitelist($path.'Test');
-        //$filter->removeDirectoryFromWhitelist($path.'View');
-        //    public function removeDirectoryFromWhitelist(string $directory, string $suffix = '.php', string $prefix = ''): void
-        //    public function removeFileFromWhitelist(string $filename): void
-
+        //$str.="_AfterReplayTest";
         return $str;
     }
     public function _BeforeWebTest()
@@ -100,18 +90,28 @@ EOT;
     {
         $this->cleanAll();
     }
-    protected function in_paths($paths,$file)
+    
+    public function _OnReport()
     {
+        //TODO more.
+        return;
+        
+    
+        //path = \DuckAdmin\DuckAdminApp::_()->options['path'];
+        //$filter = MyCoverageBridge::_()->getCoverage()->filter();
+        //$filter->removeDirectoryFromWhitelist($path.'Test');
+        //$filter->removeDirectoryFromWhitelist($path.'View');
+        //    public function removeDirectoryFromWhitelist(string $directory, string $suffix = '.php', string $prefix = ''): void
+        //    public function removeFileFromWhitelist(string $filename): void
+        
+        /*
+        function in_paths($paths,$file)
         foreach($paths as $v){
             if($v === substr($file,0,strlen($v))){
                 return true;
             }
         }
-        return false;
-    }
-    public function _OnReport()
-    {
-        return;
+        //return false;
         $coverage = MyCoverageBridge::_()->getCoverage();
         $path = realpath(\DuckUser\System\DuckUserApp::_()->options['path']).'/';
         
@@ -138,5 +138,6 @@ EOT;
         
         $path = realpath(\DuckUser\System\DuckUserApp::_()->options['path']).'/';
         //var_dump($path);
+        */
     }
 }

@@ -30,8 +30,8 @@ class MyCoverageBridge extends MyCoverage
         'test_on_report'=>null,
         
     ];
+    public $session_id='';
     protected $is_save_session=false;
-    protected $session_id='';
     protected $post =[];
     public function __construct()
     {

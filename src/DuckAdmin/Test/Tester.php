@@ -40,32 +40,7 @@ class Tester
     {
         __var_log(__METHOD__);
     }
-    public function getTestList2()
-    {
-        $list = <<<EOT
-#WEB index
-#SETWEB AJAX
-#WEB account/dashboard
-#WEB account/dashboard
-#WEB index
-#WEB account/logout
-#SETWEB AJAX
-#WEB account/logout
-#WEB account/login username=admin&password=123456&captcha=7268
-#SETWEB OPTIONS
-#WEB admin/index?diffname
 
-EOT;
-        $static_class = static::class;
-        $args = [
-            'static' => $static_class,
-        ];
-        $list = $this->replace_string($list,$args);
-        $prefix = DuckAdminApp::_()->options['controller_url_prefix'];
-        $list = str_replace('#WEB ','#WEB '.$prefix,$list);
-
-        return $list;
-    }
     public function testGetCurrentAdminId()
     {
         try{

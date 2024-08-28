@@ -88,8 +88,12 @@ class DemoApp extends DuckPhp
         if ($this->options['duckadmin_demo_enable_workerman']) {
             \DuckPhp\HttpServer\HttpServer::_(\WorkermanHttpd\WorkermanHttpd::_());
         }
-        //enable test;
-        if ($this->options['duckadmin_demo_enable_test']) {
+        
+        //eanable test
+        if ($this->is_root) {
+            $this->loadSetting();
+        }
+        if (static::Setting('duckadmin_demo_enable_test') || $this->options['duckadmin_demo_enable_test']) {
             $this->enableTest();
         }
     }
@@ -114,7 +118,8 @@ class DemoApp extends DuckPhp
         if(is_file($file)){
             return;
         }
-            $sqlfile = 'demodb.sql';
+        
+        $sqlfile = 'demodb.sql';
         $full_file = $this->extendFullFile($this->options['path'], $this->options['path_config']??'config', $sqlfile);
         
         $sql = file_get_contents($full_file);
@@ -144,14 +149,14 @@ class DemoApp extends DuckPhp
         $path_src = realpath(__DIR__.'/../../src/').'/';
         $tester_options = [
             'path_src'=> $path_src,
+            'test_callback_class'=> MyTester::class,
+            
             'test_server_port'=> 8080,
             'test_homepage' =>'/index.php/',
             'test_path_document'=>'public',
             'test_new_server'=>true,
-            
-            'test_callback_class'=> MyTester::class,
         ];
-        // this is specail. must before init;
+        // sorry this is specail. must before init;
         MyCoverageBridge::_()->init($tester_options)->onAppPrepare();
     }
 }

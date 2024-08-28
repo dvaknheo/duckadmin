@@ -53,16 +53,18 @@ php cli.php install ## --force 可以强制执行 --help 查看参数
 ```
 composer require dvaknheo/duckadmin
 ./vendor/bin/duckphp install
-#todo sed // 'allow_require_ext_app' => true,
+sed -i "s|//'app' =>|'cli_command_with_fast_installer' => true, 'allow_require_ext_app' => true, \n//'app' =>|" ./src/System/App.php 
 php cli.php require DuckAdmin/System/DuckAdminApp
-php cli.php require DuckUser/System/DuckUserApp
-php cli.php require SimpleBlog/System/SimpleBlogApp
-php cli.php require DuckUserMangager/System/DuckUserMangagerApp
+#php cli.php require DuckUser/System/DuckUserApp
+#php cli.php require SimpleBlog/System/SimpleBlogApp
+#php cli.php require DuckUserMangager/System/DuckUserMangagerApp
 php cli.php run
 
 ```
-访问 http://127.0.0.1:8080/app/admin/index 打开管理后台。
+访问 http://127.0.0.1:8080/duck-admin/ 打开管理后台。
 
+// sed -i "s|//'app' =>|'cli_command_with_fast_installer' => true, 'allow_require_ext_app' => true, \n//'app' =>|" ./src/System/App.php 
+这行是默认duckphp 工程的参数的
 
 ### 第二种模式，手动修改 duckphp工程嵌入
 
