@@ -7,6 +7,7 @@ namespace DuckCoverage;
 
 use DuckPhp\Core\App;
 use DuckPhp\Core\Console;
+use DuckPhp\Core\ExitException;
 use DuckPhp\Foundation\Helper;
 use DuckPhp\HttpServer\HttpServer;
 
@@ -54,7 +55,7 @@ class MyCoverageBridge extends MyCoverage
         Helper::OnEvent([App::Phase(),'onAfterRun'],[static::class,'OnAfterRun']);
         //Helper::OnEvent([App::Phase(),'onInit'],[static::class,'OnAfterRun']); registcommand
         
-        \DuckPhp\Core\ExitException::Init(); //__define(__ExitException);
+        ExitException::Init(); //__define(__ExitException);
         
         return $this;
     }

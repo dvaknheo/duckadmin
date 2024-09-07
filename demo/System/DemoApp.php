@@ -91,7 +91,7 @@ class DemoApp extends DuckPhp
         
         //eanable test
         if ($this->is_root) {
-            $this->loadSetting();
+            $this->loadSetting(); //:(
         }
         if (static::Setting('duckadmin_demo_enable_test') || $this->options['duckadmin_demo_enable_test']) {
             $this->enableTest();
@@ -106,8 +106,7 @@ class DemoApp extends DuckPhp
     }
     protected function checkDemoDb()
     {
-        //这里对测试程序造成干扰
-        if ($this->options['duckadmin_demo_enable_test']) {
+        if (static::Setting('duckadmin_demo_enable_test') || $this->options['duckadmin_demo_enable_test']) {
             return;
         }
         $dsn = $this->options['database_list'][0]['dsn']??null;
@@ -127,10 +126,6 @@ class DemoApp extends DuckPhp
         foreach ($sqls as $sql) {
             if (empty($sql)) {
                 continue;
-            }
-            if ($this->options['sql_dump_debug_show_sql']??false) {
-                echo $sql;
-                echo ";\n";
             }
             $flag = DbManager::Db()->execute($sql);
         }

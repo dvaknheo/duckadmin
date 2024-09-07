@@ -65,14 +65,14 @@ EOT;
 
     public function _GetTestList()
     {
+        $static = static::class;
         $str ='';
-        //$str.="_BeforeReplayTest";
+        $str.="#CALL {$static}@installTest\n";
         $str .= \DuckAdmin\Test\Tester::_()->getTestList();
         $str .= \DuckUser\Test\Tester::_()->getTestList();
         $str .= \SimpleBlog\Test\Tester::_()->getTestList();
         $str .= \DuckUserManager\Test\Tester::_()->getTestList();
-        
-        //$str.="_AfterReplayTest";
+        $str.="#CALL {$static}@cleanAll\n";
         return $str;
     }
     public function _BeforeWebTest()
@@ -82,14 +82,7 @@ EOT;
     {
         //
     }
-    public function _BeforeReplayTest()
-    {
-        $this->installTest();
-    }
-    public function _AfterReplayTest()
-    {
-        $this->cleanAll();
-    }
+
     
     public function _OnReport()
     {
