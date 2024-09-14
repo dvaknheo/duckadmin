@@ -11,6 +11,10 @@ use DuckPhp\Core\ExitException;
 use DuckPhp\Foundation\Helper;
 use DuckPhp\HttpServer\HttpServer;
 
+#CALL
+#WEB url post
+#SETWEB precall preweb postweb postcall
+
 class MyCoverageBridge extends MyCoverage
 {
     //todo use  global singletonex to replace default singleton function
@@ -45,7 +49,7 @@ class MyCoverageBridge extends MyCoverage
     
         $this->options['path'] = Helper::PathOfRuntime();
         $this->options['test_path_server'] = Helper::PathOfProject();
-        $this->options['path_src'] = realpath(__DIR__.'/../../').'/src';
+        $this->options['path_src'] = realpath(__DIR__.'/../../').'/src'; //??
 
         $this->options['group'] = $this->watchingGetName();
 

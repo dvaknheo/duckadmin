@@ -21,7 +21,7 @@
 ## 演示 demo
 扩展需求：  sqlite
 
-duckadmin 支持 mysql，只需要改配置，后面再演示
+`DuckAdmin` 支持 mysql，只需改配置，后面再演示
 
 ```
 composer require dvaknheo/duckadmin
@@ -49,11 +49,10 @@ php cli.php install ## --force 可以强制执行 --help 查看参数
 ### 第一种模式：新建 duckphp 工程并应用。
 当你想复制 demo 例子，不想做任何操作，执行以下命令
 
-
 ```
 composer require dvaknheo/duckadmin
 ./vendor/bin/duckphp install
-sed -i "s|//'app' =>|'cli_command_with_fast_installer' => true, 'allow_require_ext_app' => true, \n//'app' =>|" ./src/System/App.php 
+sed -i "s|//'app' =>|'allow_require_ext_app' => true, \n//'app' =>|" ./src/System/App.php 
 php cli.php require DuckAdmin/System/DuckAdminApp
 #php cli.php require DuckUser/System/DuckUserApp
 #php cli.php require SimpleBlog/System/SimpleBlogApp
@@ -63,8 +62,9 @@ php cli.php run
 ```
 访问 http://127.0.0.1:8080/duck-admin/ 打开管理后台。
 
-// sed -i "s|//'app' =>|'cli_command_with_fast_installer' => true, 'allow_require_ext_app' => true, \n//'app' =>|" ./src/System/App.php 
-这行是默认duckphp 工程的参数的
+sed -i "s|//'app' =>|'allow_require_ext_app' => true, \n//'app' =>|" ./src/System/App.php 
+
+这行是打开默认因安全原因关闭的允许引用额外子应用。
 
 ### 第二种模式，手动修改 duckphp工程嵌入
 
@@ -100,7 +100,7 @@ php cli.php run
 
 ### 第三种模式：独立工程嵌入
 
-当你要给个没有后台系统的  php-fpm 工程里使用。
+当你要给个没有后台系统的  php-fpm 工程里使用。 demo 里的 `main.php` 演示的这种情况
 
  `composer require dvaknheo/duckadmin`
 
