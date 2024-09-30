@@ -52,8 +52,9 @@ php cli.php install ## --force 可以强制执行 --help 查看参数
 ```
 composer require dvaknheo/duckadmin
 ./vendor/bin/duckphp install
-sed -i "s|//'app' =>|'allow_require_ext_app' => true, \n//'app' =>|" ./src/System/App.php 
+sed -i "s|//'app' =>|'cli_command_with_fast_installer' => true, 'allow_require_ext_app' => true, \n//'app' =>|" ./src/System/App.php 
 php cli.php require DuckAdmin/System/DuckAdminApp
+# 一路回车
 #php cli.php require DuckUser/System/DuckUserApp
 #php cli.php require SimpleBlog/System/SimpleBlogApp
 #php cli.php require DuckUserMangager/System/DuckUserMangagerApp
@@ -62,45 +63,13 @@ php cli.php run
 ```
 访问 http://127.0.0.1:8080/duck-admin/ 打开管理后台。
 
-sed -i "s|//'app' =>|'allow_require_ext_app' => true, \n//'app' =>|" ./src/System/App.php 
+sed -i "s|//'app' =>|'cli_command_with_fast_installer' => true, 'allow_require_ext_app' => true, \n//'app' =>|" ./src/System/App.php 
 
 这行是打开默认因安全原因关闭的允许引用额外子应用。
 
-### 第二种模式，手动修改 duckphp工程嵌入
+### 第二种模式：独立工程嵌入
 
-零代码虽然舒服，但不是最后解决方案
-
-当你熟悉了 duckphp 工程结构之后。
-
-在你的duckphp工程里修改你的 System/App.php 相关 配置
-
-```php
-    public $options = [
-        //...
-
-        'app' => [
-                \DuckAdmin\System\DuckAdminApp::class => [      // 后台管理系统
-                    'controller_url_prefix' => 'app/admin/',    // 访问路径
-                    // 'database_driver' =>'mysql',  // 如果你想改为 mysql 驱动
-                    //... 其他配置
-                    
-                ],
-            ],
-        ];
-```
-
-运行
-```
-php cli.php run
-```
-访问 http://127.0.0.1:8080/app/admin/index 打开管理后台。
-
-这里只是 DuckAdmin 后台，不包括demo里的用户系统，用户管理，而博客例子
-
-
-### 第三种模式：独立工程嵌入
-
-当你要给个没有后台系统的  php-fpm 工程里使用。 demo 里的 `main.php` 演示的这种情况
+当你要给个没有后台系统的  php-fpm 工程里使用。 demo 里的 `另一个简洁版本` 指向的 `main.php` 演示的这种情况
 
  `composer require dvaknheo/duckadmin`
 
@@ -132,6 +101,39 @@ $admin_id = \DuckPhp\Foundation\Helper::AdminId(false);
 ```
 可以看出，多了 skip_404 选项。 当返回404 的时候，自行处理其他业务
 这里得到的 admin_id 就是登录后获得的id.
+
+
+### 第三种模式，手动修改 duckphp工程嵌入
+
+零代码虽然舒服，但不是最后解决方案
+
+当你熟悉了 duckphp 工程结构之后。
+
+在你的duckphp工程里修改你的 System/App.php 相关 配置
+
+```php
+    public $options = [
+        //...
+
+        'app' => [
+                \DuckAdmin\System\DuckAdminApp::class => [      // 后台管理系统
+                    'controller_url_prefix' => 'app/admin/',    // 访问路径
+                    // 'database_driver' =>'mysql',  // 如果你想改为 mysql 驱动
+                    //... 其他配置
+                    
+                ],
+            ],
+        ];
+```
+
+运行
+```
+php cli.php run
+```
+访问 http://127.0.0.1:8080/app/admin/index 打开管理后台。
+
+这里只是 DuckAdmin 后台，不包括demo里的用户系统，用户管理，而博客例子
+
 
 ## 二次开发
 

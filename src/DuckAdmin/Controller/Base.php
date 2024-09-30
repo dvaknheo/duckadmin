@@ -6,8 +6,9 @@
 
 namespace DuckAdmin\Controller;
 use DuckPhp\Foundation\SimpleControllerTrait;
+use DuckPhp\GlobalAdmin\AdminControllerInterface;
 
-class Base
+class Base implements AdminControllerInterface
 {
     use SimpleControllerTrait;
     /**

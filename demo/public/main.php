@@ -21,14 +21,21 @@ use DuckPhp\Foundation\Helper;
 //我们演示在其他框架系统中嵌入 duckadmin
 $options=[
     'path' => __DIR__.'/../', // 指定路径
-    
     'skip_404' => true,      // 跳过内部 404处理。
     'app' => [
         DuckAdminApp::class => [      // 后台管理系统
             'controller_url_prefix' => 'app/admin/',    // 访问路径
-            'need_install'=>false,
+            'installed' => '2024-06-10T22:12:01+08:00', // 安装标志
+            'database_list' =>  //指定数据库
+            [
+                'dsn' => 'sqlite:demodb.db',
+                'username' => '',
+                'password' => '',
+            ],
         ],
-    ]
+    ],
+    
+    
 ];
 
 $flag = DuckPhp::RunQuickly($options);
@@ -55,8 +62,14 @@ $url_logout = Helper::Admin()->urlForLogout();
 		<title>DuckAdmin 后台系统</title>
 	</head>
 	<body>
-<div>
+<div class="layui-header" style ="background-color:#5FB878;padding:1em;">
+    <div>
+        <h1>DuckAdmin Demo</h1><span> DuckPhp 的演示</span>
+    </div>
+</div>
+  <div class="layui-container">
 <a href="/">回主页</a>
+<hr />
 这是另一个 demo，这模式下，你的代码和duckphp 的代码完全分离 <br />
 <?php if($admin_id){?>
 你好 <?=$admin_name?> (<?=$admin_id?>)
@@ -75,14 +88,21 @@ use DuckPhp\Foundation\Helper;
 //我们演示在其他框架系统中嵌入 duckadmin
 $options=[
     'path' => __DIR__.'/../', // 指定路径
-    
     'skip_404' => true,      // 跳过内部 404处理。
     'app' => [
         DuckAdminApp::class => [      // 后台管理系统
             'controller_url_prefix' => 'app/admin/',    // 访问路径
-            'need_install'=>false,
+            'installed' => '2024-06-10T22:12:01+08:00', // 安装标志
+            'database_list' =>  //指定数据库
+            [
+                'dsn' => 'sqlite:demodb.db',
+                'username' => '',
+                'password' => '',
+            ],
         ],
-    ]
+    ],
+    
+    
 ];
 
 $flag = DuckPhp::RunQuickly($options);
@@ -100,5 +120,6 @@ $admin_id = Helper::AdminId(false);
 $admin_name = $admin_id ? Helper::AdminName() : '';
 $url_logout = Helper::Admin()->urlForLogout();
 </pre>
+</div>
 	</body>
 </html>

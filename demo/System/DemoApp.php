@@ -138,6 +138,17 @@ class DemoApp extends DuckPhp
         // show a command demo
         echo "From this time, you never be alone~\n";
     }
+    /**
+     * show a hello world in console.
+     */
+    public function command_t2()
+    {
+        // show a command demo
+        echo "From this time, you never be alone~\n";
+        $x = \DuckAdmin\Business\FinderForAdminController::_()->init([])->getAdminControllers();
+        var_dump($x);
+
+    }
     protected function enableTest()
     {
         // for coverage test
