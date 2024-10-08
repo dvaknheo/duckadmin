@@ -11,6 +11,7 @@ use DuckPhp\Core\CoreHelper;
 use DuckPhp\DuckPhp;
 use DuckPhp\Foundation\Controller\Helper;
 use DuckCoverage\MyCoverageBridge;
+use DuckAdmin\Controller\AccountController;
 use DuckAdminDemo\Test\MyTester;
 
 class DemoApp extends DuckPhp
@@ -103,6 +104,12 @@ class DemoApp extends DuckPhp
         
         parent::onInited();
         // You Codes Here.
+        
+        CoreHelper::PhaseCall(
+            \DuckAdmin\System\DuckAdminApp::class,function(){
+                AccountController::_(MyAccountController::_());
+        });
+        
     }
     protected function checkDemoDb()
     {
@@ -129,6 +136,7 @@ class DemoApp extends DuckPhp
             }
             $flag = DbManager::Db()->execute($sql);
         }
+
     }
     /**
      * show a hello world in console.

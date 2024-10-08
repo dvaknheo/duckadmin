@@ -46,26 +46,23 @@ php cli.php install ## --force 可以强制执行 --help 查看参数
 ```
 
 ## 正常使用模式
-### 第一种模式：新建 duckphp 工程并应用。
+### 第一种模式：快速 duckphp 工程并应用。
 当你想复制 demo 例子，不想做任何操作，执行以下命令
 
 ```
 composer require dvaknheo/duckadmin
-./vendor/bin/duckphp install
-sed -i "s|//'app' =>|'cli_command_with_fast_installer' => true, 'allow_require_ext_app' => true, \n//'app' =>|" ./src/System/App.php 
+composer exec duckphp new
 php cli.php require DuckAdmin/System/DuckAdminApp
 # 一路回车
 #php cli.php require DuckUser/System/DuckUserApp
 #php cli.php require SimpleBlog/System/SimpleBlogApp
 #php cli.php require DuckUserMangager/System/DuckUserMangagerApp
+
 php cli.php run
 
 ```
 访问 http://127.0.0.1:8080/duck-admin/ 打开管理后台。
 
-sed -i "s|//'app' =>|'cli_command_with_fast_installer' => true, 'allow_require_ext_app' => true, \n//'app' =>|" ./src/System/App.php 
-
-这行是打开默认因安全原因关闭的允许引用额外子应用。
 
 ### 第二种模式：独立工程嵌入
 
@@ -73,30 +70,40 @@ sed -i "s|//'app' =>|'cli_command_with_fast_installer' => true, 'allow_require_e
 
  `composer require dvaknheo/duckadmin`
 
-在你的 fpm 入口文件里添加代码：
+核心功能代码如下
 ```
 <?php
-//index.php
-$options = [
-    'skip_404'=>true,
+//我们演示在其他框架系统中嵌入 duckadmin
+$options=[
+    'path' => __DIR__.'/../', // 指定路径
+    'skip_404' => true,      // 跳过内部 404处理。
     'app' => [
-            \DuckAdmin\System\DuckAdminApp::class => [      // 后台管理系统
-                'controller_url_prefix' => 'app/admin/',    // 访问路径
-                // 'database_driver' =>'mysql',  // 如果你想改为 mysql 驱动
-                //... 其他配置
-                
+        DuckAdminApp::class => [      // 后台管理系统
+            'controller_url_prefix' => 'app/admin/',    // 访问路径
+            'installed' => '2024-06-10T22:12:01+08:00', // 安装标志
+            'database_list' =>  //指定数据库
+            [
+                'dsn' => 'sqlite:demodb.db',
+                'username' => '',
+                'password' => '',
             ],
         ],
-    ];
+    ],    
 ];
 
 $flag = DuckPhp::RunQuickly($options);
+if ($flag) {
+    return; // 后台管理系统完毕
+}
 
-if($flag){return;}
+//////////////////////////
 
-$admin_id = \DuckPhp\Foundation\Helper::AdminId(false);
- 
-//your code here
+// you code here.
+$url_admin = __url('app/admin/index'); // 后台地址，和设置的 controller_url_prefix 一样
+
+$admin_id = Helper::AdminId(false);     // 管理员ID
+$admin_name = $admin_id ? Helper::AdminName() : ''; // 管理员名字
+$url_logout = Helper::Admin()->urlForLogout();
 
 ```
 可以看出，多了 skip_404 选项。 当返回404 的时候，自行处理其他业务
@@ -195,7 +202,7 @@ DuckAdmin 支持 sqlite /mysql 两种模式的数据库 你可以在选项里切
 
 ```
 cd demo
-php cli.php duckcover  --watch testname --replay --report
+php cli.php duckcover --replay --report
 ```
 testname 会在 demo/runtime 目录底下生成 test_coverage 生成报告
  

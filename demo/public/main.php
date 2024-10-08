@@ -33,9 +33,7 @@ $options=[
                 'password' => '',
             ],
         ],
-    ],
-    
-    
+    ],    
 ];
 
 $flag = DuckPhp::RunQuickly($options);
@@ -43,14 +41,13 @@ if ($flag) {
     return; // 后台管理系统完毕
 }
 
-
-//
 //////////////////////////
-// you code here.
-$url_admin = __url('app/admin/index'); // 指向动态链接
 
-$admin_id = Helper::AdminId(false);
-$admin_name = $admin_id ? Helper::AdminName() : '';
+// you code here.
+$url_admin = __url('app/admin/index'); // 后台地址，和设置的 controller_url_prefix 一样
+
+$admin_id = Helper::AdminId(false);     // 管理员ID
+$admin_name = $admin_id ? Helper::AdminName() : ''; // 管理员名字
 $url_logout = Helper::Admin()->urlForLogout();
 
 ?>
