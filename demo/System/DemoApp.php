@@ -153,7 +153,7 @@ class DemoApp extends DuckPhp
     {
         // show a command demo
         echo "From this time, you never be alone~\n";
-        $x = \DuckAdmin\Business\FinderForAdminController::_()->init([])->getAdminControllers();
+        $x = \DuckAdmin\Business\FinderForAdminController::_()->init([])->getAllAdminMethod();
         var_dump($x);
 
     }

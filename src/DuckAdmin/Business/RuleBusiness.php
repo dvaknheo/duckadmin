@@ -108,49 +108,48 @@ class RuleBusiness extends Base
         
     }
 
-    /**
+/**
      * 根据类同步规则到数据库
      * @return void
      */
     protected function syncRules()
     {
-        $items = RuleModel::_()->getAllByKey();
+        // 这里要改
         $methods_in_db = [];
         $methods_in_files = [];
-        foreach ($items as $item) {
-            $class = $item['key'];
-            //如果有@在内，那就继续
-            if (strpos($class, '@')) {
-                $methods_in_db[$class] = $class;
-                continue;
-            }
-            if (!class_exists($class)) {
-                continue;
-            }
+
+        $data = FinderForAdminController::_()->getAllAdminMethod();
+        
+        foreach($data as $class =>$methods) {
             $reflection = new \ReflectionClass($class);
             $properties = $reflection->getDefaultProperties();
             $no_need_auth = array_merge($properties['noNeedLogin'] ?? [], $properties['noNeedAuth'] ?? []);
-            $class = $reflection->getName();
-            $pid = $item['id'];
-            $methods = $reflection->getMethods();
-            foreach ($methods as $method) {
-                if ($method->isConstructor()){continue;}
-                if ($method->isDestructor()){continue;}
-                if ($method->isStatic()){continue;}
-                if (!$method->isPublic()){continue;}
-                $method_name = $method->getName();
-                
-                //strtolower($method_name) === 'index' || 
+            
+            $pid = 0;
+            $parent_menu = RuleModel::_()->findByKey($class);
+            if($parent_menu){
+                $pid=$parent_menu['id'];
+            }else{
+                // 插入新的类权限
+                $parent_menu = RuleModel::_()->findByKey('unknown');
+                if(!$parent_menu){
+                    RuleModel::_()->addMenu(['pid'=>0,'key'=>'unknown','title'=>'未分配权限','type'=>'0']);
+                    $parent_menu = RuleModel::_()->findByKey('unknown');
+                }
+                $pid = RuleModel::_()->addMenu(['pid'=>$parent_menu['id'],'key'=>$class,'title'=>$class,'type'=>1]);
+                $parent_menu = RuleModel::_()->findByKey($class);
+                $pid=$parent_menu['id'];
+            }
+            
+            foreach ($methods as $name => $url) {
+                [$class,$method_name]=explode('@',$name);
                 if (in_array($method_name, $no_need_auth)) {
                     continue;
                 }
+                $method = new \ReflectionMethod($class,$method_name);
                 
-                $name = "$class@$method_name";
-                
-                $methods_in_files[$name] = $name;
                 $title = $this->getCommentFirstLine($method->getDocComment()) ?: $method_name;
-                
-                $menu = $items[$name] ?? [];
+                $menu = RuleModel::_()->findByKey($name);
                 if (!$menu) {
                     RuleModel::_()->addMenu(['pid'=>$pid,'key'=>$name,'title'=>$title,'type'=>2]);
                     continue;
@@ -159,15 +158,9 @@ class RuleBusiness extends Base
                     RuleModel::_()->updateTitleByKey($name,$title);
                 }
             }
-            
-        }
-        // 从数据库中删除已经不存在的方法
-        $menu_names_to_del = array_diff($methods_in_db, $methods_in_files);
-        if ($menu_names_to_del) {
-            //RuleModel::whereIn('key', $menu_names_to_del)->delete();
         }
     }
-    
+
     ///////////////////////////////
     public function permission($admin_id)
     {

@@ -146,7 +146,7 @@ class FinderForAdminController extends ComponentBase
             $function = $method->getName();
             $path_info = $this->pathInfoFromClassAndMethod($full_class, $function, $adjuster);
             if(!isset($path_info)){continue;}
-            $ret[$full_class.'->'.$function]= $path_info;
+            $ret[$full_class.'@'.$function]= $path_info;
         }
         return $ret;
     }
@@ -172,10 +172,46 @@ class FinderForAdminController extends ComponentBase
         return $ret;
     }
     
+    public function getAllAdminMethod()
+    {
+        $ret=[];
+        Helper::recursiveApps(
+            $ret,
+            function ($app_class, &$ret){
+                $data=[];
+                $classes = $this->getAllControllerClasses();
+                foreach($classes as $class => $file){
+                    if (!$this->isAdminController($class)) {
+                        continue;
+                    }
+                    $methods = $this->getControllerMethods($class);
+                    $data[$class]=$methods;
+                }
+                $ret = array_merge($ret,$data);
+            }
+        );
+        return $ret;
+    }
+    public function isAdminController($class)
+    {
+        try{
+            $obj=new \ReflectionClass($class);
+            $flag = $obj->isSubclassOf(\DuckPhp\GlobalAdmin\AdminControllerInterface::class);
+            if($flag){
+                return true;
+            }
+            //$traits = $obj->getTraits();
+            //return in_array(
+            
+            return false;
+        }catch(\ReflectionException $ex){
+            return false;
+        }
+    }
     //API
     public function getAllAdminController()
     {
-        $ret =  $this->getAllControllerClasses(); // 是否有必要是否重复。root 开始？
+        $ret=[];
         Helper::recursiveApps(
             $ret,
             function ($app_class, &$ret){
