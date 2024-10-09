@@ -24,6 +24,9 @@ class RuleModel extends Base
     }
     public function doSelect(array $where, string $field = null, string $order= 'desc' ,$page=1,$page_size=10)
     {
+        if(isset($where['type'])){
+            $where['type']=explode(',',$where['type']);
+        }
         // 隔离BaseModel 的调用
         return parent::doSelect($where, $field, $order,$page,$page_size);
     }
