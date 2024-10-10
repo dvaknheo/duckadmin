@@ -1,4 +1,4 @@
-<?php //regenerate by DuckPhp\Component\ExtOptionsLoader->saveExtOptions at 2024-06-10T22:12:01+08:00
+<?php //regenerate by DuckPhp\Component\ExtOptionsLoader->saveExtOptions at 2024-10-09T22:05:12+08:00
 return array (
   'DuckAdminDemo\\System\\DemoApp' => 
   array (
@@ -15,7 +15,8 @@ return array (
   ),
   'DuckAdmin\\System\\DuckAdminApp' => 
   array (
-    'installed' => '2024-06-10T22:12:01+08:00',
+    'installed' => '2024-10-09T22:05:12+08:00',
+    'controller_resource_prefix' => 'res/',
   ),
   'DuckUser\\System\\DuckUserApp' => 
   array (

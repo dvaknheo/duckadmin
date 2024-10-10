@@ -49,7 +49,7 @@ class DuckAdminApp extends DuckPhp
 重复密码  ：[{password_confirm}]
 
 ",
-        'install_options'=>[
+        'install_default_options'=>[
             'username'=>'admin',
             'password'=>'123456',
             'password_confirm'=>'123456',

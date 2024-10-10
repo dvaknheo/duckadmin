@@ -29,15 +29,15 @@ class MyTester
     }
     public static function BeforeReplayTest()
     {
-        return static::_()->_BeforeReplayTest();
+        return static::_()->installTest();
     }
     public static function AfterReplayTest()
     {
-        return static::_()->_AfterReplayTest();
+        //return static::_()->_AfterReplayTest();
     }
     public static function OnReport()
     {
-        return static::_()->_OnReport();
+        //return static::_()->_OnReport();
     }
     public function installTest()
     {
@@ -67,7 +67,7 @@ EOT;
     {
         $static = static::class;
         $str ='';
-        $str.="#CALL {$static}@installTest\n";
+        //$str.="#CALL {$static}@installTest\n";
         $str .= \DuckAdmin\Test\Tester::_()->getTestList();
         $str .= \DuckUser\Test\Tester::_()->getTestList();
         $str .= \SimpleBlog\Test\Tester::_()->getTestList();
