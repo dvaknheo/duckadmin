@@ -87,7 +87,7 @@ class DemoApp extends DuckPhp
         
         //use workerman
         if ($this->options['duckadmin_demo_enable_workerman']) {
-            \DuckPhp\HttpServer\HttpServer::_(\WorkermanHttpd\WorkermanHttpd::_());
+            \DuckPhp\HttpServer\HttpServer::_(\WorkermanHttpd\WorkermanHttpd::_())->options['host']='0.0.0.0';
         }
         
         //eanable test

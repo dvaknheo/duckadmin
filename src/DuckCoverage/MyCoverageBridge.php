@@ -10,6 +10,7 @@ use DuckPhp\Core\Console;
 use DuckPhp\Core\ExitException;
 use DuckPhp\Foundation\Helper;
 use DuckPhp\HttpServer\HttpServer;
+use SebastianBergmann\CodeCoverage\CodeCoverage;
 
 #CALL
 #WEB url post
@@ -65,6 +66,9 @@ class MyCoverageBridge extends MyCoverage
     }
     public function onAppPrepare()
     {
+        if(!class_exists(CodeCoverage::class)){
+            return;
+        }
         $app = App::_();
         if(MyCoverageBridge::_()->isInHttpTest()){
             $app->options['ext_options_file'] = 'runtime/DuckPhpApps_test.config.php';
