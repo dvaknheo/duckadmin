@@ -46,6 +46,9 @@ class MyCoverageBridge extends MyCoverage
     }
     public function init(array $options, ?object $context = null)
     {
+        if (!class_exists(CodeCoverage::class)) {
+            return $this;
+        }
         parent::init($options, $context);
     
         $this->options['path'] = Helper::PathOfRuntime();
