@@ -12,6 +12,7 @@ use DuckPhp\DuckPhp;
 use DuckPhp\Foundation\Controller\Helper;
 use DuckCoverage\MyCoverageBridge;
 use DuckAdmin\Controller\AccountController;
+use DuckAdminDemo\Overrided\MyAccountController;
 use DuckAdminDemo\Test\MyTester;
 
 class DemoApp extends DuckPhp
@@ -113,9 +114,6 @@ class DemoApp extends DuckPhp
     }
     protected function checkDemoDb()
     {
-        if (static::Setting('duckadmin_demo_enable_test') || $this->options['duckadmin_demo_enable_test']) {
-            return;
-        }
         $dsn = $this->options['database_list'][0]['dsn']??null;
         if ($dsn !=='sqlite:demodb.db') {
             return;

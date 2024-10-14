@@ -51,11 +51,8 @@ class AccountController extends Base
         
         //这里有更好判断方法不需要特殊化，TODO 用上
         $flag = AdminAction::_()->doCheckCaptcha($captcha);
-        if (Helper::SERVER('REMOTE_ADDR')!=='127.0.0.1') {
-            Helper::ControllerThrowOn(!$flag, '验证码错误',1); // @codeCoverageIgnore
-        }else{
-            //__debug_log("skip captcha for test");
-        }
+        Helper::ControllerThrowOn(!$flag, '验证码错误',1);
+
         
         $admin = AccountBusiness::_()->login($username, $password);
         AdminAction::_()->setCurrentAdmin($admin);

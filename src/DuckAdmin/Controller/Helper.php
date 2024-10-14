@@ -36,7 +36,7 @@ class Helper
         if(!$code){$code = -1;}
         $ret =['code' => $code, 'msg' => $msg, 'type' => 'error'];
         if (__is_debug()) {
-            $ret['trace'] = $ex->getTrace();
+            $ret['trace'] = $ex->getTraceAsString();
         }
         static::ShowJson($ret);
     }

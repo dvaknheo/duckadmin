@@ -3,7 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-namespace DuckAdminDemo\System;
+namespace DuckAdminDemo\Overrided;
 
 
 use DuckAdmin\Controller\AccountController;
