@@ -22,7 +22,7 @@ class UserAction extends Base implements UserActionInterface
             return $this->user;
         }
         $user = Session::_()->getCurrentUser();
-        Helper::ControllerThrowOn(!$user, '请登录');
+        Helper::ControllerThrowOn(!$user, '请登录', -1, UserException::class);
         $this->user = $user;
         return $this->user;
     }
