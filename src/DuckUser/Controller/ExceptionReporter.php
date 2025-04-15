@@ -9,4 +9,8 @@ use DuckPhp\Foundation\ExceptionReporterTrait;
 class ExceptionReporter
 {
     use ExceptionReporterTrait;
+    public function onUserException($ex)
+    {
+        Helper::Show302('');
+    }
 }
