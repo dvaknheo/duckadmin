@@ -108,7 +108,7 @@ class DemoApp extends DuckPhp
         
         CoreHelper::PhaseCall(
             \DuckAdmin\System\DuckAdminApp::class,function(){
-                AccountController::_(MyAccountController::_());
+                MyAccountController::OverrideParent();
         });
         
     }
