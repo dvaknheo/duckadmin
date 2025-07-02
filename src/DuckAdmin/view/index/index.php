@@ -92,6 +92,7 @@
         <!-- 依 赖 脚 本 -->
         <script src="<?=__res('component/layui/layui.js')?>"></script>
         <script src="<?=__res('component/pear/pear.js')?>"></script>
+        <script src="<?=__res('admin/js/ajax_post.js')?>"></script>
         <!-- 框 架 初 始 化 -->
         <script>
 

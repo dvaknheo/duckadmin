@@ -56,7 +56,7 @@
         <script src="<?=__res('component/layui/layui.js')?>"></script>
         <script src="<?=__res('component/pear/pear.js')?>"></script>
         <script src="<?=__res('admin/js/permission.js')?>"></script>
-        
+        <script src="<?=__res('admin/js/ajax_post.js')?>"></script>
         <script>
 
             // 相关接口
