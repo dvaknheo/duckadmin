@@ -102,7 +102,7 @@ body {
     </head>
     <!-- 代 码 结 构 -->
     <body background="<?=__res('admin/images/background.svg')?>" style="background-size: cover;">
-        <form class="layui-form">
+        <form class="layui-form" method="post" action="<?=__url('account/login')?>">
             <div class="layui-form-item">
                 <img class="logo" src="<?=__res('admin/images/logo.png')?>" />
                 <div class="title pear-text">admin</div>
@@ -115,7 +115,7 @@ body {
             </div>
             <div class="layui-form-item">
                 <input hover  lay-verify="required" class="code layui-input layui-input-inline" name="captcha" placeholder="验证码" />
-                <img class="codeImage" width="120px"/>
+                <img class="codeImage" src-ref="<?=__url('account/captcha?type=login&v=')?>" width="120px"/>
             </div>
             <div class="layui-form-item">
                 <button type="submit" class="pear-btn pear-btn-primary login" lay-submit lay-filter="login">
@@ -127,50 +127,66 @@ body {
         <script src="<?=__res('component/layui/layui.js')?>"></script>
         <script src="<?=__res('component/pear/pear.js')?>"></script>
         <script>
-         var url_back=<?=json_encode($url_back)?>;
-         var url_captcha="<?=__url('account/captcha?type=login&v=')?>";
-         var url_login="<?=__url('account/login')?>";
-       </script>
-        <script>
-            layui.use(['form', 'button', 'popup', 'layer', 'theme', 'admin'], function() {
-
-                var $ = layui.$, layer = layui.layer, form = layui.form;
-                function switchCaptcha() {
-                    $('.codeImage').attr("src", url_captcha + new Date().getTime());
-                }
-                $('.codeImage').on('click', function () {
+var url_back=<?=json_encode($url_back)?>;
+</script>
+<script>
+function ajax_post(form, callback) {
+    const action = form.getAttribute('action');
+    const method = form.getAttribute('method') || 'POST';
+    const formData = new FormData(form);
+    return fetch(action, {
+        method: method,
+        body: formData,
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json(); // 解析 JSON
+    })
+    .then(data => {
+        if (typeof callback === 'function') {
+            callback(data); // 成功时调用 callback(data)
+        }
+        return data; // 仍然返回 data 以便链式调用
+    })
+    .catch(error => {
+        console.error('Fetch error:', error);
+        throw error; // 继续抛出错误，以便外部可以 .catch()
+    });
+}
+layui.use(['form', 'popup', 'layer'], function() {
+    layer = layui.layer;
+    function switchCaptcha() {
+        var  url_captcha = document.querySelector('.codeImage').getAttribute('src-ref');
+        document.querySelector('.codeImage').setAttribute("src", url_captcha + new Date().getTime());
+    }
+    document.querySelector('.codeImage').addEventListener('click', function () {
+        switchCaptcha();
+    });
+    switchCaptcha();
+    // 登 录 提 交
+    layui.form.on('submit(login)', function (data) {
+        ajax_post(this.closest('form'), function (res) {
+            layer.closeAll('loading');
+            if (res.code) {
+                layui.popup.failure(res.msg, function () {
                     switchCaptcha();
                 });
-                switchCaptcha();
-                // 登 录 提 交
-                form.on('submit(login)', function (data) {
-                    layer.load();
-                    $.ajax({
-                        url: url_login,
-                        type: "POST",
-                        data: data.field,
-                        success: function (res) {
-                            layer.closeAll('loading');
-                            if (!res.code) {
-                                layui.popup.success('登录成功', function () {
-                                    //location.reload();
-                                    if(url_back){
-                                        location.href = url_back;
-                                    }else{
-                                        location.reload();
-                                    }
-                                })
-                            } else {
-                                layui.popup.failure(res.msg, function () {
-                                    switchCaptcha();
-                                })
-                            }
-                        }
-                    });
-                    return false;
-                });
-
+                return;
+            }
+            layui.popup.success('登录成功', function () {
+                if(url_back){
+                    location.href = url_back;
+                    return;
+                }
+                location.reload();
             })
-        </script>
+        });
+        return false;
+    });
+
+})
+</script>
     </body>
 </html>
