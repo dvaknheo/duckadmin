@@ -27,7 +27,7 @@
                     <!-- 基本信息 -->
                     <div class="layui-tab-item layui-show">
 
-                        <form class="layui-form" lay-filter="baseInfo">
+                        <form method="post" class="layui-form" lay-filter="baseInfo" action="<?=__url('account/update')?>">
                             <div class="layui-form-item">
                                 <label class="layui-form-label">昵称</label>
                                 <div class="layui-input-block">
@@ -62,7 +62,7 @@
 
                     <div class="layui-tab-item">
 
-                        <form class="layui-form" action="">
+                        <form method="post" class="layui-form" action="<?=__url('account/password')?>">
                             <div class="layui-form-item">
                                 <label class="layui-form-label">原始密码</label>
                                 <div class="layui-input-block">
@@ -122,33 +122,21 @@
                 });
 
                 form.on("submit(saveBaseInfo)", function(data){
-                    $.ajax({
-                        url: "<?=__url('account/update')?>",
-                        dataType: "json",
-                        type: "POST",
-                        data: data.field,
-                        success: function (res) {
+                    ajax_post(this.closet('form'),function (res) {
                             if (res.code) {
                                 return layui.popup.failure(res.msg);
                             }
                             return layui.popup.success("操作成功");
-                        }
                     });
                     return false;
                 });
 
                 form.on("submit(savePassword)", function(data){
-                    $.ajax({
-                        url: "<?=__url('account/password')?>",
-                        dataType: "json",
-                        type: "POST",
-                        data: data.field,
-                        success: function (res) {
+                    ajax_post(this.closet('form'),function (res) {
                             if (res.code) {
                                 return layui.popup.failure(res.msg);
                             }
                             return layui.popup.success("操作成功");
-                        }
                     });
                     return false;
                 });

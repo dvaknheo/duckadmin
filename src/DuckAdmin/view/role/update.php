@@ -8,8 +8,8 @@
     </head>
     <body>
 
-        <form class="layui-form">
-
+        <form method="post" class="layui-form" action="<?=__url('role/update')?>">
+            <input type="hidden" name="id" value="<?php die();?>">
             <div class="mainBox">
                 <div class="main-container mr-5">
 
@@ -61,7 +61,6 @@
             // 相关接口
             const PRIMARY_KEY = "id";
             const SELECT_API = "<?=__url('role/select')?>" + location.search;
-            const UPDATE_API = "<?=__url('role/update')?>";
 
             // 获取数据库记录
             layui.use(["form", "util", "popup"], function () {
@@ -164,12 +163,7 @@
             layui.use(["form", "popup"], function () {
                 layui.form.on("submit(save)", function (data) {
                     data.field[PRIMARY_KEY] = layui.url().search[PRIMARY_KEY];
-                    layui.$.ajax({
-                        url: UPDATE_API,
-                        type: "POST",
-                        dateType: "json",
-                        data: data.field,
-                        success: function (res) {
+                    ajax_post(this.closet('form'),function (res) {
                             if (res.code) {
                                 return layui.popup.failure(res.msg);
                             }
@@ -177,7 +171,6 @@
                                 parent.refreshTable();
                                 parent.layer.close(parent.layer.getFrameIndex(window.name));
                             });
-                        }
                     });
                     return false;
                 });

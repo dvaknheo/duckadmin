@@ -15,7 +15,7 @@
     </head>
     <body>
 
-        <form class="layui-form" action="">
+        <form method="post" class="layui-form">
 
             <div class="mainBox">
                 <div class="main-container mr-5">
@@ -93,9 +93,6 @@
         <script src="<?=__res('admin/js/ajax_post.js')?>"></script>
         <script>
 
-            // 接口
-            const INSERT_URL = "<?=__url('rule/insert')?>";
-
             // 图标选择
             layui.use(["iconPicker"], function() {
                 layui.iconPicker.render({
@@ -152,12 +149,7 @@
             // 表单提交事件
             layui.use(["form", "popup"], function () {
                 layui.form.on("submit(save)", function (data) {
-                    layui.$.ajax({
-                        url: INSERT_URL,
-                        type: "POST",
-                        dateType: "json",
-                        data: data.field,
-                        success: function (res) {
+                    ajax_post(this.closet('form'),function (res) {
                             if (res.code) {
                                 return layui.popup.failure(res.msg);
                             }
@@ -165,7 +157,6 @@
                                 parent.refreshTable();
                                 parent.layer.close(parent.layer.getFrameIndex(window.name));
                             });
-                        }
                     });
                     return false;
                 });

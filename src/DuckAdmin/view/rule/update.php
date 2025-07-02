@@ -15,8 +15,8 @@
     </head>
     <body>
 
-        <form class="layui-form">
-
+        <form method="post" class="layui-form" action="<?=__url('rule/update')?>">
+            <input type="hidden" name="id" value="<?php die("give me the id")?>">
             <div class="mainBox">
                 <div class="main-container mr-5">
 
@@ -93,9 +93,7 @@
         <script>
 
             // 相关接口
-            let PRIMARY_KEY = "id";
             const SELECT_API = "<?=__url('rule/select')?>" + location.search;
-            const UPDATE_API = "<?=__url('rule/update')?>";
 
             // 获取行数据
             layui.use(["form", "util", "popup"], function () {
@@ -184,12 +182,8 @@
             layui.use(["form", "popup"], function () {
                 layui.form.on("submit(save)", function (data) {
                     data.field[PRIMARY_KEY] = layui.url().search[PRIMARY_KEY];
-                    layui.$.ajax({
-                        url: UPDATE_API,
-                        type: "POST",
-                        dateType: "json",
-                        data: data.field,
-                        success: function (res) {
+                    
+                    ajax_post(this.closet('form'),function (res) {
                             if (res.code) {
                                 return layui.popup.failure(res.msg);
                             }
@@ -197,7 +191,6 @@
                                 parent.refreshTable();
                                 parent.layer.close(parent.layer.getFrameIndex(window.name));
                             });
-                        }
                     });
                     return false;
                 });
