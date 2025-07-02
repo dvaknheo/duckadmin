@@ -149,7 +149,7 @@
             // 表单提交事件
             layui.use(["form", "popup"], function () {
                 layui.form.on("submit(save)", function (data) {
-                    ajax_post(this.closet('form'),function (res) {
+                    ajax_post(this.closest('form'),function (res) {
                             if (res.code) {
                                 return layui.popup.failure(res.msg);
                             }

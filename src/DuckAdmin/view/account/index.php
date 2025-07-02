@@ -122,7 +122,7 @@
                 });
 
                 form.on("submit(saveBaseInfo)", function(data){
-                    ajax_post(this.closet('form'),function (res) {
+                    ajax_post(this.closest('form'),function (res) {
                             if (res.code) {
                                 return layui.popup.failure(res.msg);
                             }
@@ -132,7 +132,7 @@
                 });
 
                 form.on("submit(savePassword)", function(data){
-                    ajax_post(this.closet('form'),function (res) {
+                    ajax_post(this.closest('form'),function (res) {
                             if (res.code) {
                                 return layui.popup.failure(res.msg);
                             }
