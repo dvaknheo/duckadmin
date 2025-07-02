@@ -6,14 +6,106 @@
         <title>登录</title>
         <!-- 样 式 文 件 -->
         <link rel="stylesheet" href="<?=__res('component/pear/css/pear.css')?>" />
-        <link rel="stylesheet" href="<?=__res('admin/css/pages/login.css')?>" />
+<style>
+.layui-form {
+	width: 320px !important;
+	margin: auto !important;
+	margin-top: 160px !important;
+}
+
+.layui-form button {
+	width: 100% !important;
+	height: 44px !important;
+	line-height: 44px !important;
+	font-size: 16px !important;
+	font-weight: 550 !important;
+}
+
+.layui-form-checked[lay-skin=primary] i {
+	color: #fff !important;
+}
+
+.layui-tab-content {
+	margin-top: 15px !important;
+	padding-left: 0px !important;
+	padding-right: 0px !important;
+}
+
+.layui-form-item {
+	margin-top: 20px !important;
+}
+
+.layui-input {
+	height: 44px !important;
+	line-height: 44px !important;
+	padding-left: 15px !important;
+	border-radius: 3px !important;
+}
+
+.layui-form-danger:focus{
+	box-shadow: 0px 0px 2px 1px #f56c6c !important;
+}
+
+.logo {
+	width: 60px !important;
+	margin-top: 10px !important;
+	margin-bottom: 10px !important;
+	margin-left: 20px !important;
+}
+
+.title {
+	font-size: 30px !important;
+	font-weight: 550 !important;
+	margin-left: 20px !important;
+	display: inline-block !important;
+	height: 60px !important;
+	line-height: 60px !important;
+	margin-top: 10px !important;
+	position: absolute !important;
+}
+
+.desc {
+	width: 100% !important;
+	text-align: center !important;
+	color: gray !important;
+	height: 60px !important;
+	line-height: 60px !important;
+}
+
+body {
+	background-repeat:no-repeat;
+	background-color: whitesmoke;
+	background-size: 100%;
+	height: 100%;
+ }
+
+.code {
+	float: left;
+	margin-right: 13px;
+	margin: 0px !important;
+	border: #e6e6e6 1px solid;
+	display: inline-block!important;
+}
+
+.codeImage {
+	float: right;
+	height: 42px;
+	border: #e6e6e6 1px solid;
+}
+
+@media (max-width:768px){
+	body{
+		background-position:center;
+	}
+}
+</style>
     </head>
     <!-- 代 码 结 构 -->
     <body background="<?=__res('admin/images/background.svg')?>" style="background-size: cover;">
         <form class="layui-form">
             <div class="layui-form-item">
                 <img class="logo" src="<?=__res('admin/images/logo.png')?>" />
-                <div class="title pear-text">webman admin</div>
+                <div class="title pear-text">admin</div>
             </div>
             <div class="layui-form-item">
                 <input lay-verify="required" hover class="layui-input" type="text" name="username" value="" placeholder="用户名" />
@@ -31,33 +123,30 @@
                 </button>
             </div>
         </form>
-        <script>
-            var color = localStorage.getItem("theme-color-color");
-            var second = localStorage.getItem("theme-color-second");
-            if (!color || !second) {
-                localStorage.setItem("theme-color-color", "#2d8cf0");
-                localStorage.setItem("theme-color-second", "#ecf5ff");
-            }
-        </script>
         <!-- 资 源 引 入 -->
         <script src="<?=__res('component/layui/layui.js')?>"></script>
         <script src="<?=__res('component/pear/pear.js')?>"></script>
         <script>
          var url_back=<?=json_encode($url_back)?>;
+         var url_captcha="<?=__url('account/captcha?type=login&v=')?>";
+         var url_login="<?=__url('account/login')?>";
        </script>
         <script>
             layui.use(['form', 'button', 'popup', 'layer', 'theme', 'admin'], function() {
 
                 var $ = layui.$, layer = layui.layer, form = layui.form;
                 function switchCaptcha() {
-                    $('.codeImage').attr("src", "<?=__url('account/captcha?type=login&v=')?>" + new Date().getTime());
+                    $('.codeImage').attr("src", url_captcha + new Date().getTime());
                 }
+                $('.codeImage').on('click', function () {
+                    switchCaptcha();
+                });
                 switchCaptcha();
                 // 登 录 提 交
                 form.on('submit(login)', function (data) {
                     layer.load();
                     $.ajax({
-                        url: '<?=__url('account/login')?>',
+                        url: url_login,
                         type: "POST",
                         data: data.field,
                         success: function (res) {
@@ -80,9 +169,7 @@
                     });
                     return false;
                 });
-                $('.codeImage').on('click', function () {
-                    switchCaptcha();
-                });
+
             })
         </script>
     </body>

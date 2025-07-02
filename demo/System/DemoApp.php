@@ -28,7 +28,7 @@ class DemoApp extends DuckPhp
         'path_resource' => 'public',          //for workerman local file
         
         'database_driver' => 'sqlite',
-        'duckadmin_demo_enable_test' => true,
+        'duckadmin_demo_enable_test' => false,
         'duckadmin_demo_enable_workerman' => true,
         
         'app' => [
@@ -108,7 +108,7 @@ class DemoApp extends DuckPhp
         
         CoreHelper::PhaseCall(
             \DuckAdmin\System\DuckAdminApp::class,function(){
-                MyAccountController::OverrideParent();
+                //MyAccountController::OverrideParent();
         });
         
     }
