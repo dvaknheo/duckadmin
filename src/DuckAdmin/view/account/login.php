@@ -126,7 +126,7 @@ body {
         <!-- 资 源 引 入 -->
         <script src="<?=__res('component/layui/layui.js')?>"></script>
         <script src="<?=__res('component/pear/pear.js')?>"></script>
-        <script src="<?=__res('admin/js/ajax_post.js')?>"></script>
+        <script src="<?=__res('admin/js/common.js')?>"></script>
         <script>
 var url_back=<?=json_encode($url_back)?>;
 </script>

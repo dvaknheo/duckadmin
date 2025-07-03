@@ -30,11 +30,12 @@
 <button class="pear-btn pear-btn-xs tool-btn" lay-event="edit" permission="app.admin.rule.update">编辑</button>
 <button class="pear-btn pear-btn-xs tool-btn" lay-event="remove" permission="app.admin.rule.delete">删除</button>
 </script>
+<script>
+    window.PERMISSION_API = "<?=__url('rule/permission')?>";
+</script>
 		<script src="<?=__res('component/layui/layui.js')?>"></script>
 		<script src="<?=__res('component/pear/pear.js')?>"></script>
-		<script src="<?=__res('admin/js/permission.js')?>"></script>
 		<script src="<?=__res('admin/js/common.js')?>"></script>
-        <script src="<?=__res('admin/js/ajax_post.js')?>"></script>
 		<script>
 layui.$(function () {
     togglePermission();
@@ -42,10 +43,6 @@ layui.$(function () {
 layui.$(function () {
     toggleSearchFormShow();
 });
-
-        
-	window.PERMISSION_API = "<?=__url('rule/permission')?>";
-
 			// 相关常量
 			const PRIMARY_KEY = "id";
 			const SELECT_API = "<?=__url('rule/select?limit=5000')?>";
