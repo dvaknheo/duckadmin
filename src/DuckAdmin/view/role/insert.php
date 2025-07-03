@@ -60,10 +60,8 @@
         <script>
             // 字段 权限 rules
             layui.use(["jquery", "xmSelect", "popup"], function() {
-                layui.$.ajax({
-                    url: "<?=__url('role/rules?id=1')?>",
-                    dataType: "json",
-                    success: function (res) {
+                var url= "<?=__url('role/rules?id=1')?>";
+                fetch(url).then(response => {return response.json();}).then(res => {
                         let value = layui.$("#rules").attr("value");
                         let initValue = value ? value.split(",") : [];
                         layui.xmSelect.render({
@@ -74,16 +72,13 @@
                             tree: {"show":true,expandedKeys:initValue},
                             toolbar: {show:true,list:["ALL","CLEAR","REVERSE"]},
                         })
-                    }
                 });
             });
             
             // 字段 父级 pid
             layui.use(["jquery", "xmSelect", "popup"], function() {
-                layui.$.ajax({
-                    url: "<?=__url('role/select?format=tree')?>",
-                    dataType: "json",
-                    success: function (res) {
+                var url = "<?=__url('role/select?format=tree')?>";
+                fetch(url).then(response => {return response.json();}).then(res => {
                         let value = layui.$("#pid").attr("value");
                         let initValue = value ? value.split(",") : [];
                         layui.xmSelect.render({
@@ -100,22 +95,18 @@
                             on: function(data){
                                 let id = data.arr[0] ? data.arr[0].value : "";
                                 if (!id) return;
-                                layui.$.ajax({
-                                    url: '<?=__url('role/rules?id=')?>' + id,
-                                    dataType: 'json',
-                                    success: function (res) {
+                                var url= '<?=__url('role/rules?id=')?>' + id;
+                                fetch(url).then(response => {return response.json();}).then(res => {
                                         if (res.code) {
                                             return layui.popup.failure(res.msg);
                                         }
                                         layui.xmSelect.get('#rules')[0].update({data:res.data});
-                                    }
                                 });
                             }
                         })
                         if (res.code) {
                             layui.popup.failure(res.msg);
                         }
-                    }
                 });
             });
             

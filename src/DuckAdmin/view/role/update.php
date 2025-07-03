@@ -65,10 +65,8 @@
             // 获取数据库记录
             layui.use(["form", "util", "popup"], function () {
                 let $ = layui.$;
-                $.ajax({
-                    url: SELECT_API,
-                    dataType: "json",
-                    success: function (res) {
+                var url = SELECT_API;
+                fetch(url).then(response => {return response.json();}).then(res => {
                         
                         // 给表单初始化数据
                         layui.each(res.data[0], function (key, value) {
@@ -87,11 +85,8 @@
                         
                         // 字段 权限 rules
                         layui.use(["jquery", "xmSelect", "popup"], function() {
-                            layui.$.ajax({
-                                url: "<?=__url('role/rules?id=')?>" + res.data[0].pid,
-                                dataType: "json",
-                                success: function (res) {
-                                    let value = layui.$("#rules").attr("value");
+                            var url = "<?=__url('role/rules?id=')?>" + res.data[0].pid;
+                            fetch(url).then(response => {return response.json();}).then(res => {                                    let value = layui.$("#rules").attr("value");
                                     let initValue = value ? value.split(",") : [];
                                     layui.xmSelect.render({
                                         el: "#rules",
@@ -104,7 +99,6 @@
                                     if (res.code) {
                                         layui.popup.failure(res.msg);
                                     }
-                                }
                             });
                         });
                         

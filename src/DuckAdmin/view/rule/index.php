@@ -154,11 +154,7 @@
 				let count = apis.length;
 				layui.each(apis, function (k, item) {
 					let [field, url] = item;
-console.log(url);
-					$.ajax({
-						url: url,
-						dateType: "json",
-						success: function (res) {
+					fetch(url).then(response => {return response.json();}).then(res => {
 							if (res.code) {
 								return layui.popup.failure(res.msg);
 							}
@@ -172,8 +168,7 @@ console.log(url);
 								}
 							}
 							travel(res.data);
-						},
-						complete: function () {
+						
 							if (--count === 0) {
 								render();
 							}
