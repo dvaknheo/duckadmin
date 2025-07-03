@@ -32,7 +32,3 @@ function toggleSearchFormShow()
     $('.top-search-from .toggle-btn a:first').addClass('layui-hide');
 }
 
-layui.$(function () {
-    toggleSearchFormShow();
-});
-

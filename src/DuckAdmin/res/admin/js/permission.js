@@ -1,7 +1,7 @@
 /**
  * 获取控制器详细权限，并决定展示哪些按钮或dom元素
  */
-layui.$(function () {
+function togglePermission() {
     let $ = layui.$;
     the_url = window.PERMISSION_API ? window.PERMISSION_API : "/app/admin/rule/permission";
     $.ajax({
@@ -32,4 +32,8 @@ layui.$(function () {
             }
         }
     });
+
+}
+layui.$(function () {
+    togglePermission();
 });

@@ -103,7 +103,9 @@
         <script src="<?=__res('admin/js/common.js')?>"></script>
         <script src="<?=__res('admin/js/ajax_post.js')?>"></script>
         <script>
-
+layui.$(function () {
+    toggleSearchFormShow();
+});
             // 相关常量
             const PRIMARY_KEY = "id";
             const INSERT_URL = "<?=__url('admin/insert')?>";

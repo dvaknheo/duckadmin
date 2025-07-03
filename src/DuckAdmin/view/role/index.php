@@ -45,7 +45,9 @@
         <script src="<?=__res('admin/js/common.js')?>"></script>
         <script src="<?=__res('admin/js/ajax_post.js')?>"></script>
         <script>
-
+layui.$(function () {
+    toggleSearchFormShow();
+});
             // 相关常量
             const PRIMARY_KEY = "id";
             const SELECT_API = "<?=__url('role/select')?>";

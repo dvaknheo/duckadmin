@@ -36,6 +36,12 @@
 		<script src="<?=__res('admin/js/common.js')?>"></script>
         <script src="<?=__res('admin/js/ajax_post.js')?>"></script>
 		<script>
+
+layui.$(function () {
+    toggleSearchFormShow();
+});
+
+        
 	window.PERMISSION_API = "<?=__url('rule/permission')?>";
 
 			// 相关常量
@@ -172,7 +178,6 @@
 							if (--count === 0) {
 								render();
 							}
-						}
 					});
 				});
 				if (!count) {
