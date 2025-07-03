@@ -79,7 +79,9 @@
         <script src="<?=__res('admin/js/permission.js')?>"></script>
         <script src="<?=__res('admin/js/ajax_post.js')?>"></script>
         <script>
-            
+layui.$(function () {
+    togglePermission();
+});
             // 字段 角色 roles
             layui.use(["jquery", "xmSelect", "popup"], function() {
                 layui.$.ajax({

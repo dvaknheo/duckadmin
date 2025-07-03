@@ -145,7 +145,9 @@
         <script src="<?=__res('admin/js/permission.js')?>"></script>
         <script src="<?=__res('admin/js/ajax_post.js')?>"></script>
         <script>
-
+layui.$(function () {
+    togglePermission();
+});
 
             // 菜单设置
             layui.use(["upload", "layer", "popup"], function() {

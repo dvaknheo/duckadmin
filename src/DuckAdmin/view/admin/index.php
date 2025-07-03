@@ -104,6 +104,9 @@
         <script src="<?=__res('admin/js/ajax_post.js')?>"></script>
         <script>
 layui.$(function () {
+    togglePermission();
+});
+layui.$(function () {
     toggleSearchFormShow();
 });
             // 相关常量

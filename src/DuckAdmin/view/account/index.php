@@ -109,6 +109,9 @@
         <script src="<?=__res('admin/js/permission.js')?>"></script>
         <script src="<?=__res('admin/js/ajax_post.js')?>"></script>
         <script>
+layui.$(function () {
+    togglePermission();
+});
             layui.use(["form", "popup"], function () {
                 let $ = layui.$;
                 var url = "<?=__url('account/info')?>";

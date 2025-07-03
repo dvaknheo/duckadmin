@@ -34,6 +34,3 @@ function togglePermission() {
     });
 
 }
-layui.$(function () {
-    togglePermission();
-});

@@ -58,6 +58,9 @@
         <script src="<?=__res('admin/js/permission.js')?>"></script>
         <script src="<?=__res('admin/js/ajax_post.js')?>"></script>
         <script>
+layui.$(function () {
+    togglePermission();
+});
             // 字段 权限 rules
             layui.use(["jquery", "xmSelect", "popup"], function() {
                 var url= "<?=__url('role/rules?id=1')?>";

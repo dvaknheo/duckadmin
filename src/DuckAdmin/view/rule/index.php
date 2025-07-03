@@ -36,7 +36,9 @@
 		<script src="<?=__res('admin/js/common.js')?>"></script>
         <script src="<?=__res('admin/js/ajax_post.js')?>"></script>
 		<script>
-
+layui.$(function () {
+    togglePermission();
+});
 layui.$(function () {
     toggleSearchFormShow();
 });

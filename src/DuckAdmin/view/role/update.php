@@ -57,7 +57,9 @@
         <script src="<?=__res('admin/js/permission.js')?>"></script>
         <script src="<?=__res('admin/js/ajax_post.js')?>"></script>
         <script>
-
+layui.$(function () {
+    togglePermission();
+});
             // 相关接口
             const PRIMARY_KEY = "id";
             const SELECT_API = "<?=__url('role/select')?>" + location.search;

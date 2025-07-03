@@ -92,7 +92,9 @@
         <script src="<?=__res('admin/js/permission.js')?>"></script>
         <script src="<?=__res('admin/js/ajax_post.js')?>"></script>
         <script>
-
+layui.$(function () {
+    togglePermission();
+});
             // 图标选择
             layui.use(["iconPicker"], function() {
                 layui.iconPicker.render({
