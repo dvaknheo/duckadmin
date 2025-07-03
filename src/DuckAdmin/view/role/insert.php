@@ -8,7 +8,7 @@
     </head>
     <body>
 
-        <form method="post" class="layui-form">
+        <form method="post" class="layui-form" action="<?=__url('role/insert')?>">
 
             <div class="mainBox">
                 <div class="main-container mr-5">
@@ -123,7 +123,6 @@ layui.$(function () {
                                 parent.refreshTable();
                                 parent.layer.close(parent.layer.getFrameIndex(window.name));
                             });
-                        }
                     });
                     return false;
                 });

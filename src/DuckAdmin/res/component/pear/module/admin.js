@@ -1,4 +1,4 @@
-layui.define(['message', 'table', 'jquery', 'element', 'form', 'tab', 'menu', 'frame', 'theme', 'convert','fullscreen'],
+layui.define(['message', 'table', 'jquery', 'element', 'form', 'tab', 'menu', 'frame', 'theme', 'fullscreen'],
 	function(exports) {
 		"use strict";
 

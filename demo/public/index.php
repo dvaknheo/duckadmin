@@ -3,7 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-
+@include_once(__DIR__. '/../LocalOverride.php');
 $file = __DIR__.'/../../vendor/autoload.php';
 if(is_file($file)){
  require_once $file;
@@ -13,7 +13,6 @@ if(is_file($file)){
         require_once $file;
     }
 }
-//@include_once(__DIR__. '/../LocalOverride.php');
 
 $options=[
     // ...
