@@ -144,7 +144,6 @@ layui.$(function () {
                             layui.popup.failure(res.msg);
                         }
 
-                    }
                 });
             });
 
