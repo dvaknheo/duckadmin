@@ -1,13 +1,11 @@
-layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'menu', 'frame', 'theme', 'convert','fullscreen'],
+layui.define(['message', 'table', 'jquery', 'element', 'form', 'tab', 'menu', 'frame', 'theme', 'convert','fullscreen'],
 	function(exports) {
 		"use strict";
 
 		var $ = layui.jquery,
 			form = layui.form,
 			element = layui.element,
-			yaml = layui.yaml,
 			pearTab = layui.tab,
-			convert = layui.convert,
 			pearMenu = layui.menu,
 			pearFrame = layui.frame,
 			pearTheme = layui.theme,
@@ -24,8 +22,8 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 
 		var pearAdmin = new function() {
 
-			var configType = 'yml';
-			var configPath = 'pear.config.yml';
+			var configType = 'json';//去掉 yaml
+			var configPath = 'pear.config.json';//去掉 yaml
 
 			this.setConfigPath = function(path) {
 				configPath = path;
@@ -44,21 +42,17 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 			}
 
 			this.readConfig = function() {
-				if (configType === "yml") {
-					return yaml.load(configPath);
-				} else {
-					var data;
-					$.ajax({
-						url: configPath,
-						type: 'get',
-						dataType: 'json',
-						async: false,
-						success: function(result) {
-							data = result;
-						}
-					})
-					return data;
-				}
+                var data;
+                $.ajax({
+                    url: configPath,
+                    type: 'get',
+                    dataType: 'json',
+                    async: false,
+                    success: function(result) {
+                        data = result;
+                    }
+                })
+                return data;
 			}
 
 			this.messageRender = function(option) {
