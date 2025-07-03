@@ -104,10 +104,8 @@
 
             // 上级菜单
             layui.use(["jquery", "xmSelect", "popup"], function() {
-                layui.$.ajax({
-                    url: "<?=__url('rule/select?format=tree&type=0,1')?>",
-                    dataType: "json",
-                    success: function (res) {
+                url = "<?=__url('rule/select?format=tree&type=0,1')?>";
+                fetch(url).then(response => {return response.json();}).then(res => {
                         let value = layui.$("#pid").attr("value");
                         let initValue = value ? value.split(",") : [];
                         layui.xmSelect.render({
@@ -126,7 +124,6 @@
                         if (res.code) {
                             return layui.popup.failure(res.msg);
                         }
-                    }
                 });
             });
 

@@ -151,7 +151,7 @@
             layui.use(["upload", "layer", "popup"], function() {
                 let $ = layui.$;
                 let form = layui.form;
-                // 提交
+                // 提交 TODO 改成 ajax_post
                 form.on("submit(saveMenuInfo)", function(data){
                     $.ajax({
                         url: "<?=__url('config/update')?>",
@@ -173,7 +173,7 @@
             layui.use(["upload", "layer", "popup"], function() {
                 let $ = layui.$;
                 let form = layui.form;
-                // 提交
+                // 提交 这要改一下，这数据居然不是这里数据而是其他数据？
                 form.on("submit(saveTabInfo)", function(data){
                     let field = data.field;
                     field.index = {
@@ -202,11 +202,9 @@
 
             layui.use(["form"], function () {
                 let form = layui.form;
-                let $ = layui.$;
-                $.ajax({
-                    url: "<?=__url('config/get')?>",
-                    dataType: "json",
-                    success: function (res) {
+              
+                var url = "<?=__url('config/get')?>";
+                fetch(url).then(response => {return response.json();}).then(res => {
                         if (res.code) {
                             return layui.popup.failure(res.msg);
                         }
@@ -220,7 +218,6 @@
                         tab.title = index.title;
                         tab.href= index.href;
                         form.val("tabInfo", res.tab);
-                    }
                 });
 
             });

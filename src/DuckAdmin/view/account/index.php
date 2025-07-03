@@ -109,19 +109,13 @@
         <script src="<?=__res('admin/js/permission.js')?>"></script>
         <script src="<?=__res('admin/js/ajax_post.js')?>"></script>
         <script>
-
             layui.use(["form", "popup"], function () {
-                let form = layui.form;
                 let $ = layui.$;
-                $.ajax({
-                    url: "<?=__url('account/info')?>",
-                    dataType: "json",
-                    success: function (res) {
-                        form.val("baseInfo", res.data);
-                    }
-                });
-
-                form.on("submit(saveBaseInfo)", function(data){
+                var url = "<?=__url('account/info')?>";
+                fetch(url).then(response => {return response.json();}).then(res => {
+                    layui.form.val("baseInfo", res.data);
+                })
+                layui.form.on("submit(saveBaseInfo)", function(data){
                     ajax_post(this.closest('form'),function (res) {
                             if (res.code) {
                                 return layui.popup.failure(res.msg);
@@ -131,7 +125,7 @@
                     return false;
                 });
 
-                form.on("submit(savePassword)", function(data){
+                layui.form.on("submit(savePassword)", function(data){
                     ajax_post(this.closest('form'),function (res) {
                             if (res.code) {
                                 return layui.popup.failure(res.msg);

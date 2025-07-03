@@ -9,7 +9,7 @@
     <body>
 
         <form method="post" class="layui-form" action="<?=__url('role/update')?>">
-            <input type="hidden" name="id" value="<?php die();?>">
+            <input type="hidden" name="id" value="<?=$_GET['id']?>">
             <div class="mainBox">
                 <div class="main-container mr-5">
 
@@ -110,10 +110,8 @@
                         
                         // 字段 父级角色组 pid
                         layui.use(["jquery", "xmSelect", "popup"], function() {
-                            layui.$.ajax({
-                                url: "<?=__url('role/select?format=tree')?>",
-                                dataType: "json",
-                                success: function (res) {
+                            var url = "<?=__url('role/select?format=tree')?>";
+                            fetch(url).then(response => {return response.json();}).then(res => {
                                     let value = layui.$("#pid").attr("value");
                                     let initValue = value ? value.split(",") : [];
                                     layui.xmSelect.render({
@@ -131,22 +129,18 @@
                                         on: function(data){
                                             let id = data.arr[0] ? data.arr[0].value : "";
                                             if (!id) return;
-                                            layui.$.ajax({
-                                                url: '<?=__url('role/rules?id=')?>' + id,
-                                                dataType: 'json',
-                                                success: function (res) {
+                                            var url = '<?=__url('role/rules?id=')?>' + id;
+                                            fetch(url).then(response => {return response.json();}).then(res => {
                                                     if (res.code) {
                                                         return layui.popup.failure(res.msg);
                                                     }
                                                     layui.xmSelect.get('#rules')[0].update({data:res.data});
-                                                }
                                             });
                                         }
                                     });
                                     if (res.code) {
                                         layui.popup.failure(res.msg);
                                     }
-                                }
                             });
                         });
 
@@ -162,7 +156,6 @@
             //提交事件
             layui.use(["form", "popup"], function () {
                 layui.form.on("submit(save)", function (data) {
-                    data.field[PRIMARY_KEY] = layui.url().search[PRIMARY_KEY];
                     ajax_post(this.closest('form'),function (res) {
                             if (res.code) {
                                 return layui.popup.failure(res.msg);

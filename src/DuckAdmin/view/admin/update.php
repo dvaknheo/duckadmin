@@ -145,7 +145,7 @@
                 });
             });
 
-            //提交事件
+            //提交事件 TODO 这里要修改成 ajax_post
             layui.use(["form", "popup"], function () {
                 layui.form.on("submit(save)", function (data) {
                     data.field[PRIMARY_KEY] = layui.url().search[PRIMARY_KEY];

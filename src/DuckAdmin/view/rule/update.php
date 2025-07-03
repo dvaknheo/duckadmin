@@ -16,7 +16,7 @@
     <body>
 
         <form method="post" class="layui-form" action="<?=__url('rule/update')?>">
-            <input type="hidden" name="id" value="<?php die("give me the id")?>">
+            <input type="hidden" name="id" value="<?= $_GET['id']?>">
             <div class="mainBox">
                 <div class="main-container mr-5">
 
@@ -98,10 +98,9 @@
             // 获取行数据
             layui.use(["form", "util", "popup"], function () {
                 let $ = layui.$;
-                $.ajax({
-                    url: SELECT_API,
-                    dataType: "json",
-                    success: function (res) {
+
+                var url = SELECT_API;
+                fetch(url).then(response => {return response.json();}).then(res => {
 
                         // 赋值表单
                         layui.each(res.data[0], function (key, value) {
@@ -129,10 +128,8 @@
 
                         // 获取上级菜单
                         layui.use(["jquery", "xmSelect", "popup"], function() {
-                            layui.$.ajax({
-                                url: "<?=__url('rule/select')?>?format=tree&type=0,1",
-                                dataType: "json",
-                                success: function (res) {
+                            var url = "<?=__url('rule/select?format=tree&type=0,1')?>";
+                            fetch(url).then(response => {return response.json();}).then(res => {
                                     let value = layui.$("#pid").attr("value");
                                     let initValue = value ? value.split(",") : [];
                                     layui.xmSelect.render({
@@ -150,7 +147,6 @@
                                     if (res.code) {
                                         return layui.popup.failure(res.msg);
                                     }
-                                }
                             });
                         });
 
@@ -174,15 +170,12 @@
                             layui.popup.failure(res.msg);
                         }
 
-                    }
                 });
             });
 
             // 提交事件
             layui.use(["form", "popup"], function () {
                 layui.form.on("submit(save)", function (data) {
-                    data.field[PRIMARY_KEY] = layui.url().search[PRIMARY_KEY];
-                    
                     ajax_post(this.closest('form'),function (res) {
                             if (res.code) {
                                 return layui.popup.failure(res.msg);

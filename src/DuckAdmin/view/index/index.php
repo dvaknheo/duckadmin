@@ -113,27 +113,20 @@
 
                 // 登出逻辑
                 admin.logout(function(){
-                    $.ajax({
-                        url: "<?=__url('account/logout')?>",
-                        dataType: "json",
-                        success: function (res) {
+                    var url = "<?=__url('account/logout')?>";
+                    fetch(url).then(response => {return response.json();}).then(res => {
                             if (res.code) {
                                 return popup.error(res.msg);
                             }
                             popup.success("注销成功",function(){
                                 location.reload();
                             })
-                        }
                     });
                     return false;
-                })
-
-                $.ajax({
-                    url: "<?=__url('account/info')?>",
-                    dataType: 'json',
-                    success: function (res) {
-                        window.Admin.Account = res.data;
-                    }
+                });
+                var url = "<?=__url('account/info')?>";
+                fetch(url).then(response => {return response.json();}).then(res => {
+                    window.Admin.Account = res.data;
                 });
 
                 // 消息点击回调

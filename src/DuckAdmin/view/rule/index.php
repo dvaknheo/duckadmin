@@ -154,6 +154,7 @@
 				let count = apis.length;
 				layui.each(apis, function (k, item) {
 					let [field, url] = item;
+console.log(url);
 					$.ajax({
 						url: url,
 						dateType: "json",
