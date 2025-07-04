@@ -105,19 +105,7 @@ layui.use(["form", "util", "jquery", "xmSelect","popup","iconPicker"], function 
             }
 
             // 赋值表单
-            layui.each(res.data[0], function (key, value) {
-                let obj = $('*[name="'+key+'"]');
-                if (key === "password") {
-                    obj.attr("placeholder", "不更新密码请留空");
-                    return;
-                }
-                if (typeof obj[0] === "undefined" || !obj[0].nodeName) return;
-                if (obj[0].nodeName.toLowerCase() === "textarea") {
-                    obj.html(layui.util.escape(value));
-                } else {
-                    obj.attr("value", value);
-                }
-            });
+            fill_form(res.data[0]);
 
             // 图标选择
             layui.iconPicker.render({

@@ -64,34 +64,24 @@ const SELECT_API = "<?=__url('role/select')?>" + location.search;
 // 获取数据库记录
 layui.use(["form", "util", "popup","jquery", "xmSelect"], function () {
     let $ = layui.$;
+    window.PERMISSION_API = "<?=__url('rule/permission')?>";
     togglePermission();
     var url = SELECT_API;
     fetch(url).then(response => {return response.json();}).then(res => {
              // ajax产生错误
             if (res.code) {
-                layui.popup.failure(res.msg);
+                return layui.popup.failure(res.msg);
             }
 
             // 给表单初始化数据
-            layui.each(res.data[0], function (key, value) {
-                let obj = $('*[name="'+key+'"]');
-                if (key === "password") {
-                    obj.attr("placeholder", "不更新密码请留空");
-                    return;
-                }
-                if (typeof obj[0] === "undefined" || !obj[0].nodeName) return;
-                if (obj[0].nodeName.toLowerCase() === "textarea") {
-                    obj.val(layui.util.escape(value));
-                } else {
-                    obj.attr("value", value);
-                }
-            });
+            fill_form(res.data[0]);
             
             // 字段 权限 rules
             var url = "<?=__url('role/rules?id=')?>" + res.data[0].pid;
             fetch(url).then(response => {return response.json();}).then(res => {
                     let value = layui.$("#rules").attr("value");
                     let initValue = value ? value.split(",") : [];
+                    //data = res.data
                     layui.xmSelect.render({
                         el: "#rules",
                         name: "rules",
@@ -108,8 +98,12 @@ layui.use(["form", "util", "popup","jquery", "xmSelect"], function () {
             // 字段 父级角色组 pid
             var url = "<?=__url('role/select?format=tree')?>";
             fetch(url).then(response => {return response.json();}).then(res => {
+                    if (res.code) {
+                        return layui.popup.failure(res.msg);
+                    }
                     let value = layui.$("#pid").attr("value");
                     let initValue = value ? value.split(",") : [];
+                    //data = res.data
                     layui.xmSelect.render({
                         el: "#pid",
                         name: "pid",
@@ -134,9 +128,6 @@ layui.use(["form", "util", "popup","jquery", "xmSelect"], function () {
                             });
                         }
                     });
-                    if (res.code) {
-                        layui.popup.failure(res.msg);
-                    }
             });
 
            

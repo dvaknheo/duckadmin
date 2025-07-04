@@ -8,7 +8,7 @@
     </head>
     <body>
 
-        <form method="post" class="layui-form" action="<?=__url('admin/update')?>">
+        <form method="post" class="layui-form">
             <input type="hidden" name="id" value="<?=$_GET['id']/*安全问题*/?>">
             <div class="mainBox">
                 <div class="main-container mr-5">
@@ -93,19 +93,7 @@ layui.use(["form", "jquery","util","xmSelect", "popup"], function () {
             return layui.popup.failure(res.msg);
         }
         // 给表单初始化数据
-        layui.each(res.data[0], function (key, value) {
-            let obj = $('*[name="'+key+'"]');  // 这里要调整一下。
-            if (key === "password") {
-                obj.attr("placeholder", "不更新密码请留空");
-                return;
-            }
-            if (typeof obj[0] === "undefined" || !obj[0].nodeName) return;
-            if (obj[0].nodeName.toLowerCase() === "textarea") {
-                obj.val(layui.util.escape(value));
-            } else {
-                obj.attr("value", value);
-            }
-        });
+        fill_form(res.data[0]);
         
         // 字段 角色 roles
         var url = "<?=__url('role/select?format=tree')?>"; //这里也要调整

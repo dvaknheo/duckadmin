@@ -70,7 +70,7 @@ function togglePermission() {
 }
 function ajax_post(form, callback) {
     const action = form.getAttribute('action') || location.pathname;
-    const method = form.getAttribute('method') || 'POST';
+    const method = form.getAttribute('method') || 'GET';
     const formData = new FormData(form);
     return fetch(action, {
         method: method,
@@ -91,5 +91,23 @@ function ajax_post(form, callback) {
     .catch(error => {
         console.error('Fetch error:', error);
         throw error; // 继续抛出错误，以便外部可以 .catch()
+    });
+}
+
+function fill_form(data)
+{
+    // 赋值表单
+    layui.each(data, function (key, value) {
+        let obj = $('*[name="'+key+'"]');
+        if (key === "password") {
+            obj.attr("placeholder", "不更新密码请留空");
+            return;
+        }
+        if (typeof obj[0] === "undefined" || !obj[0].nodeName) return;
+        if (obj[0].nodeName.toLowerCase() === "textarea") {
+            obj.html(layui.util.escape(value));
+        } else {
+            obj.attr("value", value);
+        }
     });
 }

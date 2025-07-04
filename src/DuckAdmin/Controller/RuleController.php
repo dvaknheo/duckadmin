@@ -97,7 +97,11 @@ class RuleController extends Base
     {
         $post = Helper::POST();
         if (!$post) {
-            return Helper::Show([], 'rule/update');
+            // 我们把东西拿过来
+            $vdata['i'];
+            rule/select
+        
+            return Helper::Show($vdata, 'rule/update');
         }
         RuleBusiness::_()->updateRule(Helper::AdminId(), $post);
         return Helper::Success();

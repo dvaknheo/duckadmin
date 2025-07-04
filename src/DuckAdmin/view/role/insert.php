@@ -8,7 +8,7 @@
     </head>
     <body>
 
-        <form method="post" class="layui-form" action="<?=__url('role/insert')?>">
+        <form method="post" class="layui-form">
 
             <div class="mainBox">
                 <div class="main-container mr-5">
@@ -50,83 +50,76 @@
             </div>
             
         </form>
-<script>
-    window.PERMISSION_API = "<?=__url('rule/permission')?>";
-</script>
         <script src="<?=__res('component/layui/layui.js')?>"></script>
         <script src="<?=__res('component/pear/pear.js')?>"></script>
         <script src="<?=__res('admin/js/common.js')?>"></script>
         <script>
-layui.$(function () {
+// 字段 权限 rules
+layui.use(["form","jquery", "xmSelect", "popup"], function() {
+    window.PERMISSION_API = "<?=__url('rule/permission')?>";
     togglePermission();
-});
-            // 字段 权限 rules
-            layui.use(["jquery", "xmSelect", "popup"], function() {
-                var url= "<?=__url('role/rules?id=1')?>";
-                fetch(url).then(response => {return response.json();}).then(res => {
-                        let value = layui.$("#rules").attr("value");
-                        let initValue = value ? value.split(",") : [];
-                        layui.xmSelect.render({
-                            el: "#rules",
-                            name: "rules",
-                            initValue: initValue,
-                            data: res.data,
-                            tree: {"show":true,expandedKeys:initValue},
-                            toolbar: {show:true,list:["ALL","CLEAR","REVERSE"]},
-                        })
-                });
-            });
-            
-            // 字段 父级 pid
-            layui.use(["jquery", "xmSelect", "popup"], function() {
-                var url = "<?=__url('role/select?format=tree')?>";
-                fetch(url).then(response => {return response.json();}).then(res => {
-                        let value = layui.$("#pid").attr("value");
-                        let initValue = value ? value.split(",") : [];
-                        layui.xmSelect.render({
-                            el: "#pid",
-                            name: "pid",
-                            initValue: initValue,
-                            tips: "请选择",
-                            data: res.data,
-                            value: "0",
-                            model: {"icon":"hidden","label":{"type":"text"}},
-                            clickClose: true,
-                            radio: true,
-                            tree: {show: true,"strict":false,"clickCheck":true,"clickExpand":false,expandedKeys:true},
-                            on: function(data){
-                                let id = data.arr[0] ? data.arr[0].value : "";
-                                if (!id) return;
-                                var url= '<?=__url('role/rules?id=')?>' + id;
-                                fetch(url).then(response => {return response.json();}).then(res => {
-                                        if (res.code) {
-                                            return layui.popup.failure(res.msg);
-                                        }
-                                        layui.xmSelect.get('#rules')[0].update({data:res.data});
-                                });
-                            }
-                        })
-                        if (res.code) {
-                            layui.popup.failure(res.msg);
-                        }
-                });
-            });
-            
-            //提交事件
-            layui.use(["form", "popup"], function () {
-                layui.form.on("submit(save)", function (data) {
-                    ajax_post(this.closest('form'),function (res) {
+    var url= "<?=__url('role/rules?id=1')?>";
+    fetch(url).then(response => {return response.json();}).then(res => {
+            let value = layui.$("#rules").attr("value");
+            let initValue = value ? value.split(",") : [];
+            layui.xmSelect.render({
+                el: "#rules",
+                name: "rules",
+                initValue: initValue,
+                data: res.data,
+                tree: {"show":true,expandedKeys:initValue},
+                toolbar: {show:true,list:["ALL","CLEAR","REVERSE"]},
+            })
+    });
+
+
+    // 字段 父级 pid
+    var url = "<?=__url('role/select?format=tree')?>";
+    fetch(url).then(response => {return response.json();}).then(res => {
+            let value = layui.$("#pid").attr("value");
+            let initValue = value ? value.split(",") : [];
+            layui.xmSelect.render({
+                el: "#pid",
+                name: "pid",
+                initValue: initValue,
+                tips: "请选择",
+                data: res.data,
+                value: "0",
+                model: {"icon":"hidden","label":{"type":"text"}},
+                clickClose: true,
+                radio: true,
+                tree: {show: true,"strict":false,"clickCheck":true,"clickExpand":false,expandedKeys:true},
+                on: function(data){
+                    let id = data.arr[0] ? data.arr[0].value : "";
+                    if (!id) return;
+                    var url= '<?=__url('role/rules?id=')?>' + id;
+                    fetch(url).then(response => {return response.json();}).then(res => {
                             if (res.code) {
                                 return layui.popup.failure(res.msg);
                             }
-                            return layui.popup.success("操作成功", function () {
-                                parent.refreshTable();
-                                parent.layer.close(parent.layer.getFrameIndex(window.name));
-                            });
+                            layui.xmSelect.get('#rules')[0].update({data:res.data});
                     });
-                    return false;
+                }
+            })
+            if (res.code) {
+                layui.popup.failure(res.msg);
+            }
+    });
+
+    //提交事件
+    layui.form.on("submit(save)", function (data) {
+        ajax_post(this.closest('form'),function (res) {
+                if (res.code) {
+                    return layui.popup.failure(res.msg);
+                }
+                return layui.popup.success("操作成功", function () {
+                    parent.refreshTable();
+                    parent.layer.close(parent.layer.getFrameIndex(window.name));
                 });
-            });
+        });
+        return false;
+    });
+});
 
         </script>
 
