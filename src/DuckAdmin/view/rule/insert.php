@@ -90,49 +90,54 @@
 <script>
 window.PERMISSION_API = "<?=__url('rule/permission')?>";
 layui.use(["form","iconPicker","jquery", "xmSelect", "popup"], function() {
-    togglePermission();
-    // 图标选择
-    layui.iconPicker.render({
-        elem: "#icon",
-        type: "fontClass",
-        page: false,
-    });
+    let $ = layui.$;
     
-    url = "<?=__url('rule/select?format=tree&type=0,1')?>";
-    fetch(url).then(response => {return response.json();}).then(res => {
-            let value = layui.$("#pid").attr("value");
-            let initValue = value ? value.split(",") : [];
-            layui.xmSelect.render({
-                el: "#pid",
-                name: "pid",
-                initValue: initValue,
-                tips: "无",
-                toolbar: {show: true, list: ["CLEAR"]},
-                data: res.data,
-                value: "0",
-                model: {"icon":"hidden","label":{"type":"text"}},
-                clickClose: true,
-                radio: true,
-                tree: {show: true,"strict":false,"clickCheck":true,"clickExpand":false},
-            });
-            if (res.code) {
-                return layui.popup.failure(res.msg);
-            }
-    });
+    togglePermission();
+        // 图标选择
+        layui.iconPicker.render({
+            elem: "#icon",
+            type: "fontClass",
+            page: false,
+        });
+            // 菜单类型下拉列表
+        var initValue;
+        initValue = document.querySelector('#type').getAttribute('value');
+        initValue = initValue ? initValue.split(",") : [];
+        layui.xmSelect.render({
+            el: "#type",
+            name: "type",
+            initValue: initValue,
+            data: [{"value":"0","name":"目录"},{"value":"1","name":"菜单"},{"value":"2","name":"权限"}],
+            value: "1",
+            model: {"icon":"hidden","label":{"type":"text"}},
+            clickClose: true,
+            radio: true,
+        })
+        
+        var url = "<?=__url('rule/select?format=tree&type=0,1')?>";
+        fetch(url).then(response => {return response.json();}).then(res => {
+                if (res.code) {
+                    return layui.popup.failure(res.msg);
+                }
+                var initValue;
+                initValue = document.querySelector('#pid').getAttribute('value');
+                initValue = initValue ? initValue.split(",") : [];
+                layui.xmSelect.render({
+                    el: "#pid",
+                    name: "pid",
+                    initValue: initValue,
+                    tips: "无",
+                    toolbar: {show: true, list: ["CLEAR"]},
+                    data: res.data,
+                    value: "0",
+                    model: {"icon":"hidden","label":{"type":"text"}},
+                    clickClose: true,
+                    radio: true,
+                    tree: {show: true,"strict":false,"clickCheck":true,"clickExpand":false},
+                });
+        });
 
-    // 菜单类型下拉列表
-    let value = layui.$("#type").attr("value");
-    let initValue = value ? value.split(",") : [];
-    layui.xmSelect.render({
-        el: "#type",
-        name: "type",
-        initValue: initValue,
-        data: [{"value":"0","name":"目录"},{"value":"1","name":"菜单"},{"value":"2","name":"权限"}],
-        value: "1",
-        model: {"icon":"hidden","label":{"type":"text"}},
-        clickClose: true,
-        radio: true,
-    })
+
 
     // 表单提交事件
     layui.form.on("submit(save)", function (data) {

@@ -15,7 +15,7 @@
     </head>
     <body>
 
-        <form method="post" class="layui-form" action="<?=__url('rule/update')?>">
+        <form method="post" class="layui-form">
             <input type="hidden" name="id" value="<?= $_GET['id']?>">
             <div class="mainBox">
                 <div class="main-container mr-5">
@@ -87,7 +87,7 @@
         <script src="<?=__res('component/layui/layui.js')?>"></script>
         <script src="<?=__res('component/pear/pear.js')?>"></script>
         <script src="<?=__res('admin/js/common.js')?>"></script>
-        <script>
+<script>
 window.PERMISSION_API = "<?=__url('rule/permission')?>";
 // 相关接口
 const SELECT_API = "<?=__url('rule/select')?>" + location.search;
@@ -99,59 +99,65 @@ layui.use(["form", "util", "jquery", "xmSelect","popup","iconPicker"], function 
     
     var url = SELECT_API;
     fetch(url).then(response => {return response.json();}).then(res => {
-            // ajax产生错误
-            if (res.code) {
-                return layui.popup.failure(res.msg);
-            }
+        // ajax产生错误
+        if (res.code) {
+            return layui.popup.failure(res.msg);
+        }
+        // 赋值表单
+        fill_form(res.data[0]);
 
-            // 赋值表单
-            fill_form(res.data[0]);
+        // 图标选择
+        layui.iconPicker.render({
+            elem: "#icon",
+            type: "fontClass",
+            page: false,
+        });
+        // 菜单类型下拉选择
+        var initValue;
+        initValue = document.querySelector('#type').getAttribute('value');
+        initValue = initValue ? initValue.split(",") : [];
+        
+        layui.xmSelect.render({
+            el: "#type",
+            name: "type",
+            initValue: initValue,
+            data: [{"value":"0","name":"目录"},{"value":"1","name":"菜单"},{"value":"2","name":"权限"}],
+            model: {"icon":"hidden","label":{"type":"text"}},
+            clickClose: true,
+            radio: true,
+        })
+        
+        // 获取上级菜单
+        var url = "<?=__url('rule/select?format=tree&type=0,1')?>";
+        fetch(url).then(response => {return response.json();}).then(res => {
+                if (res.code) {
+                    return layui.popup.failure(res.msg);
+                }
+                
+                var initValue;
+                initValue = document.querySelector('#pid').getAttribute('value');
+                initValue = initValue ? initValue.split(",") : [];
+                var data = res.data;
+                
+                layui.xmSelect.render({
+                    el: "#pid",
+                    name: "pid",
+                    initValue: initValue,
+                    tips: "无",
+                    toolbar: {show: true, list: ["CLEAR"]},
+                    data: res.data,
+                    model: {"icon":"hidden","label":{"type":"text"}},
+                    clickClose: true,
+                    radio: true,
+                    tree: {show: true,"strict":false,"clickCheck":true,"clickExpand":false,expandedKeys: initValue},
+                });
+                
+        });
 
-            // 图标选择
-            layui.iconPicker.render({
-                elem: "#icon",
-                type: "fontClass",
-                page: false,
-            });
-
-            // 获取上级菜单
-            var url = "<?=__url('rule/select?format=tree&type=0,1')?>";
-            fetch(url).then(response => {return response.json();}).then(res => {
-                    if (res.code) {
-                        return layui.popup.failure(res.msg);
-                    }
-                    let value = layui.$("#pid").attr("value");
-                    let initValue = value ? value.split(",") : [];
-                    layui.xmSelect.render({
-                        el: "#pid",
-                        name: "pid",
-                        initValue: initValue,
-                        tips: "无",
-                        toolbar: {show: true, list: ["CLEAR"]},
-                        data: res.data,
-                        model: {"icon":"hidden","label":{"type":"text"}},
-                        clickClose: true,
-                        radio: true,
-                        tree: {show: true,"strict":false,"clickCheck":true,"clickExpand":false,expandedKeys: initValue},
-                    });
-                    
-            });
-            // 菜单类型下拉选择
-            var initValue = layui.$("#type").attr("value");
-            initValue = initValue ? initValue.split(",") : [];
-            
-            layui.xmSelect.render({
-                el: "#type",
-                name: "type",
-                initValue: initValue,
-                data: [{"value":"0","name":"目录"},{"value":"1","name":"菜单"},{"value":"2","name":"权限"}],
-                model: {"icon":"hidden","label":{"type":"text"}},
-                clickClose: true,
-                radio: true,
-            })
     });
 
-    // 提交事件
+
+    // 表单提交事件
     layui.form.on("submit(save)", function (data) {
         ajax_post(this.closest('form'),function (res) {
                 if (res.code) {
@@ -165,9 +171,7 @@ layui.use(["form", "util", "jquery", "xmSelect","popup","iconPicker"], function 
         return false;
     });
 });
-
-        </script>
+</script>
 
     </body>
-
 </html>
