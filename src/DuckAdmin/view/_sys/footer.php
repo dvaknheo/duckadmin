@@ -31,8 +31,7 @@
                 Account: {}
             };
 
-            layui.use(["admin","jquery","popup","drawer"], function() {
-                var $ = layui.$;
+            layui.use(["admin","popup"], function() {
                 var admin = layui.admin;
                 var popup = layui.popup;
 

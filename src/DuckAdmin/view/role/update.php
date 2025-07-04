@@ -87,7 +87,8 @@ layui.$(function () {
                         // 字段 权限 rules
                         layui.use(["jquery", "xmSelect", "popup"], function() {
                             var url = "<?=__url('role/rules?id=')?>" + res.data[0].pid;
-                            fetch(url).then(response => {return response.json();}).then(res => {                                    let value = layui.$("#rules").attr("value");
+                            fetch(url).then(response => {return response.json();}).then(res => {
+                                    let value = layui.$("#rules").attr("value");
                                     let initValue = value ? value.split(",") : [];
                                     layui.xmSelect.render({
                                         el: "#rules",
