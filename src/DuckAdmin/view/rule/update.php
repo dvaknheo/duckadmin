@@ -90,105 +90,93 @@
         <script src="<?=__res('component/pear/pear.js')?>"></script>
         <script src="<?=__res('admin/js/common.js')?>"></script>
         <script>
-layui.$(function () {
+// 相关接口
+const SELECT_API = "<?=__url('rule/select')?>" + location.search;
+// 获取行数据
+layui.use(["form", "util", "jquery", "xmSelect","popup","iconPicker"], function () {
+    let $ = layui.$;
+    
     togglePermission();
-});
-            // 相关接口
-            const SELECT_API = "<?=__url('rule/select')?>" + location.search;
+    
+    var url = SELECT_API;
+    fetch(url).then(response => {return response.json();}).then(res => {
+            // ajax产生错误
+            if (res.code) {
+                return layui.popup.failure(res.msg);
+            }
 
-            // 获取行数据
-            layui.use(["form", "util", "popup"], function () {
-                let $ = layui.$;
-
-                var url = SELECT_API;
-                fetch(url).then(response => {return response.json();}).then(res => {
-
-                        // 赋值表单
-                        layui.each(res.data[0], function (key, value) {
-                            let obj = $('*[name="'+key+'"]');
-                            if (key === "password") {
-                                obj.attr("placeholder", "不更新密码请留空");
-                                return;
-                            }
-                            if (typeof obj[0] === "undefined" || !obj[0].nodeName) return;
-                            if (obj[0].nodeName.toLowerCase() === "textarea") {
-                                obj.html(layui.util.escape(value));
-                            } else {
-                                obj.attr("value", value);
-                            }
-                        });
-
-                        // 图标选择
-                        layui.use(["iconPicker"], function() {
-                            layui.iconPicker.render({
-                                elem: "#icon",
-                                type: "fontClass",
-                                page: false,
-                            });
-                        });
-
-                        // 获取上级菜单
-                        layui.use(["jquery", "xmSelect", "popup"], function() {
-                            var url = "<?=__url('rule/select?format=tree&type=0,1')?>";
-                            fetch(url).then(response => {return response.json();}).then(res => {
-                                    let value = layui.$("#pid").attr("value");
-                                    let initValue = value ? value.split(",") : [];
-                                    layui.xmSelect.render({
-                                        el: "#pid",
-                                        name: "pid",
-                                        initValue: initValue,
-                                        tips: "无",
-                                        toolbar: {show: true, list: ["CLEAR"]},
-                                        data: res.data,
-                                        model: {"icon":"hidden","label":{"type":"text"}},
-                                        clickClose: true,
-                                        radio: true,
-                                        tree: {show: true,"strict":false,"clickCheck":true,"clickExpand":false,expandedKeys: initValue},
-                                    });
-                                    if (res.code) {
-                                        return layui.popup.failure(res.msg);
-                                    }
-                            });
-                        });
-
-                        // 菜单类型下拉选择
-                        layui.use(["jquery", "xmSelect"], function() {
-                            let value = layui.$("#type").attr("value");
-                            let initValue = value ? value.split(",") : [];
-                            layui.xmSelect.render({
-                                el: "#type",
-                                name: "type",
-                                initValue: initValue,
-                                data: [{"value":"0","name":"目录"},{"value":"1","name":"菜单"},{"value":"2","name":"权限"}],
-                                model: {"icon":"hidden","label":{"type":"text"}},
-                                clickClose: true,
-                                radio: true,
-                            })
-                        });
-
-                        // ajax产生错误
-                        if (res.code) {
-                            layui.popup.failure(res.msg);
-                        }
-
-                });
+            // 赋值表单
+            layui.each(res.data[0], function (key, value) {
+                let obj = $('*[name="'+key+'"]');
+                if (key === "password") {
+                    obj.attr("placeholder", "不更新密码请留空");
+                    return;
+                }
+                if (typeof obj[0] === "undefined" || !obj[0].nodeName) return;
+                if (obj[0].nodeName.toLowerCase() === "textarea") {
+                    obj.html(layui.util.escape(value));
+                } else {
+                    obj.attr("value", value);
+                }
             });
 
-            // 提交事件
-            layui.use(["form", "popup"], function () {
-                layui.form.on("submit(save)", function (data) {
-                    ajax_post(this.closest('form'),function (res) {
-                            if (res.code) {
-                                return layui.popup.failure(res.msg);
-                            }
-                            return layui.popup.success("操作成功", function () {
-                                parent.refreshTable();
-                                parent.layer.close(parent.layer.getFrameIndex(window.name));
-                            });
+            // 图标选择
+            layui.iconPicker.render({
+                elem: "#icon",
+                type: "fontClass",
+                page: false,
+            });
+
+            // 获取上级菜单
+            var url = "<?=__url('rule/select?format=tree&type=0,1')?>";
+            fetch(url).then(response => {return response.json();}).then(res => {
+                    if (res.code) {
+                        return layui.popup.failure(res.msg);
+                    }
+                    let value = layui.$("#pid").attr("value");
+                    let initValue = value ? value.split(",") : [];
+                    layui.xmSelect.render({
+                        el: "#pid",
+                        name: "pid",
+                        initValue: initValue,
+                        tips: "无",
+                        toolbar: {show: true, list: ["CLEAR"]},
+                        data: res.data,
+                        model: {"icon":"hidden","label":{"type":"text"}},
+                        clickClose: true,
+                        radio: true,
+                        tree: {show: true,"strict":false,"clickCheck":true,"clickExpand":false,expandedKeys: initValue},
                     });
-                    return false;
-                });
+                    
             });
+            // 菜单类型下拉选择
+            let value = layui.$("#type").attr("value");
+            let initValue = value ? value.split(",") : [];
+            layui.xmSelect.render({
+                el: "#type",
+                name: "type",
+                initValue: initValue,
+                data: [{"value":"0","name":"目录"},{"value":"1","name":"菜单"},{"value":"2","name":"权限"}],
+                model: {"icon":"hidden","label":{"type":"text"}},
+                clickClose: true,
+                radio: true,
+            })
+    });
+
+    // 提交事件
+    layui.form.on("submit(save)", function (data) {
+        ajax_post(this.closest('form'),function (res) {
+                if (res.code) {
+                    return layui.popup.failure(res.msg);
+                }
+                return layui.popup.success("操作成功", function () {
+                    parent.refreshTable();
+                    parent.layer.close(parent.layer.getFrameIndex(window.name));
+                });
+        });
+        return false;
+    });
+});
 
         </script>
 

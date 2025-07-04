@@ -19,8 +19,9 @@
                 重载这个页面以设置你的系统
             </pre>
 		</div>
+        <!--
 		<script src="<?=__res('component/layui/layui.js')?>"></script>
 		<script src="<?=__res('component/pear/pear.js')?>"></script>
-
+        -->
 	</body>
 </html>

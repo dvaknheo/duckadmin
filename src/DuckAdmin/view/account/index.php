@@ -100,46 +100,39 @@
 
             </div>
         </div>
-
-<script>
-    window.PERMISSION_API = "<?=__url('rule/permission')?>";
-</script>
         <script src="<?=__res('component/layui/layui.js')?>"></script>
         <script src="<?=__res('component/pear/pear.js')?>"></script>
         <script src="<?=__res('admin/js/common.js')?>"></script>
-        <script>
-layui.$(function () {
+<script>
+window.PERMISSION_API = "<?=__url('rule/permission')?>";
+layui.use(["form", "popup"], function () {
     togglePermission();
+    var url = "<?=__url('account/info')?>";
+    fetch(url).then(response => {return response.json();}).then(res => {
+        layui.form.val("baseInfo", res.data);
+    })
+    layui.form.on("submit(saveBaseInfo)", function(data){
+        ajax_post(this.closest('form'),function (res) {
+                if (res.code) {
+                    return layui.popup.failure(res.msg);
+                }
+                return layui.popup.success("操作成功");
+        });
+        return false;
+    });
+
+    layui.form.on("submit(savePassword)", function(data){
+        ajax_post(this.closest('form'),function (res) {
+                if (res.code) {
+                    return layui.popup.failure(res.msg);
+                }
+                return layui.popup.success("操作成功");
+        });
+        return false;
+    });
+
 });
-            layui.use(["form", "popup"], function () {
-                let $ = layui.$;
-                var url = "<?=__url('account/info')?>";
-                fetch(url).then(response => {return response.json();}).then(res => {
-                    layui.form.val("baseInfo", res.data);
-                })
-                layui.form.on("submit(saveBaseInfo)", function(data){
-                    ajax_post(this.closest('form'),function (res) {
-                            if (res.code) {
-                                return layui.popup.failure(res.msg);
-                            }
-                            return layui.popup.success("操作成功");
-                    });
-                    return false;
-                });
-
-                layui.form.on("submit(savePassword)", function(data){
-                    ajax_post(this.closest('form'),function (res) {
-                            if (res.code) {
-                                return layui.popup.failure(res.msg);
-                            }
-                            return layui.popup.success("操作成功");
-                    });
-                    return false;
-                });
-
-            });
-
-        </script>
+</script>
 
     </body>
 </html>
