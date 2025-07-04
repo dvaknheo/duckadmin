@@ -137,8 +137,9 @@ layui.use(["form", "util", "jquery", "xmSelect","popup","iconPicker"], function 
                     
             });
             // 菜单类型下拉选择
-            let value = layui.$("#type").attr("value");
-            let initValue = value ? value.split(",") : [];
+            var initValue = layui.$("#type").attr("value");
+            initValue = initValue ? initValue.split(",") : [];
+            
             layui.xmSelect.render({
                 el: "#type",
                 name: "type",

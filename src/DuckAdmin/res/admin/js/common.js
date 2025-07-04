@@ -96,6 +96,7 @@ function ajax_post(form, callback) {
 
 function fill_form(data)
 {
+    let $ = layui.$;
     // 赋值表单
     layui.each(data, function (key, value) {
         let obj = $('*[name="'+key+'"]');

@@ -95,16 +95,17 @@ class RuleController extends Base
      */
     public function update()
     {
-        $post = Helper::POST();
-        if (!$post) {
-            // 我们把东西拿过来
-            $vdata['i'];
-            rule/select
+        $v = [];
+        $v['id'] = intval(Helper::GET('id'));
+        //$v['rule_data'] = RuleBusiness::_()->getRuleById($v['id']); // rule/select?id=1;
+        //$v['rule_tree'] = RuleBusiness::_()->getRuleTree('0,1');     // rule/select?format=tree&type=0,1
         
-            return Helper::Show($vdata, 'rule/update');
-        }
-        RuleBusiness::_()->updateRule(Helper::AdminId(), $post);
-        return Helper::Success();
+        Helper::Show($v, 'rule/update');
+    }
+    public function do_update()
+    {
+        RuleBusiness::_()->updateRule(Helper::AdminId(), Helper::POST());
+        Helper::Success();
     }
     
     /**
