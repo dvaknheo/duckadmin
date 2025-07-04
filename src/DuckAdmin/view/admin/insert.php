@@ -71,62 +71,53 @@
             </div>
             
         </form>
-<script>
-    window.PERMISSION_API = "<?=__url('rule/permission')?>";
-</script>
+
         <script src="<?=__res('component/layui/layui.js')?>"></script>
         <script src="<?=__res('component/pear/pear.js')?>"></script>
         <script src="<?=__res('admin/js/common.js')?>"></script>
         <script>
-layui.$(function () {
+var PERMISSION_API = "<?=__url('rule/permission')?>";
+var URL_ROLE_TREE = "<?=__url('role/select?format=tree')?>"
+</script>
+<script>
+layui.use(["form", "xmSelect", "popup"], function() {
+
     togglePermission();
+    var url = URL_ROLE_TREE;
+    fetch(url).then(response => {return response.json();}).then(res => {
+            let value = layui.$("#roles").attr("value");
+            let initValue = value ? value.split(",") : [];
+            if (!top.Admin.Account.isSupperAdmin) {
+                layui.each(res.data, function (k, v) {
+                    v.disabled = true;
+                });
+            }
+            layui.xmSelect.render({
+                el: "#roles",
+                name: "roles",
+                initValue: initValue,
+                data: res.data,
+                layVerify: "required",
+                tree: {"show":true, expandedKeys:true, strict:false},
+                toolbar: {show:true, list:["ALL","CLEAR","REVERSE"]},
+            });
+            if (res.code) {
+                layui.popup.failure(res.msg);
+            }
+    });
+    layui.form.on("submit(save)", function (data) {
+        ajax_post(this.closest('form'),function (res) {
+                if (res.code) {
+                    return layui.popup.failure(res.msg);
+                }
+                return layui.popup.success("操作成功", function () {
+                    parent.refreshTable();
+                    parent.layer.close(parent.layer.getFrameIndex(window.name));
+                });
+        });
+        return false;
+    });
 });
-            // 字段 角色 roles
-            layui.use(["jquery", "xmSelect", "popup"], function() {
-                layui.$.ajax({
-                    url: "<?=__url('role/select?format=tree')?>",
-                    dataType: "json",
-                    success: function (res) {
-                        let value = layui.$("#roles").attr("value");
-                        let initValue = value ? value.split(",") : [];
-                        if (!top.Admin.Account.isSupperAdmin) {
-                            layui.each(res.data, function (k, v) {
-                                v.disabled = true;
-                            });
-                        }
-                        layui.xmSelect.render({
-                            el: "#roles",
-                            name: "roles",
-                            initValue: initValue,
-                            data: res.data,
-                            layVerify: "required",
-                            tree: {"show":true, expandedKeys:true, strict:false},
-                            toolbar: {show:true, list:["ALL","CLEAR","REVERSE"]},
-                        });
-                        if (res.code) {
-                            layui.popup.failure(res.msg);
-                        }
-                    }
-                });
-            });
-            
-            //提交事件
-            layui.use(["form", "popup"], function () {
-                layui.form.on("submit(save)", function (data) {
-                    ajax_post(this.closest('form'),function (res) {
-                            if (res.code) {
-                                return layui.popup.failure(res.msg);
-                            }
-                            return layui.popup.success("操作成功", function () {
-                                parent.refreshTable();
-                                parent.layer.close(parent.layer.getFrameIndex(window.name));
-                            });
-                    });
-                    return false;
-                });
-            });
-
-        </script>
-
+</script>
     </body>
 </html>

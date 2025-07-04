@@ -8,8 +8,8 @@
     </head>
     <body>
 
-        <form class="layui-form">
-
+        <form method="post" class="layui-form" action="<?=__url('admin/update')?>">
+            <input type="hidden" name="id" value="<?=$_GET['id']/*安全问题*/?>">
             <div class="mainBox">
                 <div class="main-container mr-5">
 
@@ -71,103 +71,81 @@
             
         </form>
 <script>
-    window.PERMISSION_API = "<?=__url('rule/permission')?>";
 </script>
         <script src="<?=__res('component/layui/layui.js')?>"></script>
         <script src="<?=__res('component/pear/pear.js')?>"></script>
         <script src="<?=__res('admin/js/common.js')?>"></script>
         <script>
-layui.$(function () {
+window.PERMISSION_API = "<?=__url('rule/permission')?>";
+const PRIMARY_KEY = "id";
+const SELECT_API = "<?=__url('admin/select')?>" + location.search;
+const UPDATE_API = "<?=__url('admin/update')?>";
+
+// 获取数据库记录
+layui.use(["form", "jquery","util","xmSelect", "popup"], function () {
     togglePermission();
+    
+    let $ = layui.$;
+    var url = SELECT_API;
+    fetch(url).then(response => {return response.json();}).then(res => {
+         // ajax产生错误
+        if (res.code) {
+            return layui.popup.failure(res.msg);
+        }
+        // 给表单初始化数据
+        layui.each(res.data[0], function (key, value) {
+            let obj = $('*[name="'+key+'"]');  // 这里要调整一下。
+            if (key === "password") {
+                obj.attr("placeholder", "不更新密码请留空");
+                return;
+            }
+            if (typeof obj[0] === "undefined" || !obj[0].nodeName) return;
+            if (obj[0].nodeName.toLowerCase() === "textarea") {
+                obj.val(layui.util.escape(value));
+            } else {
+                obj.attr("value", value);
+            }
+        });
+        
+        // 字段 角色 roles
+        var url = "<?=__url('role/select?format=tree')?>"; //这里也要调整
+        fetch(url).then(response => {return response.json();}).then(res => {
+            if (res.code) {
+                return layui.popup.failure(res.msg);
+            }
+            let value = layui.$("#roles").attr("value");
+            let initValue = value ? value.split(",") : [];
+            if (!top.Admin.Account.isSupperAdmin) {
+                layui.each(res.data, function (k, v) {
+                    v.disabled = true;
+                });
+            }
+            layui.xmSelect.render({
+                el: "#roles",
+                name: "roles",
+                initValue: initValue,
+                data: res.data,
+                layVerify: "required",
+                tree: {show: true, expandedKeys: true, strict: false},
+                toolbar: {show: true, list: ["ALL","CLEAR","REVERSE"]},
+            });
+        });
+    });
+
+    layui.form.on("submit(save)", function (data) {
+        ajax_post(this.closest('form'),function (res) {
+                if (res.code) {
+                    return layui.popup.failure(res.msg);
+                }
+                return layui.popup.success("操作成功", function () {
+                    parent.refreshTable();
+                    parent.layer.close(parent.layer.getFrameIndex(window.name));
+                });
+            }
+        });
+        return false;
+    });
 });
-            // 相关接口
-            const PRIMARY_KEY = "id";
-            const SELECT_API = "<?=__url('admin/select')?>" + location.search;
-            const UPDATE_API = "<?=__url('admin/update')?>";
-
-            // 获取数据库记录
-            layui.use(["form", "util", "popup"], function () {
-                let $ = layui.$;
-                $.ajax({
-                    url: SELECT_API,
-                    dataType: "json",
-                    success: function (res) {
-                        
-                        // 给表单初始化数据
-                        layui.each(res.data[0], function (key, value) {
-                            let obj = $('*[name="'+key+'"]');
-                            if (key === "password") {
-                                obj.attr("placeholder", "不更新密码请留空");
-                                return;
-                            }
-                            if (typeof obj[0] === "undefined" || !obj[0].nodeName) return;
-                            if (obj[0].nodeName.toLowerCase() === "textarea") {
-                                obj.val(layui.util.escape(value));
-                            } else {
-                                obj.attr("value", value);
-                            }
-                        });
-                        
-                        // 字段 角色 roles
-                        layui.use(["jquery", "xmSelect"], function() {
-                            layui.$.ajax({
-                                url: "<?=__url('role/select?format=tree')?>",
-                                dataType: "json",
-                                success: function (res) {
-                                    let value = layui.$("#roles").attr("value");
-                                    let initValue = value ? value.split(",") : [];
-                                    if (!top.Admin.Account.isSupperAdmin) {
-                                        layui.each(res.data, function (k, v) {
-                                            v.disabled = true;
-                                        });
-                                    }
-                                    layui.xmSelect.render({
-                                        el: "#roles",
-                                        name: "roles",
-                                        initValue: initValue,
-                                        data: res.data,
-                                        layVerify: "required",
-                                        tree: {show: true, expandedKeys: true, strict: false},
-                                        toolbar: {show: true, list: ["ALL","CLEAR","REVERSE"]},
-                                    })
-                                    if (res.code) {
-                                        layui.popup.failure(res.msg);
-                                    }
-                                }
-                            });
-                        });
-
-                        // ajax产生错误
-                        if (res.code) {
-                            layui.popup.failure(res.msg);
-                        }
-
-                    }
-                });
-            });
-
-            //提交事件 TODO 这里要修改成 ajax_post
-            layui.use(["form", "popup"], function () {
-                layui.form.on("submit(save)", function (data) {
-                    data.field[PRIMARY_KEY] = layui.url().search[PRIMARY_KEY];
-                    layui.$.ajax({
-                        url: UPDATE_API,
-                        type: "POST",
-                        dateType: "json",
-                        data: data.field,
-                        success: function (res) {
-                            if (res.code) {
-                                return layui.popup.failure(res.msg);
-                            }
-                            return layui.popup.success("操作成功", function () {
-                                parent.refreshTable();
-                                parent.layer.close(parent.layer.getFrameIndex(window.name));
-                            });
-                        }
-                    });
-                    return false;
-                });
-            });
 
         </script>
 
