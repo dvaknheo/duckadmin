@@ -69,7 +69,7 @@ function togglePermission() {
 
 }
 function ajax_post(form, callback) {
-    const action = form.getAttribute('action');
+    const action = form.getAttribute('action') || location.pathname;
     const method = form.getAttribute('method') || 'POST';
     const formData = new FormData(form);
     return fetch(action, {

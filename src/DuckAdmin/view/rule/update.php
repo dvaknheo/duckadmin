@@ -74,7 +74,8 @@
 
             <div class="bottom">
                 <div class="button-container">
-                    <button type="submit" class="pear-btn pear-btn-primary pear-btn-md" lay-submit="" lay-filter="save">
+                    <button type="submit" class="pear-btn pear-btn-primary pear-btn-md" lay-submit=""
+                        lay-filter="save">
                         提交
                     </button>
                     <button type="reset" class="pear-btn pear-btn-md">
@@ -83,13 +84,11 @@
                 </div>
             </div>
         </form>
-<script>
-    window.PERMISSION_API = "<?=__url('rule/permission')?>";
-</script>
         <script src="<?=__res('component/layui/layui.js')?>"></script>
         <script src="<?=__res('component/pear/pear.js')?>"></script>
         <script src="<?=__res('admin/js/common.js')?>"></script>
         <script>
+window.PERMISSION_API = "<?=__url('rule/permission')?>";
 // 相关接口
 const SELECT_API = "<?=__url('rule/select')?>" + location.search;
 // 获取行数据

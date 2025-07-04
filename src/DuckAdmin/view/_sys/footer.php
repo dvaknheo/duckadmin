@@ -25,42 +25,41 @@
         <script src="<?=__res('admin/js/common.js')?>"></script>
         <!-- 框 架 初 始 化 -->
         <script>
+// Admin
+window.Admin = {
+    Account: {}
+};
 
-            // Admin
-            window.Admin = {
-                Account: {}
-            };
+layui.use(["admin","popup"], function() {
+    var admin = layui.admin;
+    var popup = layui.popup;
 
-            layui.use(["admin","popup"], function() {
-                var admin = layui.admin;
-                var popup = layui.popup;
+    admin.setConfigType("json");
+    admin.setConfigPath("<?=__url('config/get')?>");
 
-                admin.setConfigType("json");
-                admin.setConfigPath("<?=__url('config/get')?>");
+    admin.render();
 
-                admin.render();
+    // 登出逻辑
+    admin.logout(function(){
+        var url = "<?=__url('account/logout')?>";
+        fetch(url).then(response => {return response.json();}).then(res => {
+                if (res.code) {
+                    return popup.error(res.msg);
+                }
+                popup.success("注销成功",function(){
+                    location.reload();
+                })
+        });
+        return false;
+    });
+    var url = "<?=__url('account/info')?>";
+    fetch(url).then(response => {return response.json();}).then(res => {
+        window.Admin.Account = res.data;
+    });
 
-                // 登出逻辑
-                admin.logout(function(){
-                    var url = "<?=__url('account/logout')?>";
-                    fetch(url).then(response => {return response.json();}).then(res => {
-                            if (res.code) {
-                                return popup.error(res.msg);
-                            }
-                            popup.success("注销成功",function(){
-                                location.reload();
-                            })
-                    });
-                    return false;
-                });
-                var url = "<?=__url('account/info')?>";
-                fetch(url).then(response => {return response.json();}).then(res => {
-                    window.Admin.Account = res.data;
-                });
-
-                // 消息点击回调
-                //admin.message(function(id, title, context, form) {});
-            });
+    // 消息点击回调
+    //admin.message(function(id, title, context, form) {});
+});
 
         </script>
     </body>

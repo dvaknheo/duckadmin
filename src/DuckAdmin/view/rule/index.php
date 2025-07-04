@@ -39,8 +39,7 @@
 		<script>
 layui.$(function () {
     togglePermission();
-});
-layui.$(function () {
+
     toggleSearchFormShow();
 });
 			// 相关常量
