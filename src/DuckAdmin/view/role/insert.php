@@ -55,56 +55,62 @@
         <script src="<?=__res('admin/js/common.js')?>"></script>
         <script>
 // 字段 权限 rules
-layui.use(["form","jquery", "xmSelect", "popup"], function() {
+layui.use(["form", "popup","jquery", "xmSelect", "util"], function () {
+    let $ = layui.$;
     window.PERMISSION_API = "<?=__url('rule/permission')?>";
     togglePermission();
-    var url= "<?=__url('role/rules?id=1')?>";
-    fetch(url).then(response => {return response.json();}).then(res => {
-            let value = layui.$("#rules").attr("value");
-            let initValue = value ? value.split(",") : [];
-            layui.xmSelect.render({
-                el: "#rules",
-                name: "rules",
-                initValue: initValue,
-                data: res.data,
-                tree: {"show":true,expandedKeys:initValue},
-                toolbar: {show:true,list:["ALL","CLEAR","REVERSE"]},
-            })
-    });
-
-
-    // 字段 父级 pid
-    var url = "<?=__url('role/select?format=tree')?>";
-    fetch(url).then(response => {return response.json();}).then(res => {
-            let value = layui.$("#pid").attr("value");
-            let initValue = value ? value.split(",") : [];
-            layui.xmSelect.render({
-                el: "#pid",
-                name: "pid",
-                initValue: initValue,
-                tips: "请选择",
-                data: res.data,
-                value: "0",
-                model: {"icon":"hidden","label":{"type":"text"}},
-                clickClose: true,
-                radio: true,
-                tree: {show: true,"strict":false,"clickCheck":true,"clickExpand":false,expandedKeys:true},
-                on: function(data){
-                    let id = data.arr[0] ? data.arr[0].value : "";
-                    if (!id) return;
-                    var url= '<?=__url('role/rules?id=')?>' + id;
-                    fetch(url).then(response => {return response.json();}).then(res => {
-                            if (res.code) {
-                                return layui.popup.failure(res.msg);
-                            }
-                            layui.xmSelect.get('#rules')[0].update({data:res.data});
+    
+            // 字段 权限 rules
+            var url= "<?=__url('role/rules?id=1')?>";
+            fetch(url).then(response => {return response.json();}).then(res => {
+                    let value = layui.$("#rules").attr("value");
+                    let initValue = value ? value.split(",") : [];
+                    //data = res.data
+                    layui.xmSelect.render({
+                        el: "#rules",
+                        name: "rules",
+                        initValue: initValue,
+                        data: res.data,
+                        tree: {"show":true,expandedKeys:initValue},
+                        toolbar: {show:true,list:["ALL","CLEAR","REVERSE"]},
+                    })
+                    if (res.code) {
+                        layui.popup.failure(res.msg);
+                    }
+            });
+            
+            // 字段 父级角色组 pid
+            var url = "<?=__url('role/select?format=tree')?>";
+            fetch(url).then(response => {return response.json();}).then(res => {
+                    if (res.code) {
+                        return layui.popup.failure(res.msg);
+                    }
+                    let value = layui.$("#pid").attr("value");
+                    let initValue = value ? value.split(",") : [];
+                    layui.xmSelect.render({
+                        el: "#pid",
+                        name: "pid",
+                        initValue: initValue,
+                        tips: "请选择",
+                        data: res.data,
+                        value: "0",
+                        model: {"icon":"hidden","label":{"type":"text"}},
+                        clickClose: true,
+                        radio: true,
+                        tree: {show: true,"strict":false,"clickCheck":true,"clickExpand":false,expandedKeys:true},
+                        on: function(data){
+                            let id = data.arr[0] ? data.arr[0].value : "";
+                            if (!id) return;
+                            var url = '<?=__url('role/rules?id=')?>' + id;
+                            fetch(url).then(response => {return response.json();}).then(res => {
+                                    if (res.code) {
+                                        return layui.popup.failure(res.msg);
+                                    }
+                                    layui.xmSelect.get('#rules')[0].update({data:res.data});
+                            });
+                        }
                     });
-                }
-            })
-            if (res.code) {
-                layui.popup.failure(res.msg);
-            }
-    });
+            });
 
     //提交事件
     layui.form.on("submit(save)", function (data) {
@@ -120,8 +126,8 @@ layui.use(["form","jquery", "xmSelect", "popup"], function() {
         return false;
     });
 });
-
-        </script>
+</script>
 
     </body>
+
 </html>

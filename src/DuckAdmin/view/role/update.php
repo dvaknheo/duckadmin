@@ -8,7 +8,7 @@
     </head>
     <body>
 
-        <form method="post" class="layui-form" action="<?=__url('role/update')?>">
+        <form method="post" class="layui-form">
             <input type="hidden" name="id" value="<?=$_GET['id']?>">
             <div class="mainBox">
                 <div class="main-container mr-5">
@@ -50,9 +50,6 @@
             </div>
             
         </form>
-<script>
-    window.PERMISSION_API = "<?=__url('rule/permission')?>";
-</script>
         <script src="<?=__res('component/layui/layui.js')?>"></script>
         <script src="<?=__res('component/pear/pear.js')?>"></script>
         <script src="<?=__res('admin/js/common.js')?>"></script>
@@ -62,7 +59,7 @@ const PRIMARY_KEY = "id";
 const SELECT_API = "<?=__url('role/select')?>" + location.search;
 
 // 获取数据库记录
-layui.use(["form", "util", "popup","jquery", "xmSelect"], function () {
+layui.use(["form", "popup","jquery", "xmSelect", "util"], function () {
     let $ = layui.$;
     window.PERMISSION_API = "<?=__url('rule/permission')?>";
     togglePermission();
@@ -103,7 +100,6 @@ layui.use(["form", "util", "popup","jquery", "xmSelect"], function () {
                     }
                     let value = layui.$("#pid").attr("value");
                     let initValue = value ? value.split(",") : [];
-                    //data = res.data
                     layui.xmSelect.render({
                         el: "#pid",
                         name: "pid",
