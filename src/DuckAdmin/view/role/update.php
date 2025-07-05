@@ -70,8 +70,7 @@ layui.use(["form", "popup","jquery", "xmSelect", "util"], function () {
             var pid = data[0].pid;
             var url = "<?=__url('role/rules?id=')?>" + pid;
             fetch_data_and_run(url, function(data){
-                    let value = layui.$("#rules").attr("value");
-                    let initValue = value ? value.split(",") : [];
+                    var initValue = element_split_value('#rules');
                     //data = res.data
                     layui.xmSelect.render({
                         el: "#rules",
@@ -87,8 +86,7 @@ layui.use(["form", "popup","jquery", "xmSelect", "util"], function () {
             // 字段 父级角色组 pid
             var url = "<?=__url('role/select?format=tree')?>";
             fetch_data_and_run(url, function(data){
-                    let value = layui.$("#pid").attr("value");
-                    let initValue = value ? value.split(",") : [];
+                    var initValue = element_split_value('#pid');
                     layui.xmSelect.render({
                         el: "#pid",
                         name: "pid",

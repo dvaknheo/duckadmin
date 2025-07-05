@@ -108,9 +108,7 @@ layui.use(["form", "util", "jquery", "xmSelect","popup","iconPicker"], function 
             page: false,
         });
         // 菜单类型下拉选择
-        var initValue;
-        initValue = document.querySelector('#type').getAttribute('value');
-        initValue = initValue ? initValue.split(",") : [];
+        var initValue = element_split_value('#type');
         layui.xmSelect.render({
             el: "#type",
             name: "type",
@@ -124,9 +122,7 @@ layui.use(["form", "util", "jquery", "xmSelect","popup","iconPicker"], function 
         // 获取上级菜单
         var url = "<?=__url('rule/select?format=tree&type=0,1')?>";
         fetch_data_and_run(url, function(data){
-                var initValue;
-                initValue = document.querySelector('#pid').getAttribute('value');
-                initValue = initValue ? initValue.split(",") : [];
+                var initValue = element_split_value('#pid');
                 layui.xmSelect.render({
                     el: "#pid",
                     name: "pid",

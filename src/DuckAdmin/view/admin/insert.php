@@ -75,19 +75,23 @@
         <script src="<?=__res('component/pear/pear.js')?>"></script>
         <script src="<?=__res('admin/js/common.js')?>"></script>
 <script>
+<?php // 这段js 存放 动态数据 ?>
+var data_permission = "<?=__url('rule/permission')?>";
 var URL_ROLE_TREE = "<?=__url('role/select?format=tree')?>"
+</script>
+<script>
 layui.use(["form", "jquery","util","xmSelect", "popup"], function () {
     togglePermission("<?=__url('rule/permission')?>");
     fetch_data_and_run(null, function(){
         // 字段 角色 roles
+        var url = URL_ROLE_TREE;
         fetch_data_and_run(url, function(data){
-            let value = layui.$("#roles").attr("value");
-            let initValue = value ? value.split(",") : [];
             if (!top.Admin.Account.isSupperAdmin) {
                 layui.each(data, function (k, v) {
                     v.disabled = true;
                 });
             }
+            var initValue = element_split_value('#roles');
             layui.xmSelect.render({
                 el: "#roles",
                 name: "roles",

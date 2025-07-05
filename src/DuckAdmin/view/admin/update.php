@@ -90,13 +90,12 @@ layui.use(["form", "jquery","util","xmSelect", "popup"], function () {
         // 字段 角色 roles
         var url = URL_ROLE_TREE;
         fetch_data_and_run(url, function(data){
-            let value = layui.$("#roles").attr("value");
-            let initValue = value ? value.split(",") : [];
             if (!top.Admin.Account.isSupperAdmin) {
                 layui.each(data, function (k, v) {
                     v.disabled = true;
                 });
             }
+            var initValue = element_split_value('#roles');
             layui.xmSelect.render({
                 el: "#roles",
                 name: "roles",
