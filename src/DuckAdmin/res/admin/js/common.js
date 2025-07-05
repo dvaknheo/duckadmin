@@ -35,7 +35,7 @@ function fetch_data_and_run(object_or_url, callback) {
   }
   // 如果既不是对象也不是字符串，可能是无效输入
   else {
-    throw new Error('Invalid input: expected an object or URL string'));
+    throw new Error('Invalid input: expected an object or URL string');
   }
 }
 function fail_popup(msg,code)
@@ -85,6 +85,7 @@ function togglePermission(the_url) {
             let codes = data || [];
             let isSupperAdmin = false;
             let $ = layui.$;
+            // element.insertAdjacentHTML('beforeend', content);
             // codes里有*，说明是超级管理员，拥有所有权限
             if (codes.indexOf('*') !== -1) {
                 $("head").append("<style>*[permission]{display: initial}</style>");
@@ -104,7 +105,6 @@ function togglePermission(the_url) {
             if (codes.length) {
                 $("head").append("<style>" + codes.join(",") + "{display: initial}</style>");
             }
-        }
     });
 
 }
