@@ -93,9 +93,11 @@ function ajax_post(form, callback) {
         throw error; // 继续抛出错误，以便外部可以 .catch()
     });
 }
+function local_call(callback){ 
+    return callback();
+}
 
-function fill_form(data)
-{
+function fill_form(data) {
     let $ = layui.$;
     // 赋值表单
     layui.each(data, function (key, value) {
@@ -113,7 +115,7 @@ function fill_form(data)
     });
 }
 
-common_checkField = function(obj, field) {
+function common_checkField(obj, field) {
     let data = layui.table.checkStatus(obj.config.id).data;
     if (data.length === 0) {
         return "";
@@ -129,7 +131,7 @@ common_checkField = function(obj, field) {
 /**
  * 当前是否为与移动端
  * */
-common_isModile = function(){
+function common_isModile(){
     if ($(window).width() <= 768) {
         return true;
     }

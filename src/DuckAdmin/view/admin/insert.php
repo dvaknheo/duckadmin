@@ -74,16 +74,18 @@
         <script src="<?=__res('component/layui/layui.js')?>"></script>
         <script src="<?=__res('component/pear/pear.js')?>"></script>
         <script src="<?=__res('admin/js/common.js')?>"></script>
-        <script>
+<script>
 var PERMISSION_API = "<?=__url('rule/permission')?>";
 var URL_ROLE_TREE = "<?=__url('role/select?format=tree')?>"
-</script>
-<script>
-layui.use(["form", "xmSelect", "popup"], function() {
-
+layui.use(["form", "jquery","util","xmSelect", "popup"], function () {
     togglePermission();
-    var url = URL_ROLE_TREE;
-    fetch(url).then(response => {return response.json();}).then(res => {
+    local_call(function(){
+        // 字段 角色 roles
+        var url = URL_ROLE_TREE;
+        fetch(url).then(response => {return response.json();}).then(res => {
+            if (res.code) {
+                return layui.popup.failure(res.msg);
+            }
             let value = layui.$("#roles").attr("value");
             let initValue = value ? value.split(",") : [];
             if (!top.Admin.Account.isSupperAdmin) {
@@ -100,9 +102,7 @@ layui.use(["form", "xmSelect", "popup"], function() {
                 tree: {show: true, expandedKeys: true, strict: false},
                 toolbar: {show: true, list: ["ALL","CLEAR","REVERSE"]},
             });
-            if (res.code) {
-                layui.popup.failure(res.msg);
-            }
+        });
     });
     layui.form.on("submit(save)", function (data) {
         ajax_post(this.closest('form'),function (res) {

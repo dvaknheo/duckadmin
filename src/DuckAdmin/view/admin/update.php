@@ -19,7 +19,7 @@
                             <div name="roles" id="roles" value=""></div>
                         </div>
                     </div>
-
+                    
                     <div class="layui-form-item">
                         <label class="layui-form-label required">用户名</label>
                         <div class="layui-input-block">
@@ -75,17 +75,14 @@
         <script src="<?=__res('component/layui/layui.js')?>"></script>
         <script src="<?=__res('component/pear/pear.js')?>"></script>
         <script src="<?=__res('admin/js/common.js')?>"></script>
-        <script>
-window.PERMISSION_API = "<?=__url('rule/permission')?>";
-const PRIMARY_KEY = "id";
+<script>
+var PERMISSION_API = "<?=__url('rule/permission')?>";
+var URL_ROLE_TREE = "<?=__url('role/select?format=tree')?>"
 const SELECT_API = "<?=__url('admin/select')?>" + location.search;
-const UPDATE_API = "<?=__url('admin/update')?>";
-
 // 获取数据库记录
 layui.use(["form", "jquery","util","xmSelect", "popup"], function () {
     togglePermission();
     
-    let $ = layui.$;
     var url = SELECT_API;
     fetch(url).then(response => {return response.json();}).then(res => {
          // ajax产生错误
@@ -96,7 +93,7 @@ layui.use(["form", "jquery","util","xmSelect", "popup"], function () {
         fill_form(res.data[0]);
         
         // 字段 角色 roles
-        var url = "<?=__url('role/select?format=tree')?>"; //这里也要调整
+        var url = URL_ROLE_TREE;
         fetch(url).then(response => {return response.json();}).then(res => {
             if (res.code) {
                 return layui.popup.failure(res.msg);
