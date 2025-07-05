@@ -39,12 +39,9 @@
         <script src="<?=__res('component/layui/layui.js')?>"></script>
         <script src="<?=__res('component/pear/pear.js')?>"></script>
         <script src="<?=__res('admin/js/common.js')?>"></script>
-        <script>
-layui.$(function () {
-    togglePermission("<?=__url('rule/permission')?>");
-    toggleSearchFormShow();
-});
-// 相关常量
+<script>
+<?php // 这段js 存放 动态数据 ?>
+var data_permission = "<?=__url('rule/permission')?>";
 const PRIMARY_KEY = "id";
 const SELECT_API = "<?=__url('role/select')?>";
 const UPDATE_API = "<?=__url('role/update')?>";
@@ -52,8 +49,16 @@ const DELETE_API = "<?=__url('role/delete')?>";
 const INSERT_URL = "<?=__url('role/insert')?>";
 const UPDATE_URL = "<?=__url('role/update')?>";
 
+const URL_RULE_LIST = "<?=__url('rule/get?type=0,1,2')?>";
+const URL_ROLE_TREE ="<?=__url('role/select?format=tree')?>";
+
+</script>
+<script>
 // 表格渲染
 layui.use(["table", "treetable", "form", "common", "popup", "util"], function() {
+    togglePermission(data_permission);
+    toggleSearchFormShow();
+    
     let treeTable = layui.treetable;
     let table = layui.table;
     let form = layui.form;
@@ -136,8 +141,8 @@ layui.use(["table", "treetable", "form", "common", "popup", "util"], function() 
     
     // 获取表格中下拉或树形组件数据
     let apis = [];
-    apis.push(["rules", "<?=__url('rule/get?type=0,1,2')?>"]);
-    apis.push(["pid", "<?=__url('role/select?format=tree')?>"]);
+    apis.push(["rules", URL_RULE_LIST]);
+    apis.push(["pid", URL_ROLE_TREE]);
     let apiResults = {};
     apiResults["rules"] = [];
     apiResults["pid"] = [];

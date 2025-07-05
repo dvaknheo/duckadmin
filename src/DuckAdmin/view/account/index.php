@@ -104,9 +104,14 @@
         <script src="<?=__res('component/pear/pear.js')?>"></script>
         <script src="<?=__res('admin/js/common.js')?>"></script>
 <script>
+<?php // 这段js 存放 动态数据 ?>
+var data_permission = "<?=__url('rule/permission')?>";
+var data_of_this= "<?=__url('account/info')?>";
+</script>
+<script>
 layui.use(["form", "popup"], function () {
-    togglePermission("<?=__url('rule/permission')?>");
-    var url = "<?=__url('account/info')?>";
+    togglePermission(data_permission);
+    var url = data_of_this;
     fetch_data_and_run(url, function(data){
         layui.form.val("baseInfo", data);
     })
