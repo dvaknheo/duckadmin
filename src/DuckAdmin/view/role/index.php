@@ -154,6 +154,7 @@ layui.use(["table", "treetable", "form", "common", "popup", "util"], function() 
                 if (res.code) {
                     return layui.popup.failure(res.msg);
                 }
+                var data = res.data;
                 function travel(items) {
                     for (let k in items) {
                         let item = items[k];
@@ -163,7 +164,7 @@ layui.use(["table", "treetable", "form", "common", "popup", "util"], function() 
                         }
                     }
                 }
-                travel(res.data);
+                travel(data);
             },
             complete: function () {
                 if (--count === 0) {

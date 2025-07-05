@@ -121,6 +121,7 @@ layui.use(["form","iconPicker","jquery", "xmSelect", "popup"], function() {
                 if (res.code) {
                     return layui.popup.failure(res.msg);
                 }
+                var data = res.data;
                 var initValue;
                 initValue = document.querySelector('#pid').getAttribute('value');
                 initValue = initValue ? initValue.split(",") : [];
@@ -130,7 +131,7 @@ layui.use(["form","iconPicker","jquery", "xmSelect", "popup"], function() {
                     initValue: initValue,
                     tips: "无",
                     toolbar: {show: true, list: ["CLEAR"]},
-                    data: res.data,
+                    data: data,
                     value: "0",
                     model: {"icon":"hidden","label":{"type":"text"}},
                     clickClose: true,

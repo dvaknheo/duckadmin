@@ -89,8 +89,9 @@ layui.use(["form", "jquery","util","xmSelect", "popup"], function () {
         if (res.code) {
             return layui.popup.failure(res.msg);
         }
+        var data = res.data;
         // 给表单初始化数据
-        fill_form(res.data[0]);
+        fill_form(data[0]);
         
         // 字段 角色 roles
         var url = URL_ROLE_TREE;
@@ -98,10 +99,11 @@ layui.use(["form", "jquery","util","xmSelect", "popup"], function () {
             if (res.code) {
                 return layui.popup.failure(res.msg);
             }
+            var data = res.data;
             let value = layui.$("#roles").attr("value");
             let initValue = value ? value.split(",") : [];
             if (!top.Admin.Account.isSupperAdmin) {
-                layui.each(res.data, function (k, v) {
+                layui.each(data, function (k, v) {
                     v.disabled = true;
                 });
             }
@@ -109,7 +111,7 @@ layui.use(["form", "jquery","util","xmSelect", "popup"], function () {
                 el: "#roles",
                 name: "roles",
                 initValue: initValue,
-                data: res.data,
+                data: data,
                 layVerify: "required",
                 tree: {show: true, expandedKeys: true, strict: false},
                 toolbar: {show: true, list: ["ALL","CLEAR","REVERSE"]},

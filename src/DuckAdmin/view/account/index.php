@@ -110,7 +110,8 @@ layui.use(["form", "popup"], function () {
     togglePermission();
     var url = "<?=__url('account/info')?>";
     fetch(url).then(response => {return response.json();}).then(res => {
-        layui.form.val("baseInfo", res.data);
+        var data = res.data;
+        layui.form.val("baseInfo", data);
     })
     layui.form.on("submit(saveBaseInfo)", function(data){
         ajax_post(this.closest('form'),function (res) {

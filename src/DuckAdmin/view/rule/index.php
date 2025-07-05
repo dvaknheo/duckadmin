@@ -162,6 +162,7 @@ layui.$(function () {
 							if (res.code) {
 								return layui.popup.failure(res.msg);
 							}
+                        var data = res.data;
 							function travel(items) {
 								for (let k in items) {
 									let item = items[k];
@@ -171,7 +172,7 @@ layui.$(function () {
 									}
 								}
 							}
-							travel(res.data);
+							travel(data);
 						
 							if (--count === 0) {
 								render();

@@ -124,7 +124,8 @@ layui.use(["admin","popup"], function() {
     });
     var url = "<?=__url('account/info')?>";
     fetch(url).then(response => {return response.json();}).then(res => {
-        window.Admin.Account = res.data;
+        var data = res.data;
+        window.Admin.Account = data;
     });
 
     // 消息点击回调

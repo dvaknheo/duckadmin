@@ -1,3 +1,46 @@
+function local_call(callback){ 
+    return callback();
+}
+function fetch_data_and_run(object_or_url, exception_callback, callback) {
+  if (typeof callback === 'undefined') {
+    callback = exception_callback;
+    exception_callback = null;
+  }
+  // 如果是对象（且不是 null），直接调用 callback
+  if (typeof object_or_url === 'object') {
+      callback(object_or_url);
+  }
+  // 如果是字符串，假设是 URL，用 fetch 获取数据
+  else if (typeof object_or_url === 'string') {
+    fetch(object_or_url)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(res => {
+        // 如果返回的 JSON 有 code 字段，调用 exception_callback
+        if (res.code) {
+          exception_callback(res.msg,res.code);
+        } else {
+          // 否则调用 callback(res.data)
+          callback(res.data !== undefined ? res.data : res);
+        }
+      })
+      //.catch(error => {
+      //  exception_callback(error);
+      //});
+  }
+  // 如果既不是对象也不是字符串，可能是无效输入
+  else {
+    throw new Error('Invalid input: expected an object or URL string'));
+  }
+}
+function pop_fail()
+{
+    return layui.popup.failure(res.msg);
+}
 /**
  * 浏览页面顶部搜索框展开收回控制
  */
@@ -36,15 +79,12 @@ function toggleSearchFormShow()
  * 获取控制器详细权限，并决定展示哪些按钮或dom元素
  */
 function togglePermission() {
-    let $ = layui.$;
     the_url = window.PERMISSION_API ? window.PERMISSION_API : "/app/admin/rule/permission";
-    $.ajax({
-        url: the_url,
-        dataType: "json",
-        success: function (res) {
+    fetch_data_and_run(the_url,function (data) {
             let style = '';
-            let codes = res.data || [];
+            let codes = data || [];
             let isSupperAdmin = false;
+            let $ = layui.$;
             // codes里有*，说明是超级管理员，拥有所有权限
             if (codes.indexOf('*') !== -1) {
                 $("head").append("<style>*[permission]{display: initial}</style>");
@@ -93,9 +133,7 @@ function ajax_post(form, callback) {
         throw error; // 继续抛出错误，以便外部可以 .catch()
     });
 }
-function local_call(callback){ 
-    return callback();
-}
+
 
 function fill_form(data) {
     let $ = layui.$;

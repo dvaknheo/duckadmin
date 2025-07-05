@@ -65,18 +65,21 @@ layui.use(["form", "popup","jquery", "xmSelect", "util"], function () {
     togglePermission();
     var url = SELECT_API;
     fetch(url).then(response => {return response.json();}).then(res => {
-             // ajax产生错误
             if (res.code) {
                 return layui.popup.failure(res.msg);
             }
-
+            var data = res.data;
             // 给表单初始化数据
-            fill_form(res.data[0]);
+            fill_form(data[0]);
             
             // 字段 权限 rules
-            var pid = res.data[0].pid;
+            var pid = data[0].pid;
             var url = "<?=__url('role/rules?id=')?>" + pid;
             fetch(url).then(response => {return response.json();}).then(res => {
+                    if (res.code) {
+                        layui.popup.failure(res.msg);
+                    }
+                    var data = res.data;
                     let value = layui.$("#rules").attr("value");
                     let initValue = value ? value.split(",") : [];
                     //data = res.data
@@ -84,13 +87,11 @@ layui.use(["form", "popup","jquery", "xmSelect", "util"], function () {
                         el: "#rules",
                         name: "rules",
                         initValue: initValue,
-                        data: res.data,
+                        data: data,
                         tree: {"show":true,expandedKeys:initValue},
                         toolbar: {show:true,list:["ALL","CLEAR","REVERSE"]},
                     })
-                    if (res.code) {
-                        layui.popup.failure(res.msg);
-                    }
+                    
             });
             
             // 字段 父级角色组 pid
@@ -99,6 +100,7 @@ layui.use(["form", "popup","jquery", "xmSelect", "util"], function () {
                     if (res.code) {
                         return layui.popup.failure(res.msg);
                     }
+                    var data = res.data;
                     let value = layui.$("#pid").attr("value");
                     let initValue = value ? value.split(",") : [];
                     layui.xmSelect.render({
@@ -107,7 +109,7 @@ layui.use(["form", "popup","jquery", "xmSelect", "util"], function () {
                         initValue: initValue,
                         tips: "请选择",
                         toolbar: {show: true, list: ["CLEAR"]},
-                        data: res.data,
+                        data: data,
                         value: "0",
                         model: {"icon":"hidden","label":{"type":"text"}},
                         clickClose: true,
@@ -121,7 +123,8 @@ layui.use(["form", "popup","jquery", "xmSelect", "util"], function () {
                                     if (res.code) {
                                         return layui.popup.failure(res.msg);
                                     }
-                                    layui.xmSelect.get('#rules')[0].update({data:res.data});
+                                    var data = res.data;
+                                    layui.xmSelect.get('#rules')[0].update({data:data});
                             });
                         }
                     });
