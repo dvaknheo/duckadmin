@@ -94,17 +94,13 @@
             <button class="pear-btn pear-btn-xs tool-btn" lay-event="remove" permission="app.admin.admin.delete">删除</button>
             {{# } }}
         </script>
-<script>
-    window.PERMISSION_API = "<?=__url('rule/permission')?>";
-</script>
         <script src="<?=__res('component/layui/layui.js')?>"></script>
         <script src="<?=__res('component/pear/pear.js')?>"></script>
         <script src="<?=__res('admin/js/common.js')?>"></script>
         <script>
 layui.$(function () {
-    togglePermission();
-});
-layui.$(function () {
+    togglePermission("<?=__url('rule/permission')?>");
+
     toggleSearchFormShow();
 });
             // 相关常量

@@ -57,8 +57,7 @@
 // 字段 权限 rules
 layui.use(["form", "popup","jquery", "xmSelect", "util"], function () {
     let $ = layui.$;
-    window.PERMISSION_API = "<?=__url('rule/permission')?>";
-    togglePermission();
+    togglePermission("<?=__url('rule/permission')?>");
     fetch_data_and_run(null, function(){
             // 字段 权限 rules
             var id = 1;

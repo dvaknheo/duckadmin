@@ -75,10 +75,9 @@
         <script src="<?=__res('component/pear/pear.js')?>"></script>
         <script src="<?=__res('admin/js/common.js')?>"></script>
 <script>
-var PERMISSION_API = "<?=__url('rule/permission')?>";
 var URL_ROLE_TREE = "<?=__url('role/select?format=tree')?>"
 layui.use(["form", "jquery","util","xmSelect", "popup"], function () {
-    togglePermission();
+    togglePermission("<?=__url('rule/permission')?>");
     fetch_data_and_run(null, function(){
         // 字段 角色 roles
         fetch_data_and_run(url, function(data){

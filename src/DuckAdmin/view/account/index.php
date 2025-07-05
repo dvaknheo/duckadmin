@@ -104,10 +104,8 @@
         <script src="<?=__res('component/pear/pear.js')?>"></script>
         <script src="<?=__res('admin/js/common.js')?>"></script>
 <script>
-var g_permissions;
-window.PERMISSION_API = "<?=__url('rule/permission')?>";
 layui.use(["form", "popup"], function () {
-    togglePermission();
+    togglePermission("<?=__url('rule/permission')?>");
     var url = "<?=__url('account/info')?>";
     fetch_data_and_run(url, function(data){
         layui.form.val("baseInfo", data);

@@ -88,11 +88,10 @@
         <script src="<?=__res('component/pear/pear.js')?>"></script>
         <script src="<?=__res('admin/js/common.js')?>"></script>
 <script>
-window.PERMISSION_API = "<?=__url('rule/permission')?>";
 layui.use(["form","iconPicker","jquery", "xmSelect", "popup"], function() {
     let $ = layui.$;
     
-    togglePermission();
+    togglePermission("<?=__url('rule/permission')?>");
     fetch_data_and_run(null, function(){
         // 图标选择
         layui.iconPicker.render({

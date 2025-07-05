@@ -88,14 +88,13 @@
         <script src="<?=__res('component/pear/pear.js')?>"></script>
         <script src="<?=__res('admin/js/common.js')?>"></script>
 <script>
-window.PERMISSION_API = "<?=__url('rule/permission')?>";
 // 相关接口
 const SELECT_API = "<?=__url('rule/select')?>" + location.search;
 // 获取行数据
 layui.use(["form", "util", "jquery", "xmSelect","popup","iconPicker"], function () {
     let $ = layui.$;
     
-    togglePermission();
+    togglePermission("<?=__url('rule/permission')?>");
     
     var url = SELECT_API;
     fetch_data_and_run(url, function(data){

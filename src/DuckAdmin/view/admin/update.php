@@ -76,12 +76,11 @@
         <script src="<?=__res('component/pear/pear.js')?>"></script>
         <script src="<?=__res('admin/js/common.js')?>"></script>
 <script>
-var PERMISSION_API = "<?=__url('rule/permission')?>";
 var URL_ROLE_TREE = "<?=__url('role/select?format=tree')?>"
 const SELECT_API = "<?=__url('admin/select')?>" + location.search;
 // 获取数据库记录
 layui.use(["form", "jquery","util","xmSelect", "popup"], function () {
-    togglePermission();
+    togglePermission("<?=__url('rule/permission')?>");
     
     var url = SELECT_API;
     fetch_data_and_run(url, function(data){

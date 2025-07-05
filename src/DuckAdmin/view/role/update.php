@@ -55,14 +55,12 @@
         <script src="<?=__res('admin/js/common.js')?>"></script>
         <script>
 // 相关接口
-const PRIMARY_KEY = "id";
 const SELECT_API = "<?=__url('role/select')?>" + location.search;
 
 // 获取数据库记录
 layui.use(["form", "popup","jquery", "xmSelect", "util"], function () {
     let $ = layui.$;
-    window.PERMISSION_API = "<?=__url('rule/permission')?>";
-    togglePermission();
+    togglePermission("<?=__url('rule/permission')?>");
     var url = SELECT_API;
     fetch_data_and_run(url, function(data){
             // 给表单初始化数据

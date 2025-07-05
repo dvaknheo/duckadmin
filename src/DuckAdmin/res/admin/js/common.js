@@ -79,8 +79,7 @@ function toggleSearchFormShow()
 /**
  * 获取控制器详细权限，并决定展示哪些按钮或dom元素
  */
-function togglePermission() {
-    the_url = window.PERMISSION_API ? window.PERMISSION_API : "/app/admin/rule/permission";
+function togglePermission(the_url) {
     fetch_data_and_run(the_url,function (data) {
             let style = '';
             let codes = data || [];
