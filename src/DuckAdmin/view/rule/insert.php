@@ -88,10 +88,13 @@
         <script src="<?=__res('component/pear/pear.js')?>"></script>
         <script src="<?=__res('admin/js/common.js')?>"></script>
 <script>
-layui.use(["form","iconPicker","jquery", "xmSelect", "popup"], function() {
-    let $ = layui.$;
-    
-    togglePermission("<?=__url('rule/permission')?>");
+<?php // 这段js 存放 动态数据 ?>
+var data_permission = "<?=__url('rule/permission')?>";
+var date_rule_tree = "<?=__url('rule/select?format=tree&type=0,1')?>";
+</script>
+<script>
+layui.use(["form", "util", "jquery", "xmSelect","popup","iconPicker"], function() {
+    togglePermission(data_permission);
     fetch_data_and_run(null, function(){
         // 图标选择
         layui.iconPicker.render({
@@ -113,7 +116,7 @@ layui.use(["form","iconPicker","jquery", "xmSelect", "popup"], function() {
         })
         
         // 获取上级菜单
-        var url = "<?=__url('rule/select?format=tree&type=0,1')?>";
+        var url = date_rule_tree;
         fetch_data_and_run(url, function(data){
                 var initValue = element_split_value('#pid');
                 layui.xmSelect.render({
@@ -123,11 +126,11 @@ layui.use(["form","iconPicker","jquery", "xmSelect", "popup"], function() {
                     tips: "无",
                     toolbar: {show: true, list: ["CLEAR"]},
                     data: data,
-                    value: "0",
+                    value: "0", //这里不一样
                     model: {"icon":"hidden","label":{"type":"text"}},
                     clickClose: true,
                     radio: true,
-                    tree: {show: true,"strict":false,"clickCheck":true,"clickExpand":false},
+                    tree: {show: true,"strict":false,"clickCheck":true,"clickExpand":false}, //这里不一样
                 });
         });
     });

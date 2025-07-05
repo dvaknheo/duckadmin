@@ -53,15 +53,19 @@
         <script src="<?=__res('component/layui/layui.js')?>"></script>
         <script src="<?=__res('component/pear/pear.js')?>"></script>
         <script src="<?=__res('admin/js/common.js')?>"></script>
-        <script>
-// 字段 权限 rules
+<script>
+<?php // 这段js 存放 动态数据 ?>
+var data_permission = "<?=__url('rule/permission')?>";
+var data_role_tree = "<?=__url('role/select?format=tree')?>";
+var url_role_rule = "<?=__url('role/rules?id=')?>";
+</script>
+<script>
 layui.use(["form", "popup","jquery", "xmSelect", "util"], function () {
-    let $ = layui.$;
-    togglePermission("<?=__url('rule/permission')?>");
+    togglePermission(data_permission);
     fetch_data_and_run(null, function(){
             // 字段 权限 rules
             var id = 1;
-            var url = "<?=__url('role/rules?id=')?>" + pid;
+            var url = url_role_rule + pid;
             fetch_data_and_run(url, function(data){
                     var initValue = element_split_value('#rules');
                     //data = res.data
@@ -76,7 +80,7 @@ layui.use(["form", "popup","jquery", "xmSelect", "util"], function () {
             });
             
             // 字段 父级角色组 pid
-            var url = "<?=__url('role/select?format=tree')?>";
+            var url = data_role_tree;
             fetch_data_and_run(url, function(data){
                     var initValue = element_split_value('#pid');
                     layui.xmSelect.render({
@@ -93,7 +97,7 @@ layui.use(["form", "popup","jquery", "xmSelect", "util"], function () {
                         on: function(data){
                             let id = data.arr[0] ? data.arr[0].value : "";
                             if (!id) return;
-                            var url = '<?=__url('role/rules?id=')?>' + id;
+                            var url = url_role_rule + id;
                             fetch_data_and_run(url, function(data){
                                     layui.xmSelect.get('#rules')[0].update({data:data});
                             });

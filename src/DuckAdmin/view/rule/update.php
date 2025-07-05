@@ -88,15 +88,16 @@
         <script src="<?=__res('component/pear/pear.js')?>"></script>
         <script src="<?=__res('admin/js/common.js')?>"></script>
 <script>
-// 相关接口
-const SELECT_API = "<?=__url('rule/select')?>" + location.search;
-// 获取行数据
+<?php // 这段js 存放 动态数据 ?>
+var data_permission = "<?=__url('rule/permission')?>";
+var date_rule_tree = "<?=__url('rule/select?format=tree&type=0,1')?>";
+var data_of_this = "<?=__url('rule/select')?>" + location.search; // 这里要改成从后端获取数据
+</script>
+<script>
 layui.use(["form", "util", "jquery", "xmSelect","popup","iconPicker"], function () {
-    let $ = layui.$;
+    togglePermission(data_permission);
     
-    togglePermission("<?=__url('rule/permission')?>");
-    
-    var url = SELECT_API;
+    var url = data_of_this;
     fetch_data_and_run(url, function(data){
         // 赋值表单
         fill_form(data[0]);
@@ -120,7 +121,7 @@ layui.use(["form", "util", "jquery", "xmSelect","popup","iconPicker"], function 
         })
         
         // 获取上级菜单
-        var url = "<?=__url('rule/select?format=tree&type=0,1')?>";
+        var url = date_rule_tree;
         fetch_data_and_run(url, function(data){
                 var initValue = element_split_value('#pid');
                 layui.xmSelect.render({

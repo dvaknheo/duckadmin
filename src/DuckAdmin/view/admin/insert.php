@@ -77,14 +77,14 @@
 <script>
 <?php // 这段js 存放 动态数据 ?>
 var data_permission = "<?=__url('rule/permission')?>";
-var URL_ROLE_TREE = "<?=__url('role/select?format=tree')?>"
+var data_role_tree = "<?=__url('role/select?format=tree')?>"
 </script>
 <script>
 layui.use(["form", "jquery","util","xmSelect", "popup"], function () {
-    togglePermission("<?=__url('rule/permission')?>");
+    togglePermission(data_permission);
     fetch_data_and_run(null, function(){
         // 字段 角色 roles
-        var url = URL_ROLE_TREE;
+        var url = data_role_tree;
         fetch_data_and_run(url, function(data){
             if (!top.Admin.Account.isSupperAdmin) {
                 layui.each(data, function (k, v) {

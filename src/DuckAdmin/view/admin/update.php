@@ -76,19 +76,22 @@
         <script src="<?=__res('component/pear/pear.js')?>"></script>
         <script src="<?=__res('admin/js/common.js')?>"></script>
 <script>
-var URL_ROLE_TREE = "<?=__url('role/select?format=tree')?>"
-const SELECT_API = "<?=__url('admin/select')?>" + location.search;
-// 获取数据库记录
+<?php // 这段js 存放 动态数据 ?>
+var data_permission = "<?=__url('rule/permission')?>";
+var data_role_tree = "<?=__url('role/select?format=tree')?>"
+const data_of_this = "<?=__url('admin/select')?>" + location.search;
+</script>
+<script>
 layui.use(["form", "jquery","util","xmSelect", "popup"], function () {
-    togglePermission("<?=__url('rule/permission')?>");
+    togglePermission(data_permission);
     
-    var url = SELECT_API;
+    var url = data_of_this;
     fetch_data_and_run(url, function(data){
         // 给表单初始化数据
         fill_form(data[0]);
         
         // 字段 角色 roles
-        var url = URL_ROLE_TREE;
+        var url = data_role_tree;
         fetch_data_and_run(url, function(data){
             if (!top.Admin.Account.isSupperAdmin) {
                 layui.each(data, function (k, v) {

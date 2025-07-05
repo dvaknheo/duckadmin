@@ -53,25 +53,26 @@
         <script src="<?=__res('component/layui/layui.js')?>"></script>
         <script src="<?=__res('component/pear/pear.js')?>"></script>
         <script src="<?=__res('admin/js/common.js')?>"></script>
-        <script>
-// 相关接口
-const SELECT_API = "<?=__url('role/select')?>" + location.search;
-
-// 获取数据库记录
+<script>
+<?php // 这段js 存放 动态数据 ?>
+var data_permission = "<?=__url('rule/permission')?>";
+var data_role_tree = "<?=__url('role/select?format=tree')?>";
+var url_role_rule = "<?=__url('role/rules?id=')?>";
+var  data_of_this = "<?=__url('role/select')?>" + location.search;
+</script>
+<script>
 layui.use(["form", "popup","jquery", "xmSelect", "util"], function () {
-    let $ = layui.$;
-    togglePermission("<?=__url('rule/permission')?>");
-    var url = SELECT_API;
+    togglePermission(data_permission);
+    var url = data_of_this;
     fetch_data_and_run(url, function(data){
             // 给表单初始化数据
             fill_form(data[0]);
             
             // 字段 权限 rules
             var pid = data[0].pid;
-            var url = "<?=__url('role/rules?id=')?>" + pid;
+            var url = url_role_rule + pid;
             fetch_data_and_run(url, function(data){
                     var initValue = element_split_value('#rules');
-                    //data = res.data
                     layui.xmSelect.render({
                         el: "#rules",
                         name: "rules",
@@ -80,11 +81,10 @@ layui.use(["form", "popup","jquery", "xmSelect", "util"], function () {
                         tree: {"show":true,expandedKeys:initValue},
                         toolbar: {show:true,list:["ALL","CLEAR","REVERSE"]},
                     })
-                    
             });
             
             // 字段 父级角色组 pid
-            var url = "<?=__url('role/select?format=tree')?>";
+            var url = data_role_tree;
             fetch_data_and_run(url, function(data){
                     var initValue = element_split_value('#pid');
                     layui.xmSelect.render({
@@ -92,7 +92,7 @@ layui.use(["form", "popup","jquery", "xmSelect", "util"], function () {
                         name: "pid",
                         initValue: initValue,
                         tips: "请选择",
-                        toolbar: {show: true, list: ["CLEAR"]},
+                        toolbar: {show: true, list: ["CLEAR"]}, // 多出这里
                         data: data,
                         value: "0",
                         model: {"icon":"hidden","label":{"type":"text"}},
@@ -102,7 +102,7 @@ layui.use(["form", "popup","jquery", "xmSelect", "util"], function () {
                         on: function(data){
                             let id = data.arr[0] ? data.arr[0].value : "";
                             if (!id) return;
-                            var url = '<?=__url('role/rules?id=')?>' + id;
+                            var url = url_role_rule + id;
                             fetch_data_and_run(url, function(data){
                                     layui.xmSelect.get('#rules')[0].update({data:data});
                             });

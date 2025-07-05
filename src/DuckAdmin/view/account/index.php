@@ -132,8 +132,5 @@ layui.use(["form", "popup"], function () {
 
 });
 </script>
-<script>
-g_permissions=<?=__json($data_permision)?>;
-</script>
     </body>
 </html>

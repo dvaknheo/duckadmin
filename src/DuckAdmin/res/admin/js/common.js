@@ -177,6 +177,7 @@ function common_isModile(){
 }
 function element_split_value(selector)
 {
-        initValue = document.querySelector(selector).getAttribute('value');
-        initValue = initValue ? initValue.split(",") : [];
+    initValue = document.querySelector(selector).getAttribute('value');
+    initValue = initValue ? initValue.split(",") : [];
+    return initValue;
 }
