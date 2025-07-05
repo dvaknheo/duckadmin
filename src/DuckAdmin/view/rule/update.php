@@ -116,7 +116,6 @@ layui.use(["form", "util", "jquery", "xmSelect","popup","iconPicker"], function 
         var initValue;
         initValue = document.querySelector('#type').getAttribute('value');
         initValue = initValue ? initValue.split(",") : [];
-        
         layui.xmSelect.render({
             el: "#type",
             name: "type",
@@ -133,12 +132,9 @@ layui.use(["form", "util", "jquery", "xmSelect","popup","iconPicker"], function 
                 if (res.code) {
                     return layui.popup.failure(res.msg);
                 }
-                
                 var initValue;
                 initValue = document.querySelector('#pid').getAttribute('value');
                 initValue = initValue ? initValue.split(",") : [];
-                var data = res.data;
-                
                 layui.xmSelect.render({
                     el: "#pid",
                     name: "pid",
@@ -151,12 +147,8 @@ layui.use(["form", "util", "jquery", "xmSelect","popup","iconPicker"], function 
                     radio: true,
                     tree: {show: true,"strict":false,"clickCheck":true,"clickExpand":false,expandedKeys: initValue},
                 });
-                
         });
-
     });
-
-
     // 表单提交事件
     layui.form.on("submit(save)", function (data) {
         ajax_post(this.closest('form'),function (res) {

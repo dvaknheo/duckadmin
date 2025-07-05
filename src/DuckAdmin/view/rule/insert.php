@@ -93,13 +93,14 @@ layui.use(["form","iconPicker","jquery", "xmSelect", "popup"], function() {
     let $ = layui.$;
     
     togglePermission();
+    locall_call(function(){
         // 图标选择
         layui.iconPicker.render({
             elem: "#icon",
             type: "fontClass",
             page: false,
         });
-            // 菜单类型下拉列表
+        // 菜单类型下拉选择
         var initValue;
         initValue = document.querySelector('#type').getAttribute('value');
         initValue = initValue ? initValue.split(",") : [];
@@ -114,6 +115,7 @@ layui.use(["form","iconPicker","jquery", "xmSelect", "popup"], function() {
             radio: true,
         })
         
+        // 获取上级菜单
         var url = "<?=__url('rule/select?format=tree&type=0,1')?>";
         fetch(url).then(response => {return response.json();}).then(res => {
                 if (res.code) {
@@ -136,9 +138,7 @@ layui.use(["form","iconPicker","jquery", "xmSelect", "popup"], function() {
                     tree: {show: true,"strict":false,"clickCheck":true,"clickExpand":false},
                 });
         });
-
-
-
+    });
     // 表单提交事件
     layui.form.on("submit(save)", function (data) {
         ajax_post(this.closest('form'),function (res) {
