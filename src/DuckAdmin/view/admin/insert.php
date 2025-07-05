@@ -9,7 +9,6 @@
     <body>
 
         <form method="post" class="layui-form">
-
             <div class="mainBox">
                 <div class="main-container mr-5">
 
@@ -98,8 +97,8 @@ layui.use(["form", "xmSelect", "popup"], function() {
                 initValue: initValue,
                 data: res.data,
                 layVerify: "required",
-                tree: {"show":true, expandedKeys:true, strict:false},
-                toolbar: {show:true, list:["ALL","CLEAR","REVERSE"]},
+                tree: {show: true, expandedKeys: true, strict: false},
+                toolbar: {show: true, list: ["ALL","CLEAR","REVERSE"]},
             });
             if (res.code) {
                 layui.popup.failure(res.msg);

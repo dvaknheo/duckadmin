@@ -16,7 +16,7 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label required">角色</label>
                         <div class="layui-input-block">
-                            <div name="roles" id="roles" value="" ></div>
+                            <div name="roles" id="roles" value=""></div>
                         </div>
                     </div>
 
@@ -60,7 +60,8 @@
 
             <div class="bottom">
                 <div class="button-container">
-                    <button type="submit" class="pear-btn pear-btn-primary pear-btn-md" lay-submit="" lay-filter="save">
+                    <button type="submit" class="pear-btn pear-btn-primary pear-btn-md" lay-submit=""
+                        lay-filter="save">
                         提交
                     </button>
                     <button type="reset" class="pear-btn pear-btn-md">
@@ -70,8 +71,7 @@
             </div>
             
         </form>
-<script>
-</script>
+
         <script src="<?=__res('component/layui/layui.js')?>"></script>
         <script src="<?=__res('component/pear/pear.js')?>"></script>
         <script src="<?=__res('admin/js/common.js')?>"></script>
@@ -119,7 +119,6 @@ layui.use(["form", "jquery","util","xmSelect", "popup"], function () {
             });
         });
     });
-
     layui.form.on("submit(save)", function (data) {
         ajax_post(this.closest('form'),function (res) {
                 if (res.code) {
@@ -129,14 +128,10 @@ layui.use(["form", "jquery","util","xmSelect", "popup"], function () {
                     parent.refreshTable();
                     parent.layer.close(parent.layer.getFrameIndex(window.name));
                 });
-            }
         });
         return false;
     });
 });
-
-        </script>
-
+</script>
     </body>
-
 </html>

@@ -112,3 +112,26 @@ function fill_form(data)
         }
     });
 }
+
+common_checkField = function(obj, field) {
+    let data = layui.table.checkStatus(obj.config.id).data;
+    if (data.length === 0) {
+        return "";
+    }
+    let ids = "";
+    for (let i = 0; i < data.length; i++) {
+        ids += data[i][field] + ",";
+    }
+    ids = ids.substr(0, ids.length - 1);
+    return ids;
+}
+
+/**
+ * 当前是否为与移动端
+ * */
+common_isModile = function(){
+    if ($(window).width() <= 768) {
+        return true;
+    }
+    return false;
+}

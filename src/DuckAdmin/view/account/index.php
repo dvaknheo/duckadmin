@@ -104,6 +104,7 @@
         <script src="<?=__res('component/pear/pear.js')?>"></script>
         <script src="<?=__res('admin/js/common.js')?>"></script>
 <script>
+var g_permissions;
 window.PERMISSION_API = "<?=__url('rule/permission')?>";
 layui.use(["form", "popup"], function () {
     togglePermission();
@@ -133,6 +134,8 @@ layui.use(["form", "popup"], function () {
 
 });
 </script>
-
+<script>
+g_permissions=<?=__json($data_permision)?>;
+</script>
     </body>
 </html>
