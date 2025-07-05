@@ -100,9 +100,6 @@
 <script>
 <?php // 这段js 存放 动态数据 ?>
 var data_permission = "<?=__url('rule/permission')?>";
-</script>
-<script>
-// 相关常量
 const PRIMARY_KEY = "id";
 const INSERT_URL = "<?=__url('admin/insert')?>";
 const SELECT_API = "<?=__url('admin/select')?>";
@@ -110,6 +107,10 @@ const UPDATE_API = "<?=__url('admin/update')?>";
 const UPDATE_URL = "<?=__url('admin/update')?>"; 
 const DELETE_API = "<?=__url('admin/delete')?>";
 const URL_ROLE_SELECT ="<?=__url('role/select?format=select')?>";
+</script>
+<script>
+// 相关常量
+
 layui.use(["table", "form", "common", "popup", "util","laydate"], function() {
     // 字段 创建时间 created_at
     layui.laydate.render({
@@ -125,89 +126,52 @@ layui.use(["table", "form", "common", "popup", "util","laydate"], function() {
     let common = layui.common;
     let util = layui.util;
     
+    var tmpl_roles = function (d) {
+        let field = "roles";
+        if (typeof d[field] == "undefined") return "";
+        let items = [];
+        layui.each((d[field] + "").split(","), function (k , v) {
+            items.push(apiResults[field][v] || v);
+        });
+        return util.escape(items.join(","));
+    };
+    var tmpl_status = function (d) {
+        let field = "status";
+        form.on("switch("+field+")", function (data) {
+            let load = layer.load();
+            let postData = {};
+            postData[field] = data.elem.checked ? 1 : 0;
+            postData[PRIMARY_KEY] = this.value;
+            $.post(UPDATE_API, postData, function (res) {
+                layer.close(load);
+                if (res.code) {
+                    return layui.popup.failure(res.msg, function () {
+                        data.elem.checked = !data.elem.checked;
+                        form.render();
+                    });
+                }
+                return layui.popup.success("操作成功");
+            })
+        });
+        let checked = d[field] === 1 ? "checked" : "";
+        if (parent.Admin.Account.id === d.id) return '';
+        return '<input type="checkbox" value="'+util.escape(d[PRIMARY_KEY])+'" lay-filter="'+util.escape(field)+'" lay-skin="switch" lay-text="'+util.escape('')+'" '+checked+'/>';
+    };
     // 表头参数
     let cols = [
-        {
-            type: "checkbox"
-        },{
-            title: "ID",
-            field: "id",
-            width: 100,
-            sort: true,
-        },{
-            title: "用户名",
-            field: "username",
-        },{
-            title: "昵称",
-            field: "nickname",
-        },{
-            title: "密码",
-            field: "password",
-            hide: true,
-        },{
-            title: "邮箱",
-            field: "email",
-            hide: true,
-        },{
-            title: "手机",
-            field: "mobile",
-            hide: true,
-        },{
-            title: "创建时间",
-            field: "created_at",
-            hide: true,
-        },{
-            title: "更新时间",
-            field: "updated_at",
-            hide: true,
-        },{
-            title: "登录时间",
-            field: "login_at",
-        },{
-            title: "角色",
-            field: "roles",
-            templet: function (d) {
-                let field = "roles";
-                if (typeof d[field] == "undefined") return "";
-                let items = [];
-                layui.each((d[field] + "").split(","), function (k , v) {
-                    items.push(apiResults[field][v] || v);
-                });
-                return util.escape(items.join(","));
-            }
-        },{
-            title: "禁用",
-            field: "status",
-            templet: function (d) {
-                let field = "status";
-                form.on("switch("+field+")", function (data) {
-                    let load = layer.load();
-                    let postData = {};
-                    postData[field] = data.elem.checked ? 1 : 0;
-                    postData[PRIMARY_KEY] = this.value;
-                    $.post(UPDATE_API, postData, function (res) {
-                        layer.close(load);
-                        if (res.code) {
-                            return layui.popup.failure(res.msg, function () {
-                                data.elem.checked = !data.elem.checked;
-                                form.render();
-                            });
-                        }
-                        return layui.popup.success("操作成功");
-                    })
-                });
-                let checked = d[field] === 1 ? "checked" : "";
-                if (parent.Admin.Account.id === d.id) return '';
-                return '<input type="checkbox" value="'+util.escape(d[PRIMARY_KEY])+'" lay-filter="'+util.escape(field)+'" lay-skin="switch" lay-text="'+util.escape('')+'" '+checked+'/>';
-            },
-            width: 90,
-        },{
-            title: "操作",
-            toolbar: "#table-bar",
-            align: "center",
-            fixed: "right",
-            width: 130,
-        }
+        {type: "checkbox"},
+        {title: "ID",field: "id",width: 100,sort: true,},
+        {title: "用户名",field: "username",},
+        {title: "昵称",field: "nickname",},
+        {title: "密码",field: "password",hide: true,},
+        {title: "邮箱",field: "email",hide: true,},
+        {title: "手机",field: "mobile",hide: true,},
+        {title: "创建时间",field: "created_at",hide: true,},
+        {title: "更新时间",field: "updated_at",hide: true,},
+        {title: "登录时间",field: "login_at",},
+        {title: "角色",field: "roles",templet: tmpl_roles},
+        {title: "禁用",field: "status",templet: tmpl_status,width: 90,},
+        {title: "操作",toolbar: "#table-bar",align: "center",fixed: "right",width: 130,}
     ];
     
     /////////////////////////////////////////////////////

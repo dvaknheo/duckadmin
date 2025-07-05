@@ -11,7 +11,25 @@
 		<!-- 数据表格 -->
 		<div class="layui-card">
 			<div class="layui-card-body">
-				<table id="data-table" lay-filter="data-table"></table>
+				<table id="data-table" lay-filter="data-table">
+                    <thead>
+                    <tr>
+                      <th lay-data="checkbox"></th>
+                      <th lay-data="{field:'title'}">标题</th>
+                      <th lay-data="{field:'icon',templet: tmpl_icon}">图标</th>
+                      <th lay-data="{field:'id',hide:true}">主键</th>
+                      <th lay-data="{field:'key'}">key</th>
+                      <th lay-data="{field:'pid',hide:true,templet:tmpl_parent_menu}">上级菜单</th>
+                      <th lay-data="{field:'created_at',hide:true}">创建时间</th>
+                      <th lay-data="{field:'updated_at',hide:true}">更新时间</th>
+                      <th lay-data="{field:'href'}">url</th>
+                      <th lay-data="{field:'type',width:80;template:tmpl_type}">类型</th>
+                      <th lay-data="{field:'weight',width:80}">排序</th>
+                      <th lay-data="{toolbar:'#table-bar',align:'center',width:130}">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
 			</div>
 		</div>
 
@@ -59,71 +77,40 @@ layui.use(["table", "treetable", "form", "common", "popup", "util"], function() 
     let treeTable = layui.treetable;
     let util = layui.util;
 
+
+    var tmpl_icon = function (d) {
+        return '<i class="layui-icon ' + util.escape(d["icon"]) + '"></i>';
+    }
+    var tmpl_parent_menu = function (d) {
+        let field = "pid";
+        if (typeof d[field] == "undefined") return "";
+        let items = [];
+        layui.each((d[field] + "").split(","), function (k , v) {
+            items.push(apiResults[field][v] || v);
+        });
+        return util.escape(items.join(","));
+    }
+    var tmpl_type = function (d) {
+        let field = "type";
+        let value = apiResults["type"][d["type"]] || d["type"];
+        let css = {"目录":"layui-bg-blue", "菜单": "layui-bg-green", "权限": "layui-bg-orange"}[value];
+        return '<span class="layui-badge '+css+'">'+util.escape(value)+'</span>';
+    }
+
     // 表格头部列数据
     let cols = [
-        {
-            type: "checkbox"
-        },{
-            title: "标题",
-            field: "title",
-        },{
-            title: "图标",
-            field: "icon",
-            templet: function (d) {
-                return '<i class="layui-icon ' + util.escape(d["icon"]) + '"></i>';
-            }
-        },{
-            title: "主键",
-            field: "id",
-            hide: true,
-        },{
-            title: "key",
-            field: "key",
-        },{
-            title: "上级菜单",
-            field: "pid",
-            hide: true,
-            templet: function (d) {
-                let field = "pid";
-                if (typeof d[field] == "undefined") return "";
-                let items = [];
-                layui.each((d[field] + "").split(","), function (k , v) {
-                    items.push(apiResults[field][v] || v);
-                });
-                return util.escape(items.join(","));
-            }
-        },{
-            title: "创建时间",
-            field: "created_at",
-            hide: true,
-        },{
-            title: "更新时间",
-            field: "updated_at",
-            hide: true,
-        },{
-            title: "url",
-            field: "href",
-        },{
-            title: "类型",
-            field: "type",
-            width: 80,
-            templet: function (d) {
-                let field = "type";
-                let value = apiResults["type"][d["type"]] || d["type"];
-                let css = {"目录":"layui-bg-blue", "菜单": "layui-bg-green", "权限": "layui-bg-orange"}[value];
-                return '<span class="layui-badge '+css+'">'+util.escape(value)+'</span>';
-            }
-        },{
-            title: "排序",
-            field: "weight",
-            width: 80,
-        },{
-            title: "操作",
-            toolbar: "#table-bar",
-            align: "center",
-            fixed: "right",
-            width: 130,
-        }
+        {type: "checkbox"},
+        {title: "标题",field: "title"},
+        {title: "图标",field: "icon",templet: tmpl_icon},
+        {title: "主键",field: "id",hide: true},
+        {title: "key",field: "key"},
+        {title: "上级菜单",field: "pid",hide: true,templet: tmpl_parent_menu},
+        {title: "创建时间",field: "created_at",hide: true},
+        {title: "更新时间",field: "updated_at",hide: true},
+        {title: "url",field: "href"},
+        {title: "类型",field: "type",width: 80,templet: tmpl_type},
+        {title: "排序",field: "weight",width: 80},
+        {title: "操作",toolbar: "#table-bar",align: "center",fixed: "right",width: 130}
     ];
 
     // 渲染表格

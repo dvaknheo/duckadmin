@@ -65,56 +65,34 @@ layui.use(["table", "treetable", "form", "common", "popup", "util"], function() 
     let $ = layui.$;
     let common = layui.common;
     let util = layui.util;
-    
+    var tmpl_rules = function (d) {
+        let field = "rules";
+        if (typeof d[field] == "undefined") return "";
+        let items = [];
+        layui.each((d[field] + "").split(","), function (k , v) {
+            items.push(apiResults[field][v] || v);
+        });
+        return util.escape(items.join(","));
+    }
+    var tmpl_pids = function (d) {
+        let field = "pid";
+        if (typeof d[field] == "undefined") return "";
+        let items = [];
+        layui.each((d[field] + "").split(","), function (k , v) {
+            items.push(apiResults[field][v] || v);
+        });
+        return util.escape(items.join(","));
+    }
     // 表头参数
     let cols = [
-        {
-            type: "checkbox"
-        },{
-            title: "角色组",
-            field: "name",
-        },{
-            title: "主键",
-            field: "id",
-        },{
-            title: "权限",
-            field: "rules",
-            templet: function (d) {
-                let field = "rules";
-                if (typeof d[field] == "undefined") return "";
-                let items = [];
-                layui.each((d[field] + "").split(","), function (k , v) {
-                    items.push(apiResults[field][v] || v);
-                });
-                return util.escape(items.join(","));
-            },
-            hide: true,
-        },{
-            title: "创建时间",
-            field: "created_at",
-        },{
-            title: "更新时间",
-            field: "updated_at",
-        },{
-            title: "父级",
-            field: "pid",
-            templet: function (d) {
-                let field = "pid";
-                if (typeof d[field] == "undefined") return "";
-                let items = [];
-                layui.each((d[field] + "").split(","), function (k , v) {
-                    items.push(apiResults[field][v] || v);
-                });
-                return util.escape(items.join(","));
-            },
-            hide: true,
-        },{
-            title: "操作",
-            toolbar: "#table-bar",
-            align: "center",
-            fixed: "right",
-            width: 120,
-        }
+        {type: "checkbox"},
+        {title: "角色组",field: "name",},
+        {title: "主键",field: "id",},
+        {title: "权限",field: "rules",templet: tmpl_rules,hide: true,},
+        {title: "创建时间",field: "created_at",},
+        {title: "更新时间",field: "updated_at",},
+        {title: "父级",field: "pid",templet: tmpl_pids,hide: true,},
+        {title: "操作",toolbar: "#table-bar",align: "center",fixed: "right",width: 120,}
     ];
     
     // 渲染表格
