@@ -74,7 +74,8 @@ layui.use(["form", "popup","jquery", "xmSelect", "util"], function () {
             fill_form(res.data[0]);
             
             // 字段 权限 rules
-            var url = "<?=__url('role/rules?id=')?>" + res.data[0].pid;
+            var pid = res.data[0].pid;
+            var url = "<?=__url('role/rules?id=')?>" + pid;
             fetch(url).then(response => {return response.json();}).then(res => {
                     let value = layui.$("#rules").attr("value");
                     let initValue = value ? value.split(",") : [];
@@ -125,11 +126,8 @@ layui.use(["form", "popup","jquery", "xmSelect", "util"], function () {
                         }
                     });
             });
-
-           
     });
-
-//提交事件
+    //提交事件
     layui.form.on("submit(save)", function (data) {
         ajax_post(this.closest('form'),function (res) {
                 if (res.code) {
