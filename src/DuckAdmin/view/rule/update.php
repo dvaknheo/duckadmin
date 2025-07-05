@@ -98,12 +98,7 @@ layui.use(["form", "util", "jquery", "xmSelect","popup","iconPicker"], function 
     togglePermission();
     
     var url = SELECT_API;
-    fetch(url).then(response => {return response.json();}).then(res => {
-        // ajax产生错误
-        if (res.code) {
-            return layui.popup.failure(res.msg);
-        }
-        var data = res.data;
+    fetch_data_and_run(url, function(data){
         // 赋值表单
         fill_form(data[0]);
 
@@ -129,11 +124,7 @@ layui.use(["form", "util", "jquery", "xmSelect","popup","iconPicker"], function 
         
         // 获取上级菜单
         var url = "<?=__url('rule/select?format=tree&type=0,1')?>";
-        fetch(url).then(response => {return response.json();}).then(res => {
-                if (res.code) {
-                    return layui.popup.failure(res.msg);
-                }
-                var data = res.data;
+        fetch_data_and_run(url, function(data){
                 var initValue;
                 initValue = document.querySelector('#pid').getAttribute('value');
                 initValue = initValue ? initValue.split(",") : [];

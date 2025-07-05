@@ -109,8 +109,7 @@ window.PERMISSION_API = "<?=__url('rule/permission')?>";
 layui.use(["form", "popup"], function () {
     togglePermission();
     var url = "<?=__url('account/info')?>";
-    fetch(url).then(response => {return response.json();}).then(res => {
-        var data = res.data;
+    fetch_data_and_run(url, function(data){
         layui.form.val("baseInfo", data);
     })
     layui.form.on("submit(saveBaseInfo)", function(data){

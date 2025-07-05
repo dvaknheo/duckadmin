@@ -59,15 +59,11 @@ layui.use(["form", "popup","jquery", "xmSelect", "util"], function () {
     let $ = layui.$;
     window.PERMISSION_API = "<?=__url('rule/permission')?>";
     togglePermission();
-    local_call(function(){
+    fetch_data_and_run(null, function(){
             // 字段 权限 rules
             var id = 1;
             var url = "<?=__url('role/rules?id=')?>" + pid;
-            fetch(url).then(response => {return response.json();}).then(res => {
-                    if (res.code) {
-                        layui.popup.failure(res.msg);
-                    }
-                    var data = res.data;
+            fetch_data_and_run(url, function(data){
                     let value = layui.$("#rules").attr("value");
                     let initValue = value ? value.split(",") : [];
                     //data = res.data
@@ -83,11 +79,7 @@ layui.use(["form", "popup","jquery", "xmSelect", "util"], function () {
             
             // 字段 父级角色组 pid
             var url = "<?=__url('role/select?format=tree')?>";
-            fetch(url).then(response => {return response.json();}).then(res => {
-                    if (res.code) {
-                        return layui.popup.failure(res.msg);
-                    }
-                    var data = res.data;
+            fetch_data_and_run(url, function(data){
                     let value = layui.$("#pid").attr("value");
                     let initValue = value ? value.split(",") : [];
                     layui.xmSelect.render({
@@ -105,11 +97,7 @@ layui.use(["form", "popup","jquery", "xmSelect", "util"], function () {
                             let id = data.arr[0] ? data.arr[0].value : "";
                             if (!id) return;
                             var url = '<?=__url('role/rules?id=')?>' + id;
-                            fetch(url).then(response => {return response.json();}).then(res => {
-                                    if (res.code) {
-                                        return layui.popup.failure(res.msg);
-                                    }
-                                    var data = res.data;
+                            fetch_data_and_run(url, function(data){
                                     layui.xmSelect.get('#rules')[0].update({data:data});
                             });
                         }

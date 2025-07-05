@@ -93,7 +93,7 @@ layui.use(["form","iconPicker","jquery", "xmSelect", "popup"], function() {
     let $ = layui.$;
     
     togglePermission();
-    locall_call(function(){
+    fetch_data_and_run(null, function(){
         // 图标选择
         layui.iconPicker.render({
             elem: "#icon",
@@ -117,11 +117,7 @@ layui.use(["form","iconPicker","jquery", "xmSelect", "popup"], function() {
         
         // 获取上级菜单
         var url = "<?=__url('rule/select?format=tree&type=0,1')?>";
-        fetch(url).then(response => {return response.json();}).then(res => {
-                if (res.code) {
-                    return layui.popup.failure(res.msg);
-                }
-                var data = res.data;
+        fetch_data_and_run(url, function(data){
                 var initValue;
                 initValue = document.querySelector('#pid').getAttribute('value');
                 initValue = initValue ? initValue.split(",") : [];

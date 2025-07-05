@@ -79,14 +79,9 @@ var PERMISSION_API = "<?=__url('rule/permission')?>";
 var URL_ROLE_TREE = "<?=__url('role/select?format=tree')?>"
 layui.use(["form", "jquery","util","xmSelect", "popup"], function () {
     togglePermission();
-    local_call(function(){
+    fetch_data_and_run(null, function(){
         // 字段 角色 roles
-        var url = URL_ROLE_TREE;
-        fetch(url).then(response => {return response.json();}).then(res => {
-            if (res.code) {
-                return layui.popup.failure(res.msg);
-            }
-            var data = res.data;
+        fetch_data_and_run(url, function(data){
             let value = layui.$("#roles").attr("value");
             let initValue = value ? value.split(",") : [];
             if (!top.Admin.Account.isSupperAdmin) {

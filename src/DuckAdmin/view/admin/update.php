@@ -84,22 +84,13 @@ layui.use(["form", "jquery","util","xmSelect", "popup"], function () {
     togglePermission();
     
     var url = SELECT_API;
-    fetch(url).then(response => {return response.json();}).then(res => {
-         // ajax产生错误
-        if (res.code) {
-            return layui.popup.failure(res.msg);
-        }
-        var data = res.data;
+    fetch_data_and_run(url, function(data){
         // 给表单初始化数据
         fill_form(data[0]);
         
         // 字段 角色 roles
         var url = URL_ROLE_TREE;
-        fetch(url).then(response => {return response.json();}).then(res => {
-            if (res.code) {
-                return layui.popup.failure(res.msg);
-            }
-            var data = res.data;
+        fetch_data_and_run(url, function(data){
             let value = layui.$("#roles").attr("value");
             let initValue = value ? value.split(",") : [];
             if (!top.Admin.Account.isSupperAdmin) {

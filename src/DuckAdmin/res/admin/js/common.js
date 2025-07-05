@@ -1,17 +1,18 @@
 function local_call(callback){ 
     return callback();
 }
-function fetch_data_and_run(object_or_url, exception_callback, callback) {
-  if (typeof callback === 'undefined') {
-    callback = exception_callback;
-    exception_callback = null;
-  }
-  // 如果是对象（且不是 null），直接调用 callback
+/**
+ * 本地call或远程call，如果远程call有问题，那么 popfail.
+ */
+function fetch_data_and_run(object_or_url, callback) {
+  var exception_callback =fail_popup;
+  // 如果是对象直接调用 callback
   if (typeof object_or_url === 'object') {
       callback(object_or_url);
   }
   // 如果是字符串，假设是 URL，用 fetch 获取数据
   else if (typeof object_or_url === 'string') {
+    
     fetch(object_or_url)
       .then(response => {
         if (!response.ok) {
@@ -37,7 +38,7 @@ function fetch_data_and_run(object_or_url, exception_callback, callback) {
     throw new Error('Invalid input: expected an object or URL string'));
   }
 }
-function pop_fail()
+function fail_popup(msg,code)
 {
     return layui.popup.failure(res.msg);
 }

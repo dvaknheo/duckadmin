@@ -112,10 +112,7 @@ layui.use(["admin","popup"], function() {
     // 登出逻辑
     admin.logout(function(){
         var url = "<?=__url('account/logout')?>";
-        fetch(url).then(response => {return response.json();}).then(res => {
-                if (res.code) {
-                    return popup.error(res.msg);
-                }
+        fetch_data_and_run(url, function(data){
                 popup.success("注销成功",function(){
                     location.reload();
                 })
@@ -123,8 +120,7 @@ layui.use(["admin","popup"], function() {
         return false;
     });
     var url = "<?=__url('account/info')?>";
-    fetch(url).then(response => {return response.json();}).then(res => {
-        var data = res.data;
+    fetch_data_and_run(url, function(data){
         window.Admin.Account = data;
     });
 

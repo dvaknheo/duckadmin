@@ -249,11 +249,7 @@ layui.$(function () {
 				let count = apis.length;
 				layui.each(apis, function (k, item) {
 				    let [field, url] = item;
-				    fetch(url).then(response => {return response.json();}).then(res => {
-                            if (res.code) {
-                                return layui.popup.failure(res.msg);
-                            }
-                            var data = res.data;
+				    fetch_data_and_run(url, function(data){
 				            function travel(items) {
 				                for (let k in items) {
 				                    let item = items[k];
