@@ -111,7 +111,7 @@ const URL_ROLE_SELECT ="<?=__url('role/select?format=select')?>";
 <script>
 // 相关常量
 
-layui.use(["table", "form", "common", "popup", "util","laydate"], function() {
+layui.use(["table", "form",  "popup", "util","laydate"], function() {
     // 字段 创建时间 created_at
     layui.laydate.render({
         elem: "#created_at",
@@ -279,7 +279,7 @@ layui.use(["table", "form", "common", "popup", "util","laydate"], function() {
             type: 2,
             title: "新增",
             shade: 0.1,
-            area: [common.isModile()?"100%":"500px", common.isModile()?"100%":"450px"],
+            area: [common_isModile()?"100%":"500px", common_isModile()?"100%":"450px"],
             content: INSERT_URL
         });
     }
@@ -291,7 +291,7 @@ layui.use(["table", "form", "common", "popup", "util","laydate"], function() {
             type: 2,
             title: "修改",
             shade: 0.1,
-            area: [common.isModile()?"100%":"500px", common.isModile()?"100%":"450px"],
+            area: [common_isModile()?"100%":"500px", common_isModile()?"100%":"450px"],
             content: UPDATE_URL + "?" + PRIMARY_KEY + "=" + value
         });
     }
@@ -303,7 +303,7 @@ layui.use(["table", "form", "common", "popup", "util","laydate"], function() {
 
     // 删除多行
     let batchRemove = function(obj) {
-        let checkIds = common.checkField(obj, PRIMARY_KEY);
+        let checkIds = common_checkField(obj, PRIMARY_KEY);
         if (checkIds === "") {
             layui.popup.warning("未选中数据");
             return false;

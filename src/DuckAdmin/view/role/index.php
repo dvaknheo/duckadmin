@@ -55,7 +55,7 @@ const URL_ROLE_TREE ="<?=__url('role/select?format=tree')?>";
 </script>
 <script>
 // 表格渲染
-layui.use(["table", "treetable", "form", "common", "popup", "util"], function() {
+layui.use(["table", "treetable", "form", "popup", "util"], function() {
     togglePermission(data_permission);
     toggleSearchFormShow();
     
@@ -210,7 +210,7 @@ layui.use(["table", "treetable", "form", "common", "popup", "util"], function() 
             type: 2,
             title: "新增",
             shade: 0.1,
-            area: [common.isModile()?"100%":"500px", common.isModile()?"100%":"450px"],
+            area: [common_isModile()?"100%":"500px", common_isModile()?"100%":"450px"],
             content: INSERT_URL
         });
     }
@@ -222,7 +222,7 @@ layui.use(["table", "treetable", "form", "common", "popup", "util"], function() 
             type: 2,
             title: "修改",
             shade: 0.1,
-            area: [common.isModile()?"100%":"500px", common.isModile()?"100%":"450px"],
+            area: [common_isModile()?"100%":"500px", common_isModile()?"100%":"450px"],
             content: UPDATE_URL + "?" + PRIMARY_KEY + "=" + value
         });
     }
@@ -234,7 +234,7 @@ layui.use(["table", "treetable", "form", "common", "popup", "util"], function() 
 
     // 删除多行
     let batchRemove = function(obj) {
-        let checkIds = common.checkField(obj, PRIMARY_KEY);
+        let checkIds = common_checkField(obj, PRIMARY_KEY);
         if (checkIds === "") {
             layui.popup.warning("未选中数据");
             return false;

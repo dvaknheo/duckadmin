@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-        <title>主页</title>
+        <title>主页 - <?php echo date("Y-m-d H:i:s"); ?></title>
         <!-- 依 赖 样 式 -->
         <link rel="stylesheet" href="<?=__res('component/pear/css/pear.css')?>" />
         <!-- 加 载 样 式 -->
@@ -22,7 +22,7 @@
                 <!-- 菜 单 顶 部 -->
                 <div class="layui-logo">
                     <!-- 图 标 -->
-                    <img class="logo" alt="LOGO，请改正">
+                    <img class="logo" style="width:128px;height:128px;" alt="LOGO，请改正">
                     <!-- 标 题 -->
                     <span class="title">【标题】</span>
                 </div>
@@ -36,8 +36,10 @@
                 <!-- 顶 部 右 侧 菜 单 -->
                 <ul class="layui-nav layui-layout-right">
                     <li class="layui-nav-item layui-hide-xs"><a href="#" class="menuSearch layui-icon layui-icon-search"></a></li>
+                    <?php /*
                     <li class="layui-nav-item layui-hide-xs"><a href="#" class="fullScreen layui-icon layui-icon-screen-full"></a></li>
                     <li class="layui-nav-item layui-hide-xs message"></li>
+                    */?>
                     <li class="layui-nav-item user">
                         <!-- 头 像 -->
                         <a class="layui-icon layui-icon-username" href="javascript:;"></a>
@@ -47,8 +49,10 @@
                             <dd><a href="javascript:void(0);" class="logout">注销登录</a></dd>
                         </dl>
                     </li>
+                    <?php /*
                     <!-- 主 题 配 置 -->
                     <li class="layui-nav-item setting"><a href="#" class="layui-icon layui-icon-more-vertical"></a></li>
+                    */?>
                 </ul>
             </div>
             <!-- 侧 边 区 域 -->
@@ -80,10 +84,12 @@
             <!-- 遮 盖 层 -->
             <div class="pear-cover"></div>
             <!-- 加 载 动 画 -->
+            <?php /*
             <div class="loader-main">
                 <!-- 动 画 对 象 -->
                 <div class="loader"></div>
             </div>
+            */?>
         </div>
         <!-- 移 动 端 便 捷 操 作 -->
         <div class="pear-collapsed-pe collapse">
@@ -99,14 +105,11 @@
 window.Admin = {
     Account: {}
 };
-
 layui.use(["admin","popup"], function() {
     var admin = layui.admin;
     var popup = layui.popup;
-
     admin.setConfigPath("<?=__url('config/get')?>");
     admin.render();
-
     // 登出逻辑
     admin.logout(function(){
         var url = "<?=__url('account/logout')?>";

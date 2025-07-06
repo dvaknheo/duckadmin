@@ -21,18 +21,10 @@ layui.define(['message', 'table', 'jquery', 'element', 'form', 'tab', 'menu', 'f
 		var body = $('body');
 
 		var pearAdmin = new function() {
-
-			var configType = 'json';//去掉 yaml
 			var configPath = 'pear.config.json';//去掉 yaml
-
 			this.setConfigPath = function(path) {
 				configPath = path;
 			}
-
-			this.setConfigType = function(type) {
-				configType = type;
-			}
-
 			this.render = function(initConfig) {
 				if (initConfig !== undefined) {
 					applyConfig(initConfig);
@@ -40,9 +32,7 @@ layui.define(['message', 'table', 'jquery', 'element', 'form', 'tab', 'menu', 'f
 					applyConfig(pearAdmin.readConfig());
 				}
 			}
-
 			this.readConfig = function() {
-            
                 var data;
                 $.ajax({
                     url: configPath,
@@ -56,26 +46,14 @@ layui.define(['message', 'table', 'jquery', 'element', 'form', 'tab', 'menu', 'f
                 return data;
 			}
 
-			this.messageRender = function(option) {
-                //这里可能需要去掉
-				var option = {
-					elem: '.message',
-					url: option.header.message,
-					height: '250px'
-				};
-				msgInstance = message.render(option);
-			}
-
-
 			this.menuRender = function(param) {
-console.log(param); // 这里最重要
 				sideMenu = pearMenu.render({
 					elem: 'sideMenu',
 					async: param.menu.async !== undefined ? param.menu.async : true,
 					theme: "dark-theme",
 					height: '100%',
 					method: param.menu.method,
-					control: isControl(param) === 'true' || isControl(param) === true ? 'control' : false, // control
+					control: false,//isControl(param) === 'true' || isControl(param) === true ? 'control' : false, // control
 					controlWidth: param.menu.controlWidth,
 					defaultMenu: 0,
 					accordion: param.menu.accordion,
@@ -94,155 +72,28 @@ console.log(param); // 这里最重要
 			}
 
 			this.bodyRender = function(param) {
-
 				body.on("click", ".refresh", function() {
 					refresh();
 				})
+                bodyFrame = pearFrame.render({
+                    elem: 'content',
+                    title: '首页',
+                    url: param.tab.index.href,
+                    width: '100%',
+                    height: '100%'
+                });
 
-				if (isMuiltTab(param) === "true" || isMuiltTab(param) === true) {
-                    //删除多tab模式
-				} else {
-					bodyFrame = pearFrame.render({
-						elem: 'content',
-						title: '首页',
-						url: param.tab.index.href,
-						width: '100%',
-						height: '100%'
-					});
-
-					sideMenu.click(function(dom, data) {
-						bodyFrame.changePage(data.menuUrl, true);
-						compatible()
-					})
-				}
+                sideMenu.click(function(dom, data) {
+                    bodyFrame.changePage(data.menuUrl, true);
+                    compatible()
+                })
 			}
-            // 这里是把加载的删除
-			this.keepLoad = function(param) {
-				compatible()
-				setTimeout(function() {
-					$(".loader-main").fadeOut(200);
-				}, param.other.keepLoad)
-			}
-
-			this.themeRender = function(option) {
-console.log("remove me");
-return;
-				if (option.theme.allowCustom === false) {
-					$(".setting").remove();
-				}
-				var colorId = localStorage.getItem("theme-color");
-				var currentColor = getColorById(colorId);
-				localStorage.setItem("theme-color", currentColor.id);
-				localStorage.setItem("theme-color-color", currentColor.color);
-				localStorage.setItem("theme-color-second", currentColor.second);
-				pearTheme.changeTheme(window, isAutoHead(config));
-
-				var menu = localStorage.getItem("theme-menu");
-				if (menu === null) {
-					menu = option.theme.defaultMenu;
-				} else {
-					if (option.theme.allowCustom === false) {
-						menu = option.theme.defaultMenu;
-					}
-				}
-
-				var header = localStorage.getItem("theme-header");
-				if (header === null) {
-					header = option.theme.defaultHeader;
-				} else {
-					if (option.theme.allowCustom === false) {
-						header = option.theme.defaultHeader;
-					}
-				}
-
-				var banner = localStorage.getItem("theme-banner");
-				if (banner === null) {
-					banner = option.theme.banner;
-				} else {
-					if (option.theme.allowCustom === false) {
-						banner = option.theme.banner;
-					}
-				}
-
-				var autoHead = localStorage.getItem("auto-head");
-				if (autoHead === null) {
-					autoHead = option.other.autoHead;
-				} else {
-					if (option.theme.allowCustom === false) {
-						autoHead = option.other.autoHead;
-					}
-				}
-
-				var muiltTab = localStorage.getItem("muilt-tab");
-				if (muiltTab === null) {
-					muiltTab = option.tab.enable;
-				} else {
-					if (option.theme.allowCustom === false) {
-						muiltTab = option.tab.enable;
-					}
-				}
-
-				var control = localStorage.getItem("control");
-				if (control === null) {
-					control = option.menu.control;
-				} else {
-					if (option.theme.allowCustom === false) {
-						control = option.menu.control;
-					}
-				}
-
-				var footer = localStorage.getItem("footer");
-				if( footer === null) {
-					footer = option.other.footer;
-				}else{
-					if (option.theme.allowCustom === false) {
-						footer = option.other.footer;
-					}
-				}
-
-				localStorage.setItem("muilt-tab", muiltTab);
-				localStorage.setItem("theme-banner", banner);
-				localStorage.setItem("theme-menu", menu);
-				localStorage.setItem("theme-header", header);
-				localStorage.setItem("auto-head", autoHead);
-				localStorage.setItem("control", control);
-				localStorage.setItem("footer", footer);
-				this.menuSkin(menu);
-				this.headerSkin(header);
-				this.bannerSkin(banner);
-				this.footer(footer);
-			}
-
-			this.footer = function(footer){
-				var bodyDOM = $(".pear-admin .layui-body");
-				var footerDOM = $(".pear-admin .layui-footer");
-				if (footer === true || footer === "true") {
-					footerDOM.removeClass("close");
-					bodyDOM.css("bottom", footerDOM.outerHeight());
-				} else {
-					footerDOM.addClass("close");
-					bodyDOM.css("bottom", "");
-				}
-			}
-
-			this.bannerSkin = function(theme) {
-				console.log("remove me");return;
-			}
-
 			this.collapse = function(param) {
 				if (param.menu.collapse) {
 					if ($(window).width() >= 768) {
 						collapse()
 					}
 				}
-			}
-
-			this.menuSkin = function(theme) {
-                console.log("remove me");return;
-			}
-
-			this.headerSkin = function(theme) {
-				console.log("remove me");return;
 			}
 
 			this.logout = function(callback) {
@@ -266,80 +117,14 @@ return;
 			this.refresh = function(id) {
 				$("iframe[id='"+ id +"']").attr('src', $("iframe[id='"+ id +"']").attr('src'));
 			}
-
-			this.addTab = function(id, title, url) {
-				if (isMuiltTab(config) === "true" || isMuiltTab(config) === true) {
-					bodyTab.addTabOnly({
-						id: id,
-						title: title,
-						url: url,
-						icon: null,
-						close: true
-					}, 400);
-				} else {
-					return;
-				}
-			}
-
-			this.closeTab = function(id) {
-				if (isMuiltTab(config) === "true" || isMuiltTab(config) === true) {
-					pearTab.delTabByElem('content', id, function(currentId){
-						sideMenu.selectItem(currentId);
-					});
-				} else {
-					return;
-				}
-			}
-
-			this.closeCurrentTab = function() {
-				if (isMuiltTab(config) === "true" || isMuiltTab(config) === true) {
-					pearTab.delCurrentTabByElem('content', function(id){
-						sideMenu.selectItem(id);
-					});
-				} else {
-					return;
-				}
-			}
-			
-			this.closeOtherTab = function() {
-				if (isMuiltTab(config) === "true" || isMuiltTab(config) === true) {
-					pearTab.delOtherTabByElem('content', function(id){
-						sideMenu.selectItem(id);
-					});
-				} else {
-					return;
-				}
-			}
-			
-			this.closeAllTab = function() {
-				if (isMuiltTab(config) === "true" || isMuiltTab(config) === true) {
-					pearTab.delAllTabByElem('content', function(id){
-						sideMenu.selectItem(id);
-					});
-				} else {
-					return;
-				}
-			}
-
-			this.changeTabTitle = function(id, title) {
-				pearTab.changeTabTitleById('content', id ,title);
-			}
 			
 			this.changeIframe = function(id, title, url) {
-				if (isMuiltTab(config) === "true" || isMuiltTab(config) === true) {
-					return;
-				} else {
 					sideMenu.selectItem(id);
 					bodyFrame.changePage(url, true);
-				}
 			}
 
 			this.jump = function(id, title, url) {
-				if (isMuiltTab(config) === "true" || isMuiltTab(config) === true) {
-					pearAdmin.addTab(id, title, url)
-				} else {
 					pearAdmin.changeIframe(id, title, url)
-				}
 			}
 			
 			this.fullScreen = function() {
@@ -585,19 +370,6 @@ return;
 			})
 		});
 
-
-		body.on("click", ".fullScreen", function() {
-			if ($(this).hasClass("layui-icon-screen-restore")) {
-				fullscreen.fullClose().then(function() {
-					$(".fullScreen").eq(0).removeClass("layui-icon-screen-restore");
-				});
-			} else {
-				fullscreen.fullScreen().then(function() {
-					$(".fullScreen").eq(0).addClass("layui-icon-screen-restore");
-				});
-			}
-		});
-
 		body.on("click", '[user-menu-id]', function() {
             bodyFrame.changePage($(this).attr("user-menu-url"), true);
 		});
@@ -608,74 +380,12 @@ return;
 			config = param;
 			pearAdmin.menuRender(param);
 			pearAdmin.bodyRender(param);
-			pearAdmin.themeRender(param);
-			pearAdmin.keepLoad(param);
-			if (param.header.message != false) {
-				pearAdmin.messageRender(param);
-			}
 		}
-
-		function getColorById(id) {
-			var color;
-			var flag = false;
-			$.each(config.colors, function(i, value) {
-				if (value.id === id) {
-					color = value;
-					flag = true;
-				}
-			})
-			if (flag === false || config.theme.allowCustom === false) {
-				$.each(config.colors, function(i, value) {
-					if (value.id === config.theme.defaultColor) {
-						color = value;
-					}
-				})
-			}
-			return color;
-		}
-
-
 		function compatible() {
 			if ($(window).width() <= 768) {
 				collapse()
 			}
 		}
-
-		function isControl(option) {
-			if (option.theme.allowCustom) {
-				if (localStorage.getItem("control") != null) {
-					return localStorage.getItem("control")
-				} else {
-					return option.menu.control
-				}
-			} else {
-				return option.menu.control
-			}
-		}
-
-		function isAutoHead(option) {
-			if (option.theme.allowCustom) {
-				if (localStorage.getItem("auto-head") != null) {
-					return localStorage.getItem("auto-head");
-				} else {
-					return option.other.autoHead;
-				}
-			} else {
-				return option.other.autoHead;
-			}
-		}
-
-		function isMuiltTab(option) {
-            console.log("remove me")
-			return false;
-		}
-
-		window.onresize = function() {
-			if (!fullscreen.isFullscreen()) {
-				$(".fullScreen").eq(0).removeClass("layui-icon-screen-restore");
-			}
-		}
-
 		$(window).on('resize', debounce(function () {
 			if (sideMenu && !sideMenu.isCollapse && $(window).width() <= 768) {
 				collapse();
