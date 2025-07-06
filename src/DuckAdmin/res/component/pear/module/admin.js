@@ -43,6 +43,7 @@ layui.define(['table', 'jquery', 'element', 'form', 'menu', 'frame'],
 			}
 
 			this.menuRender = function(param) {
+console.log(param);
 				sideMenu = pearMenu.render({
 					elem: 'sideMenu',
 					async: param.menu.async !== undefined ? param.menu.async : true,
@@ -52,7 +53,7 @@ layui.define(['table', 'jquery', 'element', 'form', 'menu', 'frame'],
 					control: false,//isControl(param) === 'true' || isControl(param) === true ? 'control' : false, // control
 					controlWidth: param.menu.controlWidth,
 					defaultMenu: 0,
-					accordion: param.menu.accordion,
+					accordion: true,//param.menu.accordion,
 					url: param.menu.data,
 					data: param.menu.data,
 					parseData: false,
@@ -62,12 +63,13 @@ layui.define(['table', 'jquery', 'element', 'form', 'menu', 'frame'],
 					done: function() {
 						sideMenu.isCollapse = param.menu.collapse;
 						sideMenu.selectItem(param.menu.select);
-						pearAdmin.collapse(param);
+						//pearAdmin.collapse(param);
 					}
 				});
 			}
 
 			this.bodyRender = function(param) {
+                // 只用到  param.tab.index.href
 				body.on("click", ".refresh", function() {
 					refresh();
 				})
