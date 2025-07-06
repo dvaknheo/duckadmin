@@ -1,23 +1,19 @@
-layui.define(['message', 'table', 'jquery', 'element', 'form', 'tab', 'menu', 'frame', 'theme', 'fullscreen'],
+layui.define(['table', 'jquery', 'element', 'form', 'menu', 'frame'],
 	function(exports) {
 		"use strict";
 
 		var $ = layui.jquery,
 			form = layui.form,
 			element = layui.element,
-			pearTab = layui.tab,
 			pearMenu = layui.menu,
-			pearFrame = layui.frame,
-			pearTheme = layui.theme,
-			message = layui.message,
-			fullscreen=layui.fullscreen;
+			pearFrame = layui.frame;
+
 
 		var bodyFrame;
 		var sideMenu;
 		var bodyTab;
 		var config;
 		var logout = function() {};
-		var msgInstance;
 		var body = $('body');
 
 		var pearAdmin = new function() {
@@ -89,22 +85,15 @@ layui.define(['message', 'table', 'jquery', 'element', 'form', 'tab', 'menu', 'f
                 })
 			}
 			this.collapse = function(param) {
-				if (param.menu.collapse) {
-					if ($(window).width() >= 768) {
-						collapse()
-					}
-				}
+                if ($(window).width() >= 768) {
+                    collapse()
+                }
 			}
 
 			this.logout = function(callback) {
 				logout = callback;
 			}
 
-			this.message = function(callback) {
-				if (callback != null) {
-					msgInstance.click(callback);
-				}
-			}
 
 			this.collapseSide = function() {
 				collapse()
@@ -125,10 +114,6 @@ layui.define(['message', 'table', 'jquery', 'element', 'form', 'tab', 'menu', 'f
 
 			this.jump = function(id, title, url) {
 					pearAdmin.changeIframe(id, title, url)
-			}
-			
-			this.fullScreen = function() {
-                console.log("kill me");
 			}
 		};
 
