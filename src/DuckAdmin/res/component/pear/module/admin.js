@@ -42,12 +42,13 @@ layui.define(['message', 'table', 'jquery', 'element', 'form', 'tab', 'menu', 'f
 			}
 
 			this.readConfig = function() {
+            
                 var data;
                 $.ajax({
                     url: configPath,
                     type: 'get',
                     dataType: 'json',
-                    async: false,
+                    async: false, // 这里应该异步而不是同步
                     success: function(result) {
                         data = result;
                     }
@@ -56,6 +57,7 @@ layui.define(['message', 'table', 'jquery', 'element', 'form', 'tab', 'menu', 'f
 			}
 
 			this.messageRender = function(option) {
+                //这里可能需要去掉
 				var option = {
 					elem: '.message',
 					url: option.header.message,
@@ -64,13 +66,9 @@ layui.define(['message', 'table', 'jquery', 'element', 'form', 'tab', 'menu', 'f
 				msgInstance = message.render(option);
 			}
 
-			this.logoRender = function(param) {
-				$(".layui-logo .logo").attr("src", param.logo.image);
-				$(".layui-logo .title").html(param.logo.title);
-				$("title").html(param.logo.title); //变更
-			}
 
 			this.menuRender = function(param) {
+console.log(param); // 这里最重要
 				sideMenu = pearMenu.render({
 					elem: 'sideMenu',
 					async: param.menu.async !== undefined ? param.menu.async : true,
@@ -102,53 +100,7 @@ layui.define(['message', 'table', 'jquery', 'element', 'form', 'tab', 'menu', 'f
 				})
 
 				if (isMuiltTab(param) === "true" || isMuiltTab(param) === true) {
-					bodyTab = pearTab.render({
-						elem: 'content',
-						roll: true,
-						tool: true,
-						width: '100%',
-						height: '100%',
-						session: param.tab.session,
-						index: 0,
-						tabMax: param.tab.max,
-						preload: param.tab.preload,
-						closeEvent: function(id) {
-							sideMenu.selectItem(id);
-						},
-						data: [{
-							id: param.tab.index.id,
-							url: param.tab.index.href,
-							title: param.tab.index.title,
-							close: false
-						}],
-						success: function(id) {
-							if (param.tab.session) {
-								setTimeout(function() {
-									sideMenu.selectItem(id);
-									bodyTab.positionTab();
-								}, 500)
-							}
-						}
-					});
-
-					bodyTab.click(function(id) {
-						if (!param.tab.keepState) {
-							bodyTab.refresh(false);
-						}
-						bodyTab.positionTab();
-						sideMenu.selectItem(id);
-					})
-
-					sideMenu.click(function(dom, data) {
-						bodyTab.addTabOnly({
-							id: data.menuId,
-							title: data.menuTitle,
-							url: data.menuUrl,
-							icon: data.menuIcon,
-							close: true
-						}, 300);
-						compatible();
-					})
+                    //删除多tab模式
 				} else {
 					bodyFrame = pearFrame.render({
 						elem: 'content',
@@ -164,7 +116,7 @@ layui.define(['message', 'table', 'jquery', 'element', 'form', 'tab', 'menu', 'f
 					})
 				}
 			}
-
+            // 这里是把加载的删除
 			this.keepLoad = function(param) {
 				compatible()
 				setTimeout(function() {
@@ -173,6 +125,8 @@ layui.define(['message', 'table', 'jquery', 'element', 'form', 'tab', 'menu', 'f
 			}
 
 			this.themeRender = function(option) {
+console.log("remove me");
+return;
 				if (option.theme.allowCustom === false) {
 					$(".setting").remove();
 				}
@@ -389,15 +343,7 @@ layui.define(['message', 'table', 'jquery', 'element', 'form', 'tab', 'menu', 'f
 			}
 			
 			this.fullScreen = function() {
-				if ($(".fullScreen").hasClass("layui-icon-screen-restore")) {
-					screenFun(2).then(function() {
-						$(".fullScreen").eq(0).removeClass("layui-icon-screen-restore");
-					});
-				} else {
-					screenFun(1).then(function() {
-						$(".fullScreen").eq(0).addClass("layui-icon-screen-restore");
-					});
-				}
+                console.log("kill me");
 			}
 		};
 
@@ -660,7 +606,6 @@ layui.define(['message', 'table', 'jquery', 'element', 'form', 'tab', 'menu', 'f
 
 		function applyConfig(param) {
 			config = param;
-			pearAdmin.logoRender(param);
 			pearAdmin.menuRender(param);
 			pearAdmin.bodyRender(param);
 			pearAdmin.themeRender(param);

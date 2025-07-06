@@ -27,16 +27,11 @@ layui.config({
 	treetable:"treetable",   // 树状表格
 // 这里是没见过的    
 	dtree:"dtree",			// 树结构
-
-
 	nprogress: "nprogress",  // 进度过渡
     select: "select",	// 下拉多选组件
-    
-
 	notice: "notice",	// 消息提示组件
 	step:"step",		// 分布表单组件
 	tag:"tag",			// 多标签页组件
-
 	count:"count",			// 数字滚动
 	topBar: "topBar",		// 置顶组件
 	button: "button",		// 加载按钮

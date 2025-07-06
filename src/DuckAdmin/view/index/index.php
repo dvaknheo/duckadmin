@@ -22,9 +22,9 @@
                 <!-- 菜 单 顶 部 -->
                 <div class="layui-logo">
                     <!-- 图 标 -->
-                    <img class="logo">
+                    <img class="logo" alt="LOGO，请改正">
                     <!-- 标 题 -->
-                    <span class="title"></span>
+                    <span class="title">【标题】</span>
                 </div>
                 <!-- 顶 部 左 侧 功 能 -->
                 <ul class="layui-nav layui-layout-left">
@@ -104,9 +104,7 @@ layui.use(["admin","popup"], function() {
     var admin = layui.admin;
     var popup = layui.popup;
 
-    admin.setConfigType("json");
     admin.setConfigPath("<?=__url('config/get')?>");
-
     admin.render();
 
     // 登出逻辑
