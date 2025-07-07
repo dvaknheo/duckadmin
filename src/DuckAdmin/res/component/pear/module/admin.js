@@ -3,80 +3,80 @@ layui.define(['table', 'jquery', 'element', 'form', 'menu', 'frame'],
 		"use strict";
 
 		var $ = layui.jquery,
-			form = layui.form,
-			element = layui.element,
-			pearMenu = layui.menu,
-			pearFrame = layui.frame;
+        form = layui.form,
+        element = layui.element,
+        pearMenu = layui.menu,
+        pearFrame = layui.frame;
 
 
 		var bodyFrame;
 		var sideMenu;
 		var bodyTab;
-		var config;
 		var logout = function() {};
 		var body = $('body');
 
 		var pearAdmin = new function() {
-			var configPath = 'pear.config.json';//去掉 yaml
-			this.setConfigPath = function(path) {
-				configPath = path;
-			}
-			this.render = function(initConfig) {
-				if (initConfig !== undefined) {
-					applyConfig(initConfig);
-				} else {
-					applyConfig(pearAdmin.readConfig());
-				}
-			}
-			this.readConfig = function() {
-                var data;
-                $.ajax({
-                    url: configPath,
-                    type: 'get',
-                    dataType: 'json',
-                    async: false, // 这里应该异步而不是同步
-                    success: function(result) {
-                        data = result;
+			this.render = function(data_or_url) {
+            
+                var fetch_admin_and_run = function (object_or_url, callback) {
+                    if (typeof object_or_url !== 'string') {
+                        callback(object_or_url);
+                        return;
                     }
-                })
-                return data;
-			}
-
-			this.menuRender = function(param) {
-console.log(param);
+                    fetch(object_or_url)
+                        .then(response => { return response.json(); })
+                        .then(res => { callback(res); });
+                };
+                fetch_admin_and_run(data_or_url,function(param){
+/*
+{
+    "data": "rule/get",
+    "accordion": true,
+    "collapse": false,
+    "control": false,
+    "controlWidth": 500,
+    "select": 0,
+    "async": true
+}
+*/
+                    this.menuRender(param.menu);
+                    var url_home = "account/dashboard";
+                    this.bodyRender(url_home);
+                }.bind(this));
+            }
+			this.menuRender = function(menu) {
 				sideMenu = pearMenu.render({
 					elem: 'sideMenu',
-					async: param.menu.async !== undefined ? param.menu.async : true,
+					async: menu.async !== undefined ? menu.async : true,
 					theme: "dark-theme",
 					height: '100%',
-					method: param.menu.method,
-					control: false,//isControl(param) === 'true' || isControl(param) === true ? 'control' : false, // control
-					controlWidth: param.menu.controlWidth,
+					method: menu.method,
+					control: false,
+					controlWidth: menu.controlWidth,
 					defaultMenu: 0,
 					accordion: true,//param.menu.accordion,
-					url: param.menu.data,
-					data: param.menu.data,
+					url: menu.data,
+					data: menu.data,
 					parseData: false,
 					change: function() {
 						compatible();
 					},
 					done: function() {
-						sideMenu.isCollapse = param.menu.collapse;
-						sideMenu.selectItem(param.menu.select);
+						sideMenu.isCollapse = menu.collapse;
+						sideMenu.selectItem(menu.select);
 						//pearAdmin.collapse(param);
 					}
 				});
 			}
 
-			this.bodyRender = function(param) {
-                // 只用到  param.tab.index.href
+			this.bodyRender = function(url_home) {
 				body.on("click", ".refresh", function() {
 					refresh();
 				})
                 bodyFrame = pearFrame.render({
                     elem: 'content',
                     title: '首页',
-                    url: param.tab.index.href,
+                    url: url_home,
                     width: '100%',
                     height: '100%'
                 });
@@ -94,15 +94,6 @@ console.log(param);
 
 			this.logout = function(callback) {
 				logout = callback;
-			}
-
-
-			this.collapseSide = function() {
-				collapse()
-			}
-
-			this.refreshThis = function() {
-				refresh()
 			}
 
 			this.refresh = function(id) {
@@ -360,21 +351,13 @@ console.log(param);
 		body.on("click", '[user-menu-id]', function() {
             bodyFrame.changePage($(this).attr("user-menu-url"), true);
 		});
-
-
-
-		function applyConfig(param) {
-			config = param;
-			pearAdmin.menuRender(param);
-			pearAdmin.bodyRender(param);
-		}
 		function compatible() {
 			if ($(window).width() <= 768) {
 				collapse()
 			}
 		}
 		$(window).on('resize', debounce(function () {
-			if (sideMenu && !sideMenu.isCollapse && $(window).width() <= 768) {
+			if ($(window).width() <= 768) {
 				collapse();
 			}
 		},50));

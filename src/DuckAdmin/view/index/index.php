@@ -81,10 +81,10 @@
                 </span>
                 <span class="center"></span>
             </div>
+            <?php /*
             <!-- 遮 盖 层 -->
             <div class="pear-cover"></div>
             <!-- 加 载 动 画 -->
-            <?php /*
             <div class="loader-main">
                 <!-- 动 画 对 象 -->
                 <div class="loader"></div>
@@ -107,14 +107,12 @@ window.Admin = {
 };
 layui.use(["admin","popup"], function() {
     var admin = layui.admin;
-    var popup = layui.popup;
-    admin.setConfigPath("<?=__url('config/get')?>");
-    admin.render();
+    admin.render("<?=__url('config/get')?>");
     // 登出逻辑
     admin.logout(function(){
         var url = "<?=__url('account/logout')?>";
         fetch_data_and_run(url, function(data){
-                popup.success("注销成功",function(){
+                layui.popup.success("注销成功",function(){
                     location.reload();
                 })
         });

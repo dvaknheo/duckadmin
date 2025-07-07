@@ -13,11 +13,7 @@ layui.config({
 	admin: "admin", 	// 框架布局组件               Y
 	menu: "menu",		// 数据菜单组件               Y
 	frame: "frame", 	// 内容页面组件               Y
-	//tab: "tab",			// 多选项卡组件               Y
 	popup:"popup",      // 弹层封装                   Y
-	//theme: "theme",			// 主题转换               Y
-	//message: "message",     // 通知组件               Y
-	//fullscreen:"fullscreen",  //全屏组件              Y
 
 // 这里是里面调用的
     xmSelect: "xm-select",	// 下拉多选组件 //变更

@@ -129,6 +129,7 @@ body {
 </script>
         <script src="<?=__res('component/layui/layui.js')?>"></script>
         <script src="<?=__res('component/pear/pear.js')?>"></script>
+        <script src="<?=__res('admin/js/common.js')?>"></script>
         <script src="<?=__res('admin/js/login.js')?>"></script>
     </body>
 </html>

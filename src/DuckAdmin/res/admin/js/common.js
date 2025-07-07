@@ -23,7 +23,7 @@ function fetch_data_and_run(object_or_url, callback) {
       .then(res => {
         // 如果返回的 JSON 有 code 字段，调用 exception_callback
         if (res.code) {
-          exception_callback(res.msg,res.code);
+          throw new Error(res.msg,res.code);
         } else {
           // 否则调用 callback(res.data)
           callback(res.data !== undefined ? res.data : res);
