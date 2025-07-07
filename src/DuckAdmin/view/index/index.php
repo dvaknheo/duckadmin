@@ -95,6 +95,21 @@
         <div class="pear-collapsed-pe collapse">
             <a href="#" class="layui-icon layui-icon-shrink-right"></a>
         </div>
+<div style="display:hidden"><!-- 隐藏层用于弹出 -->
+<div class="menu-search-content" id ="id-menu-search">
+  <div class="layui-form menu-search-input-wrapper">
+    <div class=" layui-input-wrap layui-input-wrap-prefix">
+      <div class="layui-input-prefix">
+        <i class="layui-icon layui-icon-search"></i>
+      </div>
+      <input type="text" name="menuSearch" value="" placeholder="搜索菜单" autocomplete="off" class="layui-input" lay-affix="clear">
+    </div>
+  </div>
+  <div class="menu-search-no-data">暂无搜索结果</div>
+  <ul class="menu-search-list">
+  </ul>
+</div>
+</div>
         <!-- 依 赖 脚 本 -->
         <script src="<?=__res('component/layui/layui.js')?>"></script>
         <script src="<?=__res('component/pear/pear.js')?>"></script>
