@@ -14,6 +14,7 @@ layui.config({
 	menu: "menu",		// 数据菜单组件               Y
 	frame: "frame", 	// 内容页面组件               Y
 	popup:"popup",      // 弹层封装                   Y
+    menuSearcher:"menuSearcher",   //
 
 // 这里是里面调用的
     xmSelect: "xm-select",	// 下拉多选组件 //变更

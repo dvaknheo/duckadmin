@@ -37,6 +37,7 @@ layui.define(['table', 'jquery', 'element'], function (exports) {
 			tempDone();
 		}
 
+        ////[[[[ 这里要改用 fetch.
 		if (option.async) {
 			if (option.method === "GET") {
 				getData(option.url).then(function (data) {
@@ -53,6 +54,8 @@ layui.define(['table', 'jquery', 'element'], function (exports) {
 			// 延时返回，和 javascript 执行时序关联
 			window.setTimeout(function () { renderMenu(option); }, 500);
 		}
+        
+        ////]]]]
 
 		// 处理高度
 		$("#" + opt.elem).height(option.height)
@@ -271,7 +274,7 @@ layui.define(['table', 'jquery', 'element'], function (exports) {
 			option.parseData(option.data);
 		}
 		if (option.data.length > 0) {
-			if (option.control != false) {
+			if (false && option.control != false) {
 				createMenuAndControl(option);
 			} else {
 				createMenu(option);

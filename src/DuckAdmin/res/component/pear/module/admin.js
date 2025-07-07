@@ -1,4 +1,4 @@
-layui.define(['jquery', 'element', 'form', 'menu', 'frame'],
+layui.define(['jquery', 'element', 'form', 'menu', 'frame',"menuSearcher"],
     function(exports) {
         "use strict";
 
@@ -7,7 +7,7 @@ layui.define(['jquery', 'element', 'form', 'menu', 'frame'],
         element = layui.element,
         pearMenu = layui.menu,
         pearFrame = layui.frame;
-
+        var menuSearcher = layui.menuSearcher ;
 
         var bodyFrame;
         var sideMenu;
@@ -71,6 +71,10 @@ layui.define(['jquery', 'element', 'form', 'menu', 'frame'],
                         //pearAdmin.collapse(param);
                     }
                 });
+                sideMenu.click(function(dom, data) {
+                    bodyFrame.changePage(data.menuUrl, true);
+                    compatible()
+                })
             }
 
             this.bodyRender = function(url_home) {
@@ -85,10 +89,7 @@ layui.define(['jquery', 'element', 'form', 'menu', 'frame'],
                     height: '100%'
                 });
 
-                sideMenu.click(function(dom, data) {
-                    bodyFrame.changePage(data.menuUrl, true);
-                    compatible()
-                })
+                
             }
             this.collapse = function(param) {
                 if ($(window).width() >= 768) {
@@ -133,6 +134,7 @@ layui.define(['jquery', 'element', 'form', 'menu', 'frame'],
 
         function collapse() {
             sideMenu.collapse();
+            
             var admin = $(".pear-admin");
             var left = $(".layui-icon-spread-left")
             var right = $(".layui-icon-shrink-right")
@@ -160,6 +162,7 @@ layui.define(['jquery', 'element', 'form', 'menu', 'frame'],
         });
 
         body.on("click", ".menuSearch", function () {
+//menuSearcher.open();return;
             // 过滤菜单
             var filterHandle = function (filterData, val) {
                 if (!val) return [];
