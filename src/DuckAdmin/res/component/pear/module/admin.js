@@ -104,14 +104,9 @@ layui.define(['jquery', 'element', 'form', 'menu', 'frame',"menuSearcher"],
             this.refresh = function(id) {
                 $("iframe[id='"+ id +"']").attr('src', $("iframe[id='"+ id +"']").attr('src'));
             }
-            
-            this.changeIframe = function(id, title, url) {
-                    sideMenu.selectItem(id);
-                    bodyFrame.changePage(url, true);
-            }
-
             this.jump = function(id, title, url) {
-                    pearAdmin.changeIframe(id, title, url)
+                sideMenu.selectItem(id);
+                bodyFrame.changePage(url, true);
             }
         };
 
@@ -122,7 +117,7 @@ layui.define(['jquery', 'element', 'form', 'menu', 'frame',"menuSearcher"],
             refreshA.addClass("layui-anim-rotate");
             refreshA.addClass("layui-anim-loop");
             refreshA.addClass("layui-icon-loading");
-            bodyFrame.refresh(true);
+            bodyFrame.refresh(true);  //改这里
             setTimeout(function() {
                 refreshA.addClass("layui-icon-refresh-1");
                 refreshA.removeClass("layui-anim");
@@ -152,9 +147,7 @@ layui.define(['jquery', 'element', 'form', 'menu', 'frame',"menuSearcher"],
         }
 
         body.on("click", ".logout", function() {
-            if (logout() && bodyTab) {
-                bodyTab.clear();
-            }
+            logout();
         })
 
         body.on("click", ".collapse,.pear-cover", function() {
@@ -223,8 +216,7 @@ layui.define(['jquery', 'element', 'form', 'menu', 'frame',"menuSearcher"],
                 })
                 return _listHtml;
             }
-            var do_search = function()
-            {
+            var do_search = function() {
                 var menuData = sideMenu.option.data;
                 
                 var $input = $(".menu-search-input-wrapper input");
@@ -247,7 +239,6 @@ layui.define(['jquery', 'element', 'form', 'menu', 'frame',"menuSearcher"],
             var do_openmenu = function($this) {
                 var menuId = $this.attr("smenu-id");
                 var menuUrl = $this.attr("smenu-url");
-                var menuIcon = $this.attr("smenu-icon");
                 var menuTitle = $this.attr("smenu-title");
                 var menuType = $this.attr("smenu-type");
                 
@@ -257,7 +248,7 @@ layui.define(['jquery', 'element', 'form', 'menu', 'frame',"menuSearcher"],
                     collapse();
                 }
                 if (openableWindow) {
-                    pearAdmin.jump(menuId, menuTitle, menuUrl)
+                    pearAdmin.jump(menuId, menuTitle, menuUrl)  //这里要调整
                 } else {
                     sideMenu.selectItem(menuId);
                 }
