@@ -107,6 +107,7 @@ const UPDATE_API = "<?=__url('admin/update')?>";
 const UPDATE_URL = "<?=__url('admin/update')?>"; 
 const DELETE_API = "<?=__url('admin/delete')?>";
 const URL_ROLE_SELECT ="<?=__url('role/select?format=select')?>";
+var g_admin_id = 1;  //TODO 这里要改成当前用户
 </script>
 <script>
 // 相关常量
@@ -154,7 +155,7 @@ layui.use(["table", "form",  "popup", "util","laydate"], function() {
             })
         });
         let checked = d[field] === 1 ? "checked" : "";
-        if (parent.Admin.Account.id === d.id) return '';
+        if (g_admin_id === d.id) return ''; //这里要改
         return '<input type="checkbox" value="'+util.escape(d[PRIMARY_KEY])+'" lay-filter="'+util.escape(field)+'" lay-skin="switch" lay-text="'+util.escape('')+'" '+checked+'/>';
     };
     // 表头参数

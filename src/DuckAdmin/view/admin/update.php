@@ -79,7 +79,8 @@
 <?php // 这段js 存放 动态数据 ?>
 var data_permission = "<?=__url('rule/permission')?>";
 var data_role_tree = "<?=__url('role/select?format=tree')?>"
-const data_of_this = "<?=__url('admin/select')?>" + location.search;
+var data_of_this = "<?=__url('admin/select')?>" + location.search;
+var isSupperAdmin = true; //TODO
 </script>
 <script>
 layui.use(["form", "jquery","util","xmSelect", "popup"], function () {
@@ -93,7 +94,7 @@ layui.use(["form", "jquery","util","xmSelect", "popup"], function () {
         // 字段 角色 roles
         var url = data_role_tree;
         fetch_data_and_run(url, function(data){
-            if (!top.Admin.Account.isSupperAdmin) {
+            if (!isSupperAdmin) {
                 layui.each(data, function (k, v) {
                     v.disabled = true;
                 });
@@ -111,16 +112,7 @@ layui.use(["form", "jquery","util","xmSelect", "popup"], function () {
         });
     });
     layui.form.on("submit(save)", function (data) {
-        ajax_post(this.closest('form'),function (res) {
-                if (res.code) {
-                    return layui.popup.failure(res.msg);
-                }
-                return layui.popup.success("操作成功", function () {
-                    parent.refreshTable();
-                    parent.layer.close(parent.layer.getFrameIndex(window.name));
-                });
-        });
-        return false;
+        return app_ajax_post(this);
     });
 });
 </script>

@@ -33,5 +33,9 @@ class Base implements AdminControllerInterface
             Helper::assignExceptionHandler(\Exception::class,[Helper::class,'ShowException']);
         }
         AdminAction::_()->checkAccess();
+        
+        //$data = RuleBusiness::_()->get($admin_id,$types);
+        //SetHeaderFooter();
+        //SetViewData();
     }
 }

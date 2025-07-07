@@ -107,16 +107,7 @@ layui.use(["form", "popup","jquery", "xmSelect", "util"], function () {
     });
     //提交事件
     layui.form.on("submit(save)", function (data) {
-        ajax_post(this.closest('form'),function (res) {
-                if (res.code) {
-                    return layui.popup.failure(res.msg);
-                }
-                return layui.popup.success("操作成功", function () {
-                    parent.refreshTable();
-                    parent.layer.close(parent.layer.getFrameIndex(window.name));
-                });
-        });
-        return false;
+        return app_ajax_post(this);
     });
 });
 </script>

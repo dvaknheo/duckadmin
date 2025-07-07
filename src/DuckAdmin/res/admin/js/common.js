@@ -133,7 +133,18 @@ function ajax_post(form, callback) {
         throw error; // 继续抛出错误，以便外部可以 .catch()
     });
 }
-
+function app_ajax_post(that) {
+    ajax_post(that.closest('form'),function (res) {
+            if (res.code) {
+                return layui.popup.failure(res.msg);
+            }
+            return layui.popup.success("操作成功", function () {
+                parent.refreshTable();
+                parent.layer.close(parent.layer.getFrameIndex(window.name));
+            });
+    });
+    return false; // for form;
+}
 
 function fill_form(data) {
     let $ = layui.$;
