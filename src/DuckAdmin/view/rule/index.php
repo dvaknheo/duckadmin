@@ -1,12 +1,4 @@
-<!DOCTYPE html>
-<html>
-	<head>
-		<meta charset="utf-8">
-		<title></title>
-		<link rel="stylesheet" href="<?=__res('component/pear/css/pear.css')?>" />
-		<link rel="stylesheet" href="<?=__res('admin/css/reset.css')?>" />
-	</head>
-	<body class="pear-container">
+	<div class="">
 
 		<!-- 数据表格 -->
 		<div class="layui-card">
@@ -261,5 +253,4 @@ layui.use(["table", "treetable", "form", "popup", "util"], function() {
     }
 });
 		</script>
-	</body>
-</html>
+	</div>

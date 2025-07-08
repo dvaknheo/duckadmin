@@ -1,4 +1,4 @@
-
+        <div>
             <pre>
                 重载 AccountController::dashboard 以获得数据。
                 

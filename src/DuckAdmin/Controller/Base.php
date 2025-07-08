@@ -32,17 +32,18 @@ class Base implements AdminControllerInterface
     {
         if(Helper::IsAjax()){
             Helper::assignExceptionHandler(\Exception::class,[Helper::class,'ShowException']);
+            AdminAction::_()->checkAccess();
+            return;
         }
         AdminAction::_()->checkAccess();
-        
-            $types = [0, 1];
-            try{
-            $admin_id = Helper::AdminId();
-            }catch(\Exception $ex){ return;}
-            $menu_data = RuleBusiness::_()->get($admin_id,$types);
-            
-            Helper::assignViewData('data_menu',$menu_data);
-            Helper::setViewHeadFoot('_sys/header', '_sys/footer');
 
+        $types = [0, 1];
+        try{
+            $admin_id = Helper::AdminId(); //有几个不需要 admin_id 的
+        }catch(\Exception $ex){ return;}
+        $menu_data = RuleBusiness::_()->get($admin_id,$types);
+        
+        Helper::assignViewData('data_menu',$menu_data);
+        Helper::setViewHeadFoot('_sys/header', '_sys/footer');
     }
 }

@@ -12,6 +12,11 @@
         <link rel="stylesheet" href="<?=__res('admin/css/admin.css')?>" />
         <!-- 重置样式 -->
         <link rel="stylesheet" href="<?=__res('admin/css/reset.css')?>" />
+        
+        <!-- 依 赖 脚 本 -->
+        <script src="<?=__res('component/layui/layui.js')?>"></script>
+        <script src="<?=__res('component/pear/pear.js')?>"></script>
+        <script src="<?=__res('admin/js/common.js')?>"></script>
     </head>
     <!-- 结 构 代 码 -->
     <body class="layui-layout-body pear-admin">
@@ -59,3 +64,5 @@
             <div class="layui-body">
                 <!-- 内 容 页 面 -->
                 <div id="content">
+<div id="pear-frame" class="pear-frame"> 
+<!-- -->

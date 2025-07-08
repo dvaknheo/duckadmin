@@ -85,9 +85,6 @@
             <button class="pear-btn pear-btn-xs tool-btn" lay-event="remove" permission="app.admin.admin.delete">删除</button>
             {{# } }}
         </script>
-        <script src="<?=__res('component/layui/layui.js')?>"></script>
-        <script src="<?=__res('component/pear/pear.js')?>"></script>
-        <script src="<?=__res('admin/js/common.js')?>"></script>
 <script>
 <?php // 这段js 存放 动态数据 ?>
 var data_permission = "<?=__url('rule/permission')?>";

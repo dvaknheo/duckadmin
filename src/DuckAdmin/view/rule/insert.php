@@ -1,19 +1,4 @@
-
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>新增页面</title>
-        <link rel="stylesheet" href="<?=__res('component/pear/css/pear.css')?>" />
-        <link rel="stylesheet" href="<?=__res('admin/css/reset.css')?>" />
-        <style>
-            .layui-iconpicker .layui-anim {
-                bottom: 42px !important;
-                top: inherit !important;
-            }
-        </style>
-    </head>
-    <body>
+    <div class ="">
 
         <form method="post" class="layui-form">
 
@@ -84,9 +69,6 @@
                 </div>
             </div>
         </form>
-        <script src="<?=__res('component/layui/layui.js')?>"></script>
-        <script src="<?=__res('component/pear/pear.js')?>"></script>
-        <script src="<?=__res('admin/js/common.js')?>"></script>
 <script>
 <?php // 这段js 存放 动态数据 ?>
 var data_permission = "<?=__url('rule/permission')?>";
@@ -141,5 +123,4 @@ layui.use(["form", "util", "jquery", "xmSelect","popup","iconPicker"], function(
 });
 </script>
 
-    </body>
-</html>
+    </div>

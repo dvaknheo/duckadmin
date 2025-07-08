@@ -1,13 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title></title>
-        <link rel="stylesheet" href="<?=__res('component/layui/css/layui.css')?>" />
-        <link rel="stylesheet" href="<?=__res('component/pear/css/pear.css')?>" />
-        <link rel="stylesheet" href="<?=__res('admin/css/reset.css')?>" />
-    </head>
-    <body class="pear-container">
+    <div class="">
         <style>
             .layui-input-block input {
                 width: 300px;
@@ -137,5 +128,4 @@ layui.use(["form", "popup"], function () {
 
 });
 </script>
-    </body>
-</html>
+    </div>

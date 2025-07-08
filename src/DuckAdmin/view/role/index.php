@@ -1,13 +1,4 @@
-
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <title>浏览页面</title>
-        <link rel="stylesheet" href="<?=__res('component/pear/css/pear.css')?>" />
-        <link rel="stylesheet" href="<?=__res('admin/css/reset.css')?>" />
-    </head>
-    <body class="pear-container">
+    <div class="">
     
         <!-- 顶部查询表单 -->
         
@@ -36,9 +27,6 @@
             <button class="pear-btn pear-btn-xs tool-btn" lay-event="remove" permission="app.admin.role.delete">删除</button>
             {{# } }}
         </script>
-        <script src="<?=__res('component/layui/layui.js')?>"></script>
-        <script src="<?=__res('component/pear/pear.js')?>"></script>
-        <script src="<?=__res('admin/js/common.js')?>"></script>
 <script>
 <?php // 这段js 存放 动态数据 ?>
 var data_permission = "<?=__url('rule/permission')?>";
@@ -275,5 +263,4 @@ layui.use(["table", "treetable", "form", "popup", "util"], function() {
 })
 
         </script>
-    </body>
-</html>
+    </div>

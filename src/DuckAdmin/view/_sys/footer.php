@@ -1,4 +1,5 @@
 </div>
+                </div>
             </div>
             <!-- 页脚 -->
             <div class="layui-footer layui-text">
@@ -36,20 +37,12 @@
   </ul>
 </div>
 </div>
-        <!-- 依 赖 脚 本 -->
-        <script src="<?=__res('component/layui/layui.js')?>"></script>
-        <script src="<?=__res('component/pear/pear.js')?>"></script>
-        <script src="<?=__res('admin/js/common.js')?>"></script>
+
         <!-- 框 架 初 始 化 -->
 <script>
 var g_data_menu;
 var g_url_home;
 </script>
-<script>
-var g_data_menu = <?=__json($data_menu)?>;
-var g_url_home =  "account/dashboard";
-</script>
-
 <script>
 layui.use(["admin"], function() {
     var admin_data ={
@@ -67,6 +60,9 @@ layui.use(["admin"], function() {
     layui.admin.render(admin_data);
 });
 </script>
-
+<script>
+g_data_menu = <?=__json($data_menu)?>;
+g_url_home =  "account/dashboard";
+</script>
     </body>
 </html>
