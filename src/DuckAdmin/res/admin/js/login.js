@@ -19,11 +19,7 @@ layui.use(['form', 'popup', 'layer'], function() {
                 return;
             }
             layui.popup.success('登录成功', function () {
-                if(url_back){
-                    location.href = url_back;
-                    return;
-                }
-                location.reload();
+                location.href = url_back;
             })
         });
         return false;

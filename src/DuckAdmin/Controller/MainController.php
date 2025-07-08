@@ -30,6 +30,7 @@ class MainController extends Base
         if (!$admin_id) {
             $url_back = Helper::GET('back_url','');
             $url_back = $url_back === '/' ? '': $url_back;
+            $url_back = $url_back?$url_back:__url('account/dashboard');
             if($url_back){
                 $last_phase = App::Phase(App::Root()->getOverridingClass());
                 $url_back = __url(ltrim($url_back,'/'));

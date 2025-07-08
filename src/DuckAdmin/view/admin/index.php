@@ -1,13 +1,4 @@
-
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <title>浏览页面</title>
-        <link rel="stylesheet" href="<?=__res('component/pear/css/pear.css')?>" />
-        <link rel="stylesheet" href="<?=__res('admin/css/reset.css')?>" />
-    </head>
-    <body class="pear-container">
+    <div class="">
     
         <!-- 顶部查询表单 -->
         <div class="layui-card">
@@ -347,5 +338,4 @@ layui.use(["table", "form",  "popup", "util","laydate"], function() {
 })
 
         </script>
-    </body>
-</html>
+    </div>

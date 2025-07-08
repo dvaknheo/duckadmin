@@ -72,10 +72,11 @@ layui.define(['jquery', 'element', 'form', 'menu', 'frame',"menuSearcher"],
                         }
                     });
                     sideMenu.click(function(dom, data) {
-                        bodyFrame.changePage(data.menuUrl, true);
-                        compatible()
+                        location.href=data.menuUrl;
+                        //bodyFrame.changePage(data.menuUrl, true);
+                        //compatible()
                     })
-                    
+                    /*
                     
                     bodyFrame = pearFrame.render({
                         elem: 'content',
@@ -83,7 +84,7 @@ layui.define(['jquery', 'element', 'form', 'menu', 'frame',"menuSearcher"],
                         url: url_home,
                         width: '100%',
                         height: '100%'
-                    });
+                    }); */
                 }.bind(this));
             }
 

@@ -35,11 +35,14 @@ class Base implements AdminControllerInterface
         }
         AdminAction::_()->checkAccess();
         
-        $types = [0, 1];
+            $types = [0, 1];
+            try{
             $admin_id = Helper::AdminId();
+            }catch(\Exception $ex){ return;}
             $menu_data = RuleBusiness::_()->get($admin_id,$types);
             
             Helper::assignViewData('data_menu',$menu_data);
-            //Helper::setViewHeadFoot($head_file = null, $foot_file = null)
+            Helper::setViewHeadFoot('_sys/header', '_sys/footer');
+
     }
 }
