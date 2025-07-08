@@ -108,18 +108,6 @@ layui.define(['jquery'], function(exports) {
                 var menuType = $this.attr("smenu-type");
                 
                 menu_callback(menuId, menuTitle, menuUrl,menuType);
-                
-                return;
-                var openableWindow = menuType === "1" || menuType === 1;
-
-                if(sideMenu.isCollapse){
-                    collapse();
-                }
-                if (openableWindow) {
-                    pearAdmin.jump(menuId, menuTitle, menuUrl)  //这里要调整
-                } else {
-                    sideMenu.selectItem(menuId);
-                }
             }
             //////////////////
         this.open = function (options){

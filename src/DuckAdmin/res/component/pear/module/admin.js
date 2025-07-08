@@ -17,7 +17,6 @@ layui.define(['jquery', 'element', 'form', 'menu', 'frame',"menuSearcher"],
 
         var pearAdmin = new function() {
             this.render = function(data_or_url) {
-            
                 var fetch_admin_and_run = function (object_or_url, callback) {
                     if (typeof object_or_url !== 'string') {
                         callback(object_or_url);
@@ -28,74 +27,59 @@ layui.define(['jquery', 'element', 'form', 'menu', 'frame',"menuSearcher"],
                         .then(res => { callback(res); });
                 };
                 fetch_admin_and_run(data_or_url,function(param){
-                    this.menuRender(param.menu);
                     var url_home = "account/dashboard";
-                    this.bodyRender(url_home);
+                    /*
+                    {
+                        "data": "rule/get",
+                        "accordion": true,
+                        "collapse": false,
+                        "control": false,
+                        "controlWidth": 500,
+                        "select": 0,
+                        "async": true
+                    }
+                    */
+                    var menu = param.menu;
+                    sideMenu = pearMenu.render({
+                        elem: 'sideMenu',
+                        
+                        theme: "dark-theme",
+                        height: '100%',
+                        control: false,  //menu.control
+                        parseData: false,
+                        
+                        url: menu.data,
+                        data: menu.data,
+                        accordion: true,//param.menu.accordion,
+                        async: menu.async !== undefined ? menu.async : true,
+                        method: menu.method,
+                        controlWidth: menu.controlWidth,
+                        defaultMenu: 0,  //menu."select": 0,
+                        
+                        change: function() {
+                            compatible();
+                        },
+                        done: function() {
+                            sideMenu.isCollapse = menu.collapse;
+                            sideMenu.selectItem(menu.select);
+                            //pearAdmin.collapse(param);
+                        }
+                    });
+                    sideMenu.click(function(dom, data) {
+                        bodyFrame.changePage(data.menuUrl, true);
+                        compatible()
+                    })
+                    
+                    
+                    bodyFrame = pearFrame.render({
+                        elem: 'content',
+                        title: '首页',
+                        url: url_home,
+                        width: '100%',
+                        height: '100%'
+                    });
                 }.bind(this));
             }
-            this.menuRender = function(menu) {
-/*
-{
-    "data": "rule/get",
-    "accordion": true,
-    "collapse": false,
-    "control": false,
-    "controlWidth": 500,
-    "select": 0,
-    "async": true
-}
-*/
-                sideMenu = pearMenu.render({
-                    elem: 'sideMenu',
-                    
-                    theme: "dark-theme",
-                    height: '100%',
-                    control: false,  //menu.control
-                    parseData: false,
-                    
-                    url: menu.data,
-                    data: menu.data,
-                    accordion: true,//param.menu.accordion,
-                    async: menu.async !== undefined ? menu.async : true,
-                    method: menu.method,
-                    controlWidth: menu.controlWidth,
-                    defaultMenu: 0,  //menu."select": 0,
-                    
-                    change: function() {
-                        compatible();
-                    },
-                    done: function() {
-                        sideMenu.isCollapse = menu.collapse;
-                        sideMenu.selectItem(menu.select);
-                        //pearAdmin.collapse(param);
-                    }
-                });
-                sideMenu.click(function(dom, data) {
-                    bodyFrame.changePage(data.menuUrl, true);
-                    compatible()
-                })
-            }
-
-            this.bodyRender = function(url_home) {
-                body.on("click", ".refresh", function() {
-                    refresh();
-                })
-                bodyFrame = pearFrame.render({
-                    elem: 'content',
-                    title: '首页',
-                    url: url_home,
-                    width: '100%',
-                    height: '100%'
-                });
-
-                
-            }
-            this.collapse = function(param) {
-                if ($(window).width() >= 768) {
-                    collapse()
-                }
-            }
-
             this.logout = function(callback) {
                 logout = callback;
             }
@@ -109,21 +93,23 @@ layui.define(['jquery', 'element', 'form', 'menu', 'frame',"menuSearcher"],
             }
         };
 
-        function refresh() {
+        function refreshInAdmin() {
             var refreshA = $(".refresh a");
             refreshA.removeClass("layui-icon-refresh-1");
             refreshA.addClass("layui-anim");
             refreshA.addClass("layui-anim-rotate");
             refreshA.addClass("layui-anim-loop");
             refreshA.addClass("layui-icon-loading");
+            
             bodyFrame.refresh(true);  //改这里
+            
             setTimeout(function() {
                 refreshA.addClass("layui-icon-refresh-1");
                 refreshA.removeClass("layui-anim");
                 refreshA.removeClass("layui-anim-rotate");
                 refreshA.removeClass("layui-anim-loop");
                 refreshA.removeClass("layui-icon-loading");
-            }, 600)
+            }, 600);
         }
 
         function collapse() {
@@ -144,6 +130,10 @@ layui.define(['jquery', 'element', 'form', 'menu', 'frame',"menuSearcher"],
                 sideMenu.isCollapse = true;
             }
         }
+        
+        body.on("click", ".refresh", function() {
+            refreshInAdmin();
+        })
 
         body.on("click", ".logout", function() {
             logout();
@@ -166,11 +156,11 @@ layui.define(['jquery', 'element', 'form', 'menu', 'frame',"menuSearcher"],
             compatible();
         }
         body.on("click", ".menuSearch", function () {
-        var menuData = sideMenu.option.data;
-        menuSearcher.open({
-            data:menuData,
-            callback:on_menu_searcher_click,
-        });
+            var menuData = sideMenu.option.data;
+            menuSearcher.open({
+                data:menuData,
+                callback:on_menu_searcher_click,
+            });
 
         });
 
