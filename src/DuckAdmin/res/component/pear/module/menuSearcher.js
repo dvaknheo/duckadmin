@@ -4,24 +4,28 @@ layui.define(['jquery'], function(exports) {
     
     var $ = layui.jquery;
     
+    var menu_data;
+    var menu_callback;
     
     var debounce =  function (fn, awaitTime) {
-            var timerID = null
-            return function () {
-                var arg = arguments[0]
-                if (timerID) {
-                    clearTimeout(timerID)
-                }
-                timerID = setTimeout(function () {
-                    fn(arg)
-                }, awaitTime)
+        var timerID = null
+        return function () {
+            var arg = arguments[0]
+            if (timerID) {
+                clearTimeout(timerID)
             }
+            timerID = setTimeout(function () {
+                fn(arg)
+            }, awaitTime)
         }
+    }
 	var menuSearcher = new function() {    
-    
-            var menu_data;
-            var menu_callback;
-            
+            this.init = function(data,callback){
+
+                menu_data = data;
+                menu_callback = callback;
+
+            }
             // 过滤菜单
             var filterHandle = function (filterData, val) {
                 if (!val) return [];
@@ -82,7 +86,7 @@ layui.define(['jquery'], function(exports) {
                 return _listHtml;
             }
             var do_search = function() {
-                var menuData =menu_data;
+                var menuData = menu_data;
                 
                 var $input = $(".menu-search-input-wrapper input");
                 var $noData = $(".menu-search-no-data");
@@ -110,11 +114,7 @@ layui.define(['jquery'], function(exports) {
                 menu_callback(menuId, menuTitle, menuUrl,menuType);
             }
             //////////////////
-        this.open = function (options){
-        
-            menu_data = options.data;
-            menu_callback = options.callback;
-            
+        this.open = function (){
             layer.open({
                 type: 1,
                 offset: "10%",
@@ -126,6 +126,8 @@ layui.define(['jquery'], function(exports) {
                 move: false,
                 content: $('#id-menu-search'),
                 success: function(layero,layeridx){
+                
+                    //这个函数应该外放
                     var $layer = layero;
                     var $input = $(".menu-search-input-wrapper input");
                     var $list = $(".menu-search-list");

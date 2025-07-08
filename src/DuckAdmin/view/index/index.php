@@ -29,7 +29,7 @@
                 <div id="control" class="layui-layout-control"></div>
                 <!-- 顶 部 右 侧 菜 单 -->
                 <ul class="layui-nav layui-layout-right">
-                    <li class="layui-nav-item layui-hide-xs"><a href="#" class="menuSearch layui-icon layui-icon-search"></a></li>
+                    <li class="layui-nav-item"><a href="#" class="menuSearch layui-icon layui-icon-search"></a></li>
                     <li class="layui-nav-item user">
                         <!-- 头 像 -->
                         <a class="layui-icon layui-icon-username" href="javascript:;"></a>
@@ -46,7 +46,7 @@
                 <!-- 菜 单 顶 部 -->
                 <div class="layui-logo">
                     <!-- 图 标 -->
-                    <img class="logo" src="<?=__res('admin/images/logo.png')?>" alt="LOGO，请改正">
+                    <a href="#logo_click"><img class="logo" src="<?=__res('admin/images/logo.png')?>" alt="LOGO，请改正"></a>
                     <!-- 标 题 -->
                     <span class="title">【标题】</span>
                 </div>
@@ -102,7 +102,7 @@
         <script src="<?=__res('admin/js/common.js')?>"></script>
         <!-- 框 架 初 始 化 -->
         <script>
-layui.use(["admin","popup"], function() {
+layui.use(["admin"], function() {
     var admin_data ={
         "url_home": "account/dashboard",
         "menu": {

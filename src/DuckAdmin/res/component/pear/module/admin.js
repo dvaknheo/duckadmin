@@ -62,6 +62,13 @@ layui.define(['jquery', 'element', 'form', 'menu', 'frame',"menuSearcher"],
                             sideMenu.isCollapse = menu.collapse;
                             sideMenu.selectItem(menu.select);
                             //pearAdmin.collapse(param);
+                            
+                            ////
+                            var menuData = sideMenu.option.data;  // 这里
+                            menuSearcher.init(
+                                menuData,
+                                on_menu_searcher_click,
+                            );
                         }
                     });
                     sideMenu.click(function(dom, data) {
@@ -149,10 +156,7 @@ layui.define(['jquery', 'element', 'form', 'menu', 'frame',"menuSearcher"],
         }
         body.on("click", ".menuSearch", function () {
             var menuData = sideMenu.option.data;
-            menuSearcher.open({
-                data:menuData,
-                callback:on_menu_searcher_click,
-            });
+            menuSearcher.open();
 
         });
 
