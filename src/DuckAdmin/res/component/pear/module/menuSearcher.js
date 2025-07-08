@@ -127,6 +127,7 @@ layui.define(['jquery'], function(exports) {
             //如果不是打开状态我们返回。
             // 监听键盘事件
             // Enter:13 Spacebar:32 UpArrow:38 DownArrow:40 Esc:27
+            var $list = $(".menu-search-list");
             $(document).off("keydown").keydown(function (e) {
 
                 var layeridx = current_layerid;
