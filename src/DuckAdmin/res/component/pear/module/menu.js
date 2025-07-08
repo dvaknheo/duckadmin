@@ -38,22 +38,9 @@ layui.define(['table', 'jquery', 'element'], function (exports) {
 		}
 
         ////[[[[ 这里要改用 fetch.
-		if (option.async) {
-			if (option.method === "GET") {
-				getData(option.url).then(function (data) {
-					option.data = data.data; //变更
-					renderMenu(option);
-				});
-			} else {
-				postData(option.url).then(function (data) {
-					option.data = data.data; //变更
-					renderMenu(option);
-				});
-			}
-		} else {
+
 			// 延时返回，和 javascript 执行时序关联
 			window.setTimeout(function () { renderMenu(option); }, 500);
-		}
         
         ////]]]]
 
@@ -249,24 +236,6 @@ layui.define(['table', 'jquery', 'element'], function (exports) {
 				}
 			})		
 		}
-	}
-
-	function getData(url) {
-		var defer = $.Deferred();
-		var symbol = url.indexOf('?') !== -1 ? '&' : '?';
-		$.get(url + symbol + "fresh=" + Math.random(), function (result) {
-			defer.resolve(result)
-		});
-		return defer.promise();
-	}
-
-	function postData(url) {
-		var defer = $.Deferred();
-		var symbol = url.indexOf('?') !== -1 ? '&' : '?';
-		$.post(url + symbol + "fresh=" + Math.random(), function (result) {
-			defer.resolve(result)
-		}, "json");
-		return defer.promise();
 	}
 
 	function renderMenu(option) {

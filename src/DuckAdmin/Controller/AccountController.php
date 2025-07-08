@@ -43,7 +43,7 @@ class AccountController extends Base
     public function login()
     {
         if(!Helper::Post()){
-            return Helper::Show([],'account/index');
+            Helper::Show302(__url('index'));
         }
         $username = Helper::Post('username', '');
         $password = Helper::Post('password', '');

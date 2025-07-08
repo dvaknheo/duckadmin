@@ -101,12 +101,21 @@
         <script src="<?=__res('component/pear/pear.js')?>"></script>
         <script src="<?=__res('admin/js/common.js')?>"></script>
         <!-- 框 架 初 始 化 -->
-        <script>
+<script>
+var g_data_menu;
+var g_url_home;
+</script>
+<script>
+var g_data_menu = <?=__json($data_menu)?>;
+var g_url_home =  "account/dashboard";
+</script>
+
+<script>
 layui.use(["admin"], function() {
     var admin_data ={
-        "url_home": "account/dashboard",
+        "url_home": g_url_home, //"account/dashboard",
         "menu": {
-            "data": "rule/get",
+            "data":  g_data_menu, //"rule/get",
             "accordion": true,
             "collapse": false,
             "control": false,
@@ -117,6 +126,7 @@ layui.use(["admin"], function() {
     };
     layui.admin.render(admin_data);
 });
-        </script>
+</script>
+
     </body>
 </html>

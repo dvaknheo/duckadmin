@@ -7,6 +7,7 @@
 namespace DuckAdmin\Controller;
 use DuckPhp\Foundation\SimpleControllerTrait;
 use DuckPhp\GlobalAdmin\AdminControllerInterface;
+use DuckAdmin\Business\RuleBusiness;
 
 class Base implements AdminControllerInterface
 {
@@ -34,8 +35,11 @@ class Base implements AdminControllerInterface
         }
         AdminAction::_()->checkAccess();
         
-        //$data = RuleBusiness::_()->get($admin_id,$types);
-        //SetHeaderFooter();
-        //SetViewData();
+        $types = [0, 1];
+            $admin_id = Helper::AdminId();
+            $menu_data = RuleBusiness::_()->get($admin_id,$types);
+            
+            Helper::assignViewData('data_menu',$menu_data);
+            //Helper::setViewHeadFoot($head_file = null, $foot_file = null)
     }
 }
