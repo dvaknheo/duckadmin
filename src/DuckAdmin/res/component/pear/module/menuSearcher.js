@@ -6,7 +6,8 @@ layui.define(['jquery'], function(exports) {
     
     var menu_data;
     var menu_callback;
-    
+    var current_layerid;
+    var current_layer;
     var debounce =  function (fn, awaitTime) {
         var timerID = null
         return function () {
@@ -71,10 +72,10 @@ layui.define(['jquery'], function(exports) {
                     return path;
                 };
                 treeTiled(data);
-
+                
                 return tiledMenus;
             }
-                        // 创建搜索列表
+            // 创建搜索列表
             var createList = function (data) {
                 var _listHtml = '';
                 $.each(data, function (index, item) {
@@ -86,24 +87,7 @@ layui.define(['jquery'], function(exports) {
                 return _listHtml;
             }
             var do_search = function() {
-                var menuData = menu_data;
-                
-                var $input = $(".menu-search-input-wrapper input");
-                var $noData = $(".menu-search-no-data");
-                var $list = $(".menu-search-list");
-                
-                var keywords = $input.val().trim(); // 搜索
-                var filteredMenus = filterHandle(menuData, keywords);
-                
-                if(filteredMenus.length){
-                    var tiledMenus = tiledHandle(filteredMenus);
-                    var listHtml = createList(tiledMenus);
-                    $noData.css("display", "none");
-                    $list.html("").append(listHtml).children(":first").addClass("this")
-                }else{
-                    $list.html("");
-                    $noData.css("display", "flex");
-                }
+
             }
             var do_openmenu = function($this) {
                 var menuId = $this.attr("smenu-id");
@@ -114,6 +98,110 @@ layui.define(['jquery'], function(exports) {
                 menu_callback(menuId, menuTitle, menuUrl,menuType);
             }
             //////////////////
+            
+
+        function input_mouseevent()
+        {
+            var $list = $(".menu-search-list");
+            $list
+                .on("click", "li", function () {
+                        // 搜索列表点击事件
+                        var layeridx = current_layerid;
+                        
+                        var $this = $(this);
+                        
+                        do_openmenu($this);
+                        
+                        layer.close(layeridx);
+                    })
+                .on("mouseenter", "li", function () {
+                        $(".menu-search-list li.this").removeClass("this");
+                        $(this).addClass("this");
+                    })
+                .on("mouseleave", "li", function(){
+                        $(this).removeClass("this");
+                    });
+        }
+        function listen_keys()
+        {
+            //如果不是打开状态我们返回。
+            // 监听键盘事件
+            // Enter:13 Spacebar:32 UpArrow:38 DownArrow:40 Esc:27
+            $(document).off("keydown").keydown(function (e) {
+
+                var layeridx = current_layerid;
+                
+                if (e.keyCode === 13 || e.keyCode === 32) {
+                    e.preventDefault();
+                    var $this = $(".menu-search-list li.this");
+                    
+                    do_openmenu($this);
+                    
+                    layer.close(layeridx);
+                }else if(e.keyCode === 38){
+                    e.preventDefault();
+                    var prevEl = $(".menu-search-list li.this").prev();
+                    $(".menu-search-list li.this").removeClass("this");
+                    if(prevEl.length !== 0){
+                        prevEl.addClass("this");
+                    }else{
+                        $list.children().last().addClass("this");
+                    }
+                }else if(e.keyCode === 40){
+                    e.preventDefault();
+                    var nextEl = $(".menu-search-list li.this").next();
+                    $(".menu-search-list li.this").removeClass("this");
+                    if(nextEl.length !== 0){
+                        nextEl.addClass("this");
+                    }else{
+                        $list.children().first().addClass("this");
+                    }
+                }else if(e.keyCode === 27){
+                    e.preventDefault();
+                    layer.close(layeridx);
+                }
+            })
+        }
+        function searcher_init_input()
+        {
+            var $input = $(".menu-search-input-wrapper input");
+            // 搜索菜单
+            $input.on("input", debounce(function(){
+            
+                var menuData = menu_data;
+                
+                var keywords = $(".menu-search-input-wrapper input").val().trim(); // 搜索
+                
+                var $list = $(".menu-search-list");
+                var $noData = $(".menu-search-no-data");
+                
+                var filteredMenus = filterHandle(menuData, keywords);
+                
+                $list.html("");
+                
+                if(filteredMenus.length){
+                    var tiledMenus = tiledHandle(filteredMenus);
+                    var listHtml = createList(tiledMenus);
+                    $list.append(listHtml).children(":first").addClass("this");
+                    
+                    $noData.css("display", "none");
+                }else{
+                    $noData.css("display", "flex");
+                }
+                
+                
+                ////////////////
+                var currentHeight = $(".menu-search-content").outerHeight()
+                
+                var layero = current_layer;
+                layero.css("height", currentHeight);
+                layero.children('.layui-layer-content').css("height", currentHeight);
+                
+            }, 500));
+        }
+        searcher_init_input();
+        input_mouseevent();
+        
         this.open = function (){
             layer.open({
                 type: 1,
@@ -126,78 +214,15 @@ layui.define(['jquery'], function(exports) {
                 move: false,
                 content: $('#id-menu-search'),
                 success: function(layero,layeridx){
-                
-                    //这个函数应该外放
-                    var $layer = layero;
-                    var $input = $(".menu-search-input-wrapper input");
-                    var $list = $(".menu-search-list");
+                    current_layer = layero;
+                    current_layerid = layeridx; // 赋值
                     
-                    $layer.css("border-radius", "6px");
-                    $input.off("focus").focus();
-                    // 搜索菜单
-                    $input.off("input").on("input", debounce(function(){
-                        do_search();
-                        
-                        var $layer = layero;
-                        var $content = $(layero).children('.layui-layer-content');
-                        
-                        var currentHeight = $(".menu-search-content").outerHeight()
-                        
-                        $layer.css("height", currentHeight);
-                        $content.css("height", currentHeight);
-                    }, 500)
-                    )
-                    // 搜索列表点击事件
-                    $list.off("click").on("click", "li", function () {
-                        var $this = $(this);
-                        do_openmenu($this);
-                        
-                        layer.close(layeridx);
-                    })
-
-                    $list.off('mouseenter').on("mouseenter", "li", function () {
-                        $(".menu-search-list li.this").removeClass("this");
-                        $(this).addClass("this");
-                    }).off("mouseleave").on("mouseleave", "li", function(){
-                        $(this).removeClass("this");
-                    })
-
-                    // 监听键盘事件
-                    // Enter:13 Spacebar:32 UpArrow:38 DownArrow:40 Esc:27
-                    $(document).off("keydown").keydown(function (e) {
-                        if (e.keyCode === 13 || e.keyCode === 32) {
-                            e.preventDefault();
-                            var $this = $(".menu-search-list li.this");
-                            
-                            do_openmenu($this);
-                            
-                            layer.close(layeridx);
-                        }else if(e.keyCode === 38){
-                            e.preventDefault();
-                            var prevEl = $(".menu-search-list li.this").prev();
-                            $(".menu-search-list li.this").removeClass("this");
-                            if(prevEl.length !== 0){
-                                prevEl.addClass("this");
-                            }else{
-                                $list.children().last().addClass("this");
-                            }
-                        }else if(e.keyCode === 40){
-                            e.preventDefault();
-                            var nextEl = $(".menu-search-list li.this").next();
-                            $(".menu-search-list li.this").removeClass("this");
-                            if(nextEl.length !== 0){
-                                nextEl.addClass("this");
-                            }else{
-                                $list.children().first().addClass("this");
-                            }
-                        }else if(e.keyCode === 27){
-                            e.preventDefault();
-                            layer.close(layeridx);
-                        }
-                    })
+                    layero.css("border-radius", "6px");//美化
+                    $(".menu-search-input-wrapper input").focus();//聚焦
+                    
+                    listen_keys(); //键盘设置
                 }
             });
-            //
         }
 	};
 	exports(MOD_NAME, menuSearcher);
