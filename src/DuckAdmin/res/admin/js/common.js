@@ -91,11 +91,6 @@ function togglePermission(the_url) {
                 $("head").append("<style>*[permission]{display: initial}</style>");
                 isSupperAdmin = true;
             }
-            if (self !== top) {
-                top.Admin.Account.isSupperAdmin = isSupperAdmin;
-            } else {
-                window.Admin.Account.isSupperAdmin = isSupperAdmin;
-            }
             if (isSupperAdmin) return;
 
             // 细分权限

@@ -36,7 +36,7 @@
                         <!-- 功 能 菜 单 -->
                         <dl class="layui-nav-child">
                             <dd><a user-menu-url="<?=__url('account/index')?>" user-menu-id="10" user-menu-title="基本资料">基本资料</a></dd>
-                            <dd><a href="javascript:void(0);" class="logout">注销登录</a></dd>
+                            <dd><a href="<?=__url('account/logout')?>" class="logout">注销登录</a></dd>
                         </dl>
                     </li>
                 </ul>
@@ -102,32 +102,21 @@
         <script src="<?=__res('admin/js/common.js')?>"></script>
         <!-- 框 架 初 始 化 -->
         <script>
-// Admin
-window.Admin = {
-    Account: {}
-};
 layui.use(["admin","popup"], function() {
-    var admin = layui.admin;
-    admin.render("<?=__url('config/get')?>");
-    // 登出逻辑
-    admin.logout(function(){
-        var url = "<?=__url('account/logout')?>";
-        fetch_data_and_run(url, function(data){
-                layui.popup.success("注销成功",function(){
-                    location.reload();
-                })
-        });
-        return false;
-    });
-    var url = "<?=__url('account/info')?>";
-    fetch_data_and_run(url, function(data){
-        window.Admin.Account = data;
-    });
-
-    // 消息点击回调
-    //admin.message(function(id, title, context, form) {});
+    var admin_data ={
+        "url_home": "account/dashboard",
+        "menu": {
+            "data": "rule/get",
+            "accordion": true,
+            "collapse": false,
+            "control": false,
+            "controlWidth": 500,
+            "select": 0,
+            "async": true
+        }
+    };
+    layui.admin.render(admin_data);
 });
-
         </script>
     </body>
 </html>

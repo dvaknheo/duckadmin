@@ -11,8 +11,7 @@ layui.define(['jquery', 'element', 'form', 'menu', 'frame',"menuSearcher"],
 
         var bodyFrame;
         var sideMenu;
-        var bodyTab;
-        var logout = function() {};
+        
         var body = $('body');
 
         var pearAdmin = new function() {
@@ -27,7 +26,7 @@ layui.define(['jquery', 'element', 'form', 'menu', 'frame',"menuSearcher"],
                         .then(res => { callback(res); });
                 };
                 fetch_admin_and_run(data_or_url,function(param){
-                    var url_home = "account/dashboard";
+                    var url_home = param.url_home;
                     /*
                     {
                         "data": "rule/get",
@@ -79,9 +78,6 @@ layui.define(['jquery', 'element', 'form', 'menu', 'frame',"menuSearcher"],
                         height: '100%'
                     });
                 }.bind(this));
-            }
-            this.logout = function(callback) {
-                logout = callback;
             }
 
             this.refresh = function(id) {
@@ -135,15 +131,11 @@ layui.define(['jquery', 'element', 'form', 'menu', 'frame',"menuSearcher"],
             refreshInAdmin();
         })
 
-        body.on("click", ".logout", function() {
-            logout();
-        })
-
         body.on("click", ".collapse,.pear-cover", function() {
             collapse();
         });
 
-        var  on_menu_searcher_click =function(menuId, menuTitle, menuUrl,menuType) {
+        var  on_menu_searcher_click = function(menuId, menuTitle, menuUrl,menuType) {
             var openableWindow = menuType === "1" || menuType === 1;
             if(sideMenu.isCollapse){
                 collapse();
