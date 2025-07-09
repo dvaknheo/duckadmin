@@ -75,6 +75,12 @@
         </template>
 
         <!-- 表格行工具栏 -->
+        <!-- 这里不能用template 标签，因为不满足html -->
+        <script type="text/html" id="template-status">
+            {{# if(g_admin_id !== d.id){ }}
+            <input type="checkbox" value="{{d.id}}" lay-filter="status" lay-skin="switch" lay-text="" {{= d.status==1 ? 'checked="checked"' : '' }}>
+            {{# } }}
+        </script>
         <template id="table-bar">
             <button href="update?inframe=true&id={{d.id}}" class="js-open-layer pear-btn pear-btn-xs tool-btn" permission="app.admin.admin.update">编辑</button>
             <button class="pear-btn pear-btn-xs tool-btn" lay-event="remove" permission="app.admin.admin.delete">删除</button>
@@ -86,12 +92,10 @@ const PRIMARY_KEY = "id";
 const SELECT_API = "<?=__url('admin/select')?>";
 const UPDATE_API = "<?=__url('admin/update')?>"; // 这个只是改状态
 const DELETE_API = "<?=__url('admin/delete')?>";
-var g_admin_id = 1;  //TODO 这里要改成当前用户
+var g_admin_id = <?=$current_admin_id?>;
 </script>
 <script>
-// 相关常量
-
-layui.use(["table", "form",  "popup", "util","laydate"], function() {
+layui.use(["table", "form",  "popup", "laydate"], function() {
     // 字段 创建时间 created_at
     layui.laydate.render({
         elem: "#created_at",
@@ -103,15 +107,7 @@ layui.use(["table", "form",  "popup", "util","laydate"], function() {
     let table = layui.table;
     let form = layui.form;
     let $ = layui.$;
-    
-    let util = layui.util;
-
-    var tmpl_status = function (d) {
-        //这里可以放到模板里。
-        let checked = d[field] === 1 ? "checked" : "";
-        if (g_admin_id === d.id) return ''; //不能改自己的。 // 这里用个 东西够了，
-        return '<input type="checkbox" value="'+util.escape(d[PRIMARY_KEY])+'" lay-filter="'+util.escape(field)+'" lay-skin="switch" lay-text="'+util.escape('')+'" '+checked+'/>';
-    };
+    let common = layui.common;
     // 表头参数
     let cols = [
         {type: "checkbox"},
@@ -125,7 +121,7 @@ layui.use(["table", "form",  "popup", "util","laydate"], function() {
         {title: "更新时间",field: "updated_at",hide: true,},
         {title: "登录时间",field: "login_at",},
         {title: "角色",field: "roles"}, // 这里直接从服务端获取 角色名称就够了。 1,2,3 =>'超管之类'
-        {title: "禁用",field: "status",templet: tmpl_status,width: 90,},
+        {title: "禁用",field: "status",templet: "#template-status",width: 90,},
         {title: "操作",toolbar: "#table-bar",align: "center",fixed: "right",width: 130,}
     ];
     
@@ -146,10 +142,6 @@ layui.use(["table", "form",  "popup", "util","laydate"], function() {
                 layEvent: "refresh",
                 icon: "layui-icon-refresh",
             }, "filter", "print", "exports"],
-            done: function () {
-            
-                layer.photos({photos: 'div[lay-id="data-table"]', anim: 5}); //没懂
-            }
         });
     // 编辑或删除行事件
     table.on("tool(data-table)", function(obj) {
@@ -196,12 +188,10 @@ layui.use(["table", "form",  "popup", "util","laydate"], function() {
     
     form.on("switch(status)", function (data) {
         let load = layer.load();
-        let postData = {};
-        postData[field] = data.elem.checked ? 1 : 0;
-        postData[PRIMARY_KEY] = this.value;
-<!-- -->
-console.log(UPDATE_API);
-console.log(postData);
+        let postData = {
+            id: this.value,
+            status: data.elem.checked ? 1 : 0,
+        };
         $.post(UPDATE_API, postData, function (res) {
             layer.close(load);
             if (res.code) {
@@ -259,7 +249,7 @@ console.log(postData);
         url = $(this).attr('href');
         layer.open({
             type: 2,
-            title: "",
+            title: "--",
             shade: 0.1,
             area: [common_isModile()?"100%":"500px", common_isModile()?"100%":"450px"],
             content: url

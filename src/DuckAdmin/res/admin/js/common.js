@@ -158,6 +158,35 @@ function fill_form(data) {
         }
     });
 }
+// 把 get 改成 post
+function ajaxPostFromUrl(originalUrl) {
+    const [baseUrl, queryString] = originalUrl.split('?');
+    
+    // 解析查询参数
+    const params = {};
+    if (queryString) {
+        queryString.split('&').forEach(pair => {
+            const [key, value] = pair.split('=');
+            if (key) params[key] = value || '';
+        });
+    }
+
+    // 返回 Fetch Promise
+    return fetch(baseUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams(params).toString(),
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    });
+}
+
 
 function common_checkField(obj, field) {
     let $ = layui.$;

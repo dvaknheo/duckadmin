@@ -20,7 +20,9 @@ class AdminController extends Base
      */
     public function index()
     {
-        return Helper::Show([],'admin/index');
+        $data=[];
+        $data['current_admin_id']=Session::_()->getCurrentAdminId();
+        return Helper::Show($data,'admin/index');
     }
     public function select()
     {
