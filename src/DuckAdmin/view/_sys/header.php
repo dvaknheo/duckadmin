@@ -6,8 +6,6 @@
         <title>主页 - <?php echo date("Y-m-d H:i:s"); ?></title>
         <!-- 依 赖 样 式 -->
         <link rel="stylesheet" href="<?=__res('component/pear/css/pear.css')?>" />
-        <!-- 加 载 样 式 -->
-        <link rel="stylesheet" href="<?=__res('admin/css/loader.css')?>" />
         <!-- 布 局 样 式 -->
         <link rel="stylesheet" href="<?=__res('admin/css/admin.css')?>" />
         <!-- 重置样式 -->
@@ -28,7 +26,6 @@
                 <!-- 顶 部 左 侧 功 能 -->
                 <ul class="layui-nav layui-layout-left">
                     <li class="collapse layui-nav-item"><a href="#" class="layui-icon layui-icon-shrink-right"></a></li>
-                    <li class="refresh layui-nav-item"><a href="#" class="layui-icon layui-icon-refresh-1" loading = 600></a></li>
                 </ul>
                 <!-- 多 系 统 菜 单 -->
                 <div id="control" class="layui-layout-control"></div>

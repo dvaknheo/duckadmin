@@ -20,7 +20,7 @@ layui.define(['jquery'], function(exports) {
             }, awaitTime)
         }
     }
-	var menuSearcher = new function() {    
+    var menuSearcher = new function() {    
             this.init = function(data,callback){
 
                 menu_data = data;
@@ -100,7 +100,7 @@ layui.define(['jquery'], function(exports) {
             //////////////////
             
 
-        function input_mouseevent()
+        function searcher_input_mouseevent()
         {
             var $list = $(".menu-search-list");
             $list
@@ -122,7 +122,7 @@ layui.define(['jquery'], function(exports) {
                         $(this).removeClass("this");
                     });
         }
-        function listen_keys()
+        function searcher_listen_keys()
         {
             //如果不是打开状态我们返回。
             // 监听键盘事件
@@ -201,9 +201,10 @@ layui.define(['jquery'], function(exports) {
             }, 500));
         }
         searcher_init_input();
-        input_mouseevent();
+        searcher_input_mouseevent();
         
         this.open = function (){
+console.log("open layer!");
             layer.open({
                 type: 1,
                 offset: "10%",
@@ -215,13 +216,14 @@ layui.define(['jquery'], function(exports) {
                 move: false,
                 content: $('#id-menu-search'),
                 success: function(layero,layeridx){
+console.log("OPEN DONE");
                     current_layer = layero;
                     current_layerid = layeridx; // 赋值
                     
                     layero.css("border-radius", "6px");//美化
                     $(".menu-search-input-wrapper input").focus();//聚焦
                     
-                    listen_keys(); //键盘设置
+                    searcher_listen_keys(); //键盘设置
                 }
             });
         }

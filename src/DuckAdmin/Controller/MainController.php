@@ -39,8 +39,6 @@ class MainController extends Base
             Helper::Show(['url_back'=>$url_back], 'account/login');
             return;
         }
-        
-        $this->initController();
-        Helper::Show([], 'index/index');
+        Helper::Show302('account/dashboard');
     }
 }

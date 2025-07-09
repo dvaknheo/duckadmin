@@ -22,8 +22,7 @@
         <div class="pear-collapsed-pe collapse">
             <a href="#" class="layui-icon layui-icon-shrink-right"></a>
         </div>
-<div style="display:none;"><!-- 隐藏层用于弹出 -->
-<div class="menu-search-content" id ="id-menu-search">
+<div class="menu-search-content" id ="id-menu-search" style="display:none;"><!-- 隐藏层用于弹出 -->
   <div class="layui-form menu-search-input-wrapper">
     <div class=" layui-input-wrap layui-input-wrap-prefix">
       <div class="layui-input-prefix">
@@ -35,7 +34,6 @@
   <div class="menu-search-no-data">暂无搜索结果</div>
   <ul class="menu-search-list">
   </ul>
-</div>
 </div>
 
         <!-- 框 架 初 始 化 -->
