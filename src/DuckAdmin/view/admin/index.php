@@ -70,7 +70,7 @@
 
         <!-- 表格顶部工具栏 -->
         <template id="table-toolbar">
-            <a href="insert" class="pear-btn pear-btn-md" lay-event="add" permission="app.admin.admin.insert" ><i class="layui-icon layui-icon-add-1"></i>新增</a>
+            <a href="javascript:;" class="pear-btn pear-btn-md" lay-event="add" permission="app.admin.admin.insert" ><i class="layui-icon layui-icon-add-1"></i>新增</a>
             <a href="javascript:;" class="pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove" permission="app.admin.admin.delete" ><i class="layui-icon layui-icon-delete"></i>删除</a>
         </template>
 
@@ -86,9 +86,8 @@ const PRIMARY_KEY = "id";
 const INSERT_URL = "<?=__url('admin/insert')?>";
 const SELECT_API = "<?=__url('admin/select')?>";
 const UPDATE_API = "<?=__url('admin/update')?>";
-const UPDATE_URL = "<?=__url('admin/update')?>"; 
+const UPDATE_URL = "<?=__url('admin/update?inframe=true')?>"; 
 const DELETE_API = "<?=__url('admin/delete')?>";
-const URL_ROLE_SELECT ="<?=__url('role/select?format=select')?>";
 var g_admin_id = 1;  //TODO 这里要改成当前用户
 </script>
 <script>
@@ -187,7 +186,10 @@ console.log(postData);
 
     // 表格顶部工具栏事件
     table.on("toolbar(data-table)", function(obj) {
+console.log(this);return false;
+        return false;
         if (obj.event === "add") {
+            console.log(this);
             add();
         } else if (obj.event === "refresh") {
             refreshTable();
@@ -242,7 +244,7 @@ console.log(postData);
             title: "修改",
             shade: 0.1,
             area: [common_isModile()?"100%":"500px", common_isModile()?"100%":"450px"],
-            content: UPDATE_URL + "?" + PRIMARY_KEY + "=" + value
+            content: UPDATE_URL + "&" + PRIMARY_KEY + "=" + value
         });
     }
 

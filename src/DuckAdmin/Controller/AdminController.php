@@ -22,32 +22,20 @@ class AdminController extends Base
     {
         return Helper::Show([],'admin/index');
     }
-
-    /**
-     * 查询
-     * @param 
-     * @return Response
-     * @throws BusinessException
-     */
     public function select()
     {
         $input = Helper::GET();
         [$data, $count] = AdminBusiness::_()->showAdmins(Helper::AdminId(),$input);
         return Helper::Success($data,$count);
     }
-
-    /**
-     * 插入
-     * @param 
-     * @return Response
-     * @throws BusinessException
-     */
     public function insert()
     {
-        if (!Helper::POST()) {
-            return Helper::Show([],'admin/insert');
+        $data =[];
+        if(Helper::GET('inframe',false)){
+            Helper::setViewHeadFoot("_sys/header-layer","_sys/footer-layer");
+            $data['inframe']=true;
         }
-        
+        return Helper::Show($data,'admin/insert');
     }
     public function do_insert()
     {
@@ -55,26 +43,21 @@ class AdminController extends Base
         $admin_id = AdminBusiness::_()->addAdmin(Helper::AdminId(), $input);
         return Helper::Success(['id' => $admin_id]);
     }
-    /**
-     * 更新
-     * @param 
-     * @return Response
-     * @throws BusinessException
-    */
     public function update()
     {
-        if (!Helper::POST()) {
-            return Helper::Show([],'admin/update');
+        $data =[];
+        if(Helper::GET('inframe',false)){
+            Helper::setViewHeadFoot("_sys/header-layer","_sys/footer-layer");
+            $data['inframe']=true;
         }
+        return Helper::Show($data,'admin/update');
+    }
+    public function do_update()
+    {
         $post = Helper::POST();
         AdminBusiness::_()->updateAdmin(Helper::AdminId(), $post);
+        return Helper::Success();
     }
-
-    /**
-     * 删除
-     * @param 
-     * @return Response
-     */
     public function delete()
     {
         AdminBusiness::_()->deleteAdmin(Helper::AdminId(), Helper::POST('id',null));
