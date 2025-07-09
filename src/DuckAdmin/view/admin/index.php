@@ -69,22 +69,16 @@
         </div>
 
         <!-- 表格顶部工具栏 -->
-        <script type="text/html" id="table-toolbar">
-            <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add" permission="app.admin.admin.insert">
-                <i class="layui-icon layui-icon-add-1"></i>新增
-            </button>
-            <button class="pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove" permission="app.admin.admin.delete">
-                <i class="layui-icon layui-icon-delete"></i>删除
-            </button>
-        </script>
+        <template id="table-toolbar">
+            <a href="insert" class="pear-btn pear-btn-md" lay-event="add" permission="app.admin.admin.insert" ><i class="layui-icon layui-icon-add-1"></i>新增</a>
+            <a href="javascript:;" class="pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove" permission="app.admin.admin.delete" ><i class="layui-icon layui-icon-delete"></i>删除</a>
+        </template>
 
         <!-- 表格行工具栏 -->
-        <script type="text/html" id="table-bar">
-            {{# if(d.show_toolbar){ }}
+        <template id="table-bar">
             <button class="pear-btn pear-btn-xs tool-btn" lay-event="edit" permission="app.admin.admin.update">编辑</button>
             <button class="pear-btn pear-btn-xs tool-btn" lay-event="remove" permission="app.admin.admin.delete">删除</button>
-            {{# } }}
-        </script>
+        </template>
 <script>
 <?php // 这段js 存放 动态数据 ?>
 var data_permission = "<?=__url('rule/permission')?>";
@@ -114,16 +108,7 @@ layui.use(["table", "form",  "popup", "util","laydate"], function() {
     let $ = layui.$;
     let common = layui.common;
     let util = layui.util;
-    
-    var tmpl_roles = function (d) {
-        let field = "roles";
-        if (typeof d[field] == "undefined") return "";
-        let items = [];
-        layui.each((d[field] + "").split(","), function (k , v) {
-            items.push(apiResults[field][v] || v);
-        });
-        return util.escape(items.join(","));
-    };
+
     var tmpl_status = function (d) {
         let field = "status";
         form.on("switch("+field+")", function (data) {
@@ -131,6 +116,9 @@ layui.use(["table", "form",  "popup", "util","laydate"], function() {
             let postData = {};
             postData[field] = data.elem.checked ? 1 : 0;
             postData[PRIMARY_KEY] = this.value;
+<!-- -->
+console.log(UPDATE_API);
+console.log(postData);
             $.post(UPDATE_API, postData, function (res) {
                 layer.close(load);
                 if (res.code) {
@@ -158,7 +146,7 @@ layui.use(["table", "form",  "popup", "util","laydate"], function() {
         {title: "创建时间",field: "created_at",hide: true,},
         {title: "更新时间",field: "updated_at",hide: true,},
         {title: "登录时间",field: "login_at",},
-        {title: "角色",field: "roles",templet: tmpl_roles},
+        {title: "角色",field: "roles"}, // 这里直接从服务端获取 角色名称就够了。 1,2,3 =>'超管之类'
         {title: "禁用",field: "status",templet: tmpl_status,width: 90,},
         {title: "操作",toolbar: "#table-bar",align: "center",fixed: "right",width: 130,}
     ];
@@ -186,34 +174,7 @@ layui.use(["table", "form",  "popup", "util","laydate"], function() {
             }
         });
     }
-    
-    // 获取表格中下拉或树形组件数据
-    let apis = [];
-    apis.push(["roles", URL_ROLE_SELECT]);
-    let apiResults = {};
-    apiResults["roles"] = [];
-    let count = apis.length;
-    layui.each(apis, function (k, item) {
-        let [field, url] = item;
-        fetch_data_and_run(url, function(data){
-                function travel(items) {
-                    for (let k in items) {
-                        let item = items[k];
-                        apiResults[field][item.value] = item.name;
-                        if (item.children) {
-                            travel(item.children);
-                        }
-                    }
-                }
-                travel(data);
-                if (--count === 0) {
-                    render();
-                }
-        });
-    });
-    if (!count) {
-        render();
-    }
+    render();
     
     // 编辑或删除行事件
     table.on("tool(data-table)", function(obj) {
@@ -326,7 +287,7 @@ layui.use(["table", "form",  "popup", "util","laydate"], function() {
         });
     }
 
-    // 刷新表格数据
+    // 刷新表格数据，这是用于回调的
     window.refreshTable = function(param) {
         table.reloadData("data-table", {
             scrollPos: "fixed"

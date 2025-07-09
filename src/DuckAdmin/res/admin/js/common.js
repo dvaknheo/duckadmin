@@ -160,6 +160,7 @@ function fill_form(data) {
 }
 
 function common_checkField(obj, field) {
+    let $ = layui.$;
     let data = layui.table.checkStatus(obj.config.id).data;
     if (data.length === 0) {
         return "";
@@ -176,6 +177,7 @@ function common_checkField(obj, field) {
  * 当前是否为与移动端
  * */
 function common_isModile(){
+    let $ = layui.$;
     if ($(window).width() <= 768) {
         return true;
     }

@@ -53,7 +53,7 @@ class AdminBusiness extends Base
     public function updateAdmin($op_id,$input)
     {
         $admin_id = $input['id'];
-        $role_ids = $input['roles'];
+        $role_ids = $input['roles']; // 这里还有个改 status ，和 role_ids 无关的
         $data = AdminModel::_()->inputFilter($input);
         Helper::BusinessThrowOn(!$admin_id,'缺少参数',1);
         

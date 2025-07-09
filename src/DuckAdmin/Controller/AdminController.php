@@ -47,11 +47,14 @@ class AdminController extends Base
         if (!Helper::POST()) {
             return Helper::Show([],'admin/insert');
         }
+        
+    }
+    public function do_insert()
+    {
         $input = Helper::POST();
         $admin_id = AdminBusiness::_()->addAdmin(Helper::AdminId(), $input);
         return Helper::Success(['id' => $admin_id]);
     }
-
     /**
      * 更新
      * @param 
