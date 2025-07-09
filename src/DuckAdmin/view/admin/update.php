@@ -1,6 +1,6 @@
     <div class="">
         <form method="post" class="layui-form">
-            <input type="hidden" name="id" value="<?=$_GET['id']/*安全问题*/?>">
+            <input type="hidden" name="id" value="<?=$id?>">
             <div class="mainBox">
                 <div class="main-container mr-5">
 

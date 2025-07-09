@@ -50,6 +50,7 @@ class AdminController extends Base
             Helper::setViewHeadFoot("_sys/header-layer","_sys/footer-layer");
             $data['inframe']=true;
         }
+        $data['id'] = intval(Helper::GET('id',0));
         return Helper::Show($data,'admin/update');
     }
     public function do_update()

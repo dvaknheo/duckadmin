@@ -70,23 +70,21 @@
 
         <!-- 表格顶部工具栏 -->
         <template id="table-toolbar">
-            <a href="javascript:;" class="pear-btn pear-btn-md" lay-event="add" permission="app.admin.admin.insert" ><i class="layui-icon layui-icon-add-1"></i>新增</a>
-            <a href="javascript:;" class="pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove" permission="app.admin.admin.delete" ><i class="layui-icon layui-icon-delete"></i>删除</a>
+            <button href="insert?inframe=true" class="js-open-layer pear-btn pear-btn-md" permission="app.admin.admin.insert" ><i class="layui-icon layui-icon-add-1"></i>新增</button>
+            <a href="javascript:;" class="js-batchremove pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove" permission="app.admin.admin.delete" ><i class="layui-icon layui-icon-delete"></i>删除</a>
         </template>
 
         <!-- 表格行工具栏 -->
         <template id="table-bar">
-            <button class="pear-btn pear-btn-xs tool-btn" lay-event="edit" permission="app.admin.admin.update">编辑</button>
+            <button href="update?inframe=true&id={{d.id}}" class="js-open-layer pear-btn pear-btn-xs tool-btn" permission="app.admin.admin.update">编辑</button>
             <button class="pear-btn pear-btn-xs tool-btn" lay-event="remove" permission="app.admin.admin.delete">删除</button>
         </template>
 <script>
 <?php // 这段js 存放 动态数据 ?>
 var data_permission = "<?=__url('rule/permission')?>";
 const PRIMARY_KEY = "id";
-const INSERT_URL = "<?=__url('admin/insert')?>";
 const SELECT_API = "<?=__url('admin/select')?>";
-const UPDATE_API = "<?=__url('admin/update')?>";
-const UPDATE_URL = "<?=__url('admin/update?inframe=true')?>"; 
+const UPDATE_API = "<?=__url('admin/update')?>"; // 这个只是改状态
 const DELETE_API = "<?=__url('admin/delete')?>";
 var g_admin_id = 1;  //TODO 这里要改成当前用户
 </script>
@@ -105,32 +103,13 @@ layui.use(["table", "form",  "popup", "util","laydate"], function() {
     let table = layui.table;
     let form = layui.form;
     let $ = layui.$;
-    let common = layui.common;
+    
     let util = layui.util;
 
     var tmpl_status = function (d) {
-        let field = "status";
-        form.on("switch("+field+")", function (data) {
-            let load = layer.load();
-            let postData = {};
-            postData[field] = data.elem.checked ? 1 : 0;
-            postData[PRIMARY_KEY] = this.value;
-<!-- -->
-console.log(UPDATE_API);
-console.log(postData);
-            $.post(UPDATE_API, postData, function (res) {
-                layer.close(load);
-                if (res.code) {
-                    return layui.popup.failure(res.msg, function () {
-                        data.elem.checked = !data.elem.checked;
-                        form.render();
-                    });
-                }
-                return layui.popup.success("操作成功");
-            })
-        });
+        //这里可以放到模板里。
         let checked = d[field] === 1 ? "checked" : "";
-        if (g_admin_id === d.id) return ''; //这里要改
+        if (g_admin_id === d.id) return ''; //不能改自己的。 // 这里用个 东西够了，
         return '<input type="checkbox" value="'+util.escape(d[PRIMARY_KEY])+'" lay-filter="'+util.escape(field)+'" lay-skin="switch" lay-text="'+util.escape('')+'" '+checked+'/>';
     };
     // 表头参数
@@ -152,8 +131,7 @@ console.log(postData);
     
     /////////////////////////////////////////////////////
     // 渲染表格
-    function render()
-    {
+
         table.render({
             elem: "#data-table",
             url: SELECT_API,
@@ -169,29 +147,20 @@ console.log(postData);
                 icon: "layui-icon-refresh",
             }, "filter", "print", "exports"],
             done: function () {
-                layer.photos({photos: 'div[lay-id="data-table"]', anim: 5});
+            
+                layer.photos({photos: 'div[lay-id="data-table"]', anim: 5}); //没懂
             }
         });
-    }
-    render();
-    
     // 编辑或删除行事件
     table.on("tool(data-table)", function(obj) {
         if (obj.event === "remove") {
             remove(obj);
-        } else if (obj.event === "edit") {
-            edit(obj);
-        }
+        } 
     });
 
     // 表格顶部工具栏事件
     table.on("toolbar(data-table)", function(obj) {
-console.log(this);return false;
-        return false;
-        if (obj.event === "add") {
-            console.log(this);
-            add();
-        } else if (obj.event === "refresh") {
+        if (obj.event === "refresh") {
             refreshTable();
         } else if (obj.event === "batchRemove") {
             batchRemove(obj);
@@ -224,29 +193,26 @@ console.log(this);return false;
             }
         });
     });
-
-    // 表格新增数据
-    let add = function() {
-        layer.open({
-            type: 2,
-            title: "新增",
-            shade: 0.1,
-            area: [common_isModile()?"100%":"500px", common_isModile()?"100%":"450px"],
-            content: INSERT_URL
-        });
-    }
-
-    // 表格编辑数据
-    let edit = function(obj) {
-        let value = obj.data[PRIMARY_KEY];
-        layer.open({
-            type: 2,
-            title: "修改",
-            shade: 0.1,
-            area: [common_isModile()?"100%":"500px", common_isModile()?"100%":"450px"],
-            content: UPDATE_URL + "&" + PRIMARY_KEY + "=" + value
-        });
-    }
+    
+    form.on("switch(status)", function (data) {
+        let load = layer.load();
+        let postData = {};
+        postData[field] = data.elem.checked ? 1 : 0;
+        postData[PRIMARY_KEY] = this.value;
+<!-- -->
+console.log(UPDATE_API);
+console.log(postData);
+        $.post(UPDATE_API, postData, function (res) {
+            layer.close(load);
+            if (res.code) {
+                return layui.popup.failure(res.msg, function () {
+                    data.elem.checked = !data.elem.checked;
+                    form.render();
+                });
+            }
+            return layui.popup.success("操作成功");
+        })
+    });
 
     // 删除一行
     let remove = function(obj) {
@@ -288,7 +254,18 @@ console.log(this);return false;
             })
         });
     }
-
+    $("body").on('click','.js-open-layer',function(e){
+        e.preventDefault();
+        url = $(this).attr('href');
+        layer.open({
+            type: 2,
+            title: "",
+            shade: 0.1,
+            area: [common_isModile()?"100%":"500px", common_isModile()?"100%":"450px"],
+            content: url
+        });
+    });
+            
     // 刷新表格数据，这是用于回调的
     window.refreshTable = function(param) {
         table.reloadData("data-table", {
