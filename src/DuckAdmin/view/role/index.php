@@ -28,16 +28,6 @@
 <script>
 <?php // 这段js 存放 动态数据 ?>
 var data_permission = "<?=__url('rule/permission')?>";
-const PRIMARY_KEY = "id";
-const SELECT_API = "<?=__url('role/select')?>";
-const UPDATE_API = "<?=__url('role/update')?>";
-const DELETE_API = "<?=__url('role/delete')?>";
-const INSERT_URL = "<?=__url('role/insert')?>";
-const UPDATE_URL = "<?=__url('role/update')?>";
-
-const URL_RULE_LIST = "<?=__url('rule/get?type=0,1,2')?>";
-const URL_ROLE_TREE ="<?=__url('role/select?format=tree')?>";
-
 </script>
 <script>
 // 表格渲染
@@ -85,7 +75,7 @@ layui.use(["table", "treetable", "form", "popup", "util"], function() {
 
     treeTable.render({
         elem: "#data-table",
-        url: SELECT_API,
+        url: "select",
         treeColIndex: 1,
         treeIdName: "id",
         treePidName: "pid",

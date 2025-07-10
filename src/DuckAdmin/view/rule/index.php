@@ -34,13 +34,7 @@
 <?php // 这段js 存放 动态数据 ?>
 var data_permission = "<?=__url('rule/permission')?>";
 // 相关常量
-const PRIMARY_KEY = "id";
 const SELECT_API = "<?=__url('rule/select?limit=5000')?>";
-const DELETE_API = "<?=__url('rule/delete')?>";
-const UPDATE_API = "<?=__url('rule/update')?>";
-const INSERT_URL = "<?=__url('rule/insert')?>";
-const UPDATE_URL = "<?=__url('rule/update')?>";
-const SELECT_TREE_API = "<?=__url('rule/select?format=tree&type=0,1')?>";
 </script>
 <script>
 

@@ -92,7 +92,6 @@
 <script>
 <?php // 这段js 存放 动态数据 ?>
 var data_permission = "<?=__url('rule/permission')?>";
-const UPDATE_API = "<?=__url('admin/update')?>"; // 这个只是改状态
 var g_admin_id = <?=$current_admin_id?>;
 </script>
 <script>
@@ -166,7 +165,7 @@ layui.use(["table", "form",  "popup", "laydate"], function() {
             id: this.value,
             status: data.elem.checked ? 1 : 0,
         };
-        $.post(UPDATE_API, postData, function (res) {
+        $.post("update", postData, function (res) {
             layer.close(load);
             if (res.code) {
                 return layui.popup.failure(res.msg, function () {
