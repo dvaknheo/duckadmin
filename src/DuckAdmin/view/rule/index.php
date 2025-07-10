@@ -1,30 +1,10 @@
-	<div class="">
-
+    <div id="js-main">
 		<!-- 数据表格 -->
 		<div class="layui-card">
 			<div class="layui-card-body">
-				<table id="data-table" lay-filter="data-table">
-                    <thead>
-                    <tr>
-                      <th lay-data="checkbox"></th>
-                      <th lay-data="{field:'title'}">标题</th>
-                      <th lay-data="{field:'icon',templet: tmpl_icon}">图标</th>
-                      <th lay-data="{field:'id',hide:true}">主键</th>
-                      <th lay-data="{field:'key'}">key</th>
-                      <th lay-data="{field:'pid',hide:true,templet:tmpl_parent_menu}">上级菜单</th>
-                      <th lay-data="{field:'created_at',hide:true}">创建时间</th>
-                      <th lay-data="{field:'updated_at',hide:true}">更新时间</th>
-                      <th lay-data="{field:'href'}">url</th>
-                      <th lay-data="{field:'type',width:80;template:tmpl_type}">类型</th>
-                      <th lay-data="{field:'weight',width:80}">排序</th>
-                      <th lay-data="{toolbar:'#table-bar',align:'center',width:130}">操作</th>
-                    </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
+				<table id="data-table" lay-filter="data-table"></table>
 			</div>
 		</div>
-
 		<!-- 表格顶部工具栏 -->
 		<script type="text/html" id="table-toolbar">
 			<button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add" permission="app.admin.rule.insert">
@@ -34,15 +14,13 @@
 				<i class="layui-icon layui-icon-delete"></i>删除
 			</button>
 		</script>
-
 		<!-- 表格行工具栏 -->
-<script type="text/html" id="table-bar">
-<button class="pear-btn pear-btn-xs tool-btn" lay-event="edit" permission="app.admin.rule.update">编辑</button>
-<button class="pear-btn pear-btn-xs tool-btn" lay-event="remove" permission="app.admin.rule.delete">删除</button>
-</script>
-		<script src="<?=__res('component/layui/layui.js')?>"></script>
-		<script src="<?=__res('component/pear/pear.js')?>"></script>
-		<script src="<?=__res('admin/js/common.js')?>"></script>
+        <script type="text/html" id="table-bar">
+        <button class="pear-btn pear-btn-xs tool-btn" lay-event="edit" permission="app.admin.rule.update">编辑</button>
+        <button class="pear-btn pear-btn-xs tool-btn" lay-event="remove" permission="app.admin.rule.delete">删除</button>
+        </script>
+
+<script src="<?=__res('admin/js/index.js')?>"></script>
 <script>
 <?php // 这段js 存放 动态数据 ?>
 var data_permission = "<?=__url('rule/permission')?>";

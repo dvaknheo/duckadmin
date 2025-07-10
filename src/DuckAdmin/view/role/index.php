@@ -27,7 +27,7 @@
             <button class="pear-btn pear-btn-xs tool-btn" lay-event="remove" permission="app.admin.role.delete">删除</button>
             {{# } }}
         </script>
-
+<script src="<?=__res('admin/js/index.js')?>"></script>
 <script>
 <?php // 这段js 存放 动态数据 ?>
 var data_permission = "<?=__url('rule/permission')?>";
