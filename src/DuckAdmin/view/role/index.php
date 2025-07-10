@@ -12,7 +12,7 @@
 
         <!-- 表格顶部工具栏 -->
         <script type="text/html" id="table-toolbar">
-            <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add" permission="app.admin.role.insert">
+            <button class="js-open-layer pear-btn pear-btn-primary pear-btn-md" permission="app.admin.role.insert" href="insert?inframe=true">
                 <i class="layui-icon layui-icon-add-1"></i>新增
             </button>
             <button class="pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove" permission="app.admin.role.delete">
@@ -20,13 +20,14 @@
             </button>
         </script>
 
-        <!-- 表格行工具栏 -->
+        <!-- 表格行工具栏 --><!-- 根 role 不能被删除 -->
         <script type="text/html" id="table-bar">
             {{# if(d.id!==1&&d.pid&&!d.isRoot){ }}
-            <button class="pear-btn pear-btn-xs tool-btn" lay-event="edit" permission="app.admin.role.update">编辑</button>
+            <button class="js-open-layer pear-btn pear-btn-xs tool-btn" permission="app.admin.role.update" href="update?inframe=true&id={{d.id}}" alt="编辑">编辑</button>
             <button class="pear-btn pear-btn-xs tool-btn" lay-event="remove" permission="app.admin.role.delete">删除</button>
             {{# } }}
         </script>
+
 <script>
 <?php // 这段js 存放 动态数据 ?>
 var data_permission = "<?=__url('rule/permission')?>";
@@ -76,10 +77,10 @@ layui.use(["table", "treetable", "form", "popup", "util"], function() {
         {type: "checkbox"},
         {title: "角色组",field: "name",},
         {title: "主键",field: "id",},
-        {title: "权限",field: "rules",templet: tmpl_rules,hide: true,},
+        {title: "权限",field: "rules",templet: tmpl_rules,hide: true,},  // 这应该由服务端获取
         {title: "创建时间",field: "created_at",},
         {title: "更新时间",field: "updated_at",},
-        {title: "父级",field: "pid",templet: tmpl_pids,hide: true,},
+        {title: "父级",field: "pid",templet: tmpl_pids,hide: true,}, // 这应该由服务端获取
         {title: "操作",toolbar: "#table-bar",align: "center",fixed: "right",width: 120,}
     ];
     
@@ -153,7 +154,6 @@ layui.use(["table", "treetable", "form", "popup", "util"], function() {
             edit(obj);
         }
     });
-
     // 表格顶部工具栏事件
     table.on("toolbar(data-table)", function(obj) {
         if (obj.event === "add") {
@@ -164,7 +164,17 @@ layui.use(["table", "treetable", "form", "popup", "util"], function() {
             batchRemove(obj);
         }
     });
-
+    // 表格排序事件
+    table.on("sort(data-table)", function(obj){
+        table.reload("data-table", {
+            initSort: obj,
+            scrollPos: "fixed",
+            where: {
+                field: obj.field,
+                order: obj.type
+            }
+        });
+    });
     // 表格顶部搜索事件
     form.on("submit(table-query)", function(data) {
         table.reload("data-table", {
@@ -179,19 +189,7 @@ layui.use(["table", "treetable", "form", "popup", "util"], function() {
             where: []
         })
     });
-
-    // 表格排序事件
-    table.on("sort(data-table)", function(obj){
-        table.reload("data-table", {
-            initSort: obj,
-            scrollPos: "fixed",
-            where: {
-                field: obj.field,
-                order: obj.type
-            }
-        });
-    });
-
+    
     // 表格新增数据
     let add = function() {
         layer.open({
@@ -202,6 +200,8 @@ layui.use(["table", "treetable", "form", "popup", "util"], function() {
             content: INSERT_URL
         });
     }
+    
+    ///// 这些应该整合
 
     // 表格编辑数据
     let edit = function(obj) {

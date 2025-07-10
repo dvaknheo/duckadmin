@@ -1,5 +1,4 @@
-    <div class="">
-    
+    <div id="js-main">
         <!-- 顶部查询表单 -->
         <div class="layui-card">
             <div class="layui-card-body">
@@ -70,28 +69,30 @@
 
         <!-- 表格顶部工具栏 -->
         <template id="table-toolbar">
-            <button href="insert?inframe=true" class="js-open-layer pear-btn pear-btn-md" permission="app.admin.admin.insert" ><i class="layui-icon layui-icon-add-1"></i>新增</button>
-            <a href="javascript:;" class="js-batchremove pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove" permission="app.admin.admin.delete" ><i class="layui-icon layui-icon-delete"></i>删除</a>
+            <button class="js-open-layer pear-btn pear-btn-md" permission="app.admin.admin.insert" href="insert?inframe=true" alt="新增"><i class="layui-icon layui-icon-add-1"></i>新增</button>
+            <button class="js-batchremove pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove" permission="app.admin.admin.delete" href="delete?id={id}" ><i class="layui-icon layui-icon-delete"></i>删除</button>
         </template>
 
         <!-- 表格行工具栏 -->
         <!-- 这里不能用template 标签，因为不满足html -->
         <script type="text/html" id="template-status">
             {{# if(g_admin_id !== d.id){ }}
-            <input type="checkbox" value="{{d.id}}" lay-filter="status" lay-skin="switch" lay-text="" {{= d.status==1 ? 'checked="checked"' : '' }}>
+                {{# if(d.status==1){ }}
+                    <input type="checkbox" value="{{d.id}}" lay-filter="status" lay-skin="switch" lay-text="" checked="checked">
+                {{# }else{ }}
+                    <input type="checkbox" value="{{d.id}}" lay-filter="status" lay-skin="switch" lay-text="">
+                {{# } }}
             {{# } }}
         </script>
         <template id="table-bar">
-            <button href="update?inframe=true&id={{d.id}}" class="js-open-layer pear-btn pear-btn-xs tool-btn" permission="app.admin.admin.update">编辑</button>
-            <button class="pear-btn pear-btn-xs tool-btn" lay-event="remove" permission="app.admin.admin.delete">删除</button>
+            <button class="js-open-layer pear-btn pear-btn-xs tool-btn" permission="app.admin.admin.update" href="update?inframe=true&id={{d.id}}" alt="修改">编辑</button>
+            <button class="js-delete pear-btn pear-btn-xs tool-btn" permission="app.admin.admin.delete" href="delete?id={{d.id}}">删除</button>
         </template>
+<script src="<?=__res('admin/js/index.js')?>"></script>
 <script>
 <?php // 这段js 存放 动态数据 ?>
 var data_permission = "<?=__url('rule/permission')?>";
-const PRIMARY_KEY = "id";
-const SELECT_API = "<?=__url('admin/select')?>";
 const UPDATE_API = "<?=__url('admin/update')?>"; // 这个只是改状态
-const DELETE_API = "<?=__url('admin/delete')?>";
 var g_admin_id = <?=$current_admin_id?>;
 </script>
 <script>
@@ -107,7 +108,24 @@ layui.use(["table", "form",  "popup", "laydate"], function() {
     let table = layui.table;
     let form = layui.form;
     let $ = layui.$;
-    let common = layui.common;
+    
+    
+    // 表格顶部搜索事件
+    form.on("submit(table-query)", function(data) {
+        table.reload("data-table", {
+            where: data.field
+        })
+        return false;
+    });
+    
+    // 表格顶部搜索重置事件
+    form.on("submit(table-reset)", function(data) {
+        table.reload("data-table", {
+            where: []
+        })
+    });
+    
+    /////////////////////////////////////////////////////
     // 表头参数
     let cols = [
         {type: "checkbox"},
@@ -124,68 +142,24 @@ layui.use(["table", "form",  "popup", "laydate"], function() {
         {title: "禁用",field: "status",templet: "#template-status",width: 90,},
         {title: "操作",toolbar: "#table-bar",align: "center",fixed: "right",width: 130,}
     ];
-    
-    /////////////////////////////////////////////////////
-    // 渲染表格
-
-        table.render({
-            elem: "#data-table",
-            url: SELECT_API,
-            page: true,
-            cols: [cols],
-            skin: "line",
-            size: "lg",
-            toolbar: "#table-toolbar",
-            autoSort: false,
-            defaultToolbar: [{
-                title: "刷新",
-                layEvent: "refresh",
-                icon: "layui-icon-refresh",
-            }, "filter", "print", "exports"],
-        });
-    // 编辑或删除行事件
-    table.on("tool(data-table)", function(obj) {
-        if (obj.event === "remove") {
-            remove(obj);
-        } 
+    table.render({
+        elem: "#data-table",
+        url: "select",
+        page: true,
+        cols: [cols],
+        skin: "line",
+        size: "lg",
+        toolbar: "#table-toolbar",
+        autoSort: false,
+        defaultToolbar: [{
+            title: "刷新",
+            layEvent: "refresh",
+            icon: "layui-icon-refresh",
+        }, "filter", "print", "exports"],
     });
-
-    // 表格顶部工具栏事件
-    table.on("toolbar(data-table)", function(obj) {
-        if (obj.event === "refresh") {
-            refreshTable();
-        } else if (obj.event === "batchRemove") {
-            batchRemove(obj);
-        }
-    });
-
-    // 表格顶部搜索事件
-    form.on("submit(table-query)", function(data) {
-        table.reload("data-table", {
-            where: data.field
-        })
-        return false;
-    });
-    
-    // 表格顶部搜索重置事件
-    form.on("submit(table-reset)", function(data) {
-        table.reload("data-table", {
-            where: []
-        })
-    });
-
-    // 表格排序事件
-    table.on("sort(data-table)", function(obj){
-        table.reload("data-table", {
-            initSort: obj,
-            scrollPos: "fixed",
-            where: {
-                field: obj.field,
-                order: obj.type
-            }
-        });
-    });
-    
+    enable_index_page_all(table);
+    ///////////////////////////////
+    //这里 toggle 按钮。
     form.on("switch(status)", function (data) {
         let load = layer.load();
         let postData = {
@@ -203,65 +177,6 @@ layui.use(["table", "form",  "popup", "laydate"], function() {
             return layui.popup.success("操作成功");
         })
     });
-
-    // 删除一行
-    let remove = function(obj) {
-        return doRemove(obj.data[PRIMARY_KEY]);
-    }
-
-    // 删除多行
-    let batchRemove = function(obj) {
-        let checkIds = common_checkField(obj, PRIMARY_KEY);
-        if (checkIds === "") {
-            layui.popup.warning("未选中数据");
-            return false;
-        }
-        doRemove(checkIds.split(","));
-    }
-
-    // 执行删除
-    let doRemove = function (ids) {
-        let data = {};
-        data[PRIMARY_KEY] = ids;
-        layer.confirm("确定删除?", {
-            icon: 3,
-            title: "提示"
-        }, function(index) {
-            layer.close(index);
-            let loading = layer.load();
-            $.ajax({
-                url: DELETE_API,
-                data: data,
-                dataType: "json",
-                type: "post",
-                success: function(res) {
-                    layer.close(loading);
-                    if (res.code) {
-                        return layui.popup.failure(res.msg);
-                    }
-                    return layui.popup.success("操作成功", refreshTable);
-                }
-            })
-        });
-    }
-    $("body").on('click','.js-open-layer',function(e){
-        e.preventDefault();
-        url = $(this).attr('href');
-        layer.open({
-            type: 2,
-            title: "--",
-            shade: 0.1,
-            area: [common_isModile()?"100%":"500px", common_isModile()?"100%":"450px"],
-            content: url
-        });
-    });
-            
-    // 刷新表格数据，这是用于回调的
-    window.refreshTable = function(param) {
-        table.reloadData("data-table", {
-            scrollPos: "fixed"
-        });
-    }
 })
 
         </script>
