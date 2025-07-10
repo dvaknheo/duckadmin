@@ -1,4 +1,4 @@
-    <div class="">
+    <div id="js-main">
     
         <!-- 顶部查询表单 -->
         
@@ -11,20 +11,17 @@
         </div>
 
         <!-- 表格顶部工具栏 -->
-        <script type="text/html" id="table-toolbar">
-            <button class="js-open-layer pear-btn pear-btn-primary pear-btn-md" permission="app.admin.role.insert" href="insert?inframe=true">
-                <i class="layui-icon layui-icon-add-1"></i>新增
-            </button>
-            <button class="pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove" permission="app.admin.role.delete">
-                <i class="layui-icon layui-icon-delete"></i>删除
-            </button>
-        </script>
+        <template id="table-toolbar">
+            <button class="js-open-layer pear-btn pear-btn-md" permission="app.admin.role.insert" href="insert?inframe=true" alt="新增"><i class="layui-icon layui-icon-add-1"></i>新增</button>
+            <button class="js-batchremove pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove" permission="app.admin.role.delete" href="delete?id={id}" ><i class="layui-icon layui-icon-delete"></i>删除</button>
+        </template>
+
 
         <!-- 表格行工具栏 --><!-- 根 role 不能被删除 -->
         <script type="text/html" id="table-bar">
             {{# if(d.id!==1&&d.pid&&!d.isRoot){ }}
-            <button class="js-open-layer pear-btn pear-btn-xs tool-btn" permission="app.admin.role.update" href="update?inframe=true&id={{d.id}}" alt="编辑">编辑</button>
-            <button class="pear-btn pear-btn-xs tool-btn" lay-event="remove" permission="app.admin.role.delete">删除</button>
+            <button class="js-open-layer pear-btn pear-btn-xs tool-btn" permission="app.admin.role.update" href="update?inframe=true&id={{d.id}}" alt="修改">编辑</button>
+            <button class="js-delete pear-btn pear-btn-xs tool-btn" permission="app.admin.role.delete" href="delete?id={{d.id}}">删除</button>
             {{# } }}
         </script>
 <script src="<?=__res('admin/js/index.js')?>"></script>
@@ -55,6 +52,7 @@ layui.use(["table", "treetable", "form", "popup", "util"], function() {
     let common = layui.common;
     let util = layui.util;
     var tmpl_rules = function (d) {
+        return "???";
         let field = "rules";
         if (typeof d[field] == "undefined") return "";
         let items = [];
@@ -64,6 +62,7 @@ layui.use(["table", "treetable", "form", "popup", "util"], function() {
         return util.escape(items.join(","));
     }
     var tmpl_pids = function (d) {
+        return "???";
         let field = "pid";
         if (typeof d[field] == "undefined") return "";
         let items = [];
@@ -83,183 +82,25 @@ layui.use(["table", "treetable", "form", "popup", "util"], function() {
         {title: "父级",field: "pid",templet: tmpl_pids,hide: true,}, // 这应该由服务端获取
         {title: "操作",toolbar: "#table-bar",align: "center",fixed: "right",width: 120,}
     ];
-    
-    // 渲染表格
-    function render()
-    {
-        treeTable.render({
-            elem: "#data-table",
-            url: SELECT_API,
-            treeColIndex: 1,
-            treeIdName: "id",
-            treePidName: "pid",
-            treeDefaultClose: false,
-            cols: [cols],
-            skin: "line",
-            size: "lg",
-            toolbar: "#table-toolbar",
-            defaultToolbar: [{
-                title: "刷新",
-                layEvent: "refresh",
-                icon: "layui-icon-refresh",
-            }, "filter", "print", "exports"]
-        });
-    }
-    
-    // 获取表格中下拉或树形组件数据
-    let apis = [];
-    apis.push(["rules", URL_RULE_LIST]);
-    apis.push(["pid", URL_ROLE_TREE]);
-    let apiResults = {};
-    apiResults["rules"] = [];
-    apiResults["pid"] = [];
-    let count = apis.length;
-    layui.each(apis, function (k, item) {
-        let [field, url] = item;
-        $.ajax({
-            url: url,
-            dateType: "json",
-            success: function (res) {
-                if (res.code) {
-                    return layui.popup.failure(res.msg);
-                }
-                var data = res.data;
-                function travel(items) {
-                    for (let k in items) {
-                        let item = items[k];
-                        apiResults[field][item.value] = item.name;
-                        if (item.children) {
-                            travel(item.children);
-                        }
-                    }
-                }
-                travel(data);
-            },
-            complete: function () {
-                if (--count === 0) {
-                    render();
-                }
-            }
-        });
-    });
-    if (!count) {
-        render();
-    }
-    
-    // 编辑或删除行事件
-    table.on("tool(data-table)", function(obj) {
-        if (obj.event === "remove") {
-            remove(obj);
-        } else if (obj.event === "edit") {
-            edit(obj);
-        }
-    });
-    // 表格顶部工具栏事件
-    table.on("toolbar(data-table)", function(obj) {
-        if (obj.event === "add") {
-            add();
-        } else if (obj.event === "refresh") {
-            refreshTable();
-        } else if (obj.event === "batchRemove") {
-            batchRemove(obj);
-        }
-    });
-    // 表格排序事件
-    table.on("sort(data-table)", function(obj){
-        table.reload("data-table", {
-            initSort: obj,
-            scrollPos: "fixed",
-            where: {
-                field: obj.field,
-                order: obj.type
-            }
-        });
-    });
-    // 表格顶部搜索事件
-    form.on("submit(table-query)", function(data) {
-        table.reload("data-table", {
-            where: data.field
-        })
-        return false;
-    });
-    
-    // 表格顶部搜索重置事件
-    form.on("submit(table-reset)", function(data) {
-        table.reload("data-table", {
-            where: []
-        })
-    });
-    
-    // 表格新增数据
-    let add = function() {
-        layer.open({
-            type: 2,
-            title: "新增",
-            shade: 0.1,
-            area: [common_isModile()?"100%":"500px", common_isModile()?"100%":"450px"],
-            content: INSERT_URL
-        });
-    }
-    
-    ///// 这些应该整合
 
-    // 表格编辑数据
-    let edit = function(obj) {
-        let value = obj.data[PRIMARY_KEY];
-        layer.open({
-            type: 2,
-            title: "修改",
-            shade: 0.1,
-            area: [common_isModile()?"100%":"500px", common_isModile()?"100%":"450px"],
-            content: UPDATE_URL + "?" + PRIMARY_KEY + "=" + value
-        });
-    }
-
-    // 删除一行
-    let remove = function(obj) {
-        return doRemove(obj.data[PRIMARY_KEY]);
-    }
-
-    // 删除多行
-    let batchRemove = function(obj) {
-        let checkIds = common_checkField(obj, PRIMARY_KEY);
-        if (checkIds === "") {
-            layui.popup.warning("未选中数据");
-            return false;
-        }
-        doRemove(checkIds.split(","));
-    }
-
-    // 执行删除
-    let doRemove = function (ids) {
-        let data = {};
-        data[PRIMARY_KEY] = ids;
-        layer.confirm("确定删除?", {
-            icon: 3,
-            title: "提示"
-        }, function(index) {
-            layer.close(index);
-            let loading = layer.load();
-            $.ajax({
-                url: DELETE_API,
-                data: data,
-                dataType: "json",
-                type: "post",
-                success: function(res) {
-                    layer.close(loading);
-                    if (res.code) {
-                        return layui.popup.failure(res.msg);
-                    }
-                    return layui.popup.success("操作成功", refreshTable);
-                }
-            })
-        });
-    }
-
-    // 刷新表格数据
-    window.refreshTable = function(param) {
-        treeTable.reload("#data-table");
-    }
+    treeTable.render({
+        elem: "#data-table",
+        url: SELECT_API,
+        treeColIndex: 1,
+        treeIdName: "id",
+        treePidName: "pid",
+        treeDefaultClose: false,
+        cols: [cols],
+        skin: "line",
+        size: "lg",
+        toolbar: "#table-toolbar",
+        defaultToolbar: [{
+            title: "刷新",
+            layEvent: "refresh",
+            icon: "layui-icon-refresh",
+        }, "filter", "print", "exports"]
+    });
+    enable_index_page_all(table);
 })
 
         </script>

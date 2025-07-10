@@ -28,6 +28,8 @@ class AdminController extends Base
     {
         $input = Helper::GET();
         [$data, $count] = AdminBusiness::_()->showAdmins(Helper::AdminId(),$input);
+        
+        // 这里还要加上，角色信息
         return Helper::Success($data,$count);
     }
     public function insert()

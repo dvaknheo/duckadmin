@@ -39,9 +39,9 @@ class RuleController extends Base
     public function select()
     {
         $data = Helper::GET();
-
+        $data['limit']=5000;
         [$data,$total] = RuleBusiness::_()->selectRules(Helper::AdminId(), $data); // 结果还是一股脑把参数传进去了
-
+        // 这里还要加上 父菜单信息
         return Helper::Success($data,$total);
     }
 
@@ -71,19 +71,18 @@ class RuleController extends Base
         $permissions = RuleBusiness::_()->permission($admin_id);
         return Helper::Success($permissions);
     }
-    /**
-     * 添加
-     * @param Request $request
-     * @return Response
-     * @throws BusinessException
-     */
     public function insert()
     {
-        $post = Helper::POST();
-        if (!$post) {
-            return Helper::Show([], 'rule/insert');
+        $data =[];
+        if(Helper::GET('inframe',false)){
+            Helper::setViewHeadFoot("_sys/header-layer","_sys/footer-layer");
+            $data['inframe']=true;
         }
-        RuleBusiness::_()->insertRule(Helper::AdminId(), $post);
+        return Helper::Show($data,'rule/insert');
+    }
+    public function do_insert()
+    {
+        RuleBusiness::_()->insertRule(Helper::AdminId(), Helper::POST());
         return Helper::Success();
     }
 
@@ -95,12 +94,13 @@ class RuleController extends Base
      */
     public function update()
     {
-        $v = [];
-        $v['id'] = intval(Helper::GET('id'));
-        //$v['rule_data'] = RuleBusiness::_()->getRuleById($v['id']); // rule/select?id=1;
-        //$v['rule_tree'] = RuleBusiness::_()->getRuleTree('0,1');     // rule/select?format=tree&type=0,1
-        
-        Helper::Show($v, 'rule/update');
+        $data =[];
+        if(Helper::GET('inframe',false)){
+            Helper::setViewHeadFoot("_sys/header-layer","_sys/footer-layer");
+            $data['inframe']=true;
+        }
+        $data['id'] = intval(Helper::GET('id',0));
+        Helper::Show($data, 'rule/update');
     }
     public function do_update()
     {

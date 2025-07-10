@@ -5,20 +5,29 @@
 				<table id="data-table" lay-filter="data-table"></table>
 			</div>
 		</div>
-		<!-- 表格顶部工具栏 -->
-		<script type="text/html" id="table-toolbar">
-			<button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add" permission="app.admin.rule.insert">
-				<i class="layui-icon layui-icon-add-1"></i>新增
-			</button>
-			<button class="pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove" permission="app.admin.rule.delete">
-				<i class="layui-icon layui-icon-delete"></i>删除
-			</button>
-		</script>
+        <!-- 表格顶部工具栏 -->
+        <template id="table-toolbar">
+            <button class="js-open-layer pear-btn pear-btn-md" permission="app.admin.rule.insert" href="insert?inframe=true" alt="新增"><i class="layui-icon layui-icon-add-1"></i>新增</button>
+            <button class="js-batchremove pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove" permission="app.admin.rule.delete" href="delete?id={id}" ><i class="layui-icon layui-icon-delete"></i>删除</button>
+        </template>
+        
 		<!-- 表格行工具栏 -->
-        <script type="text/html" id="table-bar">
-        <button class="pear-btn pear-btn-xs tool-btn" lay-event="edit" permission="app.admin.rule.update">编辑</button>
-        <button class="pear-btn pear-btn-xs tool-btn" lay-event="remove" permission="app.admin.rule.delete">删除</button>
-        </script>
+        <template id="template-icon">
+            <i class="layui-icon {{d.icon}}"></i>
+        </template>
+        <template id="template-type">
+        {{# if(d.type==0){ }}
+            <span class="layui-badge layui-bg-blue">目录</span>
+        {{# }else if(d.type==1){ }}
+            <span class="layui-badge layui-bg-green">菜单</span>
+        {{# }else if(d.type==2){ }}
+            <span class="layui-badge layui-bg-orange">权限</span>
+        {{# } }}
+        </template>
+        <template id="table-bar">
+            <button class="js-open-layer pear-btn pear-btn-xs tool-btn" permission="app.admin.rule.update" href="update?inframe=true&id={{d.id}}" alt="修改">编辑</button>
+            <button class="js-delete pear-btn pear-btn-xs tool-btn" permission="app.admin.rule.delete" href="delete?id={{d.id}}">删除</button>
+        </template>
 
 <script src="<?=__res('admin/js/index.js')?>"></script>
 <script>
@@ -43,192 +52,44 @@ layui.use(["table", "treetable", "form", "popup", "util"], function() {
     let table = layui.table;
     let form = layui.form;
     let $ = layui.$;
-    let common = layui.common;
     let treeTable = layui.treetable;
-    let util = layui.util;
 
 
-    var tmpl_icon = function (d) {
-        return '<i class="layui-icon ' + util.escape(d["icon"]) + '"></i>';
-    }
-    var tmpl_parent_menu = function (d) {
-        let field = "pid";
-        if (typeof d[field] == "undefined") return "";
-        let items = [];
-        layui.each((d[field] + "").split(","), function (k , v) {
-            items.push(apiResults[field][v] || v);
-        });
-        return util.escape(items.join(","));
-    }
-    var tmpl_type = function (d) {
-        let field = "type";
-        let value = apiResults["type"][d["type"]] || d["type"];
-        let css = {"目录":"layui-bg-blue", "菜单": "layui-bg-green", "权限": "layui-bg-orange"}[value];
-        return '<span class="layui-badge '+css+'">'+util.escape(value)+'</span>';
-    }
 
     // 表格头部列数据
     let cols = [
         {type: "checkbox"},
         {title: "标题",field: "title"},
-        {title: "图标",field: "icon",templet: tmpl_icon},
+        {title: "图标",field: "icon",templet:'#template-icon'},
         {title: "主键",field: "id",hide: true},
         {title: "key",field: "key"},
-        {title: "上级菜单",field: "pid",hide: true,templet: tmpl_parent_menu},
+        /*{title: "上级菜单",field: "pid",hide: true,templet: tmpl_parent_menu},*/ //这个可以读取上级 pid 名称
         {title: "创建时间",field: "created_at",hide: true},
         {title: "更新时间",field: "updated_at",hide: true},
         {title: "url",field: "href"},
-        {title: "类型",field: "type",width: 80,templet: tmpl_type},
+        {title: "类型",field: "type",width: 80,templet:'#template-type'},
         {title: "排序",field: "weight",width: 80},
         {title: "操作",toolbar: "#table-bar",align: "center",fixed: "right",width: 130}
     ];
-
-    // 渲染表格
-    function render()
-    {
-        treeTable.render({
-            elem: "#data-table",
-            url: SELECT_API,
-            treeColIndex: 1,
-            treeIdName: "id",
-            treePidName: "pid",
-            treeDefaultClose: true,
-            cols: [cols],
-            skin: "line",
-            size: "lg",
-            toolbar: "#table-toolbar",
-            defaultToolbar: [{
-                title: "刷新",
-                layEvent: "refresh",
-                icon: "layui-icon-refresh",
-            }, "filter", "print", "exports"]
-        });
-    }
-
-    // 获取下拉菜单及树形组件数据
-    let apis = [];
-    let apiResults = {};
-    apiResults["pid"] = [];
-    apis.push(["pid", SELECT_TREE_API]);
-    apiResults["type"] = ["目录","菜单","权限"];
-    let count = apis.length;
-    layui.each(apis, function (k, item) {
-        let [field, url] = item;
-        fetch(url).then(response => {return response.json();}).then(res => {
-                if (res.code) {
-                    return layui.popup.failure(res.msg);
-                }
-            var data = res.data;
-                function travel(items) {
-                    for (let k in items) {
-                        let item = items[k];
-                        apiResults[field][item.value] = item.name;
-                        if (item.children) {
-                            travel(item.children);
-                        }
-                    }
-                }
-                travel(data);
-            
-                if (--count === 0) {
-                    render();
-                }
-        });
+    treeTable.render({
+        elem: "#data-table",
+        url: SELECT_API,
+        treeColIndex: 1,
+        treeIdName: "id",
+        treePidName: "pid",
+        treeDefaultClose: true,
+        cols: [cols],
+        skin: "line",
+        size: "lg",
+        toolbar: "#table-toolbar",
+        defaultToolbar: [{
+            title: "刷新",
+            layEvent: "refresh",
+            icon: "layui-icon-refresh",
+        }, "filter", "print", "exports"]
     });
-    if (!count) {
-        render();
-    }
-
-    // 删除或编辑行事件
-    table.on("tool(data-table)", function(obj) {
-        if (obj.event === "remove") {
-            remove(obj);
-        } else if (obj.event === "edit") {
-            edit(obj);
-        }
-    });
-
-    // 添加 批量删除 刷新事件
-    table.on("toolbar(data-table)", function(obj) {
-        if (obj.event === "add") {
-            add();
-        } else if (obj.event === "refresh") {
-            refreshTable();
-        } else if (obj.event === "batchRemove") {
-            batchRemove(obj);
-        }
-    });
-
-    // 添加行
-    let add = function() {
-        layer.open({
-            type: 2,
-            title: "新增",
-            shade: 0.1,
-            area: [common_isModile()?"100%":"520px", common_isModile()?"100%":"520px"],
-            content: INSERT_URL
-        });
-    }
-
-    // 编辑行
-    let edit = function(obj) {
-        let value = obj.data[PRIMARY_KEY];
-        layer.open({
-            type: 2,
-            title: "修改",
-            shade: 0.1,
-            area: [common_isModile()?"100%":"520px", common_isModile()?"100%":"520px"],
-            content: UPDATE_URL + "?" + PRIMARY_KEY + "=" + value
-        });
-    }
-
-    // 删除行
-    let remove = function(obj) {
-        return doRemove(obj.data[PRIMARY_KEY], obj);
-    }
-
-    // 删除多行
-    let batchRemove = function(obj) {
-        let checkIds = common_checkField(obj, PRIMARY_KEY);
-        if (checkIds === "") {
-            layui.popup.warning("未选中数据");
-            return false;
-        }
-        doRemove(checkIds.split(","));
-    }
-
-    // 执行删除
-    let doRemove = function (ids, obj) {
-        let data = {};
-        data[PRIMARY_KEY] = ids;
-        layer.confirm("确定删除?", {
-            icon: 3,
-            title: "提示"
-        }, function(index) {
-            layer.close(index);
-            let loading = layer.load();
-            $.ajax({
-                url: DELETE_API,
-                data: data,
-                dataType: "json",
-                type: "post",
-                success: function(res) {
-                    layer.close(loading);
-                    if (res.code) {
-                        return layui.popup.failure(res.msg);
-                    }
-                    return layui.popup.success("操作成功", function () {
-                        return obj ? obj.del() : refreshTable();
-                    });
-                }
-            })
-        });
-    }
-
-    // 刷新表格
-    window.refreshTable = function(param) {
-        treeTable.reload("#data-table");
-    }
+    enable_index_page_all(table);
+    
 });
 		</script>
 	</div>

@@ -50,14 +50,17 @@ class RoleController extends Base
      */
     public function insert()
     {
-        if (!Helper::POST()) {
-            return Helper::Show([],'role/insert');
+        $data =[];
+        if(Helper::GET('inframe',false)){
+            Helper::setViewHeadFoot("_sys/header-layer","_sys/footer-layer");
+            $data['inframe']=true;
         }
-        $post = Helper::POST();
-        
-        $id = RoleBusiness::_()->insertRole(Helper::AdminId(), $post);
+        return Helper::Show($data,'role/insert');
+    }
+    public function do_insert()
+    {
+        $id = RoleBusiness::_()->insertRole(Helper::AdminId(), Helper::POST());
         return Helper::Success(['id' => $id]);
-
     }
 
     /**
@@ -68,12 +71,17 @@ class RoleController extends Base
      */
     public function update()
     {
-        if (!Helper::POST()) {
-            return Helper::Show([],'role/update');
+        $data =[];
+        if(Helper::GET('inframe',false)){
+            Helper::setViewHeadFoot("_sys/header-layer","_sys/footer-layer");
+            $data['inframe']=true;
         }
-        $post = Helper::POST();
-        
-        $id = RoleBusiness::_()->updateRole(Helper::AdminId(), $post);
+        $data['id'] = intval(Helper::GET('id',0));
+        Helper::Show($data, 'rule/update');
+    }
+    public function do_update()
+    {
+        $id = RoleBusiness::_()->updateRole(Helper::AdminId(), Helper::POST());
         return Helper::Success(['id' => $id]);
     }
 

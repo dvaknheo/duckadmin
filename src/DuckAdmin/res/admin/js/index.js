@@ -1,7 +1,11 @@
 window.refreshTable = function(param) {
-    layui.table.reloadData("data-table", {
-        scrollPos: "fixed"
-    });
+    if(layui.treetable){
+        layui.treetable.reload("#data-table");
+    }else{
+        layui.table.reloadData("data-table", {
+            scrollPos: "fixed"
+        });
+    }
 }
 function toggleSearchFormShow()
 {
