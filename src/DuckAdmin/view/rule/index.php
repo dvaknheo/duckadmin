@@ -40,16 +40,11 @@ const SELECT_API = "<?=__url('rule/select?limit=5000')?>";
 
 // 表格渲染
 layui.use(["table", "treetable", "form", "popup", "util"], function() {
+
     togglePermission(data_permission);
     toggleSearchFormShow();
-
-    let table = layui.table;
-    let form = layui.form;
-    let $ = layui.$;
-    let treeTable = layui.treetable;
-
-
-
+    //
+    
     // 表格头部列数据
     let cols = [
         {type: "checkbox"},
@@ -65,9 +60,9 @@ layui.use(["table", "treetable", "form", "popup", "util"], function() {
         {title: "排序",field: "weight",width: 80},
         {title: "操作",toolbar: "#table-bar",align: "center",fixed: "right",width: 130}
     ];
-    treeTable.render({
+    layui.treetable.render({
         elem: "#data-table",
-        url: SELECT_API,
+        url: "select",
         treeColIndex: 1,
         treeIdName: "id",
         treePidName: "pid",
@@ -83,7 +78,6 @@ layui.use(["table", "treetable", "form", "popup", "util"], function() {
         }, "filter", "print", "exports"]
     });
     enable_index_page_all(table);
-    
 });
 		</script>
 	</div>
