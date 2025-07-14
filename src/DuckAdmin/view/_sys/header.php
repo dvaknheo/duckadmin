@@ -38,7 +38,7 @@
                         <!-- 功 能 菜 单 -->
                         <dl class="layui-nav-child">
                             <dd><a user-menu-url="<?=__url('account/index')?>" user-menu-id="10" user-menu-title="基本资料">基本资料</a></dd>
-                            <dd><a href="<?=__url('account/logout')?>" class="logout">注销登录</a></dd>
+                            <dd><a href="<?=__url('logout')?>" class="logout">登出</a></dd>
                         </dl>
                     </li>
                 </ul>

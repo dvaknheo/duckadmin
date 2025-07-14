@@ -68,22 +68,12 @@ class AccountBusiness extends Base
         try{
             $class = new \ReflectionClass($controller);
             $properties = $class->getDefaultProperties();
-            $noNeedLogin = $properties['noNeedLogin'] ?? [];
             $noNeedAuth = $properties['noNeedAuth'] ?? [];
         }catch(\ReflectionException $ex){
             Helper::BusinessThrowOn(true, '访问错误', 302);
         }
-        
-        // 不需要登录
-        if (in_array($action, $noNeedLogin)) {
-            return true;
-        }
         Helper::BusinessThrowOn(!$admin_id, $msg = '请登录', 401);
         
-        // 不需要鉴权
-        if (in_array($action, $noNeedAuth)) {
-            return true;
-        }        
         ////]]]]
         
         ////[[[[

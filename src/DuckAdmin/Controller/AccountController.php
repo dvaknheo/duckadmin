@@ -13,11 +13,6 @@ use DuckAdmin\Business\AccountBusiness;
  */
 class AccountController extends Base
 {
-    /**
-     * 不需要登录的方法
-     * @var string[]
-     */
-    protected $noNeedLogin = ['login', 'logout', 'captcha'];
 
     /**
      * 不需要鉴权的方法
@@ -32,46 +27,6 @@ class AccountController extends Base
     public function index()
     {
         return Helper::Show([],'account/index');
-    }
-
-    /**
-     * 登录
-     * @param 
-     * @return Response
-     * @throws BusinessException
-     */
-    public function login()
-    {
-        if(!Helper::Post()){
-            Helper::Show302(__url('index'));
-        }
-        $username = Helper::Post('username', '');
-        $password = Helper::Post('password', '');
-        $captcha = Helper::Post('captcha');
-        
-        //这里有更好判断方法不需要特殊化，TODO 用上
-        $flag = AdminAction::_()->doCheckCaptcha($captcha);
-        Helper::ControllerThrowOn(!$flag, '验证码错误',1);
-
-        
-        $admin = AccountBusiness::_()->login($username, $password);
-        AdminAction::_()->setCurrentAdmin($admin);
-        return Helper::Success($admin);
-    }
-
-    /**
-     * 退出
-     * @param 
-     * @return Response
-     */
-    public function logout()
-    {
-        AdminAction::_()->logout();
-        if(Helper::IsAjax()){
-            Helper::Success(0);
-        }else{
-            Helper::Show302(__url('index'));
-        }
     }
 
     /**
@@ -121,14 +76,5 @@ class AccountController extends Base
         AccountBusiness::_()->changePassword(Helper::AdminId(), $old_password, $password, $password_confirm );
         Helper::Success();
     }
-    /**
-     * 验证码
-     * @param 
-     * @param string $type
-     * @return Response
-     */
-    public function captcha()
-    {
-        AdminAction::_()->doShowCaptcha();
-    }
+
 }

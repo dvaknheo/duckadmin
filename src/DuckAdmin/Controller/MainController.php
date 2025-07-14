@@ -7,19 +7,16 @@
 namespace DuckAdmin\Controller;
 use DuckPhp\Core\App;
 
+use DuckAdmin\Business\AccountBusiness;
 use DuckAdmin\Business\InstallBusiness;
 
 /**
  * 主入口
  */
-class MainController extends Base
+class MainController
 {
-    /**
-     * 跳过验证，这里
-     */
     public function __construct()
     {
-        // 跳过验证，不做任何事
     }
     /**
      * 首页
@@ -40,5 +37,47 @@ class MainController extends Base
             return;
         }
         Helper::Show302('account/dashboard');
+    }
+    public function login()
+    {
+        if(!Helper::Post()){
+            Helper::Show302(__url('index'));
+        }
+        $username = Helper::Post('username', '');
+        $password = Helper::Post('password', '');
+        $captcha = Helper::Post('captcha');
+        
+        //这里有更好判断方法不需要特殊化，TODO 用上
+        $flag = AdminAction::_()->doCheckCaptcha($captcha);
+        Helper::ControllerThrowOn(!$flag, '验证码错误',1);
+
+        
+        $admin = AccountBusiness::_()->login($username, $password);
+        AdminAction::_()->setCurrentAdmin($admin);
+        return Helper::Success($admin);
+    }
+    /**
+     * 退出
+     * @param 
+     * @return Response
+     */
+    public function logout()
+    {
+        AdminAction::_()->logout();
+        if(Helper::IsAjax()){
+            Helper::Success(0);
+        }else{
+            Helper::Show302(__url('index'));
+        }
+    }
+    /**
+     * 验证码
+     * @param 
+     * @param string $type
+     * @return Response
+     */
+    public function captcha()
+    {
+        AdminAction::_()->doShowCaptcha();
     }
 }

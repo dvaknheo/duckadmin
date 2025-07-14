@@ -13,12 +13,6 @@ class Base implements AdminControllerInterface
 {
     use SimpleControllerTrait;
     /**
-     * 无需登录及鉴权的方法
-     * @var array
-     */
-    protected $noNeedLogin = [];
-
-    /**
      * 需要登录无需鉴权的方法
      * @var array
      */
@@ -35,8 +29,11 @@ class Base implements AdminControllerInterface
             AdminAction::_()->checkAccess();
             return;
         }
-        AdminAction::_()->checkAccess();
+            
 
+        AdminAction::_()->checkAccess();
+        
+        Helper::setViewHeadFoot('_sys/header', '_sys/footer');
         $types = [0, 1];
         try{
             $admin_id = Helper::AdminId(); //有几个不需要 admin_id 的
@@ -44,6 +41,6 @@ class Base implements AdminControllerInterface
         $menu_data = RuleBusiness::_()->get($admin_id,$types);
         
         Helper::assignViewData('data_menu',$menu_data);
-        Helper::setViewHeadFoot('_sys/header', '_sys/footer');
+        
     }
 }

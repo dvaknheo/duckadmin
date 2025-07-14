@@ -61,13 +61,6 @@ return [
                 'type' => 1,
                 'weight' => 800,
             ],
-            [
-                'title' => '系统设置',
-                'key' => 'DuckAdmin\\Controller\\ConfigController',
-                'href' => 'config/index',
-                'type' => 1,
-                'weight' => 500,
-            ],
         ]
     ],    
 ];

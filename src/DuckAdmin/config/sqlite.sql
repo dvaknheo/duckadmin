@@ -18,14 +18,6 @@ CREATE TABLE `admins` (
 	"status"	INTEGER,
 	PRIMARY KEY("id" AUTOINCREMENT)
 );
-CREATE TABLE `options` (
-	"id"	INTEGER,
-	"name"	TEXT NOT NULL UNIQUE,
-	"value"	TEXT NOT NULL,
-	"created_at"	TEXT,
-	"updated_at"	TEXT,
-	PRIMARY KEY("id" AUTOINCREMENT)
-);
 CREATE TABLE `roles` (
 	"id"	INTEGER NOT NULL,
 	"name"	TEXT NOT NULL,

@@ -102,7 +102,7 @@ body {
     </head>
     <!-- 代 码 结 构 -->
     <body background="<?=__res('admin/images/background.svg')?>" style="background-size: cover;">
-        <form class="layui-form" method="post" action="<?=__url('account/login')?>">
+        <form class="layui-form" method="post" action="<?=__url('login')?>">
             <div class="layui-form-item">
                 <img class="logo" src="<?=__res('admin/images/logo.png')?>" />
                 <div class="title pear-text">admin</div>
@@ -115,7 +115,7 @@ body {
             </div>
             <div class="layui-form-item">
                 <input hover  lay-verify="required" class="code layui-input layui-input-inline" name="captcha" placeholder="验证码" />
-                <img class="codeImage" src-ref="<?=__url('account/captcha?type=login&v=')?>" width="120px"/>
+                <img class="codeImage" src-ref="<?=__url('captcha?type=login&v=')?>" width="120px"/>
             </div>
             <div class="layui-form-item">
                 <button type="submit" class="pear-btn pear-btn-primary login" lay-submit lay-filter="login">
