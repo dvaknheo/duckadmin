@@ -43,7 +43,7 @@ layui.use(["table", "treetable", "form", "popup", "util"], function() {
 
     togglePermission(data_permission);
     toggleSearchFormShow();
-    //
+    let table = layui.table;
     
     // 表格头部列数据
     let cols = [
