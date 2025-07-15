@@ -19,7 +19,7 @@
 	<li><a href="<?=$v['url']?>"><?=$v['title']?></a></li>
 <?php }?>
 </ul>
-<?=$pager?>
+<?=$pager??''?>
 </fieldset>
 </body>
 </html>

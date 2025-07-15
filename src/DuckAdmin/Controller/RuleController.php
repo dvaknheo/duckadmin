@@ -27,6 +27,7 @@ class RuleController extends Base
      */
     public function index()
     {
+        // 这里要不要同步权限？
         Helper::Show([], 'rule/index');
     }
 
@@ -40,6 +41,7 @@ class RuleController extends Base
     {
         $data = Helper::GET();
         $data['limit']=5000;
+        //这里有个同步权限的。
         [$data,$total] = RuleBusiness::_()->selectRules(Helper::AdminId(), $data); // 结果还是一股脑把参数传进去了
         // 这里还要加上 父菜单信息
         return Helper::Success($data,$total);
@@ -67,6 +69,7 @@ class RuleController extends Base
      */
     public function permission()
     {
+        //这里是动态的获取权限。
         $admin_id = Helper::AdminId();
         $permissions = RuleBusiness::_()->permission($admin_id);
         return Helper::Success($permissions);

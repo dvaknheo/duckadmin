@@ -108,7 +108,7 @@ class RuleBusiness extends Base
         
     }
 
-/**
+    /**
      * 根据类同步规则到数据库
      * @return void
      */
@@ -164,6 +164,7 @@ class RuleBusiness extends Base
     ///////////////////////////////
     public function permission($admin_id)
     {
+        // 这里是所有的获取权限的
         $roles = AdminRoleModel::_()->rolesByAdminId($admin_id); 
         $roles = $roles ?? [];
         $rules_strings = RoleModel::_()->getRules($roles);
@@ -185,6 +186,7 @@ class RuleBusiness extends Base
                 continue; // @codeCoverageIgnore
             }
             $code = str_replace('/', '.', trim($key, '/'));
+            // app.admin. 是固定的。
             $permissions[] = 'app.admin.'.$code;
         }
         return $permissions;

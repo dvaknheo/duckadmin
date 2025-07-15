@@ -42,7 +42,6 @@ class AccountController extends Base
     }
     public function dashboard()
     {
-        // 这里要验证， 捂脸
         $data = AccountBusiness::_()->getDashBoardInfo(Helper::AdminId());
         Helper::Show($data, 'index/dashboard');
     }
