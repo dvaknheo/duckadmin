@@ -62,18 +62,6 @@ class RuleController extends Base
         
         return Helper::Success($data);
     }
-    /**
-     * 获取权限
-     * @param Request $request
-     * @return Response
-     */
-    public function permission()
-    {
-        //这里是动态的获取权限。
-        $admin_id = Helper::AdminId();
-        $permissions = RuleBusiness::_()->permission($admin_id);
-        return Helper::Success($permissions);
-    }
     public function insert()
     {
         $data =[];

@@ -91,7 +91,7 @@
 <script src="<?=__res('admin/js/index.js')?>"></script>
 <script>
 <?php // 这段js 存放 动态数据 ?>
-var data_permission = "<?=__url('rule/permission')?>";
+var data_permission = "<?=__url('account/permission')?>";
 var g_admin_id = <?=$current_admin_id?>;
 </script>
 <script>

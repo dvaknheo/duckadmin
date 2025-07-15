@@ -71,7 +71,7 @@
         </form>
 <script>
 <?php // 这段js 存放 动态数据 ?>
-var data_permission = "<?=__url('rule/permission')?>";
+var data_permission = "<?=__url('account/permission')?>";
 var date_rule_tree = "<?=__url('rule/select?format=tree&type=0,1')?>";
 </script>
 <script>

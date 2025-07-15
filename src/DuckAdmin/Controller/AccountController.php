@@ -18,7 +18,7 @@ class AccountController extends Base
      * 不需要鉴权的方法
      * @var string[]
      */
-    protected $noNeedAuth = ['info','dashboard'];
+    protected $noNeedAuth = ['info','dashboard','permission'];
 
     /**
      * 账户设置
@@ -44,6 +44,18 @@ class AccountController extends Base
     {
         $data = AccountBusiness::_()->getDashBoardInfo(Helper::AdminId());
         Helper::Show($data, 'index/dashboard');
+    }
+    /**
+     * 获取权限
+     * @param Request $request
+     * @return Response
+     */
+    public function permission()
+    {
+        //这里是动态的获取权限。
+        $admin_id = Helper::AdminId();
+        $permissions = RuleBusiness::_()->permission($admin_id);
+        return Helper::Success($permissions);
     }
     /**
      * 更新

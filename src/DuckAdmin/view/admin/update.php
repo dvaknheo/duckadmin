@@ -64,7 +64,7 @@
         </form>
 <script>
 <?php // 这段js 存放 动态数据 ?>
-var data_permission = "<?=__url('rule/permission')?>";
+var data_permission = "<?=__url('account/permission')?>";
 var data_role_tree = "<?=__url('role/select?format=tree')?>"
 var data_of_this = "<?=__url('admin/select')?>" + location.search;
 var isSupperAdmin = true; //TODO

@@ -27,7 +27,7 @@
 <script src="<?=__res('admin/js/index.js')?>"></script>
 <script>
 <?php // 这段js 存放 动态数据 ?>
-var data_permission = "<?=__url('rule/permission')?>";
+var data_permission = "<?=__url('account/permission')?>";
 </script>
 <script>
 // 表格渲染
