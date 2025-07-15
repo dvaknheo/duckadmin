@@ -33,7 +33,7 @@ class MainController
                 $url_back = __url(ltrim($url_back,'/'));
                 App::Phase($last_phase);
             }
-            Helper::Show(['url_back'=>$url_back], 'account/login');
+            Helper::Show(['url_back'=>$url_back], 'main/login');
             return;
         }
         Helper::Show302('account/dashboard');
