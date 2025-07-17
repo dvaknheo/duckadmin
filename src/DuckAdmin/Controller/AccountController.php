@@ -7,6 +7,7 @@
 namespace DuckAdmin\Controller;
 
 use DuckAdmin\Business\AccountBusiness;
+use DuckAdmin\Business\RuleBusiness;
 
 /**
  * 系统设置
@@ -43,7 +44,7 @@ class AccountController extends Base
     public function dashboard()
     {
         $data = AccountBusiness::_()->getDashBoardInfo(Helper::AdminId());
-        Helper::Show($data, 'index/dashboard');
+        Helper::Show($data, 'account/dashboard');
     }
     /**
      * 获取权限
