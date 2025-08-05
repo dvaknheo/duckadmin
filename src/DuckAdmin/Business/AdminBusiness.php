@@ -12,8 +12,10 @@ class AdminBusiness extends Base
     public function showAdmins($op_id,$input)
     {
         $child_admin_ids =[];
-        list($is_super, $child_role_ids) = $this->getIsSuperAndChildRoleIds($op_id);
+        
+        $is_super = $this->isSuper($op_id);
         if(!$is_super){
+            $child_role_ids = $this->getMyChildrenRoleIds($op_id);
             $child_admin_ids = AdminRoleModel::_()->adminIdByRoles($child_role_ids);
         }
         [$items,$total] = AdminModel::_()->showAdmins($input,$is_super,$child_admin_ids);
@@ -38,8 +40,9 @@ class AdminBusiness extends Base
         $role_ids = $role_ids ? explode(',', $role_ids) : [];
         Helper::BusinessThrowOn(!$role_ids,'至少选择一个角色组',1);
         
-        list($is_super, $child_role_ids) = $this->getIsSuperAndChildRoleIds($op_id);
+        $is_super = $this->isSuper($op_id);
         if(!$is_super){
+            $child_role_ids = $this->getMyChildrenRoleIds($op_id);
             $ext_roles = array_diff($role_ids, $child_role_ids);
             Helper::BusinessThrowOn(!empty($ext_roles),'只能增加操作者下属的角色'.implode(',',$ext_roles),1);
             
@@ -53,9 +56,10 @@ class AdminBusiness extends Base
     public function updateAdmin($op_id,$input)
     {
         $admin_id = $input['id'];
-        $role_ids = $input['roles']; // 这里还有个改 status ，和 role_ids 无关的
-        $data = AdminModel::_()->inputFilter($input);
+        $role_ids = $input['roles']; // 这里还有个改 status ，和 role_ids 无关的 //我们另用api 得了
         Helper::BusinessThrowOn(!$admin_id,'缺少参数',1);
+        
+        $data = AdminModel::_()->inputFilter($input);
         
         $flag = (isset($data['status']) && $data['status'] == 1 && $admin_id === $op_id);
         Helper::BusinessThrowOn($flag,'不能禁用自己',1);
@@ -68,8 +72,10 @@ class AdminBusiness extends Base
             $exist_role_ids = AdminRoleModel::_()->rolesByAdminId($admin_id);
             
             ////[[[[
-            list($is_super, $child_role_ids) = $this->getIsSuperAndChildRoleIds($op_id);
+            $is_super = $this->isSuper($op_id);
             if(!$is_super){
+                $child_role_ids = $this->getMyChildrenRoleIds($op_id);
+                
                 $exist_role_ids = AdminRoleModel::_()->rolesByAdminId($admin_id);
                 $same_roles = array_intersect($exist_role_ids, $child_role_ids);
                 Helper::BusinessThrowOn(empty($same_roles),'操作者没权限',1);
@@ -91,8 +97,10 @@ class AdminBusiness extends Base
         $ids = (array)$ids;
         Helper::BusinessThrowOn(in_array($op_id, $ids),'不能删除自己',1);
         
-        list($is_super, $child_role_ids) = $this->getIsSuperAndChildRoleIds($op_id);
+        $is_super = $this->isSuper($op_id);
         if(!$is_super){
+            $child_role_ids = $this->getMyChildrenRoleIds($op_id);
+            
             $child_admin_ids = AdminRoleModel::_()->adminIdByRoles($child_role_ids);
             $ext_admin_ids = array_diff($ids, $child_admin_ids);
             Helper::BusinessThrowOn(!empty($ext_admin_ids),'无数据权限',1);
@@ -103,17 +111,19 @@ class AdminBusiness extends Base
         
         return true;
     }
-    protected function getIsSuperAndChildRoleIds($op_id)
+    protected function isSuper($op_id)
     {
-        $with_self = false;
         $op_role_ids = AdminRoleModel::_()->rolesByAdminId($op_id);
         $is_super = RoleModel::_()->hasSuper($op_role_ids);
-        if($is_super){
-            return [true, []];
-        }
+        return $is_super;
+    }
+    protected function getMyChildrenRoleIds($op_id)
+    {
+        $op_role_ids = AdminRoleModel::_()->rolesByAdminId($op_id);
+        $with_self = false;
         $tree = new Tree(RoleModel::_()->getAll());
-        $descendants = $tree->getDescendant($op_role_ids, $with_self);
-        $child_role_ids = array_column($descendants, 'id');    
-        return [false, $child_role_ids];
+        $descendants = $tree->getDescendant($op_role_ids, true);
+        $all_role_ids = array_column($descendants, 'id');    
+        return $all_role_ids;
     }
 }
