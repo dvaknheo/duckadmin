@@ -11,9 +11,10 @@
     "authors": [
         {
             "name": "davknheo",
-            "email": "85811616@qq.com"
+            "email": "davknheo@qq.com"
         }
     ],
+	"version": "1.3.7",
     "autoload": {
         "psr-4": {
             "DuckAdminDemo\\": "demo/",
@@ -25,7 +26,7 @@
         }
     },
     "require": {
-        "php": ">=7.2.0",
+        "php": ">=7.4.0"
         "gregwar/captcha": "^1.1",
         "dvaknheo/workermanhttpd": "1.0.6",
         "dvaknheo/duckphp": "^1.3"
