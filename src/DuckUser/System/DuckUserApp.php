@@ -27,13 +27,9 @@ class DuckUserApp extends DuckPhp
         //'table_prefix' => '',   // 表前缀
         'session_prefix' => 'duckuser_',  // Session 前缀
         
-        'need_install'=>true,
-        'database_driver'=>'sqlite',
-        'cli_command_with_fast_installer' => true,
-        
+        //'need_install'=>true,
         /////////////////
         'home_url' => 'Home/index',
-        
         
     ];
 }

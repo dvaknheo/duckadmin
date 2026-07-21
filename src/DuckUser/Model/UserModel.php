@@ -16,10 +16,6 @@ class UserModel
     {
         $this->table_name = "Users";
     }
-    public function foo()
-    {
-        //
-    }
     public function exsits($name)
     {
         $sql = "select count(*) as c from `'TABLE'` where username=?";
