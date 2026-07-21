@@ -6,7 +6,6 @@
 
 namespace DuckAdmin\Controller;
 
-use DuckPhp\Component\ZCallTrait;
 use DuckPhp\Core\SingletonTrait;
 use DuckPhp\Core\App;
 use DuckPhp\GlobalAdmin\AdminActionInterface;
@@ -18,7 +17,6 @@ use DuckAdmin\Controller\Session;
 class AdminAction implements AdminActionInterface
 {
     use SingletonTrait;
-    use ZCallTrait;
     
     protected $admin = null;
     

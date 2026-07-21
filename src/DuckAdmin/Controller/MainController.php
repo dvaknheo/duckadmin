@@ -29,9 +29,9 @@ class MainController
             $url_back = $url_back === '/' ? '': $url_back;
             $url_back = $url_back?$url_back:__url('account/dashboard');
             if($url_back){
-                $last_phase = App::Phase(App::Root()->getOverridingClass());
-                $url_back = __url(ltrim($url_back,'/'));
-                App::Phase($last_phase);
+                //$last_phase = App::Phase(App::Root()->getOverridingClass());
+                //$url_back = __url(ltrim($url_back,'/'));
+                //App::Phase($last_phase);
             }
             Helper::Show(['url_back'=>$url_back], 'main/login');
             return;
