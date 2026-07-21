@@ -9,7 +9,7 @@ use DuckPhp\GlobalUser\UserActionInterface;
 
 use DuckUser\Business\UserBusiness;
 
-class UserAction extends Base implements UserActionInterface
+class UserAction extends Base
 {
     protected $user = null;
     public function __construct()
@@ -48,10 +48,7 @@ class UserAction extends Base implements UserActionInterface
             return '';
         }
     }
-    public function service()
-    {
-        return UserBusiness::_Z();
-    }
+
     public function login(array $post)
     {
         $user = UserBusiness::_()->login($post);
@@ -67,6 +64,7 @@ class UserAction extends Base implements UserActionInterface
         Session::_()->setCurrentUser($user);
     }
     ///////////////
+
     public function urlForLogin($url_back = null, $ext = null):string
     {
         return __url($url_back? "login?b=".__url($url_back):"login");
@@ -87,5 +85,4 @@ class UserAction extends Base implements UserActionInterface
     {
         return UserBusiness::_()->batchGetUsernames($ids);
     }
-    
 }

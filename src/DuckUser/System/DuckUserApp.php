@@ -7,6 +7,7 @@ namespace DuckUser\System;
 
 use DuckPhp\DuckPhp;
 use DuckUser\Controller\ExceptionReporter;
+use DuckUser\Controller\GlobalUserAction;
 
 class DuckUserApp extends DuckPhp
 {
@@ -14,7 +15,7 @@ class DuckUserApp extends DuckPhp
     public $options = [
         'path' => __DIR__ . '/../',
         'namespace' => 'DuckUser',
-        'class_user' => User::class,
+        'class_user' => GlobalUserAction::class,
         
         'exception_reporter' => ExceptionReporter::class,
         'exception_for_project'  => ProjectException::class,
