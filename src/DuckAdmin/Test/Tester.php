@@ -4,14 +4,14 @@ namespace DuckAdmin\Test;
 use DuckPhp\Foundation\Helper;
 use DuckPhp\Component\DbManager;
 use DuckPhp\Core\PhaseContainer;
-use DuckPhp\Foundation\SimpleSingletonTrait;
+use DuckPhp\Foundation\Trait;
 use DuckAdmin\System\DuckAdminApp;
 use Demo\Tester\MyCoverageBridge;
 
 
 class Tester
 {
-    use SimpleSingletonTrait;
+    use SingletonTrait;
 
     public function beginTest()
     {

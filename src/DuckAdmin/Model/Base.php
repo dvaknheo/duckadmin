@@ -7,12 +7,12 @@
 namespace DuckAdmin\Model;
 
 use DuckPhp\Core\App;
-use DuckPhp\Foundation\SimpleModelTrait;
+use DuckPhp\Foundation\ModelTrait;
 use DuckPhp\Helper\ModelHelperTrait;
 
 class Base
 {
-    use SimpleModelTrait;
+    use ModelTrait;
     use ModelHelperTrait;
     
     /**

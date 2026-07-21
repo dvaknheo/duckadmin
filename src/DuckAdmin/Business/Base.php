@@ -5,13 +5,13 @@
  */
 namespace DuckAdmin\Business;
 
-use DuckPhp\Foundation\SimpleBusinessTrait;
+use DuckPhp\Foundation\BusinessTrait;
 /**
  * 业务基本类，业务程序员的公用代码放在这里
  */
 class Base
 {
-    use SimpleBusinessTrait;
+    use BusinessTrait;
     
     public function __construct()
     {

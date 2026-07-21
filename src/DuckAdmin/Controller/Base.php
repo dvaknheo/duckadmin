@@ -5,13 +5,13 @@
  */
 
 namespace DuckAdmin\Controller;
-use DuckPhp\Foundation\SimpleControllerTrait;
+use DuckPhp\Foundation\ControllerTrait;
 use DuckPhp\GlobalAdmin\AdminControllerInterface;
 use DuckAdmin\Business\RuleBusiness;
 
 class Base implements AdminControllerInterface
 {
-    use SimpleControllerTrait;
+    use ControllerTrait;
     /**
      * 需要登录无需鉴权的方法
      * @var array
