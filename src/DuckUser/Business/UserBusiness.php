@@ -6,7 +6,7 @@
 namespace DuckUser\Business;
 
 use DuckPhp\Foundation\Business\Helper;
-use DuckPhp\Foundation\SimpleBusinessTrait;
+use DuckPhp\Foundation\BusinessTrait;
 use DuckUser\Model\UserModel;
 
 /**
@@ -15,7 +15,7 @@ use DuckUser\Model\UserModel;
  */
 class UserBusiness
 {
-    use SimpleBusinessTrait;
+    use BusinessTrait;
     
     public function register($form)
     {
@@ -36,7 +36,7 @@ class UserBusiness
         
         $user = UserModel::_()->getUserById($uid);
         $user = UserModel::_()->unloadPassword($user);
-        Helper::FireEvent([self::class, __METHOD__],$user);
+        //Helper::FireEvent([self::class, __METHOD__],$user);
         return $user;
     }
     public function login($form)
@@ -51,7 +51,7 @@ class UserBusiness
         Helper::BusinessThrowOn(!$flag, "密码错误");
         
         $user = UserModel::_()->unloadPassword($user);
-        Helper::FireEvent([self::class, __METHOD__],$user);
+        //Helper::FireEvent([self::class, __METHOD__],$user);
         return $user;
     }
     public function changePassword($uid, $password, $new_password)

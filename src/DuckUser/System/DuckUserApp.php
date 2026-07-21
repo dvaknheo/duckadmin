@@ -22,6 +22,8 @@ class DuckUserApp extends DuckPhp
         'exception_for_controller'  => ControllerException::class,
         'exception_reporter' =>  ExceptionReporter::class,
         
+        'controller_method_prefix' => 'action_',                    // method prefix for controllers
+
         //'table_prefix' => '',   // 表前缀
         'session_prefix' => 'duckuser_',  // Session 前缀
         

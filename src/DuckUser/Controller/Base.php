@@ -5,11 +5,11 @@
  */
 
 namespace DuckUser\Controller;
-use DuckPhp\Foundation\SimpleControllerTrait;
+use DuckPhp\Foundation\ControllerTrait;
 
 class Base
 {
-    use SimpleControllerTrait;
+    use ControllerTrait;
     public function __construct()
     {
         $this->initController(static::class);

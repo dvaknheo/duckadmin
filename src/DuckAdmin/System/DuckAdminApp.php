@@ -58,11 +58,7 @@ class DuckAdminApp extends DuckPhp
             __CLASS__, 'OnInstall',
         ],
     ];
-    protected function onPrepare()
-    {
-        parent::onPrepare();
-    }
-    protected function onInited()
+    protected function onInited(): void
     {
         parent::onInited();
     }
