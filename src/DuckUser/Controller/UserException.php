@@ -6,10 +6,10 @@
 
 namespace DuckUser\Controller;
 
-use DuckPhp\Foundation\SimpleExceptionTrait;
+use DuckPhp\Foundation\ExceptionTrait;
 use DuckUser\System\ProjectException;
 
 class UserException extends ProjectException
 {
-    use SimpleExceptionTrait;
+    use ExceptionTrait;
 }
