@@ -1,12 +1,4 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <title>浏览页面</title>
-        <link rel="stylesheet" href="<?=__res('component/pear/css/pear.css')?>" />
-        <link rel="stylesheet" href="<?=__res('admin/css/reset.css')?>" />
-    </head>
-    <body class="pear-container">   
+<?=$data_of_header ?> 
         <!-- 数据表格 -->
         <div class="layui-card">
             <div class="layui-card-body">
@@ -56,5 +48,4 @@ foreach ($users as $v) {
             </div>
         </div>
         <div>分页:<?=$pager?></div>
-    </body>
-</html>
+<?=$data_of_footer ?> 

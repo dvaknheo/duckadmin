@@ -1,0 +1,1 @@
+<?= $footer_from_global_admin ?? '' ?>
