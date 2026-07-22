@@ -13,7 +13,6 @@ class Helper
     public function goHome()
     {
         Helper::Show302(UserAction::_()->urlForHome());
-        return;
     }
     public function csrfToken()
     {

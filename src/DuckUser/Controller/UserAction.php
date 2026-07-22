@@ -6,6 +6,7 @@
 namespace DuckUser\Controller;
 
 use DuckPhp\GlobalUser\UserActionInterface;
+use DuckPhp\Core\App;
 
 use DuckUser\Business\UserBusiness;
 
@@ -75,7 +76,7 @@ class UserAction extends Base
     }
     public function urlForHome($url_back = null, $ext = null):string
     {
-        return __url('Home/index');
+        return __url(App::_()->options['home_url']);
     }
     public function urlForRegist($url_back = null, $ext = null):string
     {
