@@ -5,12 +5,12 @@
  */
 namespace DuckUserManager\Business;
 
-use DuckPhp\Foundation\SimpleBusinessTrait;
+use DuckPhp\Foundation\BusinessTrait;
 use DuckUserManager\Model\UserModel;
 
 class UserBusiness
 {
-    use SimpleBusinessTrait;
+    use BusinessTrait;
     
     public function getUserList($conditions=[],$page = 1, $page_size = 10)
     {

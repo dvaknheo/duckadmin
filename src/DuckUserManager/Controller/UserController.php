@@ -2,7 +2,7 @@
 namespace DuckUserManager\Controller;
 
 use DuckPhp\Foundation\Helper;
-use DuckPhp\Foundation\SimpleControllerTrait;
+use DuckPhp\Foundation\ControllerTrait;
 use DuckPhp\GlobalAdmin\AdminControllerInterface;
 use DuckUserManager\Business\UserBusiness;
 
@@ -11,7 +11,7 @@ use DuckUserManager\Business\UserBusiness;
  */
 class UserController implements AdminControllerInterface
 {
-    use SimpleControllerTrait;
+    use ControllerTrait;
 
     public function __construct()
     {
@@ -24,7 +24,7 @@ class UserController implements AdminControllerInterface
      * 浏览
      * @return Response
      */
-    public function action_index()
+    public function index()
     {
         $all = Helper::GET('all',false);
         [$total, $list]= UserBusiness::_()->getUserList(['all'=>$all],Helper::PageNo());
@@ -43,7 +43,7 @@ class UserController implements AdminControllerInterface
         }
         
         $data['users'] =$users;
-        $data['pager'] = Helper::PageHtml($total);
+        $data['pager'] = Helper::PageHtml((int)$total);
         $data['is_all'] =$all?true:false;
         Helper::Show($data,'user/index');
     }
@@ -53,7 +53,7 @@ class UserController implements AdminControllerInterface
      * @param 
      * @return Response
      */
-    public function action_delete()
+    public function delete()
     {
         $hash = Helper::Get('hash');
         $id = Helper::Get('id');
@@ -68,7 +68,7 @@ class UserController implements AdminControllerInterface
      * @param 
      * @return Response
      */
-    public function action_undelete()
+    public function undelete()
     {
         $hash = Helper::Get('hash');
         $id = Helper::Get('id');
