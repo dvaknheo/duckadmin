@@ -27,7 +27,7 @@ class UserAction extends Base
         $this->user = $user;
         return $this->user;
     }
-    public function id($check_login = true):int
+    public function id($check_login = true)
     {
         if($check_login){
             return (int)$this->current()['id'];
@@ -65,7 +65,15 @@ class UserAction extends Base
         Session::_()->setCurrentUser($user);
     }
     ///////////////
-
+    public function batchGetUsernames($ids)
+    {
+        return UserBusiness::_()->batchGetUsernames($ids);
+    }
+    
+    public function urlForRegist($url_back = null, $ext = null):string
+    {
+        return __url('register');
+    }
     public function urlForLogin($url_back = null, $ext = null):string
     {
         return __url($url_back? "login?b=".__url($url_back):"login");
@@ -77,13 +85,5 @@ class UserAction extends Base
     public function urlForHome($url_back = null, $ext = null):string
     {
         return __url(App::_()->options['home_url']);
-    }
-    public function urlForRegist($url_back = null, $ext = null):string
-    {
-        return __url('register');
-    }
-    public function batchGetUsernames($ids)
-    {
-        return UserBusiness::_()->batchGetUsernames($ids);
     }
 }

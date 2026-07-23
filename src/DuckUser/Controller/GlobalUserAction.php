@@ -5,19 +5,62 @@
  */
 namespace DuckUser\Controller;
 
+use DuckPhp\GlobalUser\GlobalUserTrait;
 use DuckPhp\GlobalUser\UserActionInterface;
 
-use DuckUser\Business\UserBusiness;
+use DuckUser\Business\GlobalUserBusiness;
 
-class GlobalUserAction extends UserAction implements UserActionInterface
+use DuckUser\Controller\UserAction;
+
+class GlobalUserAction implements UserActionInterface
 {
-    public function service()
+    use  GlobalUserTrait;
+    public function localService()
     {
-        return UserBusiness::_Z();
+        return GlobalUserBusiness::_();
     }
-    public function getDataForView()
+    //
+    public function getHeaderFooterData(array $input): array
     {
-        //
+        return [
+            'header' => '',
+            'footer' => '',
+        ];
+    }
+    public function id($check_login = true)
+    {
+        return UserAction::_()->id($check_login);
+    }
+    public function name($check_login = true):string
+    {
+        return UserAction::_()->name($check_login);
+    }
+
+    public function login(array $post): array
+    {
+        $user = UserBusiness::_()->login($post);
+        Session::_()->setCurrentUser($user);
+        return $user;
+    }
+    public function logout(): void
+    {
+        Session::_()->unsetCurrentUser();
+    }
+    public function regist(array $post): array
+    {
+        $user = UserBusiness::_()->register($post);
+        Session::_()->setCurrentUser($user);
+        return $user;
+    }
+    ///////////////
+    public function batchGetUsernames($ids)
+    {
+        return UserBusiness::_()->batchGetUsernames($ids);
+    }
+    
+    public function urlForRegist($url_back = null, $ext = null):string
+    {
+        return __url('register');
     }
     public function urlForLogin($url_back = null, $ext = null):string
     {
@@ -29,14 +72,7 @@ class GlobalUserAction extends UserAction implements UserActionInterface
     }
     public function urlForHome($url_back = null, $ext = null):string
     {
-        return __url('Home/index');
+        return __url(App::_()->options['home_url']);
     }
-    public function urlForRegist($url_back = null, $ext = null):string
-    {
-        return __url('register');
-    }
-    public function batchGetUsernames($ids)
-    {
-        return UserBusiness::_()->batchGetUsernames($ids);
-    }
+    
 }
