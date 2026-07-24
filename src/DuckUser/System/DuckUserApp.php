@@ -6,8 +6,9 @@
 namespace DuckUser\System;
 
 use DuckPhp\DuckPhp;
+use DuckPhp\GlobalUser\GlobalUser;
 use DuckUser\Controller\ExceptionReporter;
-use DuckUser\Controller\GlobalUserAction;
+use DuckUser\Controller\UserAction;
 
 class DuckUserApp extends DuckPhp
 {
@@ -15,7 +16,7 @@ class DuckUserApp extends DuckPhp
     public $options = [
         'path' => __DIR__ . '/../',
         'namespace' => 'DuckUser',
-        'class_user' => GlobalUserAction::class,
+        'class_user' => GlobalUser::class,
         
         'exception_reporter' => ExceptionReporter::class,
         'exception_for_project'  => ProjectException::class,
@@ -30,6 +31,16 @@ class DuckUserApp extends DuckPhp
         
         //'need_install'=>true,
         /////////////////
+        'user_callback_for_id' =>       [UserAction::class,'id'],
+        'user_callback_for_name' =>     [UserAction::class,'name'],
+        'user_callback_for_data' =>     [UserAction::class,'data'],
+        'user_callback_for_service' =>  [UserAction::class,'service'],
+        'user_url_home' => 'Home/index',
+        'user_url_regist' => 'register',
+        'user_url_login' => 'login',
+        'user_url_logout' => 'logout',
+        
+        ///////////////////
         'home_url' => 'Home/index',
         
     ];

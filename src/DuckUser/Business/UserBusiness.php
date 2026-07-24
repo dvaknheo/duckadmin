@@ -16,6 +16,15 @@ use DuckUser\Model\UserModel;
 class UserBusiness
 {
     use BusinessTrait;
+
+    public function log(int $user_id, string $string, ?string $type = null)
+    {
+        return;
+    }
+    public function checkAccess(int $id, string $class, string $method, ?string $url = null)
+    {
+        return;
+    }
     
     public function register($form)
     {

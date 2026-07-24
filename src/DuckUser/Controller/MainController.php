@@ -16,8 +16,8 @@ class MainController extends Base
     }
     public function action_index()
     {
-        $url_reg = UserAction::_()->urlForRegist();
-        $url_login = UserAction::_()->urlForLogin();
+        $url_reg = Helper::User()->urlForRegist();
+        $url_login = Helper::User()->urlForLogin();
         
         Helper::Show(get_defined_vars(), 'main');
     }
@@ -27,7 +27,7 @@ class MainController extends Base
         
         if (!$post) {
             $csrf_field = Helper::_()->csrfField();
-            $url_register = UserAction::_()->urlForRegist();
+            $url_register = Helper::User()->urlForRegist();
             
             Helper::Show(get_defined_vars(), 'register');
             return;
@@ -48,7 +48,7 @@ class MainController extends Base
         $post = Helper::POST();
         if (!$post) {
             $csrf_field = Helper::_()->csrfField();
-            $url_login = UserAction::_()->urlForLogin();
+            $url_login = Helper::User()->urlForLogin();
             $back_url = Helper::GET('b','');
             Helper::Show(get_defined_vars(),'login');
             return;

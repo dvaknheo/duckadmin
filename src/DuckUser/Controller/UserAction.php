@@ -49,7 +49,14 @@ class UserAction extends Base
             return '';
         }
     }
-
+    public function data(array $post): array
+    {
+        return Session::_()->getCurrentUser();
+    }
+    public function service()
+    {
+        return UserBusiness::_();
+    }
     public function login(array $post)
     {
         $user = UserBusiness::_()->login($post);
@@ -66,4 +73,8 @@ class UserAction extends Base
         return $user;
     }
     ///////////////
+    public function urlForHome()
+    {
+        return App::_()->options['home_url'];
+    }
 }
