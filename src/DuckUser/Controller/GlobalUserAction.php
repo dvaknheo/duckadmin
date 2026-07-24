@@ -9,7 +9,6 @@ use DuckPhp\GlobalUser\GlobalUserTrait;
 use DuckPhp\GlobalUser\UserActionInterface;
 
 use DuckUser\Business\GlobalUserBusiness;
-
 use DuckUser\Controller\UserAction;
 
 class GlobalUserAction implements UserActionInterface
@@ -35,29 +34,25 @@ class GlobalUserAction implements UserActionInterface
     {
         return UserAction::_()->name($check_login);
     }
-
+    public function regist(array $post): array
+    {
+        $ret = UserAction::_()->regist($post);
+        $this->fire('regist',$ret);
+        return $ret;
+    }
     public function login(array $post): array
     {
-        $user = UserBusiness::_()->login($post);
-        Session::_()->setCurrentUser($user);
-        return $user;
+        $ret = UserAction::_()->login($post);
+        $this->fire('login',$ret);
+        return $ret;
     }
     public function logout(): void
     {
-        Session::_()->unsetCurrentUser();
-    }
-    public function regist(array $post): array
-    {
-        $user = UserBusiness::_()->register($post);
-        Session::_()->setCurrentUser($user);
-        return $user;
-    }
-    ///////////////
-    public function batchGetUsernames($ids)
-    {
-        return UserBusiness::_()->batchGetUsernames($ids);
+        UserAction::_()->logout();
+        $this->fire('logout',$ret);
     }
     
+    ///////////////   
     public function urlForRegist($url_back = null, $ext = null):string
     {
         return __url('register');

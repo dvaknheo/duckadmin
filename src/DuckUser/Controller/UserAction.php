@@ -63,27 +63,7 @@ class UserAction extends Base
     {
         $user = UserBusiness::_()->register($post);
         Session::_()->setCurrentUser($user);
+        return $user;
     }
     ///////////////
-    public function batchGetUsernames($ids)
-    {
-        return UserBusiness::_()->batchGetUsernames($ids);
-    }
-    
-    public function urlForRegist($url_back = null, $ext = null):string
-    {
-        return __url('register');
-    }
-    public function urlForLogin($url_back = null, $ext = null):string
-    {
-        return __url($url_back? "login?b=".__url($url_back):"login");
-    }
-    public function urlForLogout($url_back = null, $ext = null):string
-    {
-        return __url('logout');
-    }
-    public function urlForHome($url_back = null, $ext = null):string
-    {
-        return __url(App::_()->options['home_url']);
-    }
 }

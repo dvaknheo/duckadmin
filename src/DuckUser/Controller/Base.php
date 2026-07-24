@@ -14,6 +14,12 @@ class Base
     {
         $this->initController(static::class);
     }
+    public function mergeViewData($data)
+    {
+        $user_name = Helper::UserName();
+        Helper::setViewHeadFoot('Home/inc-head','Home/inc-foot');
+        Helper::assignViewData();
+    }
     public function initController($class)
     {
         
@@ -22,8 +28,6 @@ class Base
         $csrf_token = Helper::_()->csrfToken();
         $csrf_field = Helper::_()->csrfField();
         
-        $user_name = Helper::UserName();
-        Helper::setViewHeadFoot('Home/inc-head','Home/inc-foot');
-        Helper::assignViewData(get_defined_vars());
+
     }
 }
