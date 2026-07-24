@@ -47,10 +47,7 @@ class UserController implements AdminControllerInterface
         $data['users'] =$users;
         $data['pager'] = Helper::PageHtml((int)$total);
         $data['is_all'] =$all?true:false;
-        $ext_data = Helper::Admin()->getHeaderFooterData([]);
-        $data['header_from_global_admin'] = $ext_data['header'];
-        $data['footer_from_global_admin'] = $ext_data['footer'];
-        
+        $data = Helper::Admin()->mergeViewData($data);
         Helper::setViewHeadFoot('user/header', 'user/footer');
         Helper::Show($data,'user/index');
     }

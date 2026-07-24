@@ -1,1 +1,1 @@
-<?= $footer_from_global_admin ?? '' ?>
+<?= $__view_data['footer']?? '' ?>

@@ -1,4 +1,3 @@
-<?=$data_of_header ?> 
         <!-- 数据表格 -->
         <div class="layui-card">
             <div class="layui-card-body">
@@ -48,4 +47,3 @@ foreach ($users as $v) {
             </div>
         </div>
         <div>分页:<?=$pager?></div>
-<?=$data_of_footer ?> 
