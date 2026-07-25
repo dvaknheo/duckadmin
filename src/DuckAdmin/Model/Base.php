@@ -119,7 +119,7 @@ class Base
     }
     protected function getAllowColumns()
     {
-        if(App::Current()->options['database_driver'] === 'sqlite'){
+        if(App::_()->options['database_driver'] === 'sqlite'){
             $sql = "pragma table_info(".$this->table().")";
             $allow_column = self::Db()->fetchAll($sql);
             $allow_column = array_column($allow_column, 'name', 'name');
