@@ -10,6 +10,7 @@ use DuckAdmin\Controller\ExceptionReporter;
 use DuckPhp\Core\Console;
 use DuckPhp\Core\Route;
 use DuckPhp\DuckPhp;
+use DuckPhp\GlobalAdmin\GlobalAdmin;
 
 /**
  * 入口类
@@ -30,6 +31,7 @@ class DuckAdminApp extends DuckPhp
         'exception_for_controller'  => ControllerException::class,
         'exception_reporter' =>  ExceptionReporter::class,
         
+        //'class_admin'=> GlobalAdmin::class,
         'class_admin'=> Admin::class,
         
         //'database_driver'=>'mysql',

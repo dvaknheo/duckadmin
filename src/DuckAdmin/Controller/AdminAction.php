@@ -14,7 +14,7 @@ use DuckAdmin\Business\AccountBusiness;
 use DuckAdmin\Business\AdminService;
 use DuckAdmin\Controller\Session;
 
-class AdminAction implements AdminActionInterface
+class AdminAction
 {
     use SingletonTrait;
     
@@ -152,7 +152,7 @@ EOF;
     //@override
     public function service()
     {
-        return AdminService::_Z();
+        return AdminService::_();
     }
     //@override
     public function login(array $post)
