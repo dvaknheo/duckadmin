@@ -100,8 +100,8 @@ class FinderForAdminController extends ComponentBase
             break;
         }
         if(!$path){
-            $namespace = App::Current()->options['namespace'];
-            $base_app = App::Current()->getOverridingClass();
+            $namespace = App::_()->options['namespace'];
+            $base_app = App::_()->getThisClassName();
             if(substr($prefix,0,strlen($namespace.'\\'))===$namespace.'\\'){
                 $reflect = new \ReflectionClass($base_app);
                 $filename =$reflect->getFileName();
