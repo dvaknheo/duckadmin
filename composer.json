@@ -17,10 +17,9 @@
 	"version": "1.3.7",
     "autoload": {
         "psr-4": {
-            "DuckAdminDemo\\": "demo/",
+            "DuckAdmin\\Admin\\": "src/Admin/",
+            "DuckAdmin\\User\\": "src/User/",
             "DuckAdmin\\": "src/DuckAdmin",
-            "DuckUserManager\\": "src/DuckUserManager",
-            "DuckUser\\": "src/DuckUser",
             "SimpleBlog\\": "src/SimpleBlog",
             "DuckCoverage\\": "src/DuckCoverage"
         }
