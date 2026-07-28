@@ -1,5 +1,5 @@
 <?php
-namespace DuckUserManager\Test;
+namespace DuckAdmin\User\Test;
 
 use DuckPhp\Foundation\SimpleSingletonTrait;
 

@@ -3,10 +3,10 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace DuckUserManager\Business;
+namespace DuckAdmin\User\Business;
 
 use DuckPhp\Foundation\BusinessTrait;
-use DuckUserManager\Model\UserModel;
+use DuckAdmin\User\Model\UserModel;
 
 class UserBusiness
 {

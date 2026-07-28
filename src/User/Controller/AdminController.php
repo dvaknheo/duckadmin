@@ -1,10 +1,10 @@
 <?php
-namespace DuckUserManager\Controller;
+namespace DuckAdmin\User\Controller;
 
 use DuckPhp\Foundation\Helper;
 use DuckPhp\Foundation\ControllerTrait;
 use DuckPhp\GlobalAdmin\AdminControllerInterface;
-use DuckUserManager\Business\UserBusiness;
+use DuckAdmin\User\Business\UserBusiness;
 
 /**
  * 管理员列表 
