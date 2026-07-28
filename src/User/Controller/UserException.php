@@ -4,10 +4,10 @@
  * From this time, you never be alone~
  */
 
-namespace DuckUser\Controller;
+namespace DuckAdmin\User\Controller;
 
 use DuckPhp\Foundation\ExceptionTrait;
-use DuckUser\System\ProjectException;
+use DuckAdmin\User\System\ProjectException;
 
 class UserException extends ProjectException
 {

@@ -3,7 +3,7 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace DuckUser\Model;
+namespace DuckAdmin\User\Model;
 
 use DuckPhp\Foundation\ModelTrait;
 use DuckPhp\Foundation\Model\Helper;

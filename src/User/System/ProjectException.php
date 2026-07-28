@@ -3,7 +3,7 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace DuckUser\System;
+namespace DuckAdmin\User\System;
 
 use DuckPhp\Foundation\ExceptionTrait;
 

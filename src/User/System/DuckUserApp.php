@@ -3,12 +3,12 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace DuckUser\System;
+namespace DuckAdmin\User\System;
 
 use DuckPhp\DuckPhp;
 use DuckPhp\GlobalUser\GlobalUser;
-use DuckUser\Controller\ExceptionReporter;
-use DuckUser\Controller\UserAction;
+use DuckAdmin\User\Controller\ExceptionReporter;
+use DuckAdmin\User\Controller\UserAction;
 
 class DuckUserApp extends DuckPhp
 {

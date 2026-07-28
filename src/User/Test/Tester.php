@@ -1,12 +1,12 @@
 <?php
-namespace DuckUser\Test;
+namespace DuckAdmin\User\Test;
 
 use DuckPhp\Foundation\SimpleSingletonTrait;
 use DuckPhp\Core\CoreHelper;
 use DuckPhp\Component\DbManager;
-use DuckUser\System\DuckUserApp;
-use DuckUser\Model\UserModel;
-use DuckUser\Controller\UserAction;
+use DuckAdmin\User\System\DuckUserApp;
+use DuckAdmin\User\Model\UserModel;
+use DuckAdmin\User\Controller\UserAction;
 
 class Tester
 {

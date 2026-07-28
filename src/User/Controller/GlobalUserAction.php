@@ -3,13 +3,13 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace DuckUser\Controller;
+namespace DuckAdmin\User\Controller;
 
 use DuckPhp\GlobalUser\GlobalUserTrait;
 use DuckPhp\GlobalUser\UserActionInterface;
 
-use DuckUser\Business\GlobalUserBusiness;
-use DuckUser\Controller\UserAction;
+use DuckAdmin\User\Business\GlobalUserBusiness;
+use DuckAdmin\User\Controller\UserAction;
 
 class GlobalUserAction implements UserActionInterface
 {

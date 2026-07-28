@@ -3,9 +3,9 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace DuckUser\Controller;
+namespace DuckAdmin\User\Controller;
 
-use DuckUser\Business\UserBusiness;
+use DuckAdmin\User\Business\UserBusiness;
 use DuckPhp\GlobalUser\UserControllerInterface;
 class HomeController extends Base implements UserControllerInterface
 {

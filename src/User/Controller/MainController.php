@@ -3,10 +3,10 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace DuckUser\Controller;
+namespace DuckAdmin\User\Controller;
 
 use DuckPhp\Core\App;
-use DuckUser\Business\UserBusiness;
+use DuckAdmin\User\Business\UserBusiness;
 
 class MainController extends Base
 {
