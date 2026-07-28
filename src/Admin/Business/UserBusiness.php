@@ -1,0 +1,80 @@
+<?php declare(strict_types=1);
+/**
+ * DuckPhp Admin System - User Business
+ */
+namespace DuckAdmin\Admin\Business;
+
+use DuckAdmin\Admin\Model\AdminUserModel;
+use DuckAdmin\Admin\Model\RoleModel;
+
+class UserBusiness extends Base
+{
+    /**
+     * 获取用户列表
+     */
+    public function getList(int $page, int $pageSize, string $search = ''): array
+    {
+        return AdminUserModel::_()->getPageList($page, $pageSize, $search);
+    }
+    
+    /**
+     * 创建用户
+     */
+    public function create(array $input, array $roleIds = []): array
+    {
+        // 验证
+        if (empty($input['username'])) {
+            return ['success' => false, 'message' => '用户名不能为空'];
+        }
+        if (empty($input['password'])) {
+            return ['success' => false, 'message' => '密码不能为空'];
+        }
+        if (strlen($input['password']) < 6) {
+            return ['success' => false, 'message' => '密码长度至少6位'];
+        }
+        
+        // 检查用户名唯一性
+        $existing = AdminUserModel::_()->getByUsername($input['username']);
+        if ($existing) {
+            return ['success' => false, 'message' => '用户名已存在'];
+        }
+        
+        AdminUserModel::_()->create($input);
+        $userId = AdminUserModel::_()->lastInsertId();
+        
+        // 分配角色
+        if (!empty($roleIds)) {
+            RoleModel::_()->setUserRoles((int)$userId, $roleIds);
+        }
+        
+        return ['success' => true, 'message' => '创建成功'];
+    }
+    
+    /**
+     * 更新用户
+     */
+    public function update(int $id, array $input, array $roleIds = []): array
+    {
+        // 验证
+        if (empty($input['username'])) {
+            return ['success' => false, 'message' => '用户名不能为空'];
+        }
+        
+        AdminUserModel::_()->edit($id, $input);
+        
+        // 更新角色
+        if (!empty($roleIds)) {
+            RoleModel::_()->setUserRoles($id, $roleIds);
+        }
+        
+        return ['success' => true, 'message' => '更新成功'];
+    }
+    
+    /**
+     * 删除用户
+     */
+    public function delete(int $id): bool
+    {
+        return AdminUserModel::_()->delete($id);
+    }
+}

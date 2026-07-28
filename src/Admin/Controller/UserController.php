@@ -1,0 +1,128 @@
+<?php declare(strict_types=1);
+/**
+ * DuckPhp Admin System - User Controller
+ */
+namespace DuckAdmin\Admin\Controller;
+
+use DuckAdmin\Admin\Business\UserBusiness;
+
+class UserController extends Base
+{
+    /**
+     * 用户列表
+     */
+    public function index()
+    {
+        $page = max(1, (int)(Helper::GET('page', '1')));
+        $search = Helper::GET('search', '');
+        $pageSize = 15;
+        
+        $data = UserBusiness::_()->getList($page, $pageSize, $search);
+        $data['page'] = $page;
+        $data['pageSize'] = $pageSize;
+        $data['search'] = $search;
+        $data['title'] = '用户管理';
+        $data['current_route'] = 'user';
+        
+        $this->render('admin/user_list', $data);
+    }
+    
+    /**
+     * 创建用户表单
+     */
+    public function create()
+    {
+        $data['title'] = '创建用户';
+        $data['current_route'] = 'user';
+        $data['roles'] = \AdminSystem\Model\RoleModel::_()->getAll();
+        $this->render('admin/user_form', $data);
+    }
+    
+    /**
+     * 保存新用户
+     */
+    public function save()
+    {
+        $input = [
+            'username' => Helper::POST('username', ''),
+            'password' => Helper::POST('password', ''),
+            'realname' => Helper::POST('realname', ''),
+            'email' => Helper::POST('email', ''),
+            'status' => (int)Helper::POST('status', '1'),
+        ];
+        $roleIds = Helper::POST('role_ids', []);
+        $roleIds = is_array($roleIds) ? $roleIds : [];
+        
+        $result = UserBusiness::_()->create($input, $roleIds);
+        if ($result['success']) {
+            Helper::Show302(__url('user/index'));
+        } else {
+            $data['error'] = $result['message'];
+            $data['title'] = '创建用户';
+            $data['current_route'] = 'user';
+            $data['roles'] = \AdminSystem\Model\RoleModel::_()->getAll();
+            $data['input'] = $input;
+            $this->render('admin/user_form', $data);
+        }
+    }
+    
+    /**
+     * 编辑用户表单
+     */
+    public function edit()
+    {
+        $id = (int)Helper::GET('id', '0');
+        $user = \AdminSystem\Model\AdminUserModel::_()->getById($id);
+        if (!$user) {
+            Helper::Show302(__url('user/index'));
+            return;
+        }
+        
+        $data['user'] = $user;
+        $data['title'] = '编辑用户';
+        $data['current_route'] = 'user';
+        $data['roles'] = \AdminSystem\Model\RoleModel::_()->getAll();
+        $data['user_role_ids'] = \AdminSystem\Model\RoleModel::_()->getUserRoleIds($id);
+        $this->render('admin/user_form', $data);
+    }
+    
+    /**
+     * 更新用户
+     */
+    public function update()
+    {
+        $id = (int)Helper::POST('id', '0');
+        $input = [
+            'username' => Helper::POST('username', ''),
+            'password' => Helper::POST('password', ''),
+            'realname' => Helper::POST('realname', ''),
+            'email' => Helper::POST('email', ''),
+            'status' => (int)Helper::POST('status', '1'),
+        ];
+        $roleIds = Helper::POST('role_ids', []);
+        $roleIds = is_array($roleIds) ? $roleIds : [];
+        
+        $result = UserBusiness::_()->update($id, $input, $roleIds);
+        if ($result['success']) {
+            Helper::Show302(__url('user/index'));
+        } else {
+            $data['error'] = $result['message'];
+            $data['user'] = $input + ['id' => $id];
+            $data['title'] = '编辑用户';
+            $data['current_route'] = 'user';
+            $data['roles'] = \AdminSystem\Model\RoleModel::_()->getAll();
+            $data['user_role_ids'] = $roleIds;
+            $this->render('admin/user_form', $data);
+        }
+    }
+    
+    /**
+     * 删除用户
+     */
+    public function delete()
+    {
+        $id = (int)Helper::GET('id', '0');
+        UserBusiness::_()->delete($id);
+        Helper::Show302(__url('user/index'));
+    }
+}

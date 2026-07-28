@@ -1,0 +1,9 @@
+<?php declare(strict_types=1);
+/**
+ * DuckPhp Admin System
+ */
+namespace DuckAdmin\Admin\System;
+
+class ProjectException extends \Exception
+{
+}
