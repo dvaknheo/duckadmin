@@ -14,14 +14,14 @@ class MainController extends Base
     {
         // this override for skip auth
     }
-    public function action_index()
+    public function index()
     {
         $url_reg = Helper::User()->urlForRegist();
         $url_login = Helper::User()->urlForLogin();
         
         Helper::Show(get_defined_vars(), 'main');
     }
-    public function action_register()
+    public function register()
     {
         $post = Helper::POST();
         
@@ -43,7 +43,7 @@ class MainController extends Base
         }
 
     }
-    public function action_login()
+    public function login()
     {
         $post = Helper::POST();
         if (!$post) {
@@ -72,7 +72,7 @@ class MainController extends Base
             return;
         }
     }
-    public function action_logout()
+    public function logout()
     {
         UserAction::_()->logout();
         

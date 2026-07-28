@@ -15,8 +15,8 @@ class DuckUserApp extends DuckPhp
     //@override
     public $options = [
         'path' => __DIR__ . '/../',
-        'namespace' => 'DuckUser',
-        'class_user' => GlobalUser::class,
+        'namespace' => "DuckAdmin\User",
+        'name'  => 'DuckUser',
         
         'exception_reporter' => ExceptionReporter::class,
         'exception_for_project'  => ProjectException::class,
@@ -24,13 +24,11 @@ class DuckUserApp extends DuckPhp
         'exception_for_controller'  => ControllerException::class,
         'exception_reporter' =>  ExceptionReporter::class,
         
-        'controller_method_prefix' => 'action_',                    // method prefix for controllers
-
         //'table_prefix' => '',   // 表前缀
         'session_prefix' => 'duckuser_',  // Session 前缀
         
-        //'need_install'=>true,
         /////////////////
+        'class_user' => GlobalUser::class,
         'user_callback_for_id' =>       [UserAction::class,'id'],
         'user_callback_for_name' =>     [UserAction::class,'name'],
         'user_callback_for_data' =>     [UserAction::class,'data'],
@@ -42,6 +40,5 @@ class DuckUserApp extends DuckPhp
         
         ///////////////////
         'home_url' => 'Home/index',
-        
     ];
 }

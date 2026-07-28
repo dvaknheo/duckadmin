@@ -7,18 +7,15 @@ namespace DuckAdmin\User\Controller;
 
 use DuckAdmin\User\Business\UserBusiness;
 use DuckPhp\GlobalUser\UserControllerInterface;
+
 class HomeController extends Base implements UserControllerInterface
 {
-    public function __construct()
-    {
-        parent::__construct();
-    }
-    public function action_index()
+    public function index()
     {
         $url_logout = Helper::User()->urlForLogout();
         Helper::Show(get_defined_vars());
     }
-    public function action_password()
+    public function password()
     {
         $error = '';
         if (Helper::POST()) {
