@@ -1,10 +1,11 @@
 <?php
 namespace DuckAdmin\User\Controller;
 
-use DuckPhp\Foundation\Helper;
 use DuckPhp\Foundation\ControllerTrait;
 use DuckPhp\GlobalAdmin\AdminControllerInterface;
-use DuckAdmin\User\Business\UserBusiness;
+
+use DuckAdmin\User\Business\UserAdminBusiness;
+use DuckAdmin\User\Controller\Helper;
 
 /**
  * 管理员列表 
@@ -15,12 +16,14 @@ class UserController implements AdminControllerInterface
 
     public function __construct()
     {
+        return $this->initController();
+    }
+    protected function initController()
+    {
         $controller =  Helper::getRouteCallingClass();
         $action =  Helper::getRouteCallingMethod();
         $url = __url(Helper::PathInfo());
         Helper::Admin()->checkAccess($controller, $action, $url);
-        
-        
     }
     /**
      * 浏览
@@ -29,7 +32,7 @@ class UserController implements AdminControllerInterface
     public function index()
     {
         $all = Helper::GET('all',false);
-        [$total, $list]= UserBusiness::_()->getUserList(['all'=>$all],Helper::PageNo());
+        [$total, $list]= UserAdminBusiness::_()->getUserList(['all'=>$all],Helper::PageNo());
         
         $users =[];
         foreach($list as $v){
@@ -64,7 +67,7 @@ class UserController implements AdminControllerInterface
         
         $this->checkHash($id,$hash);
         
-        $ret = UserBusiness::_()->deleteUser(Helper::AdminId(), $id);
+        $ret = UserAdminBusiness::_()->deleteUser(Helper::AdminId(), $id);
 		Helper::Show302('user/index');
     }
     /**
@@ -79,7 +82,7 @@ class UserController implements AdminControllerInterface
         
         $this->checkHash($id,$hash);
         
-        $ret = UserBusiness::_()->unDeleteUser(Helper::AdminId(), $id);
+        $ret = UserAdminBusiness::_()->unDeleteUser(Helper::AdminId(), $id);
 		Helper::Show302('user/index');
     }
     
