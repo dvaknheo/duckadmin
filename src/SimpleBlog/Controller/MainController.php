@@ -12,15 +12,23 @@ class MainController
 {
     public function __construct()
     {
+        $this->initController();
     }
-    public function action_index()
+    protected function initController()
     {
-    
-        $url_reg = Helper::User()->urlForRegist();
-        $url_login = Helper::User()->urlForLogin();
-        $url_logout = Helper::User()->urlForLogout();
-        $url_admin = __url('admin/index');
+        return;
+    }
+    protected function addExtViewData($data)
+    {
+        $data['url_reg'] = Helper::User()->urlForRegist();
+        $data['url_login'] = Helper::User()->urlForLogin();
+        $data['url_logout'] = Helper::User()->urlForLogout();
+        $data['url_admin'] = __url('Admin/index');
         
+        return $data;
+    }
+    public function index()
+    {
         $user_id = Helper::UserId(false);
         $user_name = Helper::UserName(false);
         [$total, $articles] = ArticleBusiness::_()->getRecentArticle(Helper::PageNo());
@@ -30,7 +38,7 @@ class MainController
         
         Helper::Show(get_defined_vars(), 'main');
     }
-    public function action_article()
+    public function article()
     {
         $id = Helper::GET('id',1);
         $id = (int)$id;
@@ -48,18 +56,21 @@ class MainController
         $url_login_to_commment = Helper::User()->UrlForLogin(__url("article/$id"));
         Helper::Show(get_defined_vars(), 'article');
     }
-    public function action_addcomment()
+    public function addcomment()
     {
-        if(!Helper::POST()){return;}
+        if(!Helper::POST()){
+            return;
+        }
         $uid = Helper::UserId();
         UserBusiness::_()->addComment($uid, Helper::POST('article_id'), Helper::POST('content'));
         Helper::Show302('article/'.Helper::POST('article_id'));
     }
-    public function action_delcomment()
+    public function delcomment()
     {
-        if(!Helper::POST()){return;}
-        
-        $uid = Helper::UserId();
+        if(!Helper::POST()){
+            return;
+        }
+$uid = Helper::UserId();
         UserBusiness::_()->deleteCommentByUser($uid, Helper::POST('id'));
         Helper::Show302('');
     }

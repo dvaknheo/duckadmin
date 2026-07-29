@@ -5,13 +5,14 @@
  */
 namespace DuckAdmin\User\Business;
 
+use DuckPhp\Foundation\Business\Helper;
 use DuckPhp\Foundation\BusinessTrait;
 use DuckAdmin\User\Model\UserAdminModel;
 
-class UserBusiness
+class UserAdminBusiness
 {
     use BusinessTrait;
-    
+
     public function getUserList($conditions=[],$page = 1, $page_size = 10)
     {
         //我们这里要加个显示被禁用的用户等
@@ -19,7 +20,7 @@ class UserBusiness
     }
     public function deleteUser($admin_id,$id)
     {
-        //ActionLogModel::_()->log("{$admin_id}禁用 {$id}，结果", "调整用户");
+        Heper::AdminService()->log($admin_id,"{$admin_id}禁用 {$id}，结果", "调整用户");
         $ret = UserAdminModel::_()->deleteUser($id);
         return $ret;
     }

@@ -6,16 +6,27 @@
 
 namespace SimpleBlog\Controller;
 
+use DuckPhp\GlobalAdmin\AdminControllerInterface;
+use DuckPhp\Foundation\ControllerTrait;
+
 use SimpleBlog\Business\ArticleBusiness;
 use SimpleBlog\Business\AdminBusiness;
-class adminController
+class adminController implements AdminControllerInterface
 {
+    use ControllerTrait;
+
     public function __construct()
     {
-        $controller = Helper::getRouteCallingClass();
-        $action = Helper::getRouteCallingMethod();
-        $path = Helper::PathInfo();
-        Helper::Admin()->checkAccess($controller,$action, __url($path));
+        $this->initController();
+    }
+    protected function initController()
+    {
+        Helper::Admin()->checkAccess();
+        $this->mergeViewData()
+    }
+    
+    protected function mergeViewData()
+    {
         $data = [
             'url_articles' => 'admin/articles',
             'url_comments' => 'admin/comments',
@@ -25,17 +36,16 @@ class adminController
         array_walk($data, function (&$v) {
             $v = __url($v);
         });
-        $data['url_logout'] =Helper::Admin()->urlForLogout();
-        
+        $data['url_logout'] = Helper::Admin()->urlForLogout();
         Helper::setViewHeadFoot('admin/inc_head', 'admin/inc_foot');
         Helper::assignViewData($data);
     }
-    public function action_index()
+    public function index()
     {
-        Helper::Show([], 'admin/main');
+        Helper::Admin()->Show([], 'admin/main');
     }
 
-    public function action_articles()
+    public function articles()
     {
         $url_add = __url('admin/article_add');
         [$count,$list]= ArticleBusiness::_()->getArticleList(Helper::PageNo());
@@ -43,9 +53,11 @@ class adminController
             'url_edit' => 'admin/article_edit?id={id}',
             'url_delete' => 'admin/article_delete?id={id}',
         ]);
-        Helper::Show(get_defined_vars(), 'admin/article_list');
+        
+        //$data = $this->addExtViewData($data);
+        Helper::Admin()->Show(get_defined_vars(), 'admin/article_list');
     }
-    public function action_article_add()
+    public function article_add()
     {
         if(!Helper::POST()){
             Helper::Show(get_defined_vars());
@@ -54,7 +66,7 @@ class adminController
         AdminBusiness::_()->addArticle(Helper::POST('title'), Helper::POST('content'));
         Helper::Show302('admin/articles');
     }
-    public function action_article_edit()
+    public function article_edit()
     {
         if(!Helper::POST()){
             $article = AdminBusiness::_()->getArticle(Helper::GET('id',0));
@@ -67,7 +79,7 @@ class adminController
         AdminBusiness::_()->updateArticle(Helper::POST('id'), Helper::POST('title'), Helper::POST('content'));
         Helper::Show302('admin/articles');
     }
-    public function action_article_delete()
+    public function article_delete()
     {
         if(!Helper::POST()){
             return;
@@ -75,7 +87,7 @@ class adminController
         AdminBusiness::_()->deleteArticle(Helper::POST('id'));
         Helper::Show302('admin/articles');
     }
-    public function action_comments()
+    public function comments()
     {
         [$total,$list] = AdminBusiness::_()->getCommentList(Helper::PageNo());
          
@@ -83,9 +95,9 @@ class adminController
             'url_edit' => 'admin/article_edit?id={id}',
             'url_delete' => 'admin/delete_comments?id={id}',
         ]);
-        Helper::Show(get_defined_vars());
+        Helper::Admin()->Show(get_defined_vars());
     }
-    public function action_delete_comments()
+    public function delete_comments()
     {
         AdminBusiness::_()->deleteComment(Helper::GET('id'));
         Helper::Show302('admin/comments');
