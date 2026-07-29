@@ -42,4 +42,8 @@ class DuckUserApp extends DuckPhp
         ///////////////////
         'home_url' => 'Home/index',
     ];
+    public function _On404(): void
+    {
+        //var_dump(\DuckPhp\Core\Route::_()->getRouteError());
+    }
 }

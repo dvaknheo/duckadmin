@@ -10,7 +10,7 @@ use DuckAdmin\User\Controller\Helper;
 /**
  * 管理员列表 
  */
-class UserController implements AdminControllerInterface
+class AdminController implements AdminControllerInterface
 {
     use ControllerTrait;
 
@@ -20,10 +20,9 @@ class UserController implements AdminControllerInterface
     }
     protected function initController()
     {
-        $controller =  Helper::getRouteCallingClass();
-        $action =  Helper::getRouteCallingMethod();
-        $url = __url(Helper::PathInfo());
-        Helper::Admin()->checkAccess($controller, $action, $url);
+        Helper::Admin()->checkAccess();
+        Helper::setViewHeadFoot('_sys/inc-head','_sys/inc-foot');
+
     }
     /**
      * 浏览
@@ -50,9 +49,7 @@ class UserController implements AdminControllerInterface
         $data['users'] =$users;
         $data['pager'] = Helper::PageHtml((int)$total);
         $data['is_all'] =$all?true:false;
-        $data = Helper::Admin()->mergeViewData($data);
-        Helper::setViewHeadFoot('user/header', 'user/footer');
-        Helper::Show($data,'user/index');
+        Helper::Admin()->show($data,'Admin/index');
     }
 
     /**
@@ -88,7 +85,7 @@ class UserController implements AdminControllerInterface
     
     protected function getHash($id)
     {
-        @session_start();
+        return '';
         $hash_id = Helper::SESSION('hash',null);
         $hash_id = $hash_id??mt_rand(1,999999);
         $_SESSION['hash']=$hash_id;
@@ -96,6 +93,7 @@ class UserController implements AdminControllerInterface
     }
     protected function checkHash($id,$hash)
     {
+        return ;
         @session_start();
         $hash_id = Helper::SESSION('hash',null);
         Helper::ControllerThrowOn($hash_id===null,"校[$id, $hash, $new_hash]检失败!");

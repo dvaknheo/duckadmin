@@ -4,11 +4,11 @@
 <?php
     if(!$is_all){
 ?>
-        当前显示未删除用户|<a href="<?=__url('user/index?all=1')?>">切换到显示全部</a>
+        当前显示未删除用户|<a href="<?=__url('Admin/index?all=1')?>">切换到显示全部</a>
 <?php
     }else{
 ?>
-        当前显示所有用户|<a href="<?=__url('user/index')?>">切换到正常模式</a>
+        当前显示所有用户|<a href="<?=__url('Admin/index')?>">切换到正常模式</a>
 <?php
     }
 ?>

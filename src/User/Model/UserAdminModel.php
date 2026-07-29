@@ -8,7 +8,7 @@ namespace DuckAdmin\User\Model;
 use DuckPhp\Foundation\ModelTrait;
 use DuckPhp\Foundation\Model\Helper;
 
-class UserModel
+class UserAdminModel
 {
     use ModelTrait;
     public function __construct()
