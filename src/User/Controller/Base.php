@@ -14,20 +14,12 @@ class Base
     {
         $this->initController(static::class);
     }
-    public function mergeViewData($data)
-    {
-        $user_name = Helper::UserName();
-        Helper::setViewHeadFoot('Home/inc-head','Home/inc-foot');
-        Helper::assignViewData();
-    }
     public function initController($class)
     {
-        
-        Helper::_()->checkCsrf();
+        Helper::User()->checkAccess(null, null,null);
+        Helper::setViewHeadFoot('_sys/inc-head','_sys/inc-foot');
         
         $csrf_token = Helper::_()->csrfToken();
         $csrf_field = Helper::_()->csrfField();
-        
-
     }
 }

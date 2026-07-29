@@ -14,14 +14,16 @@ class App extends DuckPhp
 {
     //@override
     public $options = [
+        'is_debug' =>true,
         'path' => __DIR__ . '/../',
-        'namespace' => "DuckAdmin\\DuckAdmin",
+        'namespace' => "DuckAdmin\\Admin",
         'name' => 'DuckAdmin',
         
         // 错误页面
         'error_404' => '_sys/error_404',
         'error_500' => '_sys/error_500',
-        
+        'skip_404' => false,
+
         // 异常处理
         'exception_for_project'  => ProjectException::class,
         'exception_for_business'  => BusinessException::class,
@@ -60,5 +62,11 @@ class App extends DuckPhp
     protected function onInited(): void
     {
         parent::onInited();
+    }
+    
+    public function _On404(): void
+    {
+        //echo \DuckPhp\Core\Route::_()->getRouteError();
+        parent::_On404();
     }
 }

@@ -29,7 +29,7 @@ class AuthBusiness extends Base
         if (!password_verify($password, $user['password'])) {
 
             
-            return ['success' => false, 'message' => '用户名或密码错误2:'.$t];
+            return ['success' => false, 'message' => '用户名或密码错误2:'];
         }
         
         // 更新最后登录时间

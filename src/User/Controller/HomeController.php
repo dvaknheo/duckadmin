@@ -13,7 +13,7 @@ class HomeController extends Base implements UserControllerInterface
     public function index()
     {
         $url_logout = Helper::User()->urlForLogout();
-        Helper::Show(get_defined_vars());
+        Helper::User()->show([],'');
     }
     public function password()
     {
