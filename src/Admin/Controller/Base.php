@@ -16,27 +16,10 @@ class Base
     
     public function __construct()
     {
-        $this->checkLogin();
-        $this->user = [
-            'id' => Session::_()->getUserId(),
-            'username' => Session::_()->getUsername(),
-            'realname' => Session::_()->getRealname(),
-        ];
-        $this->menus = $this->loadMenus();
+        Helper::AdminId(true);
         // 统一设置页眉页脚
         Helper::setViewHeadFoot('admin/header', 'admin/footer');
     }
-    
-    /**
-     * 检查用户是否已登录
-     */
-    protected function checkLogin(): void
-    {
-        if (!Session::_()->isLogin()) {
-            Helper::Show302(__url('login/login'));
-        }
-    }
-    
     /**
      * 加载菜单配置
      */
@@ -51,9 +34,6 @@ class Base
      */
     protected function render(string $view, array $data = []): void
     {
-        $data['current_user'] = $this->user;
-        $data['menus'] = $this->menus;
-        $data['app_name'] = 'Admin System';
-        Helper::Show($data, $view);
+        Helper::Admin()->show($data, $view);
     }
 }

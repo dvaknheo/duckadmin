@@ -5,6 +5,7 @@
 namespace DuckAdmin\Admin\Controller;
 
 use DuckAdmin\Admin\Business\UserBusiness;
+use DuckAdmin\Admin\Business\RoleBusiness;
 
 class UserController extends Base
 {

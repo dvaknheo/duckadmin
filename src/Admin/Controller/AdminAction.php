@@ -15,7 +15,7 @@ class AdminAction extends Base
 {
     public function __construct()
     {
-        //
+        // override parent
     }
     
     protected $admin = null;
@@ -57,15 +57,75 @@ class AdminAction extends Base
     }
 
     ////////////////
+
+    protected function onAuthException($ex)
+    {
+        if (Helper::IsAjax()) {
+            Helper::ShowException($ex);
+            Helper::exit();
+            return; // @codeCoverageIgnore
+        }
+        Helper::Show302('index');
+        Helper::exit();
+    } // @codeCoverageIgnore
+    protected function isOptionsMethod()
+    {
+        return Helper::SERVER('REQUEST_METHOD','GET')==='OPTIONS'?true:false;
+    }
+    /////////////////
+    //@override
+    public function id($check_login = true):int
+    {
+        $ret = Session::_()->getUserId() ?? 0;
+        Helper::ControllerThrowOn( $check_login && !$ret, "No Login");
+        return $ret;
+    }
+    //@override
+    public function name($check_login = true):string
+    {
+        $ret = Session::_()->getUsername() ?? 0;
+        Helper::ControllerThrowOn( $check_login && !$ret, "No Login");
+
+        return $ret;
+    }
+    public function data()
+    {
+        return [];
+    }
+    //@override
+    public function localService()
+    {
+        return AdminBusiness::_();
+    }
+
+    public function login(array $post)
+    {
+        throw new \Exception('no implement');
+    }
+    public function logout()
+    {
+        $this->admin = [];
+        Session::_()->setCurrentAdmin([]);
+    }
+    
+    //@override
+    public function addExtViewData(array $input): array
+    {
+        $input['app_name'] = 'Admin System';
+        
+        $user = [
+            'id' => Session::_()->getUserId(),
+            'username' => Session::_()->getUsername(),
+            'realname' => Session::_()->getRealname(),
+        ];
+        $input['menus'] = $this->loadMenus();
+        $input['current_user'] = $user;
+        return $input;
+    }
     public function checkAccess($class = null, $method = null,$url = null)
     {
-        return;
-        $controller = $class ?? Helper::getRouteCallingClass();
-        $action = $method ?? Helper::getRouteCallingMethod();
-        $url = $url ?? Helper::PathInfo();
-        
         try{
-            //__var_log($_SESSION?? null);
+            
             $admin_id = Session::_()->getCurrentAdminId();
             $admin_id = $admin_id ? $admin_id :0;
             AccountBusiness::_()->canAccess($admin_id, $controller, $action);
@@ -80,106 +140,4 @@ class AdminAction extends Base
         }
         return;
     }
-    protected function onAuthException($ex)
-    {
-        if (Helper::IsAjax()) {
-            Helper::ShowException($ex);
-            Helper::exit();
-            return; // @codeCoverageIgnore
-        }
-        $code = $ex->getCode();
-        if($code == 401){
-            return $this->exit401();
-        }else if($code == 403){
-            return $this->exit403();
-        }
-        Helper::Show302('index');
-        Helper::exit();
-    } // @codeCoverageIgnore
-    protected function isOptionsMethod()
-    {
-        return Helper::SERVER('REQUEST_METHOD','GET')==='OPTIONS'?true:false;
-    }
-    protected function exit401()
-    {
-        $url = __url('index').'?back_url='.Helper::PathInfo();
-        $response = <<<EOF
-<script>
-if (self !== top) {
-    parent.location.reload();
-}
-</script>
-<meta http-equiv=refresh content=3;url="$url">
-EOF;
- 
-        Helper::header('Unauthorized',true,401);
-        echo $response;
-        Helper::exit();
-    } // @codeCoverageIgnore
-    protected function exit403()
-    {
-        Helper::header('Forbidden',true,403);
-        Helper::Show([], '_sys/error_403');
-        Helper::exit();
-    } // @codeCoverageIgnore
-
-    /////////////////
-    //@override
-
-    //@override
-    public function id($check_login = true):int
-    {
-        if($check_login){
-            return (int)$this->getCurrentAdmin()['id'];
-        }
-        try{
-            return (int)$this->getCurrentAdmin()['id'];
-        }catch(\Exception $ex){
-            return 0;
-        }
-    }
-    //@override
-    public function name($check_login = true):string
-    {
-        if($check_login){
-            return $this->getCurrentAdmin()['username'];
-        }
-        try{
-            return $this->getCurrentAdmin()['username'];
-        }catch(\Exception $ex){
-            return '';
-        }
-    }
-    public function data()
-    {
-        return [];
-    }
-    //@override
-    public function localService()
-    {
-        return AdminBusiness::_();
-    }
-    
-    public function login(array $post)
-    {
-        throw new \Exception('no implement');
-    }
-    public function logout()
-    {
-        $this->admin = [];
-        Session::_()->setCurrentAdmin([]);
-    }
-    
-    public function addExtViewData(array $input): array
-    {
-        $user = [
-            'id' => Session::_()->getUserId(),
-            'username' => Session::_()->getUsername(),
-            'realname' => Session::_()->getRealname(),
-        ];
-        $input['menus'] = $this->loadMenus();
-        $input['current_user'] = $user;
-        return $input;
-    }
-
 }
