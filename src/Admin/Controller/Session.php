@@ -10,9 +10,7 @@ class Session
 {
     use SessionTrait;
     
-    /** @var string Session 键前缀 */
-    protected $session_prefix = 'admin_';
-    
+   
     /**
      * 是否已登录
      */
