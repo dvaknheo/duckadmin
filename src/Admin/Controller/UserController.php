@@ -35,7 +35,7 @@ class UserController extends Base
     {
         $data['title'] = '创建用户';
         $data['current_route'] = 'user';
-        $data['roles'] = \AdminSystem\Model\RoleModel::_()->getAll();
+        $data['roles'] = RoleBusiness::_()->getAll();
         $this->render('admin/user_form', $data);
     }
     
@@ -61,7 +61,7 @@ class UserController extends Base
             $data['error'] = $result['message'];
             $data['title'] = '创建用户';
             $data['current_route'] = 'user';
-            $data['roles'] = \AdminSystem\Model\RoleModel::_()->getAll();
+            $data['roles'] = RoleBusiness::_()->getAll();
             $data['input'] = $input;
             $this->render('admin/user_form', $data);
         }
@@ -73,7 +73,7 @@ class UserController extends Base
     public function edit()
     {
         $id = (int)Helper::GET('id', '0');
-        $user = \AdminSystem\Model\AdminUserModel::_()->getById($id);
+        $user = UserBusiness::_()->getById($id);
         if (!$user) {
             Helper::Show302(__url('user/index'));
             return;
@@ -82,8 +82,8 @@ class UserController extends Base
         $data['user'] = $user;
         $data['title'] = '编辑用户';
         $data['current_route'] = 'user';
-        $data['roles'] = \AdminSystem\Model\RoleModel::_()->getAll();
-        $data['user_role_ids'] = \AdminSystem\Model\RoleModel::_()->getUserRoleIds($id);
+        $data['roles'] = RoleBusiness::_()->getAll();
+        $data['user_role_ids'] = RoleBusiness::_()->getUserRoleIds($id);
         $this->render('admin/user_form', $data);
     }
     
@@ -111,7 +111,7 @@ class UserController extends Base
             $data['user'] = $input + ['id' => $id];
             $data['title'] = '编辑用户';
             $data['current_route'] = 'user';
-            $data['roles'] = \AdminSystem\Model\RoleModel::_()->getAll();
+            $data['roles'] = RoleBusiness::_()->getAll();
             $data['user_role_ids'] = $roleIds;
             $this->render('admin/user_form', $data);
         }

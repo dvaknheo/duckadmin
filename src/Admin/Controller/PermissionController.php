@@ -34,7 +34,7 @@ class PermissionController extends Base
     {
         $data['title'] = '创建权限';
         $data['current_route'] = 'permission';
-        $data['permissions'] = \AdminSystem\Model\PermissionModel::_()->getAll();
+        $data['permissions'] = PermissionBusiness::_()->getAll();
         $this->render('admin/permission_form', $data);
     }
     
@@ -59,7 +59,7 @@ class PermissionController extends Base
             $data['title'] = '创建权限';
             $data['current_route'] = 'permission';
             $data['input'] = $input;
-            $data['permissions'] = \AdminSystem\Model\PermissionModel::_()->getAll();
+            $data['permissions'] = PermissionBusiness::_()->getAll();
             $this->render('admin/permission_form', $data);
         }
     }
@@ -70,7 +70,7 @@ class PermissionController extends Base
     public function edit()
     {
         $id = (int)Helper::GET('id', '0');
-        $perm = \AdminSystem\Model\PermissionModel::_()->getById($id);
+        $perm = PermissionBusiness::_()->getById($id);
         if (!$perm) {
             Helper::Show302(__url('permission/index'));
             return;
@@ -79,7 +79,7 @@ class PermissionController extends Base
         $data['perm'] = $perm;
         $data['title'] = '编辑权限';
         $data['current_route'] = 'permission';
-        $data['permissions'] = \AdminSystem\Model\PermissionModel::_()->getAll();
+        $data['permissions'] = PermissionBusiness::_()->getAll();
         $this->render('admin/permission_form', $data);
     }
     
@@ -105,7 +105,7 @@ class PermissionController extends Base
             $data['perm'] = $input + ['id' => $id];
             $data['title'] = '编辑权限';
             $data['current_route'] = 'permission';
-            $data['permissions'] = \AdminSystem\Model\PermissionModel::_()->getAll();
+            $data['permissions'] = PermissionBusiness::_()->getAll();
             $this->render('admin/permission_form', $data);
         }
     }

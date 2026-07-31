@@ -41,4 +41,14 @@ class PermissionBusiness extends Base
     {
         return PermissionModel::_()->delete($id);
     }
+    
+    public function getAll(): array
+    {
+        return PermissionModel::_()->getAll();
+    }
+    
+    public function getById(int $id): ?array
+    {
+        return PermissionModel::_()->getById($id);
+    }
 }

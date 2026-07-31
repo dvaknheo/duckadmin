@@ -46,4 +46,19 @@ class RoleBusiness extends Base
     {
         return PermissionModel::_()->getRolePermissionIds($roleId);
     }
+    
+    public function getAll(): array
+    {
+        return RoleModel::_()->getAll();
+    }
+    
+    public function getById(int $id): ?array
+    {
+        return RoleModel::_()->getById($id);
+    }
+    
+    public function getUserRoleIds(int $userId): array
+    {
+        return RoleModel::_()->getUserRoleIds($userId);
+    }
 }

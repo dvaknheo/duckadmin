@@ -77,4 +77,12 @@ class UserBusiness extends Base
     {
         return AdminUserModel::_()->delete($id);
     }
+    
+    /**
+     * 获取单个用户
+     */
+    public function getById(int $id): ?array
+    {
+        return AdminUserModel::_()->getById($id);
+    }
 }

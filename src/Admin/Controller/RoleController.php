@@ -5,6 +5,7 @@
 namespace DuckAdmin\Admin\Controller;
 
 use DuckAdmin\Admin\Business\RoleBusiness;
+use DuckAdmin\Admin\Business\PermissionBusiness;
 
 class RoleController extends Base
 {
@@ -63,7 +64,7 @@ class RoleController extends Base
     public function edit()
     {
         $id = (int)Helper::GET('id', '0');
-        $role = \AdminSystem\Model\RoleModel::_()->getById($id);
+        $role = RoleBusiness::_()->getById($id);
         if (!$role) {
             Helper::Show302(__url('role/index'));
             return;
@@ -112,7 +113,7 @@ class RoleController extends Base
     public function permissions()
     {
         $id = (int)Helper::GET('id', '0');
-        $role = \AdminSystem\Model\RoleModel::_()->getById($id);
+        $role = RoleBusiness::_()->getById($id);
         if (!$role) {
             Helper::Show302(__url('role/index'));
             return;
@@ -127,7 +128,7 @@ class RoleController extends Base
         }
         
         $data['role'] = $role;
-        $data['permissions'] = \AdminSystem\Model\PermissionModel::_()->getAll();
+        $data['permissions'] = PermissionBusiness::_()->getAll();
         $data['role_permission_ids'] = RoleBusiness::_()->getRolePermissions($id);
         $data['title'] = '角色权限分配';
         $data['current_route'] = 'role';

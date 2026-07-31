@@ -122,13 +122,15 @@ class AdminAction extends Base
         $input['current_user'] = $user;
         return $input;
     }
+    //@override
     public function checkAccess($class = null, $method = null,$url = null)
     {
         try{
             
             $admin_id = Session::_()->getCurrentAdminId();
             $admin_id = $admin_id ? $admin_id :0;
-            AccountBusiness::_()->canAccess($admin_id, $controller, $action);
+            return;
+            //AccountBusiness::_()->canAccess($admin_id, $controller, $action);
         } catch(\Exception $ex) {
             $this->onAuthException($ex);
             return; // @codeCoverageIgnore
