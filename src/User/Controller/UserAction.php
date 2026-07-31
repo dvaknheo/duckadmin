@@ -15,43 +15,21 @@ class UserAction extends Base
     protected $user = null;
     public function __construct()
     {
-        // must override me
-    }
-    public function current()
-    {
-        if ($this->user) {
-            return $this->user;
-        }
-        $user = Session::_()->getCurrentUser();
-        Helper::ControllerThrowOn(!$user, '请登录', -1, UserException::class);
-        $this->user = $user;
-        return $this->user;
+        // just override for skip init;
     }
     public function id($check_login = true)
     {
-        if($check_login){
-            return (int)$this->current()['id'];
-        }
-        try{
-            return (int)$this->current()['id'];
-        }catch(\Exception $ex){
-            return 0;
-        }
+        $user = Session::_()->getCurrentUser();
+        $id = $user['id'] ?? null;
+        Helper::ControllerThrowOn($check_login && !$id, '请登录', -1, UserException::class);
+        return (int)$id;
     }
     public function name($check_login = true):string
     {
-        if($check_login){
-            return $this->current()['username'];
-        }
-        try{
-            return $this->current()['username'];
-        }catch(\Exception $ex){
-            return '';
-        }
-    }
-    public function data(array $post): array
-    {
-        return Session::_()->getCurrentUser();
+        $user = Session::_()->getCurrentUser();
+        $name = $user['name'] ?? null ;
+        Helper::ControllerThrowOn($check_login &&!$user, '请登录', -1, UserException::class);
+        return (string)$name;
     }
     public function service()
     {
@@ -64,7 +42,9 @@ class UserAction extends Base
     }
     public function logout()
     {
+        $id = $this->id(false);
         Session::_()->unsetCurrentUser();
+        Helper::fireGlobalEvent('logout', $id);
     }
     public function regist(array $post)
     {
