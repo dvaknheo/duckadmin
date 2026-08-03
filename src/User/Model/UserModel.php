@@ -16,6 +16,18 @@ class UserModel
     {
         $this->table_name = "Users";
     }
+    public function init(): void
+    {
+        $this->initSchema();
+    }
+    protected function initSchema(): void
+    {
+        $this->execute("
+        ......
+        )");
+        $this->execute("............");
+    }
+    
     public function exsits($name)
     {
         $sql = "select count(*) as c from `'TABLE'` where username=?";
