@@ -28,6 +28,8 @@ class UserBusiness
     
     public function register($form)
     {
+        Helper::FireGlobalEvent("regist",$form);
+
         $form['password'] = $form['password'] ?? '';
         $form['password_confirm'] = $form['password_confirm'] ?? '';
         
@@ -45,11 +47,13 @@ class UserBusiness
         
         $user = UserModel::_()->getUserById($uid);
         $user = UserModel::_()->unloadPassword($user);
-        //Helper::FireEvent([self::class, __METHOD__],$user);
+        Helper::FireGlobalEvent("registed",$user;
         return $user;
     }
     public function login($form)
     {
+        Helper::FireGlobalEvent("logining",$form);
+
         $username = $form['name'];
         $password = $form['password'];
         $user = UserModel::_()->getUserByUsername($username);
@@ -60,7 +64,7 @@ class UserBusiness
         Helper::BusinessThrowOn(!$flag, "密码错误");
         
         $user = UserModel::_()->unloadPassword($user);
-        //Helper::FireEvent([self::class, __METHOD__],$user);
+        Helper::FireGlobalEvent("logined",$form);
         return $user;
     }
     public function changePassword($uid, $password, $new_password)
