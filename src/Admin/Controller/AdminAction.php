@@ -8,6 +8,7 @@ namespace DuckAdmin\Admin\Controller;
 
 use DuckPhp\Core\SingletonTrait;
 use DuckPhp\Core\App;
+use DuckPhp\GlobalUser\UserException;
 
 use DuckAdmin\Admin\Business\AdminBusiness;
 
@@ -37,7 +38,6 @@ class AdminAction extends Base
         ];
         
         if(!$this->admin['id']){
-        
             Helper::ControllerThrowOn(!$this->admin,"需要登录",401);
             $admin =Helper::Admin();
             $url = Helper::Admin()->urlForLogin();
@@ -77,14 +77,19 @@ class AdminAction extends Base
     public function id($check_login = true):int
     {
         $ret = Session::_()->getUserId() ?? 0;
-        Helper::ControllerThrowOn( $check_login && !$ret, "No Login");
+        Helper::assignExceptionHandler(UserException::class, function($ex){
+            Helper::Show302(Helper::Admin()->urlForLogin());
+            Helper::exit();
+        });
+        Helper::ControllerThrowOn( $check_login && !$ret, "No Login1",-1, UserException::class);
         return $ret;
+            
     }
     //@override
     public function name($check_login = true):string
     {
         $ret = Session::_()->getUsername() ?? 0;
-        Helper::ControllerThrowOn( $check_login && !$ret, "No Login");
+        Helper::ControllerThrowOn( $check_login && !$ret, "No Login2");
 
         return $ret;
     }
