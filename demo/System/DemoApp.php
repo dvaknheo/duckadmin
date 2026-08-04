@@ -29,7 +29,6 @@ class DemoApp extends DuckPhp
         
         'database_driver' => 'sqlite',
         'duckadmin_demo_enable_test' => false,
-        'duckadmin_demo_enable_workerman' => true,
         
         'app' => [
 //*
@@ -72,45 +71,30 @@ class DemoApp extends DuckPhp
     public function action_index()
     {
         // index page
-        $data = [];
-        $data['url_blog'] = __url(\SimpleBlog\System\SimpleBlogApp::_()->options['controller_url_prefix']) . 'index';
-        $data['url_user'] = __url(\DuckUser\System\DuckUserApp::_()->options['controller_url_prefix']) . 'index';
-        $data['url_admin'] = __url(\DuckAdmin\System\DuckAdminApp::_()->options['controller_url_prefix']) . 'index';
-        $data['url_user_manager'] = __url(\DuckUserManager\System\DuckUserManagerApp::_()->options['controller_url_prefix']) . 'user/index';
+        //$data = [];
+        //$data['url_blog'] = __url(\SimpleBlog\System\SimpleBlogApp::_()->options['controller_url_prefix']) . 'index';
+        //$data['url_user'] = __url(\DuckUser\System\DuckUserApp::_()->options['controller_url_prefix']) . 'index';
+        //$data['url_admin'] = __url(\DuckAdmin\System\DuckAdminApp::_()->options['controller_url_prefix']) . 'index';
+        //$data['url_user_manager'] = __url(\DuckUserManager\System\DuckUserManagerApp::_()->options['controller_url_prefix']) . 'user/index';
         
         $data ['duckadmin_demo_enable_test'] = $this->options['duckadmin_demo_enable_test'];
         
         Helper::Show($data,'main');
     }
-    public function onPrepare()
+
+    public function onInited()
     {
-        parent::onPrepare();
-        
         //use workerman
         if ($this->options['duckadmin_demo_enable_workerman']) {
             \DuckPhp\HttpServer\HttpServer::_(\WorkermanHttpd\WorkermanHttpd::_())->options['host']='0.0.0.0';
         }
         
-        //eanable test
-        if ($this->is_root) {
-            $this->loadSetting(); //:(
-        }
         if (static::Setting('duckadmin_demo_enable_test') || $this->options['duckadmin_demo_enable_test']) {
             $this->enableTest();
         }
-    }
-    public function onInited()
-    {
         $this->checkDemoDb(); // if no default sqlite db file ，create it
-        
+       
         parent::onInited();
-        // You Codes Here.
-        
-        CoreHelper::PhaseCall(
-            \DuckAdmin\System\DuckAdminApp::class,function(){
-                //MyAccountController::OverrideParent();
-        });
-        
     }
     protected function checkDemoDb()
     {
@@ -135,14 +119,6 @@ class DemoApp extends DuckPhp
             $flag = DbManager::Db()->execute($sql);
         }
 
-    }
-    /**
-     * show a hello world in console.
-     */
-    public function command_hello()
-    {
-        // show a command demo
-        echo "From this time, you never be alone~\n";
     }
     /**
      * show a hello world in console.
