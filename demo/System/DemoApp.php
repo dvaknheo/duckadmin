@@ -144,7 +144,6 @@ class DemoApp extends DuckPhp
             'test_path_document'=>'public',
             'test_new_server'=>true,
         ];
-        // sorry this is specail. must before init;
-        MyCoverageBridge::_()->init($tester_options)->onAppPrepare();
+        MyCoverageBridge::_()->init($tester_options);
     }
 }

@@ -7,13 +7,12 @@ namespace DuckAdminDemo\Test;
 
 use DuckPhp\Core\App;
 use DuckPhp\Core\Console;
-use DuckPhp\Foundation\SimpleSingletonTrait;
+use DuckPhp\Foundation\SingletonTrait;
 use DuckPhp\Foundation\Helper;
-use DuckPhp\FastInstaller\FastInstaller;
 
 class MyTester
 {
-    use SimpleSingletonTrait;
+    use SingletonTrait;
 
     public static function BeforeWebTest()
     {
@@ -41,18 +40,6 @@ class MyTester
     }
     public function installTest()
     {
-        $this->cleanAll();
-        $db_file = 'db_fortest.db';
-        $input = <<<EOT
-{$db_file}
-n
-admin
-123456
-123456
-
-EOT;
-        Console::_()->readLinesFill($input);
-        FastInstaller::_()->doInstall(); // App::_()->callConsole('install');
         var_dump(DATE(DATE_ATOM));
     }
     public function cleanAll()
@@ -86,51 +73,6 @@ EOT;
     
     public function _OnReport()
     {
-        //TODO more.
         return;
-        
-    
-        //path = \DuckAdmin\DuckAdminApp::_()->options['path'];
-        //$filter = MyCoverageBridge::_()->getCoverage()->filter();
-        //$filter->removeDirectoryFromWhitelist($path.'Test');
-        //$filter->removeDirectoryFromWhitelist($path.'View');
-        //    public function removeDirectoryFromWhitelist(string $directory, string $suffix = '.php', string $prefix = ''): void
-        //    public function removeFileFromWhitelist(string $filename): void
-        
-        /*
-        function in_paths($paths,$file)
-        foreach($paths as $v){
-            if($v === substr($file,0,strlen($v))){
-                return true;
-            }
-        }
-        //return false;
-        $coverage = MyCoverageBridge::_()->getCoverage();
-        $path = realpath(\DuckUser\System\DuckUserApp::_()->options['path']).'/';
-        
-        $paths[]=$path.'Test/';
-        //$paths[]=$path.'view/';
-        //$paths[]=$path.'Controller/';
-        
-        $data = $coverage->getData();
-        $new_data = [];
-        foreach($data as $file =>$v){
-            if($this->in_paths($paths,$file)){
-                continue;
-            }
-            $new_data[$file] = $v;
-        }
-        $filter = MyCoverageBridge::_()->getCoverage()->filter();
-        $filter->removeDirectoryFromWhitelist($path.'Test/');
-        //$filter->removeDirectoryFromWhitelist($path.'View');
-        $coverage->setData($data);
-        $filter = MyCoverageBridge::_()->getCoverage()->filter();
-        $filter->removeDirectoryFromWhitelist($path.'Test/');
-        return;
-        //$coverage = MyCoverageBridge::_()->getCoverage();
-        
-        $path = realpath(\DuckUser\System\DuckUserApp::_()->options['path']).'/';
-        //var_dump($path);
-        */
     }
 }

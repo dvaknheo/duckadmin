@@ -57,11 +57,11 @@ class MyCoverageBridge extends MyCoverage
 
         $this->options['group'] = $this->watchingGetName();
 
-        Helper::OnEvent([App::Phase(),'onInit'],[static::class,'OnAppInit']);
-        
-        Helper::OnEvent([App::Phase(),'onBeforeRun'],[static::class,'OnBeforeRun']);
-        Helper::OnEvent([App::Phase(),'onAfterRun'],[static::class,'OnAfterRun']);
-        //Helper::OnEvent([App::Phase(),'onInit'],[static::class,'OnAfterRun']); registcommand
+        // 以前插入事件的模式。要换过
+        Helper::OnGloalEvent('onInit'],[static::class,'OnAppInit']);
+        Helper::OnGloalEvent([App::Phase(),'onBeforeRun'],[static::class,'OnBeforeRun']);
+        Helper::OnGloalEvent([App::Phase(),'onAfterRun'],[static::class,'OnAfterRun']);
+        //Helper::OnGloalEvent([App::Phase(),'onInit'],[static::class,'OnAfterRun']); registcommand
         
         ExitException::Init(); //__define(__ExitException);
         
@@ -72,6 +72,7 @@ class MyCoverageBridge extends MyCoverage
         if(!class_exists(CodeCoverage::class)){
             return;
         }
+        // 修改成测试的配置。 需要和 ext_options_file 配合，所以现在要调整
         $app = App::_();
         if(MyCoverageBridge::_()->isInHttpTest()){
             $app->options['ext_options_file'] = 'runtime/DuckPhpApps_test.config.php';
