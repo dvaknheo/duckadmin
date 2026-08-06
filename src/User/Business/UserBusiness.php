@@ -47,7 +47,7 @@ class UserBusiness
         
         $user = UserModel::_()->getUserById($uid);
         $user = UserModel::_()->unloadPassword($user);
-        Helper::FireGlobalEvent("registed",$user;
+        Helper::FireGlobalEvent("registed",$user);
         return $user;
     }
     public function login($form)

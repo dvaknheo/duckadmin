@@ -37,14 +37,9 @@ class DemoApp extends DuckPhp
                 'controller_resource_prefix' => 'res/',     // 资源文件前缀
             ],
 //*/
-            \DuckUser\System\DuckUserApp::class => [
+            \DuckAdmin\User\System\DuckUserApp::class => [
                 'controller_url_prefix' => 'user/',             // 访问路径
                 'controller_resource_prefix' => 'res/',    // 资源文件前缀
-            ],
-//*/
-            \DuckUserManager\System\DuckUserManagerApp::class => [
-                'controller_url_prefix' => 'app/admin/',            // 访问路径
-                'controller_resource_prefix' => 'res/',  // 资源文件前缀
             ],
 //*/
             \SimpleBlog\System\SimpleBlogApp::class => [
