@@ -19,6 +19,10 @@ class App extends DuckPhp
         'namespace' => "DuckAdmin\\Admin",
         'name' => 'DuckAdmin',
         
+        'ext' => [
+            \DuckPhp\Component\ExtOptionsLoader::class => true,
+        ],
+        
         // 错误页面
         'error_404' => '_sys/error_404',
         'error_500' => '_sys/error_500',

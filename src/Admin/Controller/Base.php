@@ -16,6 +16,7 @@ class Base
     
     public function __construct()
     {
+        Helper::checkInstall('install');
         Helper::AdminId(true);
         // 统一设置页眉页脚
         Helper::setViewHeadFoot('admin/header', 'admin/footer');

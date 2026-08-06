@@ -13,6 +13,11 @@ class LoginController
 {
     use ControllerTrait;
     
+    public function __construct()
+    {
+        Helper::checkInstall('install');
+    }
+    
     /**
      * 登录页面 / 处理登录
      * GET 显示表单，POST 处理登录
