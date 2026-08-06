@@ -16,6 +16,7 @@ class Base
     }
     public function initController($class)
     {
+        Helper::checkInstall('install');
         Helper::User()->checkAccess(null, null,null);
         Helper::setViewHeadFoot('_sys/inc-head','_sys/inc-foot');
         

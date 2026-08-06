@@ -18,6 +18,10 @@ class DuckUserApp extends DuckPhp
         'namespace' => "DuckAdmin\User",
         'name'  => 'DuckUser',
         
+        'ext' => [
+            \DuckPhp\Component\ExtOptionsLoader::class => true,
+        ],
+        
         'exception_reporter' => ExceptionReporter::class,
         'exception_for_project'  => ProjectException::class,
         'exception_for_business'  => BusinessException::class,
