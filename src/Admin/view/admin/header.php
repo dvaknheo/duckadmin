@@ -13,6 +13,11 @@
     <title><?= $title ?? '仪表盘' ?> - <?= __h($app_name ?? 'Admin System') ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+<?php
+foreach($css_files ?? [] as $css_file){
+    echo '<link href="'.__h($css_file).'" rel="stylesheet">'."\n";
+}
+?>
     <style>
         :root {
             --sidebar-width: 240px;
@@ -160,6 +165,22 @@
         }
         .mobile-toggle { display: none; background: none; border: none; color: #fff; font-size: 24px; cursor: pointer; }
     </style>
+<?php
+foreach($__html['style'] ?? [] as $style){
+    echo '<style>' . $style . '</style>' . "\n";
+}
+?>
+<?php
+foreach($__html['script_file'] ?? [] as $js_file){
+    echo '<script src="'.__h($js_file).'"></script>'."\n";
+}
+?>
+<?php
+foreach($__html['script'] ?? [] as $script){
+    echo '<script>' . __h($script) . '</script>' . "\n";
+}
+?>
+
 </head>
 <body>
     <header class="topbar">

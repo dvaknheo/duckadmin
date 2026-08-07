@@ -36,5 +36,21 @@
             });
         });
     </script>
+<?php
+foreach($__html['script_defered'] ?? [] as $script){
+    echo '<script>' . __h($script) . '</script>' . "\n";
+}
+?>
+<?php
+foreach($__html['script_file_defered'] ?? [] as $js_file){
+    echo '<script src="'.__h($js_file).'"></script>'."\n";
+}
+?>
+<?php
+foreach($__html['script_last'] ?? [] as $script){
+    echo '<script>' . __h($script) . '</script>' . "\n";
+}
+?>
+
 </body>
 </html>

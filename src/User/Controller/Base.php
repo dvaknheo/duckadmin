@@ -14,7 +14,7 @@ class Base
     {
         $this->initController(static::class);
     }
-    public function initController($class)
+    protected function initController($class)
     {
         Helper::checkInstall('install');
         Helper::User()->checkAccess(null, null,null);
