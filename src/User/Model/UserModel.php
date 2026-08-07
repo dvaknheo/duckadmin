@@ -22,10 +22,15 @@ class UserModel
     }
     protected function initSchema(): void
     {
-        $this->execute("
-        ......
+        $this->execute("CREATE TABLE IF NOT EXISTS `Users` (
+            \"id\" INTEGER,
+            \"username\" TEXT UNIQUE,
+            \"password\" TEXT,
+            \"created_at\" TEXT,
+            \"updated_at\" TEXT,
+            \"deleted_at\" TEXT,
+            PRIMARY KEY(\"id\" AUTOINCREMENT)
         )");
-        $this->execute("............");
     }
     
     public function exsits($name)
