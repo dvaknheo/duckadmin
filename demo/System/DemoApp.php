@@ -58,6 +58,7 @@ class DemoApp extends DuckPhp
             'namespace_controller' =>  "\\" . __NAMESPACE__ ,
             'controller_welcome_class' => $short_class ,
             'controller_class_postfix' => '',
+            'controller_method_prefix' => 'action_',
         ];
         
         $this->options = array_merge($this->options,$ext_options); 
@@ -77,17 +78,17 @@ class DemoApp extends DuckPhp
         Helper::Show($data,'main');
     }
 
-    public function onInited()
+    public function onInited(): void
     {
         //use workerman
-        if ($this->options['duckadmin_demo_enable_workerman']) {
+        if ($this->options['duckadmin_demo_enable_workerman']??false) {
             \DuckPhp\HttpServer\HttpServer::_(\WorkermanHttpd\WorkermanHttpd::_())->options['host']='0.0.0.0';
         }
         
-        if (static::Setting('duckadmin_demo_enable_test') || $this->options['duckadmin_demo_enable_test']) {
-            $this->enableTest();
+        if (static::Setting('duckadmin_demo_enable_test') || $this->options['duckadmin_demo_enable_test']??false) {
+            //$this->enableTest();
         }
-        $this->checkDemoDb(); // if no default sqlite db file ，create it
+        //$this->checkDemoDb(); // if no default sqlite db file ，create it
        
         parent::onInited();
     }
@@ -95,10 +96,6 @@ class DemoApp extends DuckPhp
     {
         $dsn = $this->options['database_list'][0]['dsn']??null;
         if ($dsn !=='sqlite:demodb.db') {
-            return;
-        }
-        $file = realpath(CoreHelper::PathOfRuntime()). '/demodb.db';
-        if(is_file($file)){
             return;
         }
         
@@ -113,17 +110,6 @@ class DemoApp extends DuckPhp
             }
             $flag = DbManager::Db()->execute($sql);
         }
-
-    }
-    /**
-     * show a hello world in console.
-     */
-    public function command_t2()
-    {
-        // show a command demo
-        echo "From this time, you never be alone~\n";
-        $x = \DuckAdmin\Business\FinderForAdminController::_()->init([])->getAllAdminMethod();
-        var_dump($x);
 
     }
     protected function enableTest()
