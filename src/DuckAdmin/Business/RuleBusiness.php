@@ -117,7 +117,7 @@ class RuleBusiness extends Base
         // 这里要改
         $methods_in_db = [];
         $methods_in_files = [];
-
+return;
         $data = FinderForAdminController::_()->getAllAdminMethod();
         
         foreach($data as $class =>$methods) {

@@ -35,6 +35,22 @@ class DemoApp extends DuckPhp
             \DuckAdmin\System\DuckAdminApp::class => [      // 后台管理系统
                 'controller_url_prefix' => 'app/admin/',    // 访问路径
                 'controller_resource_prefix' => 'res/',     // 资源文件前缀
+
+                'installed' =>true,
+                'data_file_enable' => false,
+
+                'session_prefix' => 'myadmin_',
+                'local_database' => true,
+                'database_list_reload_by_setting'=>false,
+
+                'database_list' => [
+                    [
+                        'dsn' => "sqlite:runtime/demodb.db",
+                        'username' => '',
+                        'password' => '',
+                    ],
+                ],
+
             ],
 //*/
             \DuckAdmin\User\System\DuckUserApp::class => [
@@ -66,12 +82,10 @@ class DemoApp extends DuckPhp
     }
     public function action_index()
     {
-        // index page
-        //$data = [];
-        //$data['url_blog'] = __url(\SimpleBlog\System\SimpleBlogApp::_()->options['controller_url_prefix']) . 'index';
-        //$data['url_user'] = __url(\DuckUser\System\DuckUserApp::_()->options['controller_url_prefix']) . 'index';
-        //$data['url_admin'] = __url(\DuckAdmin\System\DuckAdminApp::_()->options['controller_url_prefix']) . 'index';
-        //$data['url_user_manager'] = __url(\DuckUserManager\System\DuckUserManagerApp::_()->options['controller_url_prefix']) . 'user/index';
+        $data = [];
+        $data['url_blog'] = __url(\SimpleBlog\System\SimpleBlogApp::_()->options['controller_url_prefix']) . 'index';
+        $data['url_user'] = __url(\DuckAdmin\User\System\DuckUserApp::_()->options['controller_url_prefix']) . 'index';
+        $data['url_admin'] = __url(\DuckAdmin\System\DuckAdminApp::_()->options['controller_url_prefix']) . 'index';
         
         $data ['duckadmin_demo_enable_test'] = $this->options['duckadmin_demo_enable_test'];
         

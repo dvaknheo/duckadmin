@@ -45,12 +45,6 @@ duckuser 则是附带的用户系统
 （\DuckUser\System\DuckUserApp::class） <a href="<?=$url_user?>">用户基本注册登录页面在这里</a>
 这是个很简陋的用户系统。提供了基本的用户接口。这个用户系统对应的
 
-
-（\DuckUserManager\System\DuckUserManagerApp::class）<a href="<?=$url_user_manager?>">用户管理后台在这里</a>
-很简陋的用户管理系统。 (需要后台登录之后才能访问)。
-
-
-
 </pre>
 <a href="main.php">另一个简洁版本</a>
   </div>
