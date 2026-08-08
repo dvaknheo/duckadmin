@@ -6,6 +6,7 @@
 namespace DuckAdmin\Admin\System;
 
 use DuckPhp\DuckPhp;
+use DuckPhp\Ext\RouteHookWebInstaller;
 use DuckPhp\GlobalAdmin\GlobalAdmin;
 
 use DuckAdmin\Admin\Controller\AdminAction;
@@ -14,35 +15,27 @@ class App extends DuckPhp
 {
     //@override
     public $options = [
-        'is_debug' =>true,
         'path' => __DIR__ . '/../',
         'namespace' => "DuckAdmin\\Admin",
         'name' => 'DuckAdmin',
         
+        'data_file_enable' => true,
         'ext' => [
-            \DuckPhp\Component\ExtOptionsLoader::class => true,
+            RouteHookWebInstaller::class => true,
         ],
-        
+        'web_installer_use_database' => true,
+        'web_installer_database_drivers' => ['sqlite' => true],
+        // 后面还要加自定义 view 和 callback
+
         // 错误页面
         'error_404' => '_sys/error_404',
         'error_500' => '_sys/error_500',
-        'skip_404' => false,
 
         // 异常处理
         'exception_for_project'  => ProjectException::class,
         'exception_for_business'  => BusinessException::class,
         'exception_for_controller'  => ControllerException::class,
         'exception_reporter' => ExceptionReporter::class,
-        
-        // 数据库配置 — 使用 SQLite
-        'database_list' => [
-            [
-                'dsn' => 'sqlite:' . __DIR__ . '/../../database/admin.db',
-                'username' => '',
-                'password' => '',
-                'driver_options' => [],
-            ],
-        ],
         
         // 控制器类名调整：自动首字母大写
         'controller_class_adjust' => 'uc_class',
@@ -52,7 +45,7 @@ class App extends DuckPhp
         'admin_url_home' => 'Dashboar/index',
         'admin_url_login' => 'Login/login',
         'admin_url_logout' => 'Login/logout',
-        
+
         'admin_view_file_header' => 'admin/header',
         'admin_view_file_footer' => 'admin/footer',
         'admin_callback_for_id' =>      [AdminAction::class,'id'],
@@ -66,11 +59,5 @@ class App extends DuckPhp
     protected function onInited(): void
     {
         parent::onInited();
-    }
-    
-    public function _On404(): void
-    {
-        //echo \DuckPhp\Core\Route::_()->getRouteError();
-        parent::_On404();
     }
 }

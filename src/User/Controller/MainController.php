@@ -22,7 +22,7 @@ class MainController extends Base
     /**
      * DuckUser 安装：GET 展示环境自检与安装按钮；POST 执行安装
      */
-    public function install()
+    public function install_bak()
     {
         $checks = InstallBusiness::_()->environmentCheck();
         $allOk = true;

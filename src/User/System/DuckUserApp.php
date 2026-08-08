@@ -6,6 +6,7 @@
 namespace DuckAdmin\User\System;
 
 use DuckPhp\DuckPhp;
+use DuckPhp\Ext\RouteHookWebInstaller;
 use DuckPhp\GlobalUser\GlobalUser;
 use DuckAdmin\User\Controller\ExceptionReporter;
 use DuckAdmin\User\Controller\UserAction;
@@ -17,16 +18,18 @@ class DuckUserApp extends DuckPhp
         'path' => __DIR__ . '/../',
         'namespace' => "DuckAdmin\User",
         'name'  => 'DuckUser',
-        
+
+        'data_file_enable' => true,
         'ext' => [
-            \DuckPhp\Component\ExtOptionsLoader::class => true,
+            RouteHookWebInstaller::class => true,
         ],
-        
+        'web_installer_use_database' => true,
+        'web_installer_database_drivers' => ['sqlite' => true],
+
         'exception_reporter' => ExceptionReporter::class,
         'exception_for_project'  => ProjectException::class,
         'exception_for_business'  => BusinessException::class,
         'exception_for_controller'  => ControllerException::class,
-        'exception_reporter' =>  ExceptionReporter::class,
         
         //'table_prefix' => '',   // 表前缀
         'session_prefix' => 'duckuser_',  // Session 前缀

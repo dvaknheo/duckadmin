@@ -6,10 +6,12 @@ namespace DuckAdmin\Admin\Model;
 
 use DuckPhp\Component\DbManager;
 use DuckPhp\Foundation\ModelTrait;
+use DuckPhp\Helper\ModelHelperTrait;
 
 class Base
 {
     use ModelTrait;
+    use ModelHelperTrait;
     
     /**
      * 获取最后插入的 ID
