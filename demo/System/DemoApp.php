@@ -18,8 +18,6 @@ use DuckAdminDemo\Test\MyTester;
 class DemoApp extends DuckPhp
 {
     public $options = [
-        'is_debug' => true,
-        'cli_command_with_fast_installer' => true,  //for install command
         
         'path' => __DIR__.'/../',
         'namespace' => 'DuckAdminDemo',
@@ -27,30 +25,13 @@ class DemoApp extends DuckPhp
         'controller_resource_prefix' => '/',  //for workerman local file
         'path_resource' => 'public',          //for workerman local file
         
-        'database_driver' => 'sqlite',
         'duckadmin_demo_enable_test' => false,
         
         'app' => [
 //*
-            \DuckAdmin\System\DuckAdminApp::class => [      // 后台管理系统
-                'controller_url_prefix' => 'app/admin/',    // 访问路径
-                'controller_resource_prefix' => 'res/',     // 资源文件前缀
-
-                'installed' =>true,
-                'data_file_enable' => false,
-
-                'session_prefix' => 'myadmin_',
-                'local_database' => true,
-                'database_list_reload_by_setting'=>false,
-
-                'database_list' => [
-                    [
-                        'dsn' => "sqlite:runtime/demodb.db",
-                        'username' => '',
-                        'password' => '',
-                    ],
-                ],
-
+            \DuckAdmin\Admin\System\App::class => [
+                'controller_url_prefix' => 'admin/',
+                'controller_resource_prefix' => 'res/',
             ],
 //*/
             \DuckAdmin\User\System\DuckUserApp::class => [
@@ -59,8 +40,8 @@ class DemoApp extends DuckPhp
             ],
 //*/
             \SimpleBlog\System\SimpleBlogApp::class => [
-                'controller_url_prefix' => 'blog/',                 // 访问路径
-                'controller_resource_prefix' => 'res/',        // 资源文件前缀
+                'controller_url_prefix' => 'blog/',
+                'controller_resource_prefix' => 'res/',
             ],
 //*/
         ],
@@ -85,7 +66,7 @@ class DemoApp extends DuckPhp
         $data = [];
         $data['url_blog'] = __url(\SimpleBlog\System\SimpleBlogApp::_()->options['controller_url_prefix']) . 'index';
         $data['url_user'] = __url(\DuckAdmin\User\System\DuckUserApp::_()->options['controller_url_prefix']) . 'index';
-        $data['url_admin'] = __url(\DuckAdmin\System\DuckAdminApp::_()->options['controller_url_prefix']) . 'index';
+        $data['url_admin'] = __url(\DuckAdmin\Admin\System\App::_()->options['controller_url_prefix']) . 'index';
         
         $data ['duckadmin_demo_enable_test'] = $this->options['duckadmin_demo_enable_test'];
         
@@ -139,6 +120,6 @@ class DemoApp extends DuckPhp
             'test_path_document'=>'public',
             'test_new_server'=>true,
         ];
-        MyCoverageBridge::_()->init($tester_options);
+        //MyCoverageBridge::_()->init($tester_options);
     }
 }

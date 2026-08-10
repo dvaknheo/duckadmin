@@ -5,8 +5,6 @@
  */
 namespace DuckAdmin\Admin\Controller;
 
-use DuckAdmin\Admin\Business\InstallBusiness;
-
 class MainController extends Base
 {
     public function index()
