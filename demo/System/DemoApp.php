@@ -66,7 +66,7 @@ class DemoApp extends DuckPhp
         $data = [];
         $data['url_blog'] = __url(\SimpleBlog\System\SimpleBlogApp::_()->options['controller_url_prefix']) . 'index';
         $data['url_user'] = __url(\DuckAdmin\User\System\DuckUserApp::_()->options['controller_url_prefix']) . 'index';
-        $data['url_admin'] = __url(\DuckAdmin\Admin\System\App::_()->options['controller_url_prefix']) . 'index';
+        $data['url_admin'] = __url(\DuckAdmin\Admin\System\AdminApp::_()->options['controller_url_prefix']) . 'index';
         
         $data ['duckadmin_demo_enable_test'] = $this->options['duckadmin_demo_enable_test'];
         

@@ -5,6 +5,7 @@
  */
 namespace DuckAdmin\Admin\System;
 
+use DeepCopy\Filter\SetNullFilter;
 use DuckPhp\DuckPhp;
 use DuckPhp\Ext\RouteHookWebInstaller;
 use DuckPhp\GlobalAdmin\GlobalAdmin;
@@ -26,7 +27,11 @@ class AdminApp extends DuckPhp
         'web_installer_use_redis' => false,
         'web_installer_use_database' => true,
         'web_installer_database_drivers' => ['sqlite' => true],
-        // 后面还要加自定义 view 和 callback
+        'web_installer_view' => 'install',
+        'web_installer_view_block_custom' => 'install_custom',
+        'web_installer_check_custom_callback' => [self::class, 'Callback_CheckInstall'],
+        'web_installer_do_custom_callback' => [self::class, 'Callback_DoInstall'],
+        'web_installer_default_sentences' => [],
 
         // 错误页面
         'error_404' => '_sys/error_404',
@@ -56,9 +61,32 @@ class AdminApp extends DuckPhp
         'admin_callback_for_add_ext_view_data' => [AdminAction::class,'addExtViewData'],
 
     ];
+    public function __construct()
+    {
+        $this->options['web_installer_check_custom_callback'] = [static::class,'Callback_CheckInstall'];
+        $this->options['web_installer_do_custom_callback'] = [static::class,'Callback_DoInstall'];
+        parent::__construct();
+    }
+
     //@override
     protected function onInited(): void
     {
         parent::onInited();
+    }
+    public static function Callback_CheckInstall()
+    {
+        return static::_()->_CheckInstall();
+    }
+    public static function Callback_DoInstall()
+    {
+        return static::_()->_DoInstall();
+    }
+    public function _CheckInstall()
+    {
+        //
+    }
+    public function _DoInstall()
+    {
+        //
     }
 }
