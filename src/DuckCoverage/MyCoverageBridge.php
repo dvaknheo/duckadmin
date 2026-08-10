@@ -55,12 +55,18 @@ class MyCoverageBridge extends MyCoverage
         $this->options['test_path_server'] = Helper::PathOfProject();
         $this->options['path_src'] = realpath(__DIR__.'/../../').'/src'; //??
 
-        $this->options['group'] = $this->watchingGetName();
+        $watching_group = $this->watchingGetName();
+        if ($watching_group) {
+            $this->options['group'] = $watching_group;
+        }
 
-        // 以前插入事件的模式。要换过
-        Helper::OnGloalEvent('onInit'],[static::class,'OnAppInit']);
-        Helper::OnGloalEvent([App::Phase(),'onBeforeRun'],[static::class,'OnBeforeRun']);
-        Helper::OnGloalEvent([App::Phase(),'onAfterRun'],[static::class,'OnAfterRun']);
+        // 注册 duckcover 命令行命令（不依赖 onInit 全局事件，旧版 duckphp 机制已移除）
+        App::_()->regConsoleCommand(static::class);
+
+        // 注册全局事件（duckphp 1.4.x 不 fire 对应事件则不触发，保留兼容）
+        Helper::OnGlobalEvent('onInit', [static::class, 'OnAppInit']);
+        Helper::OnGlobalEvent('onBeforeRun', [static::class, 'OnBeforeRun']);
+        Helper::OnGlobalEvent('onAfterRun', [static::class, 'OnAfterRun']);
         //Helper::OnGloalEvent([App::Phase(),'onInit'],[static::class,'OnAfterRun']); registcommand
         
         ExitException::Init(); //__define(__ExitException);
@@ -110,13 +116,13 @@ class MyCoverageBridge extends MyCoverage
     {
         return static::_()->_OnBeforeRun();
     }
-    public function OnAfterRun()
+    public static function OnAfterRun()
     {
         return static::_()->_OnAfterRun();
     }
     public function _OnAppInit()
     {
-        Helper::regExtCommandClass(static::class);
+        App::_()->regConsoleCommand(static::class);
     }
     public function _OnBeforeRun()
     {
@@ -224,8 +230,11 @@ class MyCoverageBridge extends MyCoverage
         
         $this->options['name'] = 'replay';
 
-        ($this->options['test_callback_class'])::BeforeReplayTest();
-        $test_list = ($this->options['test_callback_class'])::GetTestList();
+        $callback_class = $this->options['test_callback_class'] ?? null;
+        if ($callback_class && method_exists($callback_class, 'BeforeReplayTest')) {
+            $callback_class::BeforeReplayTest();
+        }
+        $test_list = ($callback_class && method_exists($callback_class, 'GetTestList')) ? $callback_class::GetTestList() : '';
         $test_list = \explode("\n",$test_list);
         
         foreach($test_list as $line){
@@ -233,12 +242,17 @@ class MyCoverageBridge extends MyCoverage
         }
         $this->stopServer();
         
-        ($this->options['test_callback_class'])::AfterReplayTest();
+        if ($callback_class && method_exists($callback_class, 'AfterReplayTest')) {
+            $callback_class::AfterReplayTest();
+        }
         $this->doEnd();
     }
     protected function onBeforeReport()
     {
-        ($this->options['test_callback_class'])::OnReport();
+        $callback_class = $this->options['test_callback_class'] ?? null;
+        if ($callback_class && method_exists($callback_class, 'OnReport')) {
+            $callback_class::OnReport();
+        }
     }
     protected function readCommand($request)
     {
@@ -302,7 +316,7 @@ class MyCoverageBridge extends MyCoverage
         $this->callHandler($post_curl, [$ch,'post']);
     }
     protected $headers =[];
-    protected function curl_file_get_contents($url, $post =[],$is_ajax = flase,$is_options =false)
+    protected function curl_file_get_contents($url, $post =[],$is_ajax = false,$is_options = false, $method = '')
     {
         $ch = curl_init();
         
@@ -443,8 +457,6 @@ class MyCoverageBridge extends MyCoverage
             parse_str($poststr,$input);
         }
         if(!$function){
-            $app = Helper::getAppClassByComponent($class);
-            $last_phase = App::Phase($app::_()->getOverridingClass());
             if($type === '@'){
                 $object = $class::_();
             }else if($type === '->'){
@@ -469,9 +481,6 @@ class MyCoverageBridge extends MyCoverage
             }
         }
         $ret = $reflect->invokeArgs(is_object($object)? $object:null, $args);
-        if(!$function){
-            App::Phase($last_phase);
-        }
         return $ret;
     }
     /**
@@ -517,7 +526,7 @@ EOT;
                 $this->doBegin();
                 try{
                     $this->callHandler($func);
-                }catch(\Throwabl $ex){var_dump($ex);}
+                }catch(\Throwable $ex){var_dump($ex);}
                 $this->doEnd();
             }
         }

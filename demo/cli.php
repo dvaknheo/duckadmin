@@ -10,6 +10,12 @@ if(is_file($file)){
 }
 //@include_once(__DIR__. '/LocalOverride.php');
 
+\DuckPhp\Core\AutoLoader::RunQuickly([
+    'psr-4'=>[
+        'DuckAdminDemo\\' => __DIR__.'/',
+    ],
+]);
+
 $options=[
 ];
 

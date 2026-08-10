@@ -77,7 +77,7 @@ class DemoApp extends DuckPhp
     {
         // workermanhttpd 不再支持（包已移除），如需 workerman 支持请恢复依赖
         if (static::Setting('duckadmin_demo_enable_test') || $this->options['duckadmin_demo_enable_test']??false) {
-            //$this->enableTest();
+            $this->enableTest();
         }
         //$this->checkDemoDb(); // if no default sqlite db file ，create it
        
@@ -116,6 +116,6 @@ class DemoApp extends DuckPhp
             'test_path_document'=>'public',
             'test_new_server'=>true,
         ];
-        //MyCoverageBridge::_()->init($tester_options);
+        MyCoverageBridge::_()->init($tester_options);
     }
 }

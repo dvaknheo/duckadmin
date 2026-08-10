@@ -6,6 +6,8 @@
 namespace DuckCoverage;
 
 use SebastianBergmann\CodeCoverage\CodeCoverage;
+use SebastianBergmann\CodeCoverage\Driver\Selector as CodeCoverageSelector;
+use SebastianBergmann\CodeCoverage\Filter as CodeCoverageFilter;
 use SebastianBergmann\CodeCoverage\Report\Html\Facade as ReportOfHtmlOfFacade;
 use SebastianBergmann\CodeCoverage\Report\PHP as ReportOfPHP;
 
@@ -87,15 +89,32 @@ class MyCoverage
     {
         $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
         
-        $this->coverage = new CodeCoverage();
+        try {
+            $this->coverage = $this->createCoverage();
+        } catch (\Throwable $e) {
+            // 无覆盖驱动(xdebug/pcov)时延迟到 doBegin 再创建，保证 CLI 命令可用
+            $this->coverage = null;
+        }
         $this->is_inited = true;
         // auto start
         return $this;
     }
+    /**
+     * php-code-coverage 9.x: CodeCoverage 必须显式传入 Driver + Filter
+     */
+    protected function createCoverage(): CodeCoverage
+    {
+        $filter = new CodeCoverageFilter();
+        $driver = (new CodeCoverageSelector())->forLineCoverage($filter);
+        return new CodeCoverage($driver, $filter);
+    }
     public function doBegin()
     {
+        if (!$this->coverage) {
+            $this->coverage = $this->createCoverage();
+        }
         $path_src = $this->getSubPath('path_src');
-        $this->coverage->filter()->addDirectoryToWhitelist($path_src);
+        $this->coverage->filter()->includeDirectory($path_src);
         
         $this->coverage->start($this->options['name'],true);
     }
@@ -141,8 +160,8 @@ class MyCoverage
         
         $path_report=$this->getReportPath($groups);
         $this->path_report = $path_report;
-        $coverage = new CodeCoverage();
-        $coverage->filter()->addDirectoryToWhitelist($path_src);
+        $coverage = $this->createCoverage();
+        $coverage->filter()->includeDirectory($path_src);
         $coverage->setTests([
           'T' => [
             'size' => 'unknown',
@@ -166,8 +185,8 @@ class MyCoverage
         $this->onBeforeReport();
         (new ReportOfHtmlOfFacade)->process($this->coverage, $path_report);
         $report = $this->coverage->getReport();
-        $lines_tested = $report->getNumExecutedLines();
-        $lines_total = $report->getNumExecutableLines();
+        $lines_tested = $report->numberOfExecutedLines();
+        $lines_total = $report->numberOfExecutableLines();
         $lines_percent = sprintf('%0.2f%%', $lines_tested / $lines_total * 100);
         
         $this->coverage = null; 

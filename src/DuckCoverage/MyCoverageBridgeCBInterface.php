@@ -8,7 +8,7 @@ namespace DuckCoverage;
 interface MyCoverageBridgeCBInterface
 {
     public static function BeforeReplayTest();
-    public static function GetList();
+    public static function GetTestList();
     public static function AfterReplayTest();
     public static function OnReport();
 }

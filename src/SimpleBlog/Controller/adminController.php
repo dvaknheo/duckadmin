@@ -22,7 +22,7 @@ class adminController implements AdminControllerInterface
     protected function initController()
     {
         Helper::Admin()->checkAccess();
-        $this->mergeViewData()
+        $this->mergeViewData();
     }
     
     protected function mergeViewData()

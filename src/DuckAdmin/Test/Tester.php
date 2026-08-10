@@ -4,7 +4,7 @@ namespace DuckAdmin\Test;
 use DuckPhp\Foundation\Helper;
 use DuckPhp\Component\DbManager;
 use DuckPhp\Core\PhaseContainer;
-use DuckPhp\Foundation\Trait;
+use DuckPhp\Core\SingletonTrait;
 use DuckAdmin\System\DuckAdminApp;
 use Demo\Tester\MyCoverageBridge;
 
