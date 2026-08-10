@@ -22,50 +22,6 @@ class MainController extends Base
     /**
      * DuckUser 安装：GET 展示环境自检与安装按钮；POST 执行安装
      */
-    public function install_bak()
-    {
-        $checks = InstallBusiness::_()->environmentCheck();
-        $allOk = true;
-        foreach ($checks as $check) {
-            if (empty($check['ok'])) {
-                $allOk = false;
-                break;
-            }
-        }
-
-        $data = [
-            'installed' => InstallBusiness::_()->isInstalled(),
-            'done' => false,
-            'checks' => $checks,
-            'all_ok' => $allOk,
-            'error' => '',
-        ];
-
-        if ($data['installed']) {
-            Helper::Show($data, 'install');
-            return;
-        }
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if (!$allOk) {
-                $data['error'] = '环境自检未通过，请先解决上述问题后再安装';
-                Helper::Show($data, 'install');
-                return;
-            }
-            $result = InstallBusiness::_()->install();
-            if (!$result['ok']) {
-                $data['error'] = $result['error'];
-                Helper::Show($data, 'install');
-                return;
-            }
-            $data['done'] = true;
-            $data['url_home'] = Helper::Url('');
-            Helper::Show($data, 'install');
-            return;
-        }
-
-        Helper::Show($data, 'install');
-    }
     public function index()
     {
         $url_reg = Helper::User()->urlForRegist();

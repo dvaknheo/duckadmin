@@ -25,6 +25,8 @@ class DuckUserApp extends DuckPhp
         ],
         'web_installer_use_database' => true,
         'web_installer_database_drivers' => ['sqlite' => true],
+        'web_installer_use_redis' => false,
+        'web_installer_view' => 'install',
 
         'exception_reporter' => ExceptionReporter::class,
         'exception_for_project'  => ProjectException::class,
