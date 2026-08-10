@@ -11,6 +11,7 @@ use DuckPhp\Ext\RouteHookWebInstaller;
 use DuckPhp\GlobalAdmin\GlobalAdmin;
 
 use DuckAdmin\Admin\Controller\AdminAction;
+use DuckAdmin\Admin\Controller\AppAction;
 
 class AdminApp extends DuckPhp
 {
@@ -29,9 +30,13 @@ class AdminApp extends DuckPhp
         'web_installer_database_drivers' => ['sqlite' => true],
         'web_installer_view' => 'install',
         'web_installer_view_block_custom' => 'install_custom',
-        'web_installer_check_custom_callback' => [self::class, 'Callback_CheckInstall'],
-        'web_installer_do_custom_callback' => [self::class, 'Callback_DoInstall'],
-        'web_installer_default_sentences' => [],
+        'web_installer_check_custom_callback' => [AppAction::class, 'Callback_CheckInstall'],
+        'web_installer_do_custom_callback' => [AppAction::class, 'Callback_DoInstall'],
+        'web_installer_default_sentences' => [
+            'Admin Name' => '管理员账号',
+            'Admin Password' => '管理员密码',
+            'Admin Password Confirm' => '确认密码',
+        ],
 
         // 错误页面
         'error_404' => '_sys/error_404',
@@ -63,8 +68,6 @@ class AdminApp extends DuckPhp
     ];
     public function __construct()
     {
-        $this->options['web_installer_check_custom_callback'] = [static::class,'Callback_CheckInstall'];
-        $this->options['web_installer_do_custom_callback'] = [static::class,'Callback_DoInstall'];
         parent::__construct();
     }
 
@@ -72,21 +75,5 @@ class AdminApp extends DuckPhp
     protected function onInited(): void
     {
         parent::onInited();
-    }
-    public static function Callback_CheckInstall()
-    {
-        return static::_()->_CheckInstall();
-    }
-    public static function Callback_DoInstall()
-    {
-        return static::_()->_DoInstall();
-    }
-    public function _CheckInstall()
-    {
-        //
-    }
-    public function _DoInstall()
-    {
-        //
     }
 }

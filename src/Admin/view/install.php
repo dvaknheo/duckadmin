@@ -98,7 +98,8 @@ legend { font-weight: bold; }
                 <option value="<?=__h($driver)?>"<?= $driver === $dc_driver ? ' selected' : '' ?>><?=__h($driver)?></option>
 <?php } ?>
             </select></label></p>
-            <p data-db-file><label><?=__hl('webinstaller.file')?>: <input type="text" name="database[file]" value="<?=__h((string)($post['database']['file'] ?? 'database/database.db'))?>"></label></p>
+            <?php $dc_file = (string)($post['database']['file'] ?? ''); if ($dc_file === '' || $dc_file === 'database/database.db') { $dc_file = 'database/admin.db'; } ?>
+            <p data-db-file><label><?=__hl('webinstaller.file')?>: <input type="text" name="database[file]" value="<?=__h($dc_file)?>"></label></p>
             <p data-db-server><label><?=__hl('webinstaller.host')?>: <input type="text" name="database[host]" value="<?=__h((string)($post['database']['host'] ?? '127.0.0.1'))?>"></label></p>
             <p data-db-server><label><?=__hl('webinstaller.port')?>: <input type="text" name="database[port]" value="<?=__h((string)($post['database']['port'] ?? ''))?>"></label></p>
             <p data-db-server><label><?=__hl('webinstaller.dbname')?>: <input type="text" name="database[dbname]" value="<?=__h((string)($post['database']['dbname'] ?? ''))?>"></label></p>
