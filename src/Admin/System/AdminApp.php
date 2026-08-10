@@ -11,7 +11,7 @@ use DuckPhp\GlobalAdmin\GlobalAdmin;
 
 use DuckAdmin\Admin\Controller\AdminAction;
 
-class App extends DuckPhp
+class AdminApp extends DuckPhp
 {
     //@override
     public $options = [

@@ -29,7 +29,7 @@ class DemoApp extends DuckPhp
         
         'app' => [
 //*
-            \DuckAdmin\Admin\System\App::class => [
+            \DuckAdmin\Admin\System\AdminApp::class => [
                 'controller_url_prefix' => 'admin/',
                 'controller_resource_prefix' => 'res/',
             ],
