@@ -39,6 +39,10 @@ legend { font-weight: bold; }
 <?php if (!empty($installed)) { ?>
 <h2><?=__hl('webinstaller.install_complete')?></h2>
 <p><?=__hl('webinstaller.congratulations')?></p>
+<?php $home_url = __url(''); ?>
+<p>系统将在 5 秒后自动跳转到管理系统首页，<a href="<?=__h($home_url)?>">立即前往</a></p>
+<meta http-equiv="refresh" content="5;url=<?=__h($home_url)?>">
+<script>setTimeout(function(){ window.location.href = <?= json_encode($home_url) ?>; }, 5000);</script>
 <?php } else { ?>
 <form method="post">
     <fieldset>
