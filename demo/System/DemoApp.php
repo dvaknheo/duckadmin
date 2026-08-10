@@ -75,11 +75,7 @@ class DemoApp extends DuckPhp
 
     public function onInited(): void
     {
-        //use workerman
-        if ($this->options['duckadmin_demo_enable_workerman']??false) {
-            \DuckPhp\HttpServer\HttpServer::_(\WorkermanHttpd\WorkermanHttpd::_())->options['host']='0.0.0.0';
-        }
-        
+        // workermanhttpd 不再支持（包已移除），如需 workerman 支持请恢复依赖
         if (static::Setting('duckadmin_demo_enable_test') || $this->options['duckadmin_demo_enable_test']??false) {
             //$this->enableTest();
         }
