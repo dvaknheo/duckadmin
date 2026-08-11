@@ -108,8 +108,12 @@ class CoverageBase
         $driver = (new CodeCoverageSelector())->forLineCoverage($filter);
         return new CodeCoverage($driver, $filter);
     }
+    protected $is_begin = false;
     public function doBegin()
     {
+        if ($this->is_begin) {
+            return; // 防止重复调用
+        }
         if (!$this->coverage) {
             $this->coverage = $this->createCoverage();
         }
@@ -117,10 +121,14 @@ class CoverageBase
         $this->coverage->filter()->includeDirectory($path_src);
         
         $this->coverage->start($this->options['name'],true);
+        $this->is_begin = true;
     }
     
     public function doEnd()
     {
+        if (!$this->is_begin) {
+            return; // 防止重复调用
+        }
         $this->coverage->stop();
         $path_dump = $this->getSubPath('path_dump');
         $path_dump = $path_dump. $this->options['group'].'/';
@@ -129,6 +137,7 @@ class CoverageBase
         
         (new ReportOfPHP)->process($this->coverage, $path_dump.$file.'.php');
         //$this->coverage = null;
+        $this->is_begin = false;
     }
     public function getCoverage()
     {
