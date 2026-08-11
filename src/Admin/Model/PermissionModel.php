@@ -96,4 +96,60 @@ class PermissionModel extends Base
         $rows = $this->fetchAll($sql, [$userId]);
         return array_column($rows, 'key');
     }
+
+    /**
+     * 按 key 查权限 id(未找到返回 0)
+     */
+    protected function getIdByKey(string $key): int
+    {
+        $sql = "SELECT id FROM admin_permissions WHERE `key` = ? AND deleted_at IS NULL";
+        $row = $this->fetch($sql, [$key]);
+        return (int)($row['id'] ?? 0);
+    }
+
+    /**
+     * 插入默认权限种子(三级层级:system → system.user/role/permission → 各 list/create/edit/delete)
+     */
+    public function seedDefaultPermissions(): void
+    {
+        $permissions = [
+            ['系统管理', 'system', '系统管理模块', null],
+            ['用户管理', 'system.user', '用户管理', 'system'],
+            ['用户列表', 'system.user.list', '查看用户列表', 'system.user'],
+            ['创建用户', 'system.user.create', '创建新用户', 'system.user'],
+            ['编辑用户', 'system.user.edit', '编辑用户信息', 'system.user'],
+            ['删除用户', 'system.user.delete', '删除用户', 'system.user'],
+            ['角色管理', 'system.role', '角色管理', 'system'],
+            ['角色列表', 'system.role.list', '查看角色列表', 'system.role'],
+            ['创建角色', 'system.role.create', '创建新角色', 'system.role'],
+            ['编辑角色', 'system.role.edit', '编辑角色信息', 'system.role'],
+            ['删除角色', 'system.role.delete', '删除角色', 'system.role'],
+            ['权限管理', 'system.permission', '权限管理', 'system'],
+            ['权限列表', 'system.permission.list', '查看权限列表', 'system.permission'],
+            ['创建权限', 'system.permission.create', '创建新权限', 'system.permission'],
+            ['编辑权限', 'system.permission.edit', '编辑权限信息', 'system.permission'],
+            ['删除权限', 'system.permission.delete', '删除权限', 'system.permission'],
+        ];
+        foreach ($permissions as $perm) {
+            $parent_id = $perm[3] ? $this->getIdByKey($perm[3]) : 0;
+            $this->create([
+                'name' => $perm[0],
+                'key' => $perm[1],
+                'description' => $perm[2],
+                'parent_id' => $parent_id,
+                'sort_order' => 0,
+            ]);
+        }
+    }
+
+    /**
+     * 给角色关联全部权限
+     */
+    public function grantAllPermissions(int $roleId): void
+    {
+        $sql = "SELECT id FROM admin_permissions WHERE deleted_at IS NULL";
+        $rows = $this->fetchAll($sql);
+        $ids = array_column($rows, 'id');
+        $this->setRolePermissions($roleId, $ids);
+    }
 }

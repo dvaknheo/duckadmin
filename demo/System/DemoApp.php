@@ -96,8 +96,8 @@ class DemoApp extends DuckPhp
     protected function onPrepare(): void
     {
         parent::onPrepare();
-        
-        if (static::Setting('duckadmin_demo_enable_test') || ($this->options['duckadmin_demo_enable_test'] ?? false)) {
+
+        if ($this->options['duckcoverage_enable'] ?? false) {
             $this->options['data_file_json_file'] = 'DuckPhpData-test.config.json';
         }
     }

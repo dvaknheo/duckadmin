@@ -80,4 +80,20 @@ class RoleModel extends Base
             $this->execute($sql, [$userId, (int)$roleId]);
         }
     }
+
+    /**
+     * 插入默认角色(超级管理员/普通管理员),返回超级管理员 role_id
+     */
+    public function seedDefaultRoles(): int
+    {
+        $super_id = $this->create([
+            'name' => '超级管理员',
+            'description' => '拥有所有权限',
+        ]);
+        $this->create([
+            'name' => '普通管理员',
+            'description' => '有限的管理权限',
+        ]);
+        return $super_id;
+    }
 }
