@@ -215,15 +215,15 @@ class CoverageBase
     ////[[[[
     protected function watchingBegin($name)
     {
-        file_put_contents($this->options['duckcoverage_path'].'MyCoverage.watching.txt',$name);
+        file_put_contents($this->options['duckcoverage_path'].'DuckCoverage.watching.txt',$name);
     }
     protected function watchingEnd()
     {
-        @unlink($this->options['duckcoverage_path'].'MyCoverage.watching.txt');
+        @unlink($this->options['duckcoverage_path'].'DuckCoverage.watching.txt');
     }
     protected function watchingGetName()
     {
-        $group = @file_get_contents($this->options['duckcoverage_path'].'MyCoverage.watching.txt');
+        $group = @file_get_contents($this->options['duckcoverage_path'].'DuckCoverage.watching.txt');
         return $group;    
     }
     ////]]]]

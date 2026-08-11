@@ -25,15 +25,17 @@ class DuckCoverage extends CoverageBase
 
         'duckcoverage_save_web_request_list' => true,
         'duckcoverage_save_local_call_list' => false,
+
         'duckcoverage_server_port' => 8080,
         'duckcoverage_server_host' => '',
         'duckcoverage_path_server' => '',
         'duckcoverage_path_document' => 'public',
         'duckcoverage_homepage' => '/index_dev.php/',
+        'duckcoverage_new_server' => true,
+
         'duckcoverage_web_base_url' => '',      // 外部服务器(如 nginx)基础 URL,如 http://admin.duckphp-local.com/ ;空则退回内部测试服务器
 
         'duckcoverage_callback_class' => null,
-        'duckcoverage_new_server' => true,
 
         'duckcoverage_report_direct' => true,
         'duckcoverage_echo_back' => false,
@@ -49,14 +51,18 @@ class DuckCoverage extends CoverageBase
     }
     public function init(array $options, ?object $context = null)
     {
-        if (!class_exists(CodeCoverage::class)) {
-            return $this;
-        }
         parent::init($options, $context);
 
         $this->options['duckcoverage_path'] = Helper::PathOfRuntime();
         $this->options['duckcoverage_path_server'] = Helper::PathOfProject();
-        $this->options['duckcoverage_path_src'] = realpath(__DIR__ . '/../../') . '/src'; //??
+        $this->options['duckcoverage_path_src'] ??= realpath(__DIR__ . '/../../') . '/src'; //??
+
+        if (!$this->options['duckcoverage_enable']) {
+            return $this;
+        }
+        if (!App::_()->isRoot()) {
+            return $this;
+        }
 
         $watching_group = $this->watchingGetName();
         if ($watching_group) {
@@ -66,8 +72,8 @@ class DuckCoverage extends CoverageBase
         // 注册 duckcover 命令行命令（不依赖 onInit 全局事件，旧版 duckphp 机制已移除）
         App::_()->regConsoleCommand(static::class, 'command_');
 
-        // web 收集由根应用 DemoApp::serve() override 在请求前后调用 _OnBeforeRun/_OnAfterRun,
-        // 不再使用 Route hook
+        // web 收集:isInHttpTest() 命中时 _OnBeforeRun(doBegin),
+        // 并用 SystemWrapper::register_shutdown_function 在请求结束注册 _OnAfterRun(doEnd)
         ExitException::Init(); //__define(__ExitException);
 
         if ($this->isInHttpTest()) {
@@ -84,7 +90,7 @@ class DuckCoverage extends CoverageBase
     {
         $watching_name = $this->watchingGetName();
         $server_name = Helper::SERVER('HTTP_X_MYCOVERAGE_NAME', '');
-        //$server_name = $_SERVER['HTTP_X_MYCOVERAGE_NAME']??'';// do not use this;
+        //$server_name = $_SERVER['HTTP_X_MYCOVERAGE_NAME']??'';
         if ($watching_name && $watching_name === $server_name) {
             return true;
         }
@@ -103,10 +109,6 @@ class DuckCoverage extends CoverageBase
     }
     public function _OnBeforeRun()
     {
-        if (PHP_SAPI === 'cli' && App::_()->options['cli_enable']) {
-            return;
-        }
-
         if (!$this->options['duckcoverage_group']) {
             return;
         }
@@ -118,8 +120,8 @@ class DuckCoverage extends CoverageBase
         }
 
 
-        $this->options['duckcoverage_name'] = $this->getTestName();
-        //// save list
+        $this->options['duckcoverage_name'] = $this->getTestName(); //???
+        //// TODO save list
 
 
         $before_run = Helper::SERVER('HTTP_X_MYCOVERAGE_BEFORERUN', '');
@@ -132,14 +134,6 @@ class DuckCoverage extends CoverageBase
 
     public function _OnAfterRun()
     {
-        if (PHP_SAPI === 'cli' && App::_()->options['cli_enable']) {
-            return;
-        }
-        ///////////////
-        $watching_name = $this->watchingGetName();
-        if ($watching_name !== Helper::SERVER('HTTP_X_MYCOVERAGE_NAME', '')) {
-            return;
-        }
 
         $after_run = Helper::SERVER('HTTP_X_MYCOVERAGE_AFTERRUN', '');
         if ($after_run) {
