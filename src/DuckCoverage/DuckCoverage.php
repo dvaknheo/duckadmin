@@ -16,7 +16,7 @@ use SebastianBergmann\CodeCoverage\CodeCoverage;
 #WEB url post
 #SETWEB precall preweb postweb postcall
 
-class MyCoverageBridge extends MyCoverage
+class DuckCoverage extends CoverageBase
 {
     //todo use  global singletonex to replace default singleton function
     public $options =[
@@ -77,9 +77,9 @@ class MyCoverageBridge extends MyCoverage
         }
         // 修改成测试的配置。 需要和 ext_options_file 配合，所以现在要调整
         $app = App::_();
-        if(MyCoverageBridge::_()->isInHttpTest()){
+        if(DuckCoverage::_()->isInHttpTest()){
             $app->options['ext_options_file'] = 'runtime/DuckPhpApps_test.config.php';
-        } else if (MyCoverageBridge::_()->isInCliTest()){
+        } else if (DuckCoverage::_()->isInCliTest()){
             $app->options['ext_options_file'] = 'runtime/DuckPhpApps_test.config.php';
             //$app->options['ext_options_file_enable'] = false;
         }

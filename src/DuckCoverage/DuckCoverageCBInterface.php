@@ -5,7 +5,7 @@
  */
 namespace DuckCoverage;
 
-interface MyCoverageBridgeCBInterface
+interface DuckCoverageCBInterface
 {
     public static function BeforeReplayTest();
     public static function GetTestList();

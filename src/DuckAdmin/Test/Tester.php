@@ -6,7 +6,6 @@ use DuckPhp\Component\DbManager;
 use DuckPhp\Core\PhaseContainer;
 use DuckPhp\Core\SingletonTrait;
 use DuckAdmin\System\DuckAdminApp;
-use Demo\Tester\MyCoverageBridge;
 
 
 class Tester

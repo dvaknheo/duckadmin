@@ -11,7 +11,7 @@ use SebastianBergmann\CodeCoverage\Filter as CodeCoverageFilter;
 use SebastianBergmann\CodeCoverage\Report\Html\Facade as ReportOfHtmlOfFacade;
 use SebastianBergmann\CodeCoverage\Report\PHP as ReportOfPHP;
 
-class MyCoverage
+class CoverageBase
 {
     protected $coverage;
 

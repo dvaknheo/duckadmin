@@ -10,7 +10,7 @@ use DuckPhp\Component\DbManager;
 use DuckPhp\Core\CoreHelper;
 use DuckPhp\DuckPhp;
 use DuckPhp\Foundation\Controller\Helper;
-use DuckCoverage\MyCoverageBridge;
+use DuckCoverage\DuckCoverage;
 use DuckAdmin\Controller\AccountController;
 use DuckAdminDemo\Overrided\MyAccountController;
 use DuckAdminDemo\Test\MyTester;
@@ -92,11 +92,11 @@ class DemoApp extends DuckPhp
     }
 
     /**
-     * override 根应用 serve():在请求前后触发 MyCoverageBridge 的 web 覆盖收集
+     * override 根应用 serve():在请求前后触发 DuckCoverage 的 web 覆盖收集
      */
     public function serve(): bool
     {
-        $bridge = \DuckCoverage\MyCoverageBridge::_();
+        $bridge = \DuckCoverage\DuckCoverage::_();
         $bridge->_OnBeforeRun();
         $ret = parent::serve();
         $bridge->_OnAfterRun();
@@ -117,6 +117,6 @@ class DemoApp extends DuckPhp
             'test_new_server'=>true,
             'test_web_base_url' => 'http://admin.duckphp-local.com/',
         ];
-        MyCoverageBridge::_()->init($tester_options);
+        DuckCoverage::_()->init($tester_options);
     }
 }
