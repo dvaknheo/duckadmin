@@ -115,6 +115,7 @@ class DemoApp extends DuckPhp
             'test_homepage' =>'/index.php/',
             'test_path_document'=>'public',
             'test_new_server'=>true,
+            'test_web_base_url' => 'http://admin.duckphp-local.com/',
         ];
         MyCoverageBridge::_()->init($tester_options);
     }

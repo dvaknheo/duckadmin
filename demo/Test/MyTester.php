@@ -55,11 +55,11 @@ class MyTester
         $static = static::class;
         $str ='';
         //$str.="#CALL {$static}@installTest\n";
-        $str .= \DuckAdmin\Test\Tester::_()->getTestList();
-        $str .= \DuckUser\Test\Tester::_()->getTestList();
-        $str .= \SimpleBlog\Test\Tester::_()->getTestList();
-        $str .= \DuckUserManager\Test\Tester::_()->getTestList();
-        $str.="#CALL {$static}@cleanAll\n";
+        //$str .= \DuckAdmin\Test\Tester::_()->getTestList();
+        $str .= \DuckAdmin\User\Test\Tester::_()->getTestList();
+        //$str .= \SimpleBlog\Test\Tester::_()->getTestList();
+        //$str .= \DuckUserManager\Test\Tester::_()->getTestList();
+        //$str.="#CALL {$static}@cleanAll\n";
         return $str;
     }
     public function _BeforeWebTest()

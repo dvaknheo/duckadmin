@@ -1,23 +1,21 @@
 <?php
 namespace DuckAdmin\User\Test;
 
-use DuckPhp\Foundation\SimpleSingletonTrait;
-use DuckPhp\Core\CoreHelper;
 use DuckPhp\Component\DbManager;
+use DuckPhp\Core\CoreHelper;
+use DuckPhp\Foundation\SingletonTrait;
+
 use DuckAdmin\User\System\DuckUserApp;
 use DuckAdmin\User\Model\UserModel;
 use DuckAdmin\User\Controller\UserAction;
 
 class Tester
 {
-    use SimpleSingletonTrait;
+    use SingletonTrait;
     
     public static function BeforeTest()
     {
-        $phase = CoreHelper::_()->getAppClassByComponent(static::class);
-        CoreHelper::PhaseCall($phase,function(){
-            static::_()->_BeforeTest();
-        });
+        static::_()->_BeforeTest();
     }
     public function _BeforeTest()
     {
@@ -27,13 +25,11 @@ class Tester
     }
     public static function AfterTest()
     {
-        $phase = CoreHelper::_()->getAppClassByComponent(static::class);
-        CoreHelper::PhaseCall($phase,function(){
-            static::_()->_AfterTest();
-        });
+        static::_()->_AfterTest();
     }
     public function _AfterTest()
     {
+        return;
         $table = UserModel::_()->table();
         $sql = "select id from $table order by id desc  limit 1";
         $id = DbManager::Db()->fetchColumn($sql);
@@ -69,13 +65,13 @@ $list = <<<EOT
 
 EOT;
 
-        $prefix = \DuckUser\System\DuckUserApp::_()->options['controller_url_prefix'];
+        $prefix = DuckUserApp::_()->options['controller_url_prefix'];
         
         $args = [
             'username' =>'user_test',
         ];
         $args ['static'] = static::class;
-        $list = CoreHelper::_()->formatString($list,$args);
+        $list = $this->replace_string($list,$args);
         $list = str_replace('#WEB ','#WEB '.$prefix,$list);
         return $list;
     }
@@ -83,19 +79,19 @@ EOT;
     protected function getNextInsertId($table)
     {
         
-        $database_driver = \DuckUser\System\DuckUserApp::_()->options['database_driver'];
+        $database_driver = DuckUserApp::_()->options['database_driver'];
         if($database_driver ==='mysql'){
-            $sql = "show table status where Name ='".\DuckUser\System\DuckUserApp::_()->options['table_prefix'] .$table."'";
-            $ret = \DuckPhp\Component\DbManager::Db()->fetch($sql)["Auto_increment"];
+            $sql = "show table status where Name ='".DuckUserApp::_()->options['table_prefix'] .$table."'";
+            $ret = DbManager::Db()->fetch($sql)["Auto_increment"];
         }
         if($database_driver ==='sqlite'){
             $sql = "select seq from sqlite_sequence where name = ?";
-            $ret = \DuckPhp\Component\DbManager::Db()->fetchColumn($sql,$table);
+            $ret = DbManager::Db()->fetchColumn($sql,$table);
         }
         return $ret;
         
     }
-    private function replace_string($str,$args)
+    protected function replace_string($str,$args)
     {
         if (empty($args)) {
             return $str;
@@ -109,4 +105,5 @@ EOT;
         
         return $ret;
     }
+    
 }

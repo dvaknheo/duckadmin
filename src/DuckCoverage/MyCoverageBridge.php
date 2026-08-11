@@ -27,6 +27,7 @@ class MyCoverageBridge extends MyCoverage
         'test_path_server'=>'',
         'test_path_document'=>'public',
         'test_homepage' =>'/index_dev.php/',
+        'test_web_base_url' => '',      // 外部服务器(如 nginx)基础 URL,如 http://admin.duckphp-local.com/ ;空则退回内部测试服务器
         
         'test_callback_class'=>null,
         'test_new_server'=>true,
@@ -405,7 +406,12 @@ class MyCoverageBridge extends MyCoverage
         
         if($command!=='#WEB'){return;}
         
-        $this->startServer();
+        $base_url = (string)($this->options['test_web_base_url'] ?? '');
+        if ($base_url === '') {
+            // 未配置外部服务器(如 nginx)时,退回内部 PHP 测试服务器
+            $this->startServer();
+            $base_url = "http://127.0.0.1:{$this->options['test_server_port']}".$this->options['test_homepage'];
+        }
         $post =[];
         if($poststr){
             parse_str($poststr,$post);
@@ -413,8 +419,8 @@ class MyCoverageBridge extends MyCoverage
         $is_ajax = ($method ==='AJAX')?true:false;
         $is_options = ($method ==='OPTIONS')?true:false;
         
-        $url ="http://127.0.0.1:{$this->options['test_server_port']}".$this->options['test_homepage'].$uri;
-        $data = $this->curl_file_get_contents([$url,'127.0.0.1'],$post,$is_ajax,$is_options,$method);
+        $url = $base_url . $uri;
+        $data = $this->curl_file_get_contents($url,$post,$is_ajax,$is_options,$method);
         if($this->options['test_echo_back']??false){
             echo substr($data,0,200);
         }
