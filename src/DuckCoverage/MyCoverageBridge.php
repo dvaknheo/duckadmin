@@ -64,12 +64,8 @@ class MyCoverageBridge extends MyCoverage
         // 注册 duckcover 命令行命令（不依赖 onInit 全局事件，旧版 duckphp 机制已移除）
         App::_()->regConsoleCommand(static::class);
 
-        // 注册全局事件（duckphp 1.4.x 不 fire 对应事件则不触发，保留兼容）
-        Helper::OnGlobalEvent('onInit', [static::class, 'OnAppInit']);
-        Helper::OnGlobalEvent('onBeforeRun', [static::class, 'OnBeforeRun']);
-        Helper::OnGlobalEvent('onAfterRun', [static::class, 'OnAfterRun']);
-        //Helper::OnGloalEvent([App::Phase(),'onInit'],[static::class,'OnAfterRun']); registcommand
-        
+        // web 收集由根应用 DemoApp::serve() override 在请求前后调用 _OnBeforeRun/_OnAfterRun,
+        // 不再使用 Route hook
         ExitException::Init(); //__define(__ExitException);
         
         return $this;
@@ -130,7 +126,7 @@ class MyCoverageBridge extends MyCoverage
         if(!$this->options['group']){
             return;
         }
-        if (PHP_SAPI === 'cli' && App::Current()->options['cli_enable']) {
+        if (PHP_SAPI === 'cli' && App::_()->options['cli_enable']) {
             //TODO console mode
             return;
         }
@@ -159,7 +155,7 @@ class MyCoverageBridge extends MyCoverage
 
     public function _OnAfterRun()
     {
-        if (PHP_SAPI === 'cli' && App::Current()->options['cli_enable']) {
+        if (PHP_SAPI === 'cli' && App::_()->options['cli_enable']) {
             return;
         }
         ///////////////

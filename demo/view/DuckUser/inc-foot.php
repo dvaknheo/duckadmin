@@ -1,7 +1,7 @@
 
 <script src="/layui/layui.js"></script>
 <script>
-var error=<?=json_encode($error)?>;
+var error=<?=json_encode($error ?? '')?>;
 </script>
 <script>
 layui.use('layer', function(){

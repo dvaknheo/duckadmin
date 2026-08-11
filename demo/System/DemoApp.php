@@ -83,6 +83,17 @@ class DemoApp extends DuckPhp
        
         parent::onInited();
     }
+    /**
+     * override 根应用 serve():在请求前后触发 MyCoverageBridge 的 web 覆盖收集
+     */
+    public function serve(): bool
+    {
+        $bridge = \DuckCoverage\MyCoverageBridge::_();
+        $bridge->_OnBeforeRun();
+        $ret = parent::serve();
+        $bridge->_OnAfterRun();
+        return $ret;
+    }
     protected function checkDemoDb()
     {
         $dsn = $this->options['database_list'][0]['dsn']??null;
