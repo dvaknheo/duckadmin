@@ -8,7 +8,7 @@
 <?php }?>
     <label><?= __hl('用户名'); ?></label>
     <div>
-        <input name="name" value="<?= __h($name)?>" autofocus>
+        <input name="name" value="<?= __h($name??'')?>" autofocus>
     </div>
     <label><?= __hl('密码'); ?></label>
     <div>

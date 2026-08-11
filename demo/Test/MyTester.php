@@ -28,7 +28,6 @@ class MyTester
     }
     public static function BeforeReplayTest()
     {
-        return static::_()->installTest();
     }
     public static function AfterReplayTest()
     {
