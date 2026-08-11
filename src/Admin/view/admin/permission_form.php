@@ -37,17 +37,29 @@ $current_route = 'permission';
             </div>
             
             <div class="col-md-6">
-                <label class="form-label">权限标识 <span class="text-danger">*</span></label>
-                <input type="text" name="key" class="form-control" required
-                       value="<?= __h($data['key'] ?? '') ?>"
-                       placeholder="如: system.user.create">
-                <small class="text-muted">用点号分隔的层级标识，如 system.user.list</small>
+                <label class="form-label">URL</label>
+                <input type="text" name="url" class="form-control"
+                       value="<?= __h($data['url'] ?? '') ?>"
+                       placeholder="如: user/index(目录类型留空)">
+                <small class="text-muted">菜单/操作填写,与请求地址精确匹配;目录留空</small>
             </div>
             
             <div class="col-md-6">
-                <label class="form-label">上级权限</label>
+                <label class="form-label">类型</label>
+                <select name="type" class="form-select">
+                    <?php $types = [0 => '目录', 1 => '菜单', 2 => '操作']; ?>
+                    <?php foreach ($types as $tv => $tn): ?>
+                        <option value="<?= $tv ?>" <?= ((int)($data['type'] ?? 1) === $tv) ? 'selected' : '' ?>>
+                            <?= $tn ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            
+            <div class="col-md-6">
+                <label class="form-label">上级</label>
                 <select name="parent_id" class="form-select">
-                    <option value="0">顶级权限</option>
+                    <option value="0">顶级</option>
                     <?php foreach ($permissions as $p): ?>
                         <?php if ($p['parent_id'] == 0): ?>
                             <option value="<?= (int)$p['id'] ?>" 
@@ -61,13 +73,8 @@ $current_route = 'permission';
             
             <div class="col-md-6">
                 <label class="form-label">排序</label>
-                <input type="number" name="sort_order" class="form-control" 
-                       value="<?= (int)($data['sort_order'] ?? 0) ?>">
-            </div>
-            
-            <div class="col-12">
-                <label class="form-label">描述</label>
-                <textarea name="description" class="form-control" rows="2"><?= __h($data['description'] ?? '') ?></textarea>
+                <input type="number" name="weight" class="form-control" 
+                       value="<?= (int)($data['weight'] ?? 0) ?>">
             </div>
             
             <div class="col-12">

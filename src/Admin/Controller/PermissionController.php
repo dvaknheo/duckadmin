@@ -45,10 +45,10 @@ class PermissionController extends Base
     {
         $input = [
             'name' => Helper::POST('name', ''),
-            'key' => Helper::POST('key', ''),
-            'description' => Helper::POST('description', ''),
+            'url' => Helper::POST('url', ''),
+            'type' => (int)Helper::POST('type', '1'),
             'parent_id' => (int)Helper::POST('parent_id', '0'),
-            'sort_order' => (int)Helper::POST('sort_order', '0'),
+            'weight' => (int)Helper::POST('weight', '0'),
         ];
         
         $result = PermissionBusiness::_()->create($input);
@@ -91,10 +91,10 @@ class PermissionController extends Base
         $id = (int)Helper::POST('id', '0');
         $input = [
             'name' => Helper::POST('name', ''),
-            'key' => Helper::POST('key', ''),
-            'description' => Helper::POST('description', ''),
+            'url' => Helper::POST('url', ''),
+            'type' => (int)Helper::POST('type', '1'),
             'parent_id' => (int)Helper::POST('parent_id', '0'),
-            'sort_order' => (int)Helper::POST('sort_order', '0'),
+            'weight' => (int)Helper::POST('weight', '0'),
         ];
         
         $result = PermissionBusiness::_()->update($id, $input);

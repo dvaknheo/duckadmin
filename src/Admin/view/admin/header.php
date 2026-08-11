@@ -205,16 +205,14 @@ foreach($__html['script'] ?? [] as $script){
                 <?php if (!empty($menu['children'])): ?>
                     <li class="nav-item">
                         <a class="nav-link" href="javascript:;" onclick="toggleSubMenu(this)">
-                            <?php if (!empty($menu['icon'])): ?><i class="<?= __h($menu['icon']) ?>"></i><?php endif; ?>
-                            <?= __h($menu['label']) ?>
+                            <?= __h($menu['name']) ?>
                             <i class="bi bi-chevron-right arrow"></i>
                         </a>
                         <ul class="sub-menu nav flex-column">
                             <?php foreach ($menu['children'] as $child): ?>
                                 <li class="nav-item">
                                     <a class="nav-link" href="<?= __url($child['url'] ?? '#') ?>">
-                                        <?php if (!empty($child['icon'])): ?><i class="<?= __h($child['icon']) ?>"></i><?php endif; ?>
-                                        <?= __h($child['label']) ?>
+                                        <?= __h($child['name']) ?>
                                     </a>
                                 </li>
                             <?php endforeach; ?>
@@ -224,8 +222,7 @@ foreach($__html['script'] ?? [] as $script){
                     <li class="nav-item">
                         <a class="nav-link <?= ($current_route ?? '') === ($menu['url'] ?? '') ? 'active' : '' ?>" 
                            href="<?= __url($menu['url'] ?? '#') ?>">
-                            <?php if (!empty($menu['icon'])): ?><i class="<?= __h($menu['icon']) ?>"></i><?php endif; ?>
-                            <?= __h($menu['label']) ?>
+                            <?= __h($menu['name']) ?>
                         </a>
                     </li>
                 <?php endif; ?>

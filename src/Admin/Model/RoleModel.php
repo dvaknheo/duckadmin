@@ -40,9 +40,10 @@ class RoleModel extends Base
     {
         $data['created_at'] = date('Y-m-d H:i:s');
         $data['updated_at'] = date('Y-m-d H:i:s');
-        $sql = "INSERT INTO admin_roles (name, description, created_at, updated_at) VALUES (?, ?, ?, ?)";
+        $sql = "INSERT INTO admin_roles (name, description, is_super, created_at, updated_at) VALUES (?, ?, ?, ?, ?)";
         $this->execute($sql, [
             $data['name'], $data['description'] ?? '',
+            $data['is_super'] ?? 0,
             $data['created_at'], $data['updated_at']
         ]);
         return (int)$this->lastInsertId();
@@ -89,11 +90,24 @@ class RoleModel extends Base
         $super_id = $this->create([
             'name' => '超级管理员',
             'description' => '拥有所有权限',
+            'is_super' => 1,
         ]);
         $this->create([
             'name' => '普通管理员',
             'description' => '有限的管理权限',
         ]);
         return $super_id;
+    }
+
+    /**
+     * 用户是否拥有超级管理员角色
+     */
+    public function isSuperRole(int $userId): bool
+    {
+        $sql = "SELECT r.id FROM admin_roles r
+                INNER JOIN admin_role_users ru ON r.id = ru.role_id
+                WHERE ru.user_id = ? AND r.deleted_at IS NULL AND r.is_super = 1";
+        $row = $this->fetch($sql, [$userId]);
+        return !empty($row);
     }
 }

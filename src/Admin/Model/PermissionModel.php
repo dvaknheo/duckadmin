@@ -8,7 +8,7 @@ class PermissionModel extends Base
 {
     public function getAll(): array
     {
-        $sql = "SELECT * FROM admin_permissions WHERE deleted_at IS NULL ORDER BY sort_order ASC, id ASC";
+        $sql = "SELECT * FROM admin_permissions WHERE deleted_at IS NULL ORDER BY weight ASC, id ASC";
         return $this->fetchAll($sql);
     }
 
@@ -24,14 +24,14 @@ class PermissionModel extends Base
         $where = "deleted_at IS NULL";
         $params = [];
         if ($search !== '') {
-            $where .= " AND (name LIKE ? OR `key` LIKE ?)";
+            $where .= " AND (name LIKE ? OR url LIKE ?)";
             $like = '%' . $search . '%';
             $params = [$like, $like];
         }
         $totalSql = "SELECT COUNT(*) as total FROM admin_permissions WHERE {$where}";
         $total = $this->fetch($totalSql, $params)['total'] ?? 0;
         $offset = ($page - 1) * $pageSize;
-        $listSql = "SELECT * FROM admin_permissions WHERE {$where} ORDER BY sort_order ASC, id ASC LIMIT ? OFFSET ?";
+        $listSql = "SELECT * FROM admin_permissions WHERE {$where} ORDER BY weight ASC, id ASC LIMIT ? OFFSET ?";
         $listParams = array_merge($params, [$pageSize, $offset]);
         $list = $this->fetchAll($listSql, $listParams);
         return ['total' => (int)$total, 'list' => $list];
@@ -41,10 +41,10 @@ class PermissionModel extends Base
     {
         $data['created_at'] = date('Y-m-d H:i:s');
         $data['updated_at'] = date('Y-m-d H:i:s');
-        $sql = "INSERT INTO admin_permissions (name, `key`, description, parent_id, sort_order, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO admin_permissions (name, url, type, parent_id, weight, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)";
         $this->execute($sql, [
-            $data['name'], $data['key'], $data['description'] ?? '',
-            $data['parent_id'] ?? 0, $data['sort_order'] ?? 0,
+            $data['name'], $data['url'] ?? '', $data['type'] ?? 1,
+            $data['parent_id'] ?? 0, $data['weight'] ?? 0,
             $data['created_at'], $data['updated_at']
         ]);
         return (int)$this->lastInsertId();
@@ -53,10 +53,10 @@ class PermissionModel extends Base
     public function edit(int $id, array $data): bool
     {
         $data['updated_at'] = date('Y-m-d H:i:s');
-        $sql = "UPDATE admin_permissions SET name = ?, `key` = ?, description = ?, parent_id = ?, sort_order = ?, updated_at = ? WHERE id = ?";
+        $sql = "UPDATE admin_permissions SET name = ?, url = ?, type = ?, parent_id = ?, weight = ?, updated_at = ? WHERE id = ?";
         $this->execute($sql, [
-            $data['name'], $data['key'], $data['description'] ?? '',
-            $data['parent_id'] ?? 0, $data['sort_order'] ?? 0,
+            $data['name'], $data['url'] ?? '', $data['type'] ?? 1,
+            $data['parent_id'] ?? 0, $data['weight'] ?? 0,
             $data['updated_at'], $id
         ]);
         return true;
@@ -87,69 +87,75 @@ class PermissionModel extends Base
         }
     }
 
-    public function getUserPermissionKeys(int $userId): array
-    {
-        $sql = "SELECT DISTINCT p.`key` FROM admin_permissions p
-                INNER JOIN admin_role_permissions rp ON p.id = rp.permission_id
-                INNER JOIN admin_role_users ru ON rp.role_id = ru.role_id
-                WHERE ru.user_id = ? AND p.deleted_at IS NULL";
-        $rows = $this->fetchAll($sql, [$userId]);
-        return array_column($rows, 'key');
-    }
-
     /**
-     * 按 key 查权限 id(未找到返回 0)
-     */
-    protected function getIdByKey(string $key): int
-    {
-        $sql = "SELECT id FROM admin_permissions WHERE `key` = ? AND deleted_at IS NULL";
-        $row = $this->fetch($sql, [$key]);
-        return (int)($row['id'] ?? 0);
-    }
-
-    /**
-     * 插入默认权限种子(三级层级:system → system.user/role/permission → 各 list/create/edit/delete)
+     * 插入默认权限种子(目录→菜单→操作 三级)
+     * type: 0=目录 1=菜单 2=操作
      */
     public function seedDefaultPermissions(): void
     {
-        $permissions = [
-            ['系统管理', 'system', '系统管理模块', null],
-            ['用户管理', 'system.user', '用户管理', 'system'],
-            ['用户列表', 'system.user.list', '查看用户列表', 'system.user'],
-            ['创建用户', 'system.user.create', '创建新用户', 'system.user'],
-            ['编辑用户', 'system.user.edit', '编辑用户信息', 'system.user'],
-            ['删除用户', 'system.user.delete', '删除用户', 'system.user'],
-            ['角色管理', 'system.role', '角色管理', 'system'],
-            ['角色列表', 'system.role.list', '查看角色列表', 'system.role'],
-            ['创建角色', 'system.role.create', '创建新角色', 'system.role'],
-            ['编辑角色', 'system.role.edit', '编辑角色信息', 'system.role'],
-            ['删除角色', 'system.role.delete', '删除角色', 'system.role'],
-            ['权限管理', 'system.permission', '权限管理', 'system'],
-            ['权限列表', 'system.permission.list', '查看权限列表', 'system.permission'],
-            ['创建权限', 'system.permission.create', '创建新权限', 'system.permission'],
-            ['编辑权限', 'system.permission.edit', '编辑权限信息', 'system.permission'],
-            ['删除权限', 'system.permission.delete', '删除权限', 'system.permission'],
-        ];
-        foreach ($permissions as $perm) {
-            $parent_id = $perm[3] ? $this->getIdByKey($perm[3]) : 0;
-            $this->create([
-                'name' => $perm[0],
-                'key' => $perm[1],
-                'description' => $perm[2],
-                'parent_id' => $parent_id,
-                'sort_order' => 0,
-            ]);
+        // 目录
+        $system_id = $this->create(['name' => '系统管理', 'url' => '', 'type' => 0, 'parent_id' => 0, 'weight' => 5]);
+        // 菜单(按显示顺序 weight 递增)
+        $user_id = $this->create(['name' => '用户管理', 'url' => 'user/index', 'type' => 1, 'parent_id' => $system_id, 'weight' => 10]);
+        $role_id = $this->create(['name' => '角色管理', 'url' => 'role/index', 'type' => 1, 'parent_id' => $system_id, 'weight' => 20]);
+        $perm_id = $this->create(['name' => '权限管理', 'url' => 'permission/index', 'type' => 1, 'parent_id' => $system_id, 'weight' => 30]);
+        // 用户操作
+        foreach (['create', 'edit', 'delete'] as $i => $action) {
+            $this->create(['name' => '用户' . $action, 'url' => 'user/' . $action, 'type' => 2, 'parent_id' => $user_id, 'weight' => 10 + $i + 1]);
+        }
+        // 角色操作
+        foreach (['create', 'edit', 'delete'] as $i => $action) {
+            $this->create(['name' => '角色' . $action, 'url' => 'role/' . $action, 'type' => 2, 'parent_id' => $role_id, 'weight' => 20 + $i + 1]);
+        }
+        // 权限操作
+        foreach (['create', 'edit', 'delete'] as $i => $action) {
+            $this->create(['name' => '权限' . $action, 'url' => 'permission/' . $action, 'type' => 2, 'parent_id' => $perm_id, 'weight' => 30 + $i + 1]);
         }
     }
 
-    /**
-     * 给角色关联全部权限
-     */
     public function grantAllPermissions(int $roleId): void
     {
         $sql = "SELECT id FROM admin_permissions WHERE deleted_at IS NULL";
         $rows = $this->fetchAll($sql);
         $ids = array_column($rows, 'id');
         $this->setRolePermissions($roleId, $ids);
+    }
+
+    /**
+     * 获取用户可见菜单树(type 0/1 按 parent_id 组树)
+     * 超级管理员角色直接返回全部菜单,其余按角色规则过滤
+     */
+    public function getUserMenus(int $userId): array
+    {
+        if (RoleModel::_()->isSuperRole($userId)) {
+            $sql = "SELECT id, name, url, type, parent_id, weight FROM admin_permissions
+                    WHERE deleted_at IS NULL AND type IN (0,1)
+                    ORDER BY weight ASC, id ASC";
+            $rows = $this->fetchAll($sql);
+        } else {
+            $sql = "SELECT DISTINCT p.id, p.name, p.url, p.type, p.parent_id, p.weight
+                    FROM admin_permissions p
+                    INNER JOIN admin_role_permissions rp ON p.id = rp.permission_id
+                    INNER JOIN admin_role_users ru ON rp.role_id = ru.role_id
+                    WHERE ru.user_id = ? AND p.deleted_at IS NULL AND p.type IN (0,1)
+                    ORDER BY p.weight ASC, p.id ASC";
+            $rows = $this->fetchAll($sql, [$userId]);
+        }
+        $map = [];
+        foreach ($rows as $row) {
+            $row['children'] = [];
+            $map[$row['id']] = $row;
+        }
+        $tree = [];
+        foreach ($map as $id => &$node) {
+            $pid = (int)$node['parent_id'];
+            if ($pid && isset($map[$pid])) {
+                $map[$pid]['children'][] = &$node;
+            } else {
+                $tree[] = &$node;
+            }
+        }
+        unset($node);
+        return $tree;
     }
 }

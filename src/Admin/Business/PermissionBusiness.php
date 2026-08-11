@@ -18,9 +18,6 @@ class PermissionBusiness extends Base
         if (empty($input['name'])) {
             return ['success' => false, 'message' => '权限名称不能为空'];
         }
-        if (empty($input['key'])) {
-            return ['success' => false, 'message' => '权限标识不能为空'];
-        }
         PermissionModel::_()->create($input);
         return ['success' => true, 'message' => '创建成功'];
     }
@@ -29,9 +26,6 @@ class PermissionBusiness extends Base
     {
         if (empty($input['name'])) {
             return ['success' => false, 'message' => '权限名称不能为空'];
-        }
-        if (empty($input['key'])) {
-            return ['success' => false, 'message' => '权限标识不能为空'];
         }
         PermissionModel::_()->edit($id, $input);
         return ['success' => true, 'message' => '更新成功'];

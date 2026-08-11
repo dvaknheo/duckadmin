@@ -27,7 +27,7 @@ $current_route = 'permission';
     <div class="card-body">
         <form method="get" action="<?= __url('permission/index') ?>" class="row g-3 mb-4">
             <div class="col-auto flex-grow-1">
-                <input type="text" name="search" class="form-control" placeholder="搜索权限名称或标识..." value="<?= __h($search) ?>">
+                <input type="text" name="search" class="form-control" placeholder="搜索权限名称或 URL..." value="<?= __h($search) ?>">
             </div>
             <div class="col-auto">
                 <button type="submit" class="btn btn-outline-secondary"><i class="bi bi-search"></i> 搜索</button>
@@ -43,8 +43,8 @@ $current_route = 'permission';
                     <tr>
                         <th style="width:60px">ID</th>
                         <th>权限名称</th>
-                        <th>权限标识</th>
-                        <th>描述</th>
+                        <th>URL</th>
+                        <th>类型</th>
                         <th>排序</th>
                         <th>创建时间</th>
                         <th style="width:120px">操作</th>
@@ -63,9 +63,9 @@ $current_route = 'permission';
                                     <?php endif; ?>
                                     <strong><?= __h($item['name']) ?></strong>
                                 </td>
-                                <td><code><?= __h($item['key']) ?></code></td>
-                                <td class="text-muted"><?= __h($item['description'] ?? '-') ?></td>
-                                <td><?= (int)$item['sort_order'] ?></td>
+                                <td><code><?= __h($item['url'] ?? '-') ?></code></td>
+                                <td><?php $types = [0 => '目录', 1 => '菜单', 2 => '操作']; echo $types[(int)($item['type'] ?? 1)] ?? '未知'; ?></td>
+                                <td><?= (int)($item['weight'] ?? 0) ?></td>
                                 <td class="text-muted small"><?= __h($item['created_at'] ?? '-') ?></td>
                                 <td>
                                     <a href="<?= __url('permission/edit?id=' . $item['id']) ?>" class="btn btn-sm btn-outline-primary">

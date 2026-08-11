@@ -5,6 +5,7 @@
  */
 namespace DuckAdmin\Admin\Controller;
 
+use DuckAdmin\Admin\Model\PermissionModel;
 use DuckPhp\Foundation\ControllerTrait;
 
 class Base
@@ -22,12 +23,12 @@ class Base
         Helper::setViewHeadFoot('admin/header', 'admin/footer');
     }
     /**
-     * 加载菜单配置
+     * 加载菜单(按当前管理员权限过滤,查 admin_permissions 组树)
      */
     protected function loadMenus(): array
     {
-        $config = Helper::Config('app','menus',[]);
-        return $config;
+        $admin_id = (int)Helper::AdminId(false);
+        return PermissionModel::_()->getUserMenus($admin_id);
     }
     
     /**

@@ -22,7 +22,7 @@ class AdminBusiness extends Base
 
     public function isSuper($admin_id): bool
     {
-        return true;
+        return RoleModel::_()->isSuperRole((int)$admin_id);
     }
 
     /**

@@ -53,7 +53,7 @@ $current_route = 'role';
                                     ?>
                                     
                                     <?php if (empty($children)): ?>
-                                        <small class="text-muted"><?= __h($top['description']) ?></small>
+                                        <small class="text-muted"><?= __h($top['url'] ?? '') ?></small>
                                     <?php else: ?>
                                         <?php foreach ($children as $child): ?>
                                             <div class="form-check">
@@ -65,7 +65,6 @@ $current_route = 'role';
                                                        <?= in_array($child['id'], $role_permission_ids ?? []) ? 'checked' : '' ?>>
                                                 <label class="form-check-label" for="perm_<?= (int)$child['id'] ?>">
                                                     <?= __h($child['name']) ?>
-                                                    <small class="text-muted">(<?= __h($child['key']) ?>)</small>
                                                 </label>
                                             </div>
                                         <?php endforeach; ?>
