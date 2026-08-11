@@ -8,6 +8,7 @@ namespace DuckCoverage;
 use DuckPhp\Core\App;
 use DuckPhp\Core\Console;
 use DuckPhp\Core\ExitException;
+use DuckPhp\Core\SystemWrapper;
 use DuckPhp\Foundation\Helper;
 use DuckPhp\HttpServer\HttpServer;
 use SebastianBergmann\CodeCoverage\CodeCoverage;
@@ -61,34 +62,28 @@ class DuckCoverage extends CoverageBase
         }
 
         // 注册 duckcover 命令行命令（不依赖 onInit 全局事件，旧版 duckphp 机制已移除）
-        App::_()->regConsoleCommand(static::class);
+        App::_()->regConsoleCommand(static::class, 'command_');
 
         // web 收集由根应用 DemoApp::serve() override 在请求前后调用 _OnBeforeRun/_OnAfterRun,
         // 不再使用 Route hook
         ExitException::Init(); //__define(__ExitException);
+
+        if ($this->isInHttpTest()) {
+            DuckCoverage::_()->_OnBeforeRun();
+            SystemWrapper::register_shutdown_function(function () {
+                DuckCoverage::_()->_OnAfterRun();
+            });
+        }
         
+
         return $this;
-    }
-    public function onAppPrepare()
-    {
-        if(!class_exists(CodeCoverage::class)){
-            return;
-        }
-        // 修改成测试的配置。 需要和 ext_options_file 配合，所以现在要调整
-        $app = App::_();
-        if(DuckCoverage::_()->isInHttpTest()){
-            $app->options['ext_options_file'] = 'runtime/DuckPhpApps_test.config.php';
-        } else if (DuckCoverage::_()->isInCliTest()){
-            $app->options['ext_options_file'] = 'runtime/DuckPhpApps_test.config.php';
-            //$app->options['ext_options_file_enable'] = false;
-        }
     }
     public function isInHttpTest()
     {
         $watching_name = $this->watchingGetName();
-        $server_name = Helper::SERVER('HTTP_X_MYCOVERAGE_NAME',''); // do not use this;
-        //$server_name = $_SERVER['HTTP_X_MYCOVERAGE_NAME']??'';
-        if($watching_name === $server_name) {
+        $server_name = Helper::SERVER('HTTP_X_MYCOVERAGE_NAME','');
+        //$server_name = $_SERVER['HTTP_X_MYCOVERAGE_NAME']??'';// do not use this;
+        if($watching_name && $watching_name === $server_name) {
             return true;
         }
         return false;
@@ -104,29 +99,13 @@ class DuckCoverage extends CoverageBase
         }
         return false;
     }
-    public static function OnAppInit()
-    {
-        return static::_()->_OnAppInit();
-    }
-    public static function OnBeforeRun()
-    {
-        return static::_()->_OnBeforeRun();
-    }
-    public static function OnAfterRun()
-    {
-        return static::_()->_OnAfterRun();
-    }
-    public function _OnAppInit()
-    {
-        App::_()->regConsoleCommand(static::class);
-    }
     public function _OnBeforeRun()
     {
-        if(!$this->options['duckcoverage_group']){
+        if (PHP_SAPI === 'cli' && App::_()->options['cli_enable']) {
             return;
         }
-        if (PHP_SAPI === 'cli' && App::_()->options['cli_enable']) {
-            //TODO console mode
+
+        if(!$this->options['duckcoverage_group']){
             return;
         }
 
@@ -136,9 +115,6 @@ class DuckCoverage extends CoverageBase
             file_put_contents($path_dump.$this->options['duckcoverage_group'].'.list',$this->getHttpStringToLog()."\n",FILE_APPEND); 
         }
         
-        if(!$this->isInHttpTest()) {
-            return;
-        }
 
         $this->options['duckcoverage_name'] = $this->getTestName();       
         //// save list
@@ -227,9 +203,6 @@ class DuckCoverage extends CoverageBase
         $this->options['duckcoverage_name'] = 'replay';
 
         $callback_class = $this->options['duckcoverage_callback_class'] ?? null;
-        if ($callback_class && method_exists($callback_class, 'BeforeReplayTest')) {
-            $callback_class::BeforeReplayTest();
-        }
         $test_list = ($callback_class && method_exists($callback_class, 'GetTestList')) ? $callback_class::GetTestList() : '';
         $test_list = \explode("\n",$test_list);
         
@@ -238,17 +211,7 @@ class DuckCoverage extends CoverageBase
         }
         $this->stopServer();
         
-        if ($callback_class && method_exists($callback_class, 'AfterReplayTest')) {
-            $callback_class::AfterReplayTest();
-        }
         $this->doEnd();
-    }
-    protected function onBeforeReport()
-    {
-        $callback_class = $this->options['duckcoverage_callback_class'] ?? null;
-        if ($callback_class && method_exists($callback_class, 'OnReport')) {
-            $callback_class::OnReport();
-        }
     }
     protected function readCommand($request)
     {
@@ -465,7 +428,6 @@ class DuckCoverage extends CoverageBase
     }
     ////////////////////////////////////////////////////////////////////////////
     /**
-     * 根据组件类名推断其所属 app(通过 root options['app'] 的 namespace 前缀匹配)
      */
     public function callObject($class,$method,$type,$function,$poststr,$args = [])
     {

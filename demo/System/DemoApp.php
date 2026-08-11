@@ -6,13 +6,9 @@
 namespace DuckAdminDemo\System;
 
 
-use DuckPhp\Component\DbManager;
-use DuckPhp\Core\CoreHelper;
 use DuckPhp\DuckPhp;
 use DuckPhp\Foundation\Controller\Helper;
 use DuckCoverage\DuckCoverage;
-use DuckAdmin\Controller\AccountController;
-use DuckAdminDemo\Overrided\MyAccountController;
 use DuckAdminDemo\Test\MyTester;
 
 class DemoApp extends DuckPhp
@@ -24,8 +20,6 @@ class DemoApp extends DuckPhp
         
         'controller_resource_prefix' => '/',  //for workerman local file
         'path_resource' => 'public',          //for workerman local file
-        
-        'duckadmin_demo_enable_test' => false,
         
         'app' => [
 //*
@@ -45,6 +39,32 @@ class DemoApp extends DuckPhp
             ],
 //*/
         ],
+        'ext'=> [
+            DuckCoverage::class => true,
+        ],
+
+        'duckcoverage_path_dump' => 'test_coveragedumps',
+        'duckcoverage_path_report' => 'test_reports',
+        'duckcoverage_group'=>'',
+        'duckcoverage_name'=>'',
+
+        'duckcoverage_save_web_request_list' =>true,
+        'duckcoverage_save_local_call_list' =>false,
+        
+
+        'duckcoverage_report_direct'=>true,
+        'duckcoverage_echo_back'=>false,
+        
+        'duckcoverage_path_src'=> null,  //$path_src, // init in construct
+        'duckcoverage_callback_class'=> MyTester::class,
+
+        // 'duckcoverage_server_port'=> 8080,
+        // 'duckcoverage_homepage' =>'/index.php/',
+        // 'duckcoverage_path_document'=>'public',
+        // 'duckcoverage_new_server'=>true,
+        'duckcoverage_web_base_url' => 'http://admin.duckphp-local.com/',
+
+
     ];
     public function __construct()
     {
@@ -58,6 +78,10 @@ class DemoApp extends DuckPhp
             'controller_method_prefix' => 'action_',
         ];
         
+
+        $path_src = realpath(__DIR__.'/../../src/').'/';
+        $ext_options [ 'duckcoverage_path_src']= $path_src;
+
         $this->options = array_merge($this->options,$ext_options); 
         parent::__construct();
     }
@@ -69,14 +93,14 @@ class DemoApp extends DuckPhp
         $data['url_user'] = __url(\DuckAdmin\User\System\DuckUserApp::_()->options['controller_url_prefix']) . 'index';
         $data['url_admin'] = __url(\DuckAdmin\Admin\System\AdminApp::_()->options['controller_url_prefix']) . 'index';
         
-        $data ['duckadmin_demo_enable_test'] = $this->options['duckadmin_demo_enable_test'];
+        $data ['duckadmin_demo_enable_test'] = $this->options['duckadmin_demo_enable_test'] ?? false;
         
         Helper::Show($data,'main');
     }
     protected function onPrepare(): void
     {
         parent::onPrepare();
-        if (static::Setting('duckadmin_demo_enable_test') || $this->options['duckadmin_demo_enable_test'] ?? false) {
+        if (static::Setting('duckadmin_demo_enable_test') || ($this->options['duckadmin_demo_enable_test'] ?? false)) {
             $this->options['data_file_json_file'] = 'DuckPhpData-test.config.json';
         }
     }
@@ -84,39 +108,10 @@ class DemoApp extends DuckPhp
     public function onInited(): void
     {
         // workermanhttpd 不再支持（包已移除），如需 workerman 支持请恢复依赖
-        if (static::Setting('duckadmin_demo_enable_test') || $this->options['duckadmin_demo_enable_test']??false) {
-            $this->enableTest();
+        
+        if (static::Setting('duckadmin_demo_enable_test') || ($this->options['duckadmin_demo_enable_test'] ?? false)) {
         }
        
         parent::onInited();
-    }
-
-    /**
-     * override 根应用 serve():在请求前后触发 DuckCoverage 的 web 覆盖收集
-     */
-    public function serve(): bool
-    {
-        $bridge = \DuckCoverage\DuckCoverage::_();
-        $bridge->_OnBeforeRun();
-        $ret = parent::serve();
-        $bridge->_OnAfterRun();
-        return $ret;
-    }
-
-    protected function enableTest()
-    {
-        // for coverage test
-        $path_src = realpath(__DIR__.'/../../src/').'/';
-        $tester_options = [
-            'duckcoverage_path_src'=> $path_src,
-            'duckcoverage_callback_class'=> MyTester::class,
-            
-            'duckcoverage_server_port'=> 8080,
-            'duckcoverage_homepage' =>'/index.php/',
-            'duckcoverage_path_document'=>'public',
-            'duckcoverage_new_server'=>true,
-            'duckcoverage_web_base_url' => 'http://admin.duckphp-local.com/',
-        ];
-        DuckCoverage::_()->init($tester_options);
     }
 }
