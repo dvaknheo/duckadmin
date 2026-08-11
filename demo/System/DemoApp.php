@@ -61,6 +61,7 @@ class DemoApp extends DuckPhp
         $this->options = array_merge($this->options,$ext_options); 
         parent::__construct();
     }
+
     public function action_index()
     {
         $data = [];
@@ -72,6 +73,13 @@ class DemoApp extends DuckPhp
         
         Helper::Show($data,'main');
     }
+    protected function onPrepare(): void
+    {
+        parent::onPrepare();
+        if (static::Setting('duckadmin_demo_enable_test') || $this->options['duckadmin_demo_enable_test'] ?? false) {
+            $this->options['data_file_json_file'] = 'DuckPhpData-test.config.json';
+        }
+    }
 
     public function onInited(): void
     {
@@ -79,10 +87,10 @@ class DemoApp extends DuckPhp
         if (static::Setting('duckadmin_demo_enable_test') || $this->options['duckadmin_demo_enable_test']??false) {
             $this->enableTest();
         }
-        //$this->checkDemoDb(); // if no default sqlite db file ，create it
        
         parent::onInited();
     }
+
     /**
      * override 根应用 serve():在请求前后触发 MyCoverageBridge 的 web 覆盖收集
      */
@@ -94,33 +102,7 @@ class DemoApp extends DuckPhp
         $bridge->_OnAfterRun();
         return $ret;
     }
-    protected function checkDemoDb()
-    {
-        $dsn = $this->options['database_list'][0]['dsn']??null;
-        if ($dsn !=='sqlite:demodb.db') {
-            return;
-        }
-        
-        $sqlfile = 'demodb.sql';
-        $full_file = $this->extendFullFile($this->options['path'], $this->options['path_config']??'config', $sqlfile);
-        
-        $sql = file_get_contents($full_file);
-        $sqls = explode(";\n", ''.$sql);
-        foreach ($sqls as $sql) {
-            if (empty($sql)) {
-                continue;
-            }
-            $flag = DbManager::Db()->execute($sql);
-        }
 
-    }
-    protected function onPrepare(): void
-    {
-        parent::onPrepare();
-        if (static::Setting('duckadmin_demo_enable_test') || $this->options['duckadmin_demo_enable_test'] ?? false) {
-            $this->options['data_file_json_file'] = 'DuckPhpData-test.config.json';
-        }
-    }
     protected function enableTest()
     {
         // for coverage test

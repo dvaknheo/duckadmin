@@ -139,8 +139,8 @@ class MyCoverage
         $path_report = $this->getSubPath('path_report');
         if(!$this->options['test_report_direct']){
             if(empty($groups)){
-            $groups =[$this->options['group']];
-        }
+                $groups =[$this->options['group']];
+            }
             if(count($groups)===1){
                 $path_report = $path_report. $groups[0];
             }else{
