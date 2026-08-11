@@ -5,13 +5,14 @@ use DuckAdmin\Admin\Business\UserBusiness;
 use DuckAdmin\Admin\Business\RoleBusiness;
 
 /**
- * @menu 人员管理
+ * @menu_group 系统管理
  */
 class UserController extends Base
 {
     /**
      * 用户列表
      */
+    /** @menu 人员管理 */
     public function index()
     {
         $page = max(1, (int)(Helper::GET('page', '1')));
@@ -31,7 +32,7 @@ class UserController extends Base
     /**
      * 创建用户表单
      */
-    /** @name 新增人员 */
+    /** @action 新增人员 */
     public function create()
     {
         $admin_id = (int)Session::_()->getUserId();
@@ -44,7 +45,7 @@ class UserController extends Base
     /**
      * 保存新用户
      */
-    /** @name 保存人员 */
+    /** @action 保存人员 */
     public function save()
     {
         $input = [
@@ -74,7 +75,7 @@ class UserController extends Base
     /**
      * 编辑用户表单
      */
-    /** @name 编辑人员 */
+    /** @action 编辑人员 */
     public function edit()
     {
         $id = (int)Helper::GET('id', '0');
@@ -96,7 +97,7 @@ class UserController extends Base
     /**
      * 更新用户
      */
-    /** @name 更新人员 */
+    /** @action 更新人员 */
     public function update()
     {
         $id = (int)Helper::POST('id', '0');
@@ -128,7 +129,7 @@ class UserController extends Base
     /**
      * 删除用户
      */
-    /** @name 删除人员 */
+    /** @action 删除人员 */
     public function delete()
     {
         $id = (int)Helper::GET('id', '0');
@@ -136,4 +137,5 @@ class UserController extends Base
         Helper::Show302(__url('user/index'));
     }
 }
+
 

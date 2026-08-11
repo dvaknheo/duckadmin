@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 /**
  * DuckPhp Admin System - Role Controller
- * @menu 职位管理
+ * @menu_group 系统管理
  */
 namespace DuckAdmin\Admin\Controller;
 
@@ -14,8 +14,9 @@ use DuckAdmin\Admin\Business\PermissionBusiness;
 class RoleController extends Base
 {
     /**
-     * @name 角色列表
+     * @action 角色列表
      */
+    /** @menu 职位管理 */
     public function index()
     {
         $page = max(1, (int)(Helper::GET('page', '1')));
@@ -35,7 +36,7 @@ class RoleController extends Base
     /**
      * 创建角色表单
      */
-    /** @name 新增职位 */
+    /** @action 新增职位 */
     public function create()
     {
         $admin_id = (int)Session::_()->getUserId();
@@ -48,7 +49,7 @@ class RoleController extends Base
     /**
      * 保存新角色
      */
-    /** @name 保存职位 */
+    /** @action 保存职位 */
     public function save()
     {
         $admin_id = (int)Session::_()->getUserId();
@@ -72,7 +73,7 @@ class RoleController extends Base
     /**
      * 编辑角色表单
      */
-    /** @name 编辑职位 */
+    /** @action 编辑职位 */
     public function edit()
     {
         $id = (int)Helper::GET('id', '0');
@@ -93,7 +94,7 @@ class RoleController extends Base
     /**
      * 更新角色
      */
-    /** @name 更新职位 */
+    /** @action 更新职位 */
     public function update()
     {
         $admin_id = (int)Session::_()->getUserId();
@@ -118,7 +119,7 @@ class RoleController extends Base
     /**
      * 删除角色
      */
-    /** @name 删除职位 */
+    /** @action 删除职位 */
     public function delete()
     {
         $id = (int)Helper::GET('id', '0');
@@ -129,7 +130,7 @@ class RoleController extends Base
     /**
      * 权限分配页面
      */
-    /** @name 分配权限 */
+    /** @action 分配权限 */
     public function permissions()
     {
         $admin_id = (int)Session::_()->getUserId();
@@ -182,4 +183,5 @@ class RoleController extends Base
         $this->render('admin/role_permissions', $data);
     }
 }
+
 

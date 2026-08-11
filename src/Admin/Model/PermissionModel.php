@@ -124,17 +124,17 @@ class PermissionModel extends Base
     }
 
     /**
-     * 读取控制器方法 @name 注解作为权限名称
+     * 读取控制器类 @menu_group 注解作为目录名称
      */
-    protected function getNameFromAnnotation(string $controller, string $method): string
+    protected function getMenuGroupFromAnnotation(string $controller): string
     {
         if ($controller === '' || !class_exists($controller)) {
             return '';
         }
         try {
-            $ref = new \ReflectionMethod($controller, $method);
+            $ref = new \ReflectionClass($controller);
             $doc = (string)$ref->getDocComment();
-            if (preg_match('/@name\s+([^*]+)/', $doc, $m)) {
+            if (preg_match('/@menu_group\s+([^*]+)/', $doc, $m)) {
                 return trim($m[1]);
             }
         } catch (\Throwable $e) {
@@ -144,17 +144,17 @@ class PermissionModel extends Base
     }
 
     /**
-     * 读取控制器类 @menu 注解作为菜单名称
+     * 读取控制器方法注解(@menu 或 @action)
      */
-    protected function getMenuFromAnnotation(string $controller): string
+    protected function getMethodAnnotation(string $controller, string $method, string $tag): string
     {
         if ($controller === '' || !class_exists($controller)) {
             return '';
         }
         try {
-            $ref = new \ReflectionClass($controller);
+            $ref = new \ReflectionMethod($controller, $method);
             $doc = (string)$ref->getDocComment();
-            if (preg_match('/@menu\s+([^*]+)/', $doc, $m)) {
+            if (preg_match('/@' . $tag . '\s+([^*]+)/', $doc, $m)) {
                 return trim($m[1]);
             }
         } catch (\Throwable $e) {
@@ -165,15 +165,14 @@ class PermissionModel extends Base
 
     /**
      * 一键扫描:RouteLister 扫描 admin 路由
-     * - 控制器类 @menu 注解 → 生成菜单(type1,url 取该控制器 index 方法)
-     * - 方法 @name 注解 → 生成该菜单下的权限(type2)
+     * - 控制器类 @menu_group → 目录(type0,url 空)
+     * - 方法 @menu → 该目录下菜单(type1);方法 @action → 该目录下权限(type2);二者二选一
      * 已有 url 跳过(source=1 标记自动扫描)
      * @return array<string> 新增的 url 列表
      */
     public function scanRoutes(): array
     {
         $routes = \DuckPhp\Component\RouteLister::_()->listAll(true, true, true);
-        // 按控制器分组
         $groups = [];
         foreach ($routes as $route) {
             $controller = (string)($route['controller'] ?? '');
@@ -200,46 +199,61 @@ class PermissionModel extends Base
         $weight = 100;
 
         foreach ($groups as $controller => $methods) {
-            $menuName = $this->getMenuFromAnnotation($controller);
-            if ($menuName === '') {
-                continue; // 无 @menu 的控制器不扫描
+            $groupName = $this->getMenuGroupFromAnnotation($controller);
+            if ($groupName === '') {
+                continue; // 无 @menu_group 的控制器不扫描
             }
-            // 菜单 url = index 方法 url,否则第一个方法
-            $menuUrl = $methods['index'] ?? reset($methods);
-            $menuId = $existing[$menuUrl] ?? null;
-            if ($menuId === null) {
-                $menuId = $this->create([
-                    'name' => $menuName,
-                    'url' => $menuUrl,
-                    'type' => 1,
+            // 目录(按 name 查,url 为空)
+            $dirRow = $this->fetch(
+                "SELECT id FROM admin_permissions WHERE type = 0 AND name = ? AND deleted_at IS NULL",
+                [$groupName]
+            );
+            $dirId = $dirRow ? (int)$dirRow['id'] : 0;
+            if (!$dirId) {
+                $dirId = $this->create([
+                    'name' => $groupName,
+                    'url' => '',
+                    'type' => 0,
                     'parent_id' => 0,
                     'weight' => $weight,
                     'source' => 1,
                 ]);
-                $existing[$menuUrl] = $menuId;
-                $added[] = $menuUrl;
                 $weight += 10;
             }
-            // 方法权限(有 @name;index 即菜单本身,跳过)
+            // 方法:@menu 菜单 / @action 操作(二选一)
             foreach ($methods as $method => $path) {
-                if ($method === 'index' || isset($existing[$path])) {
+                if (isset($existing[$path])) {
                     continue;
                 }
-                $name = $this->getNameFromAnnotation($controller, $method);
-                if ($name === '') {
+                $menuName = $this->getMethodAnnotation($controller, $method, 'menu');
+                if ($menuName !== '') {
+                    $this->create([
+                        'name' => $menuName,
+                        'url' => $path,
+                        'type' => 1,
+                        'parent_id' => (int)$dirId,
+                        'weight' => $weight,
+                        'source' => 1,
+                    ]);
+                    $existing[$path] = true;
+                    $added[] = $path;
+                    $weight++;
                     continue;
                 }
-                $this->create([
-                    'name' => $name,
-                    'url' => $path,
-                    'type' => 2,
-                    'parent_id' => (int)$menuId,
-                    'weight' => $weight,
-                    'source' => 1,
-                ]);
-                $existing[$path] = true;
-                $added[] = $path;
-                $weight++;
+                $actionName = $this->getMethodAnnotation($controller, $method, 'action');
+                if ($actionName !== '') {
+                    $this->create([
+                        'name' => $actionName,
+                        'url' => $path,
+                        'type' => 2,
+                        'parent_id' => (int)$dirId,
+                        'weight' => $weight,
+                        'source' => 1,
+                    ]);
+                    $existing[$path] = true;
+                    $added[] = $path;
+                    $weight++;
+                }
             }
         }
         return $added;

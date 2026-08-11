@@ -4,12 +4,12 @@ namespace DuckAdmin\Admin\Controller;
 use DuckAdmin\Admin\Business\PermissionBusiness;
 
 /**
- * @menu 权限和菜单管理
+ * @menu_group 系统管理
  */
 class SystemController extends Base
 {
     /**
-     * @name 权限和菜单管理
+     * @menu 权限和菜单管理
      * 菜单/权限列表
      */
     public function index()
@@ -29,7 +29,7 @@ class SystemController extends Base
     }
 
     /**
-     * @name 一键扫描
+     * @action 一键扫描
      * 扫描路由,缺失的权限/菜单自动入库
      */
     public function scan()
@@ -42,7 +42,7 @@ class SystemController extends Base
     }
 
     /**
-     * @name 新增菜单
+     * @action 新增菜单
      */
     public function create()
     {
@@ -53,7 +53,7 @@ class SystemController extends Base
     }
 
     /**
-     * @name 保存菜单
+     * @action 保存菜单
      */
     public function save()
     {
@@ -79,7 +79,7 @@ class SystemController extends Base
     }
 
     /**
-     * @name 编辑菜单
+     * @action 编辑菜单
      */
     public function edit()
     {
@@ -98,7 +98,7 @@ class SystemController extends Base
     }
 
     /**
-     * @name 更新菜单
+     * @action 更新菜单
      */
     public function update()
     {
@@ -125,7 +125,7 @@ class SystemController extends Base
     }
 
     /**
-     * @name 删除菜单
+     * @action 删除菜单
      */
     public function delete()
     {
@@ -134,3 +134,4 @@ class SystemController extends Base
         Helper::Show302(__url('system/index'));
     }
 }
+
