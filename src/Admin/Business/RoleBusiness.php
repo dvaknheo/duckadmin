@@ -103,17 +103,31 @@ class RoleBusiness extends Base
     }
 
     /**
-     * 分配权限:目标职位须在管理范围内,且只能分配自己已拥有的权限
+     * 分配权限:目标职位须在管理范围内;只能分配目标职位上级职位拥有的权限(上级=根/超管 → 全部)
      */
     public function setPermissions(int $adminId, int $roleId, array $permissionIds): array
     {
         if (!$this->canManageRole($adminId, $roleId)) {
             return ['success' => false, 'message' => '目标职位不在你的管理范围内'];
         }
-        $assignable = PermissionBusiness::_()->getAssignablePermissionIds($adminId);
+        $role = RoleModel::_()->getById($roleId);
+        if (!$role) {
+            return ['success' => false, 'message' => '职位不存在'];
+        }
+        $parent_id = (int)($role['pid'] ?? 0);
+        if ($parent_id === 0) {
+            return ['success' => false, 'message' => '根职位(超级管理员)权限不可修改'];
+        }
+        $parent = RoleModel::_()->getById($parent_id);
+        if (!$parent || (int)($parent['is_super'] ?? 0) === 1) {
+            // 上级是根/超管:允许全部权限
+            $allowed = array_column(PermissionModel::_()->getAll(), 'id');
+        } else {
+            $allowed = PermissionModel::_()->getRolePermissionIds($parent_id);
+        }
         foreach ($permissionIds as $pid) {
-            if (!in_array((int)$pid, $assignable, true)) {
-                return ['success' => false, 'message' => '只能分配自己已拥有的权限'];
+            if (!in_array((int)$pid, $allowed, true)) {
+                return ['success' => false, 'message' => '只能分配上级职位拥有的权限'];
             }
         }
         PermissionModel::_()->setRolePermissions($roleId, $permissionIds);

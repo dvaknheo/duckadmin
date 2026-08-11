@@ -134,7 +134,7 @@ class PermissionModel extends Base
         try {
             $ref = new \ReflectionMethod($controller, $method);
             $doc = (string)$ref->getDocComment();
-            if (preg_match('/@name\s+(.+)/', $doc, $m)) {
+            if (preg_match('/@name\s+([^*]+)/', $doc, $m)) {
                 return trim($m[1]);
             }
         } catch (\Throwable $e) {
@@ -144,49 +144,103 @@ class PermissionModel extends Base
     }
 
     /**
-     * 一键扫描:RouteLister 扫描 admin 路由,对照现有 url 缺失项自动入库(source=1)
+     * 读取控制器类 @menu 注解作为菜单名称
+     */
+    protected function getMenuFromAnnotation(string $controller): string
+    {
+        if ($controller === '' || !class_exists($controller)) {
+            return '';
+        }
+        try {
+            $ref = new \ReflectionClass($controller);
+            $doc = (string)$ref->getDocComment();
+            if (preg_match('/@menu\s+([^*]+)/', $doc, $m)) {
+                return trim($m[1]);
+            }
+        } catch (\Throwable $e) {
+            // ignore
+        }
+        return '';
+    }
+
+    /**
+     * 一键扫描:RouteLister 扫描 admin 路由
+     * - 控制器类 @menu 注解 → 生成菜单(type1,url 取该控制器 index 方法)
+     * - 方法 @name 注解 → 生成该菜单下的权限(type2)
+     * 已有 url 跳过(source=1 标记自动扫描)
      * @return array<string> 新增的 url 列表
      */
     public function scanRoutes(): array
     {
         $routes = \DuckPhp\Component\RouteLister::_()->listAll(true, true, true);
-        $existing = [];
-        foreach ($this->getAll() as $p) {
-            $existing[$p['url']] = true;
-        }
-        $dir_sql = "SELECT id FROM admin_permissions WHERE name = '系统管理' AND type = 0 AND deleted_at IS NULL";
-        $dir_row = $this->fetch($dir_sql);
-        $dir_id = (int)($dir_row['id'] ?? 0);
-
-        $added = [];
-        $weight = 100;
+        // 按控制器分组
+        $groups = [];
         foreach ($routes as $route) {
+            $controller = (string)($route['controller'] ?? '');
+            $method = (string)($route['method'] ?? '');
             $url = (string)($route['url'] ?? '');
-            if ($url === '' || empty($route['controller']) || empty($route['method'])) {
+            if ($controller === '' || $method === '' || $url === '') {
                 continue;
             }
             $path = ltrim($url, '/');
             if (strpos($path, 'admin/') === 0) {
                 $path = substr($path, 6);
             }
-            if ($path === '' || isset($existing[$path])) {
+            if ($path === '') {
                 continue;
             }
-            $name = $this->getNameFromAnnotation((string)$route['controller'], (string)$route['method']);
-            if ($name === '') {
-                $name = $path;
+            $groups[$controller][$method] = $path;
+        }
+
+        $existing = [];
+        foreach ($this->getAll() as $p) {
+            $existing[$p['url']] = (int)$p['id'];
+        }
+        $added = [];
+        $weight = 100;
+
+        foreach ($groups as $controller => $methods) {
+            $menuName = $this->getMenuFromAnnotation($controller);
+            if ($menuName === '') {
+                continue; // 无 @menu 的控制器不扫描
             }
-            $this->create([
-                'name' => $name,
-                'url' => $path,
-                'type' => 2,
-                'parent_id' => $dir_id,
-                'weight' => $weight,
-                'source' => 1,
-            ]);
-            $existing[$path] = true;
-            $added[] = $path;
-            $weight++;
+            // 菜单 url = index 方法 url,否则第一个方法
+            $menuUrl = $methods['index'] ?? reset($methods);
+            $menuId = $existing[$menuUrl] ?? null;
+            if ($menuId === null) {
+                $menuId = $this->create([
+                    'name' => $menuName,
+                    'url' => $menuUrl,
+                    'type' => 1,
+                    'parent_id' => 0,
+                    'weight' => $weight,
+                    'source' => 1,
+                ]);
+                $existing[$menuUrl] = $menuId;
+                $added[] = $menuUrl;
+                $weight += 10;
+            }
+            // 方法权限(有 @name;index 即菜单本身,跳过)
+            foreach ($methods as $method => $path) {
+                if ($method === 'index' || isset($existing[$path])) {
+                    continue;
+                }
+                $name = $this->getNameFromAnnotation($controller, $method);
+                if ($name === '') {
+                    continue;
+                }
+                $this->create([
+                    'name' => $name,
+                    'url' => $path,
+                    'type' => 2,
+                    'parent_id' => (int)$menuId,
+                    'weight' => $weight,
+                    'source' => 1,
+                ]);
+                $existing[$path] = true;
+                $added[] = $path;
+                $weight++;
+            }
         }
         return $added;
     }
@@ -223,8 +277,11 @@ class PermissionModel extends Base
         if (strpos($path, 'admin/') === 0) {
             $path = substr($path, 6);
         }
-        if ($path === '') {
+        if ($path === '' || $path === 'index' || $path === 'Dashboard/index') {
             return true; // 首页/仪表盘放行
+        }
+        if ($path === 'role/permissions') {
+            return true; // 分配权限页:访问由 RoleController 内部按职位管理范围控制
         }
         $sql = "SELECT COUNT(*) FROM admin_permissions p
                 INNER JOIN admin_role_permissions rp ON p.id = rp.permission_id

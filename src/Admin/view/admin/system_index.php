@@ -17,8 +17,11 @@ $current_route = 'system';
         </nav>
     </div>
     <div>
+        <a href="<?= __url('system/scan') ?>" class="btn btn-outline-success">
+            <i class="bi bi-search"></i> 一键扫描
+        </a>
         <a href="<?= __url('system/create') ?>" class="btn btn-primary">
-            <i class="bi bi-plus-lg"></i> 新增权限
+            <i class="bi bi-plus-lg"></i> 新增菜单
         </a>
     </div>
 </div>

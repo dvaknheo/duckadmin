@@ -1,12 +1,11 @@
 <?php declare(strict_types=1);
-/**
- * DuckPhp Admin System - System Controller
- * 超级管理员专属:权限和菜单管理(一键扫描 / 手动变更),后续超管功能扩展于此
- */
 namespace DuckAdmin\Admin\Controller;
 
 use DuckAdmin\Admin\Business\PermissionBusiness;
 
+/**
+ * @menu 权限和菜单管理
+ */
 class SystemController extends Base
 {
     /**

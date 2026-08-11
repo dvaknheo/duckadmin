@@ -1,16 +1,20 @@
 <?php declare(strict_types=1);
 /**
  * DuckPhp Admin System - Role Controller
+ * @menu 职位管理
  */
 namespace DuckAdmin\Admin\Controller;
 
 use DuckAdmin\Admin\Business\RoleBusiness;
 use DuckAdmin\Admin\Business\PermissionBusiness;
 
+/**
+ * @menu_name 权限分配
+ */
 class RoleController extends Base
 {
     /**
-     * 角色列表
+     * @name 角色列表
      */
     public function index()
     {
@@ -31,6 +35,7 @@ class RoleController extends Base
     /**
      * 创建角色表单
      */
+    /** @name 新增职位 */
     public function create()
     {
         $admin_id = (int)Session::_()->getUserId();
@@ -43,6 +48,7 @@ class RoleController extends Base
     /**
      * 保存新角色
      */
+    /** @name 保存职位 */
     public function save()
     {
         $admin_id = (int)Session::_()->getUserId();
@@ -66,6 +72,7 @@ class RoleController extends Base
     /**
      * 编辑角色表单
      */
+    /** @name 编辑职位 */
     public function edit()
     {
         $id = (int)Helper::GET('id', '0');
@@ -86,6 +93,7 @@ class RoleController extends Base
     /**
      * 更新角色
      */
+    /** @name 更新职位 */
     public function update()
     {
         $admin_id = (int)Session::_()->getUserId();
@@ -110,6 +118,7 @@ class RoleController extends Base
     /**
      * 删除角色
      */
+    /** @name 删除职位 */
     public function delete()
     {
         $id = (int)Helper::GET('id', '0');
@@ -120,6 +129,7 @@ class RoleController extends Base
     /**
      * 权限分配页面
      */
+    /** @name 分配权限 */
     public function permissions()
     {
         $admin_id = (int)Session::_()->getUserId();
@@ -150,12 +160,20 @@ class RoleController extends Base
             Helper::Show302(__url('role/index'));
         }
         
-        // 可分配权限 = 自己已拥有(超管=全部),按树展示
-        $assignable = PermissionBusiness::_()->getAssignablePermissionIds($admin_id);
-        $all = PermissionBusiness::_()->getAll();
-        $data['permissions'] = array_values(array_filter($all, function ($p) use ($assignable) {
-            return in_array((int)$p['id'], $assignable, true);
-        }));
+        // 可分配权限树 = 目标职位的上级职位拥有的权限(上级=根/超管 → 全部权限树)
+        $parent_id = (int)($role['pid'] ?? 0);
+        $parent = $parent_id ? RoleBusiness::_()->getById($parent_id) : null;
+        if (!$parent || (int)($parent['is_super'] ?? 0) === 1) {
+            // 上级是根/超管:忽略一切限制,显示所有权限树
+            $permissions = PermissionBusiness::_()->getAll();
+        } else {
+            $allowed_ids = RoleBusiness::_()->getRolePermissions($parent_id);
+            $all = PermissionBusiness::_()->getAll();
+            $permissions = array_values(array_filter($all, function ($p) use ($allowed_ids) {
+                return in_array((int)$p['id'], $allowed_ids, true);
+            }));
+        }
+        $data['permissions'] = $permissions;
         $data['role'] = $role;
         $data['role_permission_ids'] = RoleBusiness::_()->getRolePermissions($id);
         $data['title'] = '职位权限分配';

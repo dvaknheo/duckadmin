@@ -1,12 +1,12 @@
 <?php declare(strict_types=1);
-/**
- * DuckPhp Admin System - User Controller
- */
 namespace DuckAdmin\Admin\Controller;
 
 use DuckAdmin\Admin\Business\UserBusiness;
 use DuckAdmin\Admin\Business\RoleBusiness;
 
+/**
+ * @menu 人员管理
+ */
 class UserController extends Base
 {
     /**
@@ -31,6 +31,7 @@ class UserController extends Base
     /**
      * 创建用户表单
      */
+    /** @name 新增人员 */
     public function create()
     {
         $admin_id = (int)Session::_()->getUserId();
@@ -43,6 +44,7 @@ class UserController extends Base
     /**
      * 保存新用户
      */
+    /** @name 保存人员 */
     public function save()
     {
         $input = [
@@ -72,6 +74,7 @@ class UserController extends Base
     /**
      * 编辑用户表单
      */
+    /** @name 编辑人员 */
     public function edit()
     {
         $id = (int)Helper::GET('id', '0');
@@ -93,6 +96,7 @@ class UserController extends Base
     /**
      * 更新用户
      */
+    /** @name 更新人员 */
     public function update()
     {
         $id = (int)Helper::POST('id', '0');
@@ -124,6 +128,7 @@ class UserController extends Base
     /**
      * 删除用户
      */
+    /** @name 删除人员 */
     public function delete()
     {
         $id = (int)Helper::GET('id', '0');

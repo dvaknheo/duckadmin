@@ -5,13 +5,12 @@
  */
 namespace SimpleBlog\Controller;
 
-use DuckPhp\GlobalAdmin\AdminController;
 use DuckPhp\Foundation\ControllerTrait;
 
 use SimpleBlog\Business\ArticleBusiness;
 use SimpleBlog\Business\UserBusiness;
 
-class userController implements UserControllerInterface
+class userController
 {
     use ControllerTrait;
 
