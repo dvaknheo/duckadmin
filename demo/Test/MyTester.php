@@ -54,20 +54,15 @@ class MyTester
     {
         $static = static::class;
         $str ='';
-        // 通过 App 切到 User 子 phase,生成 #PHASE / #URL_PREFIX 头部指令,
-        // 再由子 Tester 在其 phase 下生成命令列表
+        // 通过 App 切到 User 子 phase 调用子 Tester;
+        // #PHASE / #URL_PREFIX 头部指令由子 Tester 的 getTestList() 自身生成
         $user_app = \DuckAdmin\User\System\DuckUserApp::class;
+        $last_phase = App::Phase();
         if (App::_()->toChildPhase($user_app)) {
-            $str .= '#PHASE '.$user_app::_()->getThisPhaseName()."\n";
-            $str .= '#URL_PREFIX '.$user_app::_()->options['controller_url_prefix']."\n";
+            $str .= \DuckAdmin\User\Test\Tester::_()->getTestList();
+            App::Phase($last_phase);
         }
-        //$str.="#CALL {$static}@installTest\n";
-        //$str .= \DuckAdmin\Test\Tester::_()->getTestList();
-        $str .= \DuckAdmin\User\Test\Tester::_()->getTestList();
-        //$str .= \SimpleBlog\Test\Tester::_()->getTestList();
-        //$str .= \DuckUserManager\Test\Tester::_()->getTestList();
-        //$str.="#CALL {$static}@cleanAll\n";
-        App::_()->phaseToCurrent();
+        
         return $str;
     }
     public function _BeforeWebTest()

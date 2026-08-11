@@ -44,6 +44,9 @@ class Tester
     }
     public function getTestList()
     {
+        // 头部指令:#PHASE / #URL_PREFIX,由子 Tester 在自身 phase 下生成
+        $str = '#PHASE '.DuckUserApp::_()->getThisPhaseName()."\n";
+        $str .= '#URL_PREFIX '.DuckUserApp::_()->options['controller_url_prefix']."\n";
 $list = <<<EOT
 #CALL {static}::BeforeTest
 #WEB index
@@ -73,7 +76,7 @@ EOT;
         $args ['static'] = static::class;
         $list = $this->replace_string($list,$args);
         $list = str_replace('#WEB ','#WEB '.$prefix,$list);
-        return $list;
+        return $str.$list;
     }
     ////[[[[
     protected function getNextInsertId($table)
