@@ -264,6 +264,16 @@ class MyCoverageBridge extends MyCoverage
         if(substr($request,0,2)==='##'){
             return;
         }
+        // 头部指令:#PHASE {phase} 直接切换当前 phase;#URL_PREFIX {prefix} 记录 URL 前缀
+        if(substr($request,0,strlen('#PHASE '))==='#PHASE '){
+            $phase = trim(substr($request, strlen('#PHASE ')));
+            App::Phase($phase);
+            return;
+        }
+        if(substr($request,0,strlen('#URL_PREFIX '))==='#URL_PREFIX '){
+            $this->current_url_prefix = trim(substr($request, strlen('#URL_PREFIX ')));
+            return;
+        }
         if(substr($request,0,strlen('#CALL '))==='#CALL '){
             $this->explainCall($request);
         }
@@ -274,6 +284,7 @@ class MyCoverageBridge extends MyCoverage
             $this->explainSetWeb($request);
         }
     }
+    protected $current_url_prefix = '';
 
     protected $pre_curl;
     protected $post_curl;
@@ -419,6 +430,10 @@ class MyCoverageBridge extends MyCoverage
         $is_ajax = ($method ==='AJAX')?true:false;
         $is_options = ($method ==='OPTIONS')?true:false;
         
+        // 命令未带 URL 前缀时,按 #URL_PREFIX 指令补前缀
+        if ($this->current_url_prefix !== '' && strpos($uri, $this->current_url_prefix) !== 0) {
+            $uri = $this->current_url_prefix . $uri;
+        }
         $url = $base_url . $uri;
         $data = $this->curl_file_get_contents($url,$post,$is_ajax,$is_options,$method);
         if($this->options['test_echo_back']??false){
@@ -454,10 +469,12 @@ class MyCoverageBridge extends MyCoverage
         return;
     }
     ////////////////////////////////////////////////////////////////////////////
+    /**
+     * 根据组件类名推断其所属 app(通过 root options['app'] 的 namespace 前缀匹配)
+     */
     public function callObject($class,$method,$type,$function,$poststr,$args = [])
     {
         $input = [];
-        
         
         if($poststr){
             parse_str($poststr,$input);

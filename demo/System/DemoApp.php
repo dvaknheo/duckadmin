@@ -103,6 +103,13 @@ class DemoApp extends DuckPhp
         }
 
     }
+    protected function onPrepare(): void
+    {
+        parent::onPrepare();
+        if (static::Setting('duckadmin_demo_enable_test') || $this->options['duckadmin_demo_enable_test'] ?? false) {
+            $this->options['data_file_json_file'] = 'DuckPhpData-test.config.json';
+        }
+    }
     protected function enableTest()
     {
         // for coverage test
