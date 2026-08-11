@@ -49,6 +49,7 @@ $current_route = 'user';
                         <th style="width:60px">ID</th>
                         <th>登录账号</th>
                         <th>姓名</th>
+                        <th>所属职位</th>
                         <th>邮箱</th>
                         <th>状态</th>
                         <th>最后登录</th>
@@ -65,6 +66,7 @@ $current_route = 'user';
                                 <td><?= (int)$item['id'] ?></td>
                                 <td><strong><?= __h($item['username']) ?></strong></td>
                                 <td><?= __h($item['realname'] ?? '') ?></td>
+                                <td><?= __h($item['role_names'] ?? '-') ?></td>
                                 <td><?= __h($item['email'] ?? '') ?></td>
                                 <td>
                                     <?php if ($item['status'] == 1): ?>

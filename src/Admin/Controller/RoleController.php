@@ -124,6 +124,14 @@ class RoleController extends Base
     {
         $admin_id = (int)Session::_()->getUserId();
         $id = (int)Helper::GET('id', '0');
+        if ($id === 0) {
+            // 未指定职位:显示可管理职位选择页
+            $data['roles'] = RoleBusiness::_()->getAllManageable($admin_id);
+            $data['title'] = '分配权限';
+            $data['current_route'] = 'role';
+            $this->render('admin/role_permissions_select', $data);
+            return;
+        }
         if (!RoleBusiness::_()->canManageRole($admin_id, $id)) {
             Helper::Show302(__url('role/index'));
             return;

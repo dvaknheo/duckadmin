@@ -20,20 +20,31 @@ class AdminUserModel extends Base
         return $ret === false ? null : $ret;
     }
 
-    public function getPageList(int $page, int $pageSize, string $search = ''): array
+    public function getPageList(int $page, int $pageSize, string $search = '', ?array $roleIds = null): array
     {
-        $where = "deleted_at IS NULL";
+        $where = "u.deleted_at IS NULL";
         $params = [];
         if ($search !== '') {
-            $where .= " AND (username LIKE ? OR realname LIKE ? OR email LIKE ?)";
+            $where .= " AND (u.username LIKE ? OR u.realname LIKE ? OR u.email LIKE ?)";
             $like = '%' . $search . '%';
             $params = [$like, $like, $like];
         }
-        $totalSql = "SELECT COUNT(*) as total FROM admin_users WHERE {$where}";
+        if ($roleIds !== null && !empty($roleIds)) {
+            $in = implode(',', array_map('intval', $roleIds));
+            $where .= " AND u.id IN (SELECT user_id FROM admin_role_users WHERE role_id IN ({$in}))";
+        }
+        $totalSql = "SELECT COUNT(*) as total FROM admin_users u WHERE {$where}";
         $totalRow = $this->fetch($totalSql, $params);
         $total = $totalRow['total'] ?? 0;
         $offset = ($page - 1) * $pageSize;
-        $listSql = "SELECT id, username, realname, email, status, last_login_at, created_at, updated_at FROM admin_users WHERE {$where} ORDER BY id ASC LIMIT ? OFFSET ?";
+        $listSql = "SELECT u.id, u.username, u.realname, u.email, u.status, u.last_login_at, u.created_at, u.updated_at,
+                           GROUP_CONCAT(r.name) AS role_names
+                    FROM admin_users u
+                    LEFT JOIN admin_role_users ru ON u.id = ru.user_id
+                    LEFT JOIN admin_roles r ON ru.role_id = r.id AND r.deleted_at IS NULL
+                    WHERE {$where}
+                    GROUP BY u.id
+                    ORDER BY u.id ASC LIMIT ? OFFSET ?";
         $listParams = array_merge($params, [$pageSize, $offset]);
         $list = $this->fetchAll($listSql, $listParams);
         return ['total' => (int)$total, 'list' => $list];

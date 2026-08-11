@@ -11,9 +11,11 @@ use DuckPhp\Core\App;
 use DuckPhp\GlobalUser\UserException;
 
 use DuckAdmin\Admin\Business\AdminBusiness;
+use DuckAdmin\Admin\Model\PermissionModel;
 
-class AdminAction extends Base
+class AdminAction
 {
+    use SingletonTrait;
     public function __construct()
     {
         // override parent
@@ -127,6 +129,12 @@ class AdminAction extends Base
         $input['current_user'] = $user;
         return $input;
     }
+    protected function loadMenus(): array
+    {
+        $admin_id = (int)Helper::AdminId(false);
+        return PermissionModel::_()->getUserMenus($admin_id);
+    }
+
     //@override
     public function checkAccess($class = null, $method = null,$url = null)
     {

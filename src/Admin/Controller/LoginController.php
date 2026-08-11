@@ -15,7 +15,7 @@ class LoginController
     
     public function __construct()
     {
-        Helper::checkInstall('install');
+        Helper::checkInstall();
     }
     
     /**

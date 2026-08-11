@@ -211,9 +211,25 @@ foreach($__html['script'] ?? [] as $script){
                         <ul class="sub-menu nav flex-column">
                             <?php foreach ($menu['children'] as $child): ?>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="<?= __url($child['url'] ?? '#') ?>">
-                                        <?= __h($child['name']) ?>
-                                    </a>
+                                    <?php if (!empty($child['children'])): ?>
+                                        <a class="nav-link" href="javascript:;" onclick="toggleSubMenu(this)">
+                                            <?= __h($child['name']) ?>
+                                            <i class="bi bi-chevron-right arrow"></i>
+                                        </a>
+                                        <ul class="sub-menu nav flex-column">
+                                            <?php foreach ($child['children'] as $grand): ?>
+                                                <li class="nav-item">
+                                                    <a class="nav-link" href="<?= __url($grand['url'] ?? '#') ?>">
+                                                        <?= __h($grand['name']) ?>
+                                                    </a>
+                                                </li>
+                                            <?php endforeach; ?>
+                                        </ul>
+                                    <?php else: ?>
+                                        <a class="nav-link" href="<?= __url($child['url'] ?? '#') ?>">
+                                            <?= __h($child['name']) ?>
+                                        </a>
+                                    <?php endif; ?>
                                 </li>
                             <?php endforeach; ?>
                         </ul>

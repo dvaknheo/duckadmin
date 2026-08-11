@@ -107,7 +107,7 @@ class PermissionModel extends Base
         foreach (['create', 'edit', 'delete'] as $i => $action) {
             $this->create(['name' => '职位' . $action, 'url' => 'role/' . $action, 'type' => 2, 'parent_id' => $role_id, 'weight' => 20 + $i + 1]);
         }
-        $this->create(['name' => '分配权限', 'url' => 'role/permissions', 'type' => 2, 'parent_id' => $role_id, 'weight' => 24]);
+        $this->create(['name' => '分配权限', 'url' => 'role/permissions', 'type' => 1, 'parent_id' => $role_id, 'weight' => 25]);
         // 权限和菜单管理(SystemController,超管专属)
         $sys_id = $this->create(['name' => '权限和菜单管理', 'url' => 'system/index', 'type' => 1, 'parent_id' => $system_dir, 'weight' => 30]);
         foreach (['scan', 'create', 'edit', 'delete'] as $i => $action) {

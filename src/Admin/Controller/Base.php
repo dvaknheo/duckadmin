@@ -7,15 +7,15 @@ namespace DuckAdmin\Admin\Controller;
 
 use DuckAdmin\Admin\Model\PermissionModel;
 use DuckPhp\Foundation\ControllerTrait;
+use DuckPhp\GlobalAdmin\AdminControllerInterface;
 
-class Base
+class Base implements AdminControllerInterface
 {
-    use ControllerTrait;
-    
-    protected $user;
-    protected $menus;
-    
     public function __construct()
+    {
+        $this->initController();
+    }
+    protected function initController()
     {
         Helper::checkInstall('install');
         Helper::AdminId(true);
