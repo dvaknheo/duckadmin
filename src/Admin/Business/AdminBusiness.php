@@ -11,9 +11,12 @@ use DuckAdmin\Admin\Model\RoleModel;
 
 class AdminBusiness extends Base
 {
-    public function checkAccess($admin_id, string $class, string $method, ?string $url = null)
+    public function checkAccess($admin_id, $class = null, $method = null, ?string $url = null): bool
     {
-        return;
+        if (empty($url)) {
+            return true;
+        }
+        return PermissionModel::_()->checkUserUrl((int)$admin_id, $url);
     }
     public function log($admin_id, string $string, ?string $type = null, array $ext = [])
     {

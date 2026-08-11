@@ -45,4 +45,20 @@ class PermissionBusiness extends Base
     {
         return PermissionModel::_()->getById($id);
     }
+
+    /**
+     * 当前管理员可分配的权限 id(自己已拥有,超管=全部权限)
+     */
+    public function getAssignablePermissionIds(int $adminId): array
+    {
+        return PermissionModel::_()->getUserPermissionIds($adminId);
+    }
+
+    /**
+     * 一键扫描路由入库
+     */
+    public function scanRoutes(): array
+    {
+        return PermissionModel::_()->scanRoutes();
+    }
 }

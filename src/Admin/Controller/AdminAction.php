@@ -53,7 +53,7 @@ class AdminAction extends Base
     }
     public function getAdminIdBySession()
     {
-        return Session::_()->getCurrentAdminId();
+        return Session::_()->getUserId();
     }
 
     ////////////////
@@ -131,20 +131,16 @@ class AdminAction extends Base
     public function checkAccess($class = null, $method = null,$url = null)
     {
         try{
-            
-            $admin_id = Session::_()->getCurrentAdminId();
-            $admin_id = $admin_id ? $admin_id :0;
-            return;
-            //AccountBusiness::_()->canAccess($admin_id, $controller, $action);
+            $admin_id = Session::_()->getUserId();
+            $admin_id = $admin_id ? $admin_id : 0;
+            $url = $url ?? (string)Helper::SERVER('REQUEST_URI', '');
+            if (AdminBusiness::_()->checkAccess($admin_id, $class, $method, $url)) {
+                return;
+            }
+            throw new \Exception('无权访问', 403);
         } catch(\Exception $ex) {
             $this->onAuthException($ex);
             return; // @codeCoverageIgnore
         }
-        $flag = $this->isOptionsMethod();
-        if($flag){
-            Helper::exit();
-            return; // @codeCoverageIgnore
-        }
-        return;
     }
 }

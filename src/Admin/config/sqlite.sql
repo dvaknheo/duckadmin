@@ -22,12 +22,13 @@ CREATE TABLE admin_users (
     deleted_at DATETIME DEFAULT NULL         -- 软删除
 );
 
--- 角色表
+-- 角色表(职位树:pid 指上级职位,0=根;根为超级管理员)
 CREATE TABLE admin_roles (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name VARCHAR(100) NOT NULL,              -- 角色名
-    description TEXT DEFAULT '',             -- 角色描述
-    is_super TINYINT DEFAULT 0,              -- 1=超级管理员角色,鉴权直接放行
+    pid INTEGER DEFAULT 0,                   -- 上级职位 id,0=根职位
+    name VARCHAR(100) NOT NULL,              -- 职位名
+    description TEXT DEFAULT '',             -- 职位描述
+    is_super TINYINT DEFAULT 0,              -- 1=超级管理员职位,鉴权直接放行
     created_at DATETIME DEFAULT NULL,
     updated_at DATETIME DEFAULT NULL,
     deleted_at DATETIME DEFAULT NULL
@@ -44,13 +45,15 @@ CREATE TABLE admin_role_users (
 
 -- 权限规则表(兼作菜单树,wa_rules 模式)
 -- type: 0=目录(仅导航,url 为空) 1=菜单(可点击,url 必填) 2=操作(按钮级,url 填写对应动作)
+-- source: 0=手工添加 1=自动扫描(@name 注解/路由)生成
 CREATE TABLE admin_permissions (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name VARCHAR(100) NOT NULL,              -- 名称(菜单/操作标题)
+    name VARCHAR(100) NOT NULL,              -- 名称(菜单/操作标题;扫描时读 @name 注解)
     url VARCHAR(255) DEFAULT '',             -- url,与请求地址精确匹配;目录为空
     type TINYINT DEFAULT 1,                  -- 0=目录 1=菜单 2=操作
     parent_id INTEGER DEFAULT 0,             -- 父级 id,0=顶级
     weight INTEGER DEFAULT 0,                -- 排序
+    source TINYINT DEFAULT 0,                -- 0=手工 1=自动扫描
     created_at DATETIME DEFAULT NULL,
     updated_at DATETIME DEFAULT NULL,
     deleted_at DATETIME DEFAULT NULL

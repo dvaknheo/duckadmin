@@ -22,7 +22,7 @@ class UserController extends Base
         $data['page'] = $page;
         $data['pageSize'] = $pageSize;
         $data['search'] = $search;
-        $data['title'] = '用户管理';
+        $data['title'] = '人员管理';
         $data['current_route'] = 'user';
         
         $this->render('admin/user_list', $data);
@@ -33,9 +33,10 @@ class UserController extends Base
      */
     public function create()
     {
-        $data['title'] = '创建用户';
+        $admin_id = (int)Session::_()->getUserId();
+        $data['title'] = '新增人员';
         $data['current_route'] = 'user';
-        $data['roles'] = RoleBusiness::_()->getAll();
+        $data['roles'] = RoleBusiness::_()->getAllManageable($admin_id);
         $this->render('admin/user_form', $data);
     }
     
@@ -58,10 +59,11 @@ class UserController extends Base
         if ($result['success']) {
             Helper::Show302(__url('user/index'));
         } else {
+            $admin_id = (int)Session::_()->getUserId();
             $data['error'] = $result['message'];
-            $data['title'] = '创建用户';
+            $data['title'] = '新增人员';
             $data['current_route'] = 'user';
-            $data['roles'] = RoleBusiness::_()->getAll();
+            $data['roles'] = RoleBusiness::_()->getAllManageable($admin_id);
             $data['input'] = $input;
             $this->render('admin/user_form', $data);
         }
@@ -80,9 +82,10 @@ class UserController extends Base
         }
         
         $data['user'] = $user;
-        $data['title'] = '编辑用户';
+        $data['title'] = '编辑人员';
         $data['current_route'] = 'user';
-        $data['roles'] = RoleBusiness::_()->getAll();
+        $admin_id = (int)Session::_()->getUserId();
+        $data['roles'] = RoleBusiness::_()->getAllManageable($admin_id);
         $data['user_role_ids'] = RoleBusiness::_()->getUserRoleIds($id);
         $this->render('admin/user_form', $data);
     }
@@ -107,11 +110,12 @@ class UserController extends Base
         if ($result['success']) {
             Helper::Show302(__url('user/index'));
         } else {
+            $admin_id = (int)Session::_()->getUserId();
             $data['error'] = $result['message'];
             $data['user'] = $input + ['id' => $id];
-            $data['title'] = '编辑用户';
+            $data['title'] = '编辑人员';
             $data['current_route'] = 'user';
-            $data['roles'] = RoleBusiness::_()->getAll();
+            $data['roles'] = RoleBusiness::_()->getAllManageable($admin_id);
             $data['user_role_ids'] = $roleIds;
             $this->render('admin/user_form', $data);
         }
@@ -127,3 +131,4 @@ class UserController extends Base
         Helper::Show302(__url('user/index'));
     }
 }
+

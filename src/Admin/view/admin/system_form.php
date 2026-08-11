@@ -5,7 +5,7 @@
 $isEdit = isset($perm) && !empty($perm);
 $data = $isEdit ? $perm : ($input ?? []);
 $title = $isEdit ? '编辑权限' : '创建权限';
-$current_route = 'permission';
+$current_route = 'system';
 ?>
 
 <div class="page-header">
@@ -13,7 +13,7 @@ $current_route = 'permission';
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="<?= __url('') ?>">首页</a></li>
-            <li class="breadcrumb-item"><a href="<?= __url('permission/index') ?>">权限管理</a></li>
+            <li class="breadcrumb-item"><a href="<?= __url('system/index') ?>">权限和菜单管理</a></li>
             <li class="breadcrumb-item active"><?= __h($title) ?></li>
         </ol>
     </nav>
@@ -25,7 +25,7 @@ $current_route = 'permission';
             <div class="alert alert-danger"><?= __h($error) ?></div>
         <?php endif; ?>
         
-        <form method="post" action="<?= __url($isEdit ? 'permission/update' : 'permission/save') ?>" class="row g-3">
+        <form method="post" action="<?= __url($isEdit ? 'system/update' : 'system/save') ?>" class="row g-3">
             <?php if ($isEdit): ?>
                 <input type="hidden" name="id" value="<?= (int)$data['id'] ?>">
             <?php endif; ?>
@@ -82,8 +82,9 @@ $current_route = 'permission';
                 <button type="submit" class="btn btn-primary">
                     <i class="bi bi-check-lg"></i> <?= $isEdit ? '保存修改' : '创建权限' ?>
                 </button>
-                <a href="<?= __url('permission/index') ?>" class="btn btn-outline-secondary">取消</a>
+                <a href="<?= __url('system/index') ?>" class="btn btn-outline-secondary">取消</a>
             </div>
         </form>
     </div>
 </div>
+

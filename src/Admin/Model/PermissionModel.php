@@ -41,10 +41,11 @@ class PermissionModel extends Base
     {
         $data['created_at'] = date('Y-m-d H:i:s');
         $data['updated_at'] = date('Y-m-d H:i:s');
-        $sql = "INSERT INTO admin_permissions (name, url, type, parent_id, weight, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO admin_permissions (name, url, type, parent_id, weight, source, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         $this->execute($sql, [
             $data['name'], $data['url'] ?? '', $data['type'] ?? 1,
             $data['parent_id'] ?? 0, $data['weight'] ?? 0,
+            $data['source'] ?? 0,
             $data['created_at'], $data['updated_at']
         ]);
         return (int)$this->lastInsertId();
@@ -53,10 +54,11 @@ class PermissionModel extends Base
     public function edit(int $id, array $data): bool
     {
         $data['updated_at'] = date('Y-m-d H:i:s');
-        $sql = "UPDATE admin_permissions SET name = ?, url = ?, type = ?, parent_id = ?, weight = ?, updated_at = ? WHERE id = ?";
+        $sql = "UPDATE admin_permissions SET name = ?, url = ?, type = ?, parent_id = ?, weight = ?, source = ?, updated_at = ? WHERE id = ?";
         $this->execute($sql, [
             $data['name'], $data['url'] ?? '', $data['type'] ?? 1,
             $data['parent_id'] ?? 0, $data['weight'] ?? 0,
+            $data['source'] ?? 0,
             $data['updated_at'], $id
         ]);
         return true;
@@ -94,22 +96,22 @@ class PermissionModel extends Base
     public function seedDefaultPermissions(): void
     {
         // 目录
-        $system_id = $this->create(['name' => '系统管理', 'url' => '', 'type' => 0, 'parent_id' => 0, 'weight' => 5]);
-        // 菜单(按显示顺序 weight 递增)
-        $user_id = $this->create(['name' => '用户管理', 'url' => 'user/index', 'type' => 1, 'parent_id' => $system_id, 'weight' => 10]);
-        $role_id = $this->create(['name' => '角色管理', 'url' => 'role/index', 'type' => 1, 'parent_id' => $system_id, 'weight' => 20]);
-        $perm_id = $this->create(['name' => '权限管理', 'url' => 'permission/index', 'type' => 1, 'parent_id' => $system_id, 'weight' => 30]);
-        // 用户操作
+        $system_dir = $this->create(['name' => '系统管理', 'url' => '', 'type' => 0, 'parent_id' => 0, 'weight' => 5]);
+        // 人员管理(原用户管理)
+        $user_id = $this->create(['name' => '人员管理', 'url' => 'user/index', 'type' => 1, 'parent_id' => $system_dir, 'weight' => 10]);
         foreach (['create', 'edit', 'delete'] as $i => $action) {
-            $this->create(['name' => '用户' . $action, 'url' => 'user/' . $action, 'type' => 2, 'parent_id' => $user_id, 'weight' => 10 + $i + 1]);
+            $this->create(['name' => '人员' . $action, 'url' => 'user/' . $action, 'type' => 2, 'parent_id' => $user_id, 'weight' => 10 + $i + 1]);
         }
-        // 角色操作
+        // 职位管理(原角色管理)
+        $role_id = $this->create(['name' => '职位管理', 'url' => 'role/index', 'type' => 1, 'parent_id' => $system_dir, 'weight' => 20]);
         foreach (['create', 'edit', 'delete'] as $i => $action) {
-            $this->create(['name' => '角色' . $action, 'url' => 'role/' . $action, 'type' => 2, 'parent_id' => $role_id, 'weight' => 20 + $i + 1]);
+            $this->create(['name' => '职位' . $action, 'url' => 'role/' . $action, 'type' => 2, 'parent_id' => $role_id, 'weight' => 20 + $i + 1]);
         }
-        // 权限操作
-        foreach (['create', 'edit', 'delete'] as $i => $action) {
-            $this->create(['name' => '权限' . $action, 'url' => 'permission/' . $action, 'type' => 2, 'parent_id' => $perm_id, 'weight' => 30 + $i + 1]);
+        $this->create(['name' => '分配权限', 'url' => 'role/permissions', 'type' => 2, 'parent_id' => $role_id, 'weight' => 24]);
+        // 权限和菜单管理(SystemController,超管专属)
+        $sys_id = $this->create(['name' => '权限和菜单管理', 'url' => 'system/index', 'type' => 1, 'parent_id' => $system_dir, 'weight' => 30]);
+        foreach (['scan', 'create', 'edit', 'delete'] as $i => $action) {
+            $this->create(['name' => $action === 'scan' ? '一键扫描' : '菜单' . $action, 'url' => 'system/' . $action, 'type' => 2, 'parent_id' => $sys_id, 'weight' => 30 + $i + 1]);
         }
     }
 
@@ -122,8 +124,119 @@ class PermissionModel extends Base
     }
 
     /**
+     * 读取控制器方法 @name 注解作为权限名称
+     */
+    protected function getNameFromAnnotation(string $controller, string $method): string
+    {
+        if ($controller === '' || !class_exists($controller)) {
+            return '';
+        }
+        try {
+            $ref = new \ReflectionMethod($controller, $method);
+            $doc = (string)$ref->getDocComment();
+            if (preg_match('/@name\s+(.+)/', $doc, $m)) {
+                return trim($m[1]);
+            }
+        } catch (\Throwable $e) {
+            // ignore
+        }
+        return '';
+    }
+
+    /**
+     * 一键扫描:RouteLister 扫描 admin 路由,对照现有 url 缺失项自动入库(source=1)
+     * @return array<string> 新增的 url 列表
+     */
+    public function scanRoutes(): array
+    {
+        $routes = \DuckPhp\Component\RouteLister::_()->listAll(true, true, true);
+        $existing = [];
+        foreach ($this->getAll() as $p) {
+            $existing[$p['url']] = true;
+        }
+        $dir_sql = "SELECT id FROM admin_permissions WHERE name = '系统管理' AND type = 0 AND deleted_at IS NULL";
+        $dir_row = $this->fetch($dir_sql);
+        $dir_id = (int)($dir_row['id'] ?? 0);
+
+        $added = [];
+        $weight = 100;
+        foreach ($routes as $route) {
+            $url = (string)($route['url'] ?? '');
+            if ($url === '' || empty($route['controller']) || empty($route['method'])) {
+                continue;
+            }
+            $path = ltrim($url, '/');
+            if (strpos($path, 'admin/') === 0) {
+                $path = substr($path, 6);
+            }
+            if ($path === '' || isset($existing[$path])) {
+                continue;
+            }
+            $name = $this->getNameFromAnnotation((string)$route['controller'], (string)$route['method']);
+            if ($name === '') {
+                $name = $path;
+            }
+            $this->create([
+                'name' => $name,
+                'url' => $path,
+                'type' => 2,
+                'parent_id' => $dir_id,
+                'weight' => $weight,
+                'source' => 1,
+            ]);
+            $existing[$path] = true;
+            $added[] = $path;
+            $weight++;
+        }
+        return $added;
+    }
+
+    /**
+     * 用户已拥有的权限 id 集合(超管=全部权限)
+     */
+    public function getUserPermissionIds(int $userId): array
+    {
+        if (RoleModel::_()->isSuperRole($userId)) {
+            $sql = "SELECT id FROM admin_permissions WHERE deleted_at IS NULL";
+            $rows = $this->fetchAll($sql);
+        } else {
+            $sql = "SELECT DISTINCT p.id FROM admin_permissions p
+                    INNER JOIN admin_role_permissions rp ON p.id = rp.permission_id
+                    INNER JOIN admin_role_users ru ON rp.role_id = ru.role_id
+                    WHERE ru.user_id = ? AND p.deleted_at IS NULL";
+            $rows = $this->fetchAll($sql, [$userId]);
+        }
+        return array_column($rows, 'id');
+    }
+
+    /**
+     * 用户是否拥有指定 url 的权限(去掉 query 精确匹配;首页/空 url 放行;超管全放行)
+     */
+    public function checkUserUrl(int $userId, string $url): bool
+    {
+        if (RoleModel::_()->isSuperRole($userId)) {
+            return true;
+        }
+        $path = (string)(parse_url($url, PHP_URL_PATH) ?: $url);
+        $path = ltrim($path, '/');
+        // 去掉 admin 挂载前缀
+        if (strpos($path, 'admin/') === 0) {
+            $path = substr($path, 6);
+        }
+        if ($path === '') {
+            return true; // 首页/仪表盘放行
+        }
+        $sql = "SELECT COUNT(*) FROM admin_permissions p
+                INNER JOIN admin_role_permissions rp ON p.id = rp.permission_id
+                INNER JOIN admin_role_users ru ON rp.role_id = ru.role_id
+                WHERE ru.user_id = ? AND p.deleted_at IS NULL AND p.url = ?";
+        $count = $this->fetchColumn($sql, [$userId, $path]);
+        return ((int)$count) > 0;
+    }
+
+    /**
      * 获取用户可见菜单树(type 0/1 按 parent_id 组树)
-     * 超级管理员角色直接返回全部菜单,其余按角色规则过滤
+     * 超级管理员职位直接返回全部菜单,其余按职位规则过滤
      */
     public function getUserMenus(int $userId): array
     {

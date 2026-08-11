@@ -21,6 +21,8 @@ class Base
         Helper::AdminId(true);
         // 统一设置页眉页脚
         Helper::setViewHeadFoot('admin/header', 'admin/footer');
+        // 请求级权限校验(按 url 精确匹配,超管放行)
+        AdminAction::_()->checkAccess();
     }
     /**
      * 加载菜单(按当前管理员权限过滤,查 admin_permissions 组树)

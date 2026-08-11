@@ -7,23 +7,23 @@
  * @var int $pageSize
  * @var string $search
  */
-$title = '用户管理';
+$title = '人员管理';
 $current_route = 'user';
 ?>
 
 <div class="page-header d-flex justify-content-between align-items-center">
     <div>
-        <h4>用户管理</h4>
+        <h4>人员管理</h4>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="<?= __url('') ?>">首页</a></li>
-                <li class="breadcrumb-item active">用户管理</li>
+                <li class="breadcrumb-item active">人员管理</li>
             </ol>
         </nav>
     </div>
     <div>
         <a href="<?= __url('user/create') ?>" class="btn btn-primary">
-            <i class="bi bi-plus-lg"></i> 新增用户
+            <i class="bi bi-plus-lg"></i> 新增人员
         </a>
     </div>
 </div>
@@ -32,7 +32,7 @@ $current_route = 'user';
     <div class="card-body">
         <form method="get" action="<?= __url('user/index') ?>" class="row g-3 mb-4">
             <div class="col-auto flex-grow-1">
-                <input type="text" name="search" class="form-control" placeholder="搜索用户名、姓名、邮箱..." value="<?= __h($search) ?>">
+                <input type="text" name="search" class="form-control" placeholder="搜索人员名、姓名、邮箱..." value="<?= __h($search) ?>">
             </div>
             <div class="col-auto">
                 <button type="submit" class="btn btn-outline-secondary"><i class="bi bi-search"></i> 搜索</button>
@@ -47,7 +47,7 @@ $current_route = 'user';
                 <thead>
                     <tr>
                         <th style="width:60px">ID</th>
-                        <th>用户名</th>
+                        <th>登录账号</th>
                         <th>姓名</th>
                         <th>邮箱</th>
                         <th>状态</th>
@@ -80,7 +80,7 @@ $current_route = 'user';
                                         <i class="bi bi-pencil"></i>
                                     </a>
                                     <a href="<?= __url('user/delete?id=' . $item['id']) ?>" class="btn btn-sm btn-outline-danger" 
-                                       onclick="return confirm('确定删除用户「<?= __h($item['username']) ?>」？')">
+                                       onclick="return confirm('确定删除人员「<?= __h($item['username']) ?>」？')">
                                         <i class="bi bi-trash"></i>
                                     </a>
                                 </td>
@@ -107,3 +107,4 @@ $current_route = 'user';
         <?php endif; ?>
     </div>
 </div>
+

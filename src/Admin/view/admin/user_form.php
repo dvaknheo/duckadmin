@@ -9,7 +9,7 @@
  */
 $isEdit = isset($user) && !empty($user);
 $data = $isEdit ? $user : ($input ?? []);
-$title = $isEdit ? '编辑用户' : '创建用户';
+$title = $isEdit ? '编辑人员' : '新增人员';
 $current_route = 'user';
 ?>
 
@@ -87,10 +87,11 @@ $current_route = 'user';
             <div class="col-12">
                 <hr>
                 <button type="submit" class="btn btn-primary">
-                    <i class="bi bi-check-lg"></i> <?= $isEdit ? '保存修改' : '创建用户' ?>
+                    <i class="bi bi-check-lg"></i> <?= $isEdit ? '保存修改' : '新增人员' ?>
                 </button>
                 <a href="<?= __url('user/index') ?>" class="btn btn-outline-secondary">取消</a>
             </div>
         </form>
     </div>
 </div>
+

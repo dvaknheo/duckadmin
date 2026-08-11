@@ -14,32 +14,37 @@ class RoleBusiness extends Base
         return RoleModel::_()->getPageList($page, $pageSize, $search);
     }
     
-    public function create(string $name, string $description): array
+    public function create(int $adminId, string $name, string $description, int $pid = 0): array
     {
         if (empty($name)) {
-            return ['success' => false, 'message' => '角色名称不能为空'];
+            return ['success' => false, 'message' => '职位名称不能为空'];
         }
-        RoleModel::_()->create(['name' => $name, 'description' => $description]);
+        if ($pid !== 0 && !$this->canManageRole($adminId, $pid)) {
+            return ['success' => false, 'message' => '上级职位不在你的管理范围内'];
+        }
+        RoleModel::_()->create(['name' => $name, 'description' => $description, 'pid' => $pid]);
         return ['success' => true, 'message' => '创建成功'];
     }
     
-    public function update(int $id, string $name, string $description): array
+    public function update(int $adminId, int $id, string $name, string $description, ?int $pid = null): array
     {
         if (empty($name)) {
-            return ['success' => false, 'message' => '角色名称不能为空'];
+            return ['success' => false, 'message' => '职位名称不能为空'];
         }
-        RoleModel::_()->edit($id, ['name' => $name, 'description' => $description]);
+        if ($pid !== null && !$this->canManageRole($adminId, $pid)) {
+            return ['success' => false, 'message' => '上级职位不在你的管理范围内'];
+        }
+        $data = ['name' => $name, 'description' => $description];
+        if ($pid !== null) {
+            $data['pid'] = $pid;
+        }
+        RoleModel::_()->edit($id, $data);
         return ['success' => true, 'message' => '更新成功'];
     }
     
     public function delete(int $id): bool
     {
         return RoleModel::_()->delete($id);
-    }
-    
-    public function setPermissions(int $roleId, array $permissionIds): void
-    {
-        PermissionModel::_()->setRolePermissions($roleId, $permissionIds);
     }
     
     public function getRolePermissions(int $roleId): array
@@ -60,5 +65,58 @@ class RoleBusiness extends Base
     public function getUserRoleIds(int $userId): array
     {
         return RoleModel::_()->getUserRoleIds($userId);
+    }
+
+    /**
+     * 当前管理员可管理的职位 id(其职位的整棵子树;超管=全部职位)
+     */
+    public function getManageableRoleIds(int $adminId): array
+    {
+        if (AdminBusiness::_()->isSuper($adminId)) {
+            return RoleModel::_()->getAllIds();
+        }
+        $ids = [];
+        foreach (RoleModel::_()->getUserRoleIds($adminId) as $rid) {
+            $ids = array_merge($ids, RoleModel::_()->getSubTreeIds((int)$rid));
+        }
+        return array_values(array_unique($ids));
+    }
+
+    /**
+     * 目标职位是否在管理员可管理范围内
+     */
+    public function canManageRole(int $adminId, int $roleId): bool
+    {
+        return in_array($roleId, $this->getManageableRoleIds($adminId), true);
+    }
+
+    /**
+     * 当前管理员可管理的职位列表(含 pid,超管=全部)
+     */
+    public function getAllManageable(int $adminId): array
+    {
+        $ids = $this->getManageableRoleIds($adminId);
+        $all = RoleModel::_()->getAll();
+        return array_values(array_filter($all, function ($r) use ($ids) {
+            return in_array((int)$r['id'], $ids, true);
+        }));
+    }
+
+    /**
+     * 分配权限:目标职位须在管理范围内,且只能分配自己已拥有的权限
+     */
+    public function setPermissions(int $adminId, int $roleId, array $permissionIds): array
+    {
+        if (!$this->canManageRole($adminId, $roleId)) {
+            return ['success' => false, 'message' => '目标职位不在你的管理范围内'];
+        }
+        $assignable = PermissionBusiness::_()->getAssignablePermissionIds($adminId);
+        foreach ($permissionIds as $pid) {
+            if (!in_array((int)$pid, $assignable, true)) {
+                return ['success' => false, 'message' => '只能分配自己已拥有的权限'];
+            }
+        }
+        PermissionModel::_()->setRolePermissions($roleId, $permissionIds);
+        return ['success' => true, 'message' => '分配成功'];
     }
 }

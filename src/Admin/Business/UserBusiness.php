@@ -4,6 +4,7 @@
  */
 namespace DuckAdmin\Admin\Business;
 
+use DuckAdmin\Admin\Controller\Session;
 use DuckAdmin\Admin\Model\AdminUserModel;
 use DuckAdmin\Admin\Model\RoleModel;
 
@@ -39,6 +40,14 @@ class UserBusiness extends Base
             return ['success' => false, 'message' => '用户名已存在'];
         }
         
+        // 职位范围校验:目标职位必须是当前管理员可管理的子职位
+        $admin_id = (int)Session::_()->getUserId();
+        foreach ($roleIds as $rid) {
+            if (!RoleBusiness::_()->canManageRole($admin_id, (int)$rid)) {
+                return ['success' => false, 'message' => '目标职位不在你的管理范围内'];
+            }
+        }
+        
         AdminUserModel::_()->create($input);
         $userId = AdminUserModel::_()->lastInsertId();
         
@@ -58,6 +67,14 @@ class UserBusiness extends Base
         // 验证
         if (empty($input['username'])) {
             return ['success' => false, 'message' => '用户名不能为空'];
+        }
+        
+        // 职位范围校验:目标职位必须是当前管理员可管理的子职位
+        $admin_id = (int)Session::_()->getUserId();
+        foreach ($roleIds as $rid) {
+            if (!RoleBusiness::_()->canManageRole($admin_id, (int)$rid)) {
+                return ['success' => false, 'message' => '目标职位不在你的管理范围内'];
+            }
         }
         
         AdminUserModel::_()->edit($id, $input);
@@ -86,3 +103,4 @@ class UserBusiness extends Base
         return AdminUserModel::_()->getById($id);
     }
 }
+

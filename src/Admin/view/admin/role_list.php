@@ -2,23 +2,23 @@
 /**
  * Role List
  */
-$title = '角色管理';
+$title = '色色管理';
 $current_route = 'role';
 ?>
 
 <div class="page-header d-flex justify-content-between align-items-center">
     <div>
-        <h4>角色管理</h4>
+        <h4>色色管理</h4>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="<?= __url('') ?>">首页</a></li>
-                <li class="breadcrumb-item active">角色管理</li>
+                <li class="breadcrumb-item active">色色管理</li>
             </ol>
         </nav>
     </div>
     <div>
         <a href="<?= __url('role/create') ?>" class="btn btn-primary">
-            <i class="bi bi-plus-lg"></i> 新增角色
+            <i class="bi bi-plus-lg"></i> 新增色色
         </a>
     </div>
 </div>
@@ -27,7 +27,7 @@ $current_route = 'role';
     <div class="card-body">
         <form method="get" action="<?= __url('role/index') ?>" class="row g-3 mb-4">
             <div class="col-auto flex-grow-1">
-                <input type="text" name="search" class="form-control" placeholder="搜索角色名称..." value="<?= __h($search) ?>">
+                <input type="text" name="search" class="form-control" placeholder="搜索色色名称..." value="<?= __h($search) ?>">
             </div>
             <div class="col-auto">
                 <button type="submit" class="btn btn-outline-secondary"><i class="bi bi-search"></i> 搜索</button>
@@ -42,7 +42,7 @@ $current_route = 'role';
                 <thead>
                     <tr>
                         <th style="width:60px">ID</th>
-                        <th>角色名称</th>
+                        <th>色色名称</th>
                         <th>描述</th>
                         <th>创建时间</th>
                         <th style="width:200px">操作</th>
@@ -66,7 +66,7 @@ $current_route = 'role';
                                         <i class="bi bi-shield"></i> 权限
                                     </a>
                                     <a href="<?= __url('role/delete?id=' . $item['id']) ?>" class="btn btn-sm btn-outline-danger"
-                                       onclick="return confirm('确定删除角色「<?= __h($item['name']) ?>」？')">
+                                       onclick="return confirm('确定删除色色「<?= __h($item['name']) ?>」？')">
                                         <i class="bi bi-trash"></i>
                                     </a>
                                 </td>
@@ -93,3 +93,4 @@ $current_route = 'role';
         <?php endif; ?>
     </div>
 </div>
+

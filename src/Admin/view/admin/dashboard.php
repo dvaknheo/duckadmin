@@ -52,7 +52,7 @@ $current_route = '';
                 <i class="bi bi-lock" style="font-size: 36px; color: #faad14;"></i>
                 <h5 class="mt-2">权限管理</h5>
                 <p class="text-muted small">管理系统权限</p>
-                <a href="<?= __url('permission/index') ?>" class="btn btn-outline-warning btn-sm">进入</a>
+                <a href="<?= __url('system/index') ?>" class="btn btn-outline-warning btn-sm">进入</a>
             </div>
         </div>
     </div>
