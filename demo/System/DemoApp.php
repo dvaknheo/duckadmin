@@ -108,14 +108,14 @@ class DemoApp extends DuckPhp
         // for coverage test
         $path_src = realpath(__DIR__.'/../../src/').'/';
         $tester_options = [
-            'path_src'=> $path_src,
-            'test_callback_class'=> MyTester::class,
+            'duckcoverage_path_src'=> $path_src,
+            'duckcoverage_callback_class'=> MyTester::class,
             
-            'test_server_port'=> 8080,
-            'test_homepage' =>'/index.php/',
-            'test_path_document'=>'public',
-            'test_new_server'=>true,
-            'test_web_base_url' => 'http://admin.duckphp-local.com/',
+            'duckcoverage_server_port'=> 8080,
+            'duckcoverage_homepage' =>'/index.php/',
+            'duckcoverage_path_document'=>'public',
+            'duckcoverage_new_server'=>true,
+            'duckcoverage_web_base_url' => 'http://admin.duckphp-local.com/',
         ];
         DuckCoverage::_()->init($tester_options);
     }

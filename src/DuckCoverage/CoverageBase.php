@@ -16,13 +16,12 @@ class CoverageBase
     protected $coverage;
 
     public $options = [
-        'path' => '',
-        'path_src' => 'src/',
-        'path_dump' => 'test_coveragedumps',
-        'path_report' => 'test_reports',
-        'group'=>'',
-        'name'=>'',
-        'test_on_report'=>null,
+        'duckcoverage_path' => '',
+        'duckcoverage_path_src' => 'src/',
+        'duckcoverage_path_dump' => 'test_coveragedumps',
+        'duckcoverage_path_report' => 'test_reports',
+        'duckcoverage_group'=>'',
+        'duckcoverage_name'=>'',
     ];
     public $is_inited = false;
     
@@ -82,7 +81,7 @@ class CoverageBase
         if (static::IsAbsPath($this->options[$path_key])) {
             return static::SlashDir($this->options[$path_key]);
         } else {
-            return static::SlashDir($this->options['path']) . static::SlashDir($this->options[$path_key]);
+            return static::SlashDir($this->options['duckcoverage_path']) . static::SlashDir($this->options[$path_key]);
         }
     }
     public function init(array $options, ?object $context = null)
@@ -117,10 +116,10 @@ class CoverageBase
         if (!$this->coverage) {
             $this->coverage = $this->createCoverage();
         }
-        $path_src = $this->getSubPath('path_src');
+        $path_src = $this->getSubPath('duckcoverage_path_src');
         $this->coverage->filter()->includeDirectory($path_src);
         
-        $this->coverage->start($this->options['name'],true);
+        $this->coverage->start($this->options['duckcoverage_name'],true);
         $this->is_begin = true;
     }
     
@@ -130,10 +129,10 @@ class CoverageBase
             return; // 防止重复调用
         }
         $this->coverage->stop();
-        $path_dump = $this->getSubPath('path_dump');
-        $path_dump = $path_dump. $this->options['group'].'/';
+        $path_dump = $this->getSubPath('duckcoverage_path_dump');
+        $path_dump = $path_dump. $this->options['duckcoverage_group'].'/';
         
-        $file = md5($this->options['name']);
+        $file = md5($this->options['duckcoverage_name']);
         
         (new ReportOfPHP)->process($this->coverage, $path_dump.$file.'.php');
         //$this->coverage = null;
@@ -145,10 +144,10 @@ class CoverageBase
     }
     protected function getReportPath($groups)
     {
-        $path_report = $this->getSubPath('path_report');
-        if(!$this->options['test_report_direct']){
+        $path_report = $this->getSubPath('duckcoverage_path_report');
+        if(!$this->options['duckcoverage_report_direct']){
             if(empty($groups)){
-                $groups =[$this->options['group']];
+                $groups =[$this->options['duckcoverage_group']];
             }
             if(count($groups)===1){
                 $path_report = $path_report. $groups[0];
@@ -162,8 +161,8 @@ class CoverageBase
     
     public function createReport($groups =[])
     {
-        $path_src = $this->getSubPath('path_src');
-        $path_dump = $this->getSubPath('path_dump');
+        $path_src = $this->getSubPath('duckcoverage_path_src');
+        $path_dump = $this->getSubPath('duckcoverage_path_dump');
         
         
         
@@ -216,15 +215,15 @@ class CoverageBase
     ////[[[[
     protected function watchingBegin($name)
     {
-        file_put_contents($this->options['path'].'MyCoverage.watching.txt',$name);
+        file_put_contents($this->options['duckcoverage_path'].'MyCoverage.watching.txt',$name);
     }
     protected function watchingEnd()
     {
-        @unlink($this->options['path'].'MyCoverage.watching.txt');
+        @unlink($this->options['duckcoverage_path'].'MyCoverage.watching.txt');
     }
     protected function watchingGetName()
     {
-        $group = @file_get_contents($this->options['path'].'MyCoverage.watching.txt');
+        $group = @file_get_contents($this->options['duckcoverage_path'].'MyCoverage.watching.txt');
         return $group;    
     }
     ////]]]]

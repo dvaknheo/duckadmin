@@ -20,22 +20,21 @@ class DuckCoverage extends CoverageBase
 {
     //todo use  global singletonex to replace default singleton function
     public $options =[
-        'test_save_web_request_list' =>true,
-        'test_save_local_call_list' =>false,
-        'test_server_port'=> 8080,
-        'test_server_host'=> '',
-        'test_path_server'=>'',
-        'test_path_document'=>'public',
-        'test_homepage' =>'/index_dev.php/',
-        'test_web_base_url' => '',      // 外部服务器(如 nginx)基础 URL,如 http://admin.duckphp-local.com/ ;空则退回内部测试服务器
+        'duckcoverage_save_web_request_list' =>true,
+        'duckcoverage_save_local_call_list' =>false,
+        'duckcoverage_server_port'=> 8080,
+        'duckcoverage_server_host'=> '',
+        'duckcoverage_path_server'=>'',
+        'duckcoverage_path_document'=>'public',
+        'duckcoverage_homepage' =>'/index_dev.php/',
+        'duckcoverage_web_base_url' => '',      // 外部服务器(如 nginx)基础 URL,如 http://admin.duckphp-local.com/ ;空则退回内部测试服务器
         
-        'test_callback_class'=>null,
-        'test_new_server'=>true,
+        'duckcoverage_callback_class'=>null,
+        'duckcoverage_new_server'=>true,
 
-        'test_report_direct'=>true,
-        'test_echo_back'=>false,
-        'test_on_report'=>null,
-        
+        'duckcoverage_report_direct'=>true,
+        'duckcoverage_echo_back'=>false,
+
     ];
     public $session_id='';
     protected $is_save_session=false;
@@ -52,13 +51,13 @@ class DuckCoverage extends CoverageBase
         }
         parent::init($options, $context);
     
-        $this->options['path'] = Helper::PathOfRuntime();
-        $this->options['test_path_server'] = Helper::PathOfProject();
-        $this->options['path_src'] = realpath(__DIR__.'/../../').'/src'; //??
+        $this->options['duckcoverage_path'] = Helper::PathOfRuntime();
+        $this->options['duckcoverage_path_server'] = Helper::PathOfProject();
+        $this->options['duckcoverage_path_src'] = realpath(__DIR__.'/../../').'/src'; //??
 
         $watching_group = $this->watchingGetName();
         if ($watching_group) {
-            $this->options['group'] = $watching_group;
+            $this->options['duckcoverage_group'] = $watching_group;
         }
 
         // 注册 duckcover 命令行命令（不依赖 onInit 全局事件，旧版 duckphp 机制已移除）
@@ -123,7 +122,7 @@ class DuckCoverage extends CoverageBase
     }
     public function _OnBeforeRun()
     {
-        if(!$this->options['group']){
+        if(!$this->options['duckcoverage_group']){
             return;
         }
         if (PHP_SAPI === 'cli' && App::_()->options['cli_enable']) {
@@ -131,17 +130,17 @@ class DuckCoverage extends CoverageBase
             return;
         }
 
-        if($this->options['test_save_web_request_list'] ?? false){
-            $path_dump = $this->getSubPath('path_dump');
+        if($this->options['duckcoverage_save_web_request_list'] ?? false){
+            $path_dump = $this->getSubPath('duckcoverage_path_dump');
             @mkdir($path_dump);
-            file_put_contents($path_dump.$this->options['group'].'.list',$this->getHttpStringToLog()."\n",FILE_APPEND); 
+            file_put_contents($path_dump.$this->options['duckcoverage_group'].'.list',$this->getHttpStringToLog()."\n",FILE_APPEND); 
         }
         
         if(!$this->isInHttpTest()) {
             return;
         }
 
-        $this->options['name'] = $this->getTestName();       
+        $this->options['duckcoverage_name'] = $this->getTestName();       
         //// save list
 
 
@@ -225,9 +224,9 @@ class DuckCoverage extends CoverageBase
         $this->cleanClientStatus();
         $this->doBegin();
         
-        $this->options['name'] = 'replay';
+        $this->options['duckcoverage_name'] = 'replay';
 
-        $callback_class = $this->options['test_callback_class'] ?? null;
+        $callback_class = $this->options['duckcoverage_callback_class'] ?? null;
         if ($callback_class && method_exists($callback_class, 'BeforeReplayTest')) {
             $callback_class::BeforeReplayTest();
         }
@@ -246,7 +245,7 @@ class DuckCoverage extends CoverageBase
     }
     protected function onBeforeReport()
     {
-        $callback_class = $this->options['test_callback_class'] ?? null;
+        $callback_class = $this->options['duckcoverage_callback_class'] ?? null;
         if ($callback_class && method_exists($callback_class, 'OnReport')) {
             $callback_class::OnReport();
         }
@@ -383,14 +382,14 @@ class DuckCoverage extends CoverageBase
             return;
         }
         $server_options=[
-            'path'=> $this->options['test_path_server'],
-            'path_document'=>$this->options['test_path_document'],
-            'port'=>$this->options['test_server_port'],
+            'path'=> $this->options['duckcoverage_path_server'],
+            'path_document'=>$this->options['duckcoverage_path_document'],
+            'port'=>$this->options['duckcoverage_server_port'],
             'background' =>true,
             'http_app_class' =>get_class(App::Root()),
         ];
         
-        if($this->options['test_new_server']){
+        if($this->options['duckcoverage_new_server']){
             HttpServer::_(new HttpServer()); 
         }
         HttpServer::RunQuickly($server_options);
@@ -413,11 +412,11 @@ class DuckCoverage extends CoverageBase
         
         if($command!=='#WEB'){return;}
         
-        $base_url = (string)($this->options['test_web_base_url'] ?? '');
+        $base_url = (string)($this->options['duckcoverage_web_base_url'] ?? '');
         if ($base_url === '') {
             // 未配置外部服务器(如 nginx)时,退回内部 PHP 测试服务器
             $this->startServer();
-            $base_url = "http://127.0.0.1:{$this->options['test_server_port']}".$this->options['test_homepage'];
+            $base_url = "http://127.0.0.1:{$this->options['duckcoverage_server_port']}".$this->options['duckcoverage_homepage'];
         }
         $post =[];
         if($poststr){
@@ -432,7 +431,7 @@ class DuckCoverage extends CoverageBase
         }
         $url = $base_url . $uri;
         $data = $this->curl_file_get_contents($url,$post,$is_ajax,$is_options,$method);
-        if($this->options['test_echo_back']??false){
+        if($this->options['duckcoverage_echo_back']??false){
             echo substr($data,0,200);
         }
     }
@@ -441,13 +440,13 @@ class DuckCoverage extends CoverageBase
         @list($command,$func)=explode(' ',$request);
         if($command!=='#CALL'){return;}
         
-        $this->options['name'] = $command;
+        $this->options['duckcoverage_name'] = $command;
         
         ////[[[[
         //// save list
-        $path_dump = $this->getSubPath('path_dump');
+        $path_dump = $this->getSubPath('duckcoverage_path_dump');
         @mkdir($path_dump);
-        file_put_contents($path_dump.$this->options['group'].'.list',$request ."\n",FILE_APPEND); 
+        file_put_contents($path_dump.$this->options['duckcoverage_group'].'.list',$request ."\n",FILE_APPEND); 
         ////]]]]
         
         $this->callHandler($func);
@@ -528,7 +527,7 @@ EOT;
                 $p['watch'] = DATE('Y_m_d_H_i_s');
             }
             $this->watchingBegin($p['watch']);
-            $this->options['group']=$p['watch'];
+            $this->options['duckcoverage_group']=$p['watch'];
             echo "watching {$p['watch']}\n";
         }
         if($p['stop']??false){
@@ -540,7 +539,7 @@ EOT;
         if($p['call']??false){
             if(is_string($p['call'])){
                 $command = $p['call'];
-                $this->options['name'] = 'call '.$command;
+                $this->options['duckcoverage_name'] = 'call '.$command;
                 $func=str_replace('/','\\',$command);
                 $this->doBegin();
                 try{
@@ -553,7 +552,7 @@ EOT;
         if($p['report']??false){
             echo "reporting...\n";
             
-            $groups = is_array($p['report'])?$p['report']:[$this->options['group']];
+            $groups = is_array($p['report'])?$p['report']:[$this->options['duckcoverage_group']];
             
             $time_begin = microtime(true);
             $path_group = $this->getReportPath($groups);
