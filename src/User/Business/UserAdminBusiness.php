@@ -6,12 +6,12 @@
 namespace DuckAdmin\User\Business;
 
 use DuckPhp\Foundation\Business\Helper;
-use DuckPhp\Foundation\BusinessTrait;
+use DuckPhp\Foundation\SingletonTrait;
 use DuckAdmin\User\Model\UserAdminModel;
 
 class UserAdminBusiness
 {
-    use BusinessTrait;
+    use SingletonTrait;
 
     public function getUserList($conditions=[],$page = 1, $page_size = 10)
     {

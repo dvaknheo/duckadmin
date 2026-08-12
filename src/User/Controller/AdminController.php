@@ -1,7 +1,7 @@
 <?php
 namespace DuckAdmin\User\Controller;
 
-use DuckPhp\Foundation\ControllerTrait;
+use DuckPhp\Foundation\SingletonTrait;
 use DuckPhp\GlobalAdmin\AdminControllerInterface;
 
 use DuckAdmin\User\Business\UserAdminBusiness;
@@ -12,11 +12,11 @@ use DuckAdmin\User\Controller\Helper;
  */
 class AdminController implements AdminControllerInterface
 {
-    use ControllerTrait;
+    use SingletonTrait;
 
     public function __construct()
     {
-        return $this->initController();
+        $this->initController();
     }
     protected function initController()
     {

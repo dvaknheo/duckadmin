@@ -7,13 +7,13 @@
 namespace SimpleBlog\Controller;
 
 use DuckPhp\GlobalAdmin\AdminControllerInterface;
-use DuckPhp\Foundation\ControllerTrait;
+use DuckPhp\Foundation\SingletonTrait;
 
 use SimpleBlog\Business\ArticleBusiness;
 use SimpleBlog\Business\AdminBusiness;
 class adminController implements AdminControllerInterface
 {
-    use ControllerTrait;
+    use SingletonTrait;
 
     public function __construct()
     {

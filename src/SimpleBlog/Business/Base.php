@@ -6,9 +6,9 @@
 
 namespace SimpleBlog\Business;
 
-use DuckPhp\Foundation\SimpleBusinessTrait;
+use DuckPhp\Foundation\SingletonTrait;
 
 class Base
 {
-    use SimpleBusinessTrait;
+    use SingletonTrait;
 }

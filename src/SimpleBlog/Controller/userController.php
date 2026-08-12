@@ -5,14 +5,14 @@
  */
 namespace SimpleBlog\Controller;
 
-use DuckPhp\Foundation\ControllerTrait;
+use DuckPhp\Foundation\SingletonTrait;
 
 use SimpleBlog\Business\ArticleBusiness;
 use SimpleBlog\Business\UserBusiness;
 
 class userController
 {
-    use ControllerTrait;
+    use SingletonTrait;
 
     public function __construct()
     {

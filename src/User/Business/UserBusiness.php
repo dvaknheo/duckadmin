@@ -6,7 +6,7 @@
 namespace DuckAdmin\User\Business;
 
 use DuckPhp\Foundation\Business\Helper;
-use DuckPhp\Foundation\BusinessTrait;
+use DuckPhp\Foundation\SingletonTrait;
 use DuckAdmin\User\Model\UserModel;
 
 /**
@@ -15,7 +15,7 @@ use DuckAdmin\User\Model\UserModel;
  */
 class UserBusiness
 {
-    use BusinessTrait;
+    use SingletonTrait;
 
     public function log(int $user_id, string $string, ?string $type = null)
     {

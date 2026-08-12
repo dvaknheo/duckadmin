@@ -5,13 +5,13 @@
  */
 namespace DuckAdmin\Business;
 
-use DuckPhp\Foundation\BusinessTrait;
+use DuckPhp\Foundation\SingletonTrait;
 /**
  * 业务基本类，业务程序员的公用代码放在这里
  */
 class Base
 {
-    use BusinessTrait;
+    use SingletonTrait;
     
     public function __construct()
     {
