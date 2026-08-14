@@ -198,8 +198,8 @@ class DuckCoverage extends CoverageBase
 
         $this->options['duckcoverage_name'] = 'replay';
 
-        $callback_class = $this->options['duckcoverage_callback_class'] ?? null;
-        $test_list = ($callback_class && method_exists($callback_class, 'GetTestList')) ? $callback_class::GetTestList() : '';
+        $callback = $this->options['duckcoverage_callback'] ?? null;
+        $test_list = (string)$callback();
         $test_list = \explode("\n", $test_list);
 
         foreach ($test_list as $line) {
