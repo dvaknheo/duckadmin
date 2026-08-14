@@ -10,7 +10,7 @@ use DuckPhp\Core\Console;
 use DuckPhp\Foundation\SingletonTrait;
 use DuckPhp\Foundation\Helper;
 
-class MyTester
+class TestLister
 {
     use SingletonTrait;
 

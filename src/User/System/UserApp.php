@@ -11,12 +11,12 @@ use DuckPhp\GlobalUser\GlobalUser;
 use DuckAdmin\User\Controller\ExceptionReporter;
 use DuckAdmin\User\Controller\UserAction;
 
-class DuckUserApp extends DuckPhp
+class UserApp extends DuckPhp
 {
     //@override
     public $options = [
         'path' => __DIR__ . '/../',
-        'namespace' => "DuckAdmin\User",
+        'namespace' => "DuckAdmin\\User",
         'name'  => 'DuckUser',
 
         'data_file_enable' => true,
@@ -50,9 +50,7 @@ class DuckUserApp extends DuckPhp
 
         ///////////////////
         'home_url' => 'Home/index',
+
+        'duckcoverage_callback'=> [TestLister::class ,'GetTestList'],
     ];
-    public function _On404(): void
-    {
-        //var_dump(\DuckPhp\Core\Route::_()->getRouteError());
-    }
 }

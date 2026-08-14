@@ -6,6 +6,7 @@
 namespace DuckAdminDemo\System;
 
 
+use DuckAdminDemo\Test\TestLister;
 use DuckPhp\DuckPhp;
 use DuckPhp\Foundation\Controller\Helper;
 use DuckCoverage\DuckCoverage;
@@ -28,7 +29,7 @@ class DemoApp extends DuckPhp
                 'controller_resource_prefix' => 'res/',
             ],
 //*/
-            \DuckAdmin\User\System\DuckUserApp::class => [
+            \DuckAdmin\User\System\UserApp::class => [
                 'controller_url_prefix' => 'user/',             // 访问路径
                 'controller_resource_prefix' => 'res/',    // 资源文件前缀
             ],
@@ -56,15 +57,14 @@ class DemoApp extends DuckPhp
         'duckcoverage_echo_back'=>false,
         
         'duckcoverage_path_src'=> null,  //$path_src,
-        'duckcoverage_callback_class'=> MyTester::class,
+        'duckcoverage_callback'=> [TestLister::class ,'GetTestList'],
 
         'duckcoverage_web_base_url' => 'http://admin.duckphp-local.com/',
+
         // 'duckcoverage_server_port'=> 8080,
         // 'duckcoverage_homepage' =>'/index.php/',
         // 'duckcoverage_path_document'=>'public',
         // 'duckcoverage_new_server'=>true,
-
-
     ];
     public function __construct()
     {
@@ -86,7 +86,7 @@ class DemoApp extends DuckPhp
     {
         $data = [];
         $data['url_blog'] = __url(\SimpleBlog\System\SimpleBlogApp::_()->options['controller_url_prefix']) . 'index';
-        $data['url_user'] = __url(\DuckAdmin\User\System\DuckUserApp::_()->options['controller_url_prefix']) . 'index';
+        $data['url_user'] = __url(\DuckAdmin\User\System\UserApp::_()->options['controller_url_prefix']) . 'index';
         $data['url_admin'] = __url(\DuckAdmin\Admin\System\AdminApp::_()->options['controller_url_prefix']) . 'index';
         
         $data ['duckadmin_demo_enable_test'] = $this->options['duckadmin_demo_enable_test'] ?? false;
