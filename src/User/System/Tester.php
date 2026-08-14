@@ -69,8 +69,13 @@ $list = <<<EOT
 EOT;
 
         $prefix = DuckUserApp::_()->options['controller_url_prefix'];
-        
+
+        $phase = DuckUserApp::_()->getThisPhaseName()."\n";
+        $str .= '#URL_PREFIX '.DuckUserApp::_()->options['controller_url_prefix']."\n";
+
         $args = [
+            'phase' => $phase,
+            
             'username' =>'user_test',
         ];
         $args ['static'] = static::class;

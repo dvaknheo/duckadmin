@@ -93,12 +93,12 @@ class DemoApp extends DuckPhp
         
         Helper::Show($data,'main');
     }
-    protected function onPrepare(): void
-    {
-        parent::onPrepare();
 
+    protected function initComponentsOfRoot($components, $default): void
+    {
         if ($this->options['duckcoverage_enable'] ?? false) {
             $this->options['data_file_json_file'] = 'DuckPhpData-test.config.json';
         }
+        parent::initComponentsOfRoot($components, $default);
     }
 }
