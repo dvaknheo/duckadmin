@@ -7,11 +7,11 @@
 namespace DuckAdmin\Admin\Controller;
 
 use DuckAdmin\Admin\Business\AuthBusiness;
-use \DuckPhp\Foundation\ControllerTrait;
+use \DuckPhp\Foundation\SingletonTrait;
 
 class LoginController
 {
-    use ControllerTrait;
+    use SingletonTrait;
     
     public function __construct()
     {

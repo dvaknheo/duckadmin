@@ -6,7 +6,7 @@
 
 namespace DuckAdmin\Admin\Controller;
 
-use DuckPhp\Core\SingletonTrait;
+use DuckPhp\Foundation\SingletonTrait;
 use DuckPhp\Core\App;
 use DuckPhp\GlobalUser\UserException;
 
