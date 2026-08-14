@@ -20,17 +20,17 @@
             "DuckAdmin\\Admin\\": "src/Admin/",
             "DuckAdmin\\User\\": "src/User/",
             "DuckAdmin\\": "src/DuckAdmin",
-            "SimpleBlog\\": "src/SimpleBlog",
-            "DuckCoverage\\": "src/DuckCoverage"
+            "SimpleBlog\\": "src/SimpleBlog"
         }
     },
     "require": {
         "php": ">=7.4.0",
         "gregwar/captcha": "^1.1",
-        "dvaknheo/duckphp": "^1.3"
+        "dvaknheo/duckphp": "*",
+        "dvaknheo/duckcoverage": "*"
     },
     "require-dev": {
-        "dvaknheo/libcoverage": "^1.0.7",
+        "dvaknheo/libcoverage": "*",
         "phpunit/phpunit": "^9.6",
         "phpunit/php-code-coverage": "^9.2"
     }
