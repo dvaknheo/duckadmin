@@ -1,0 +1,64 @@
+<?php declare(strict_types=1);
+namespace CgbAIFormater\System;
+
+use DuckPhp\Foundation\Helper;
+use DuckPhp\Foundation\SingletonTrait;
+use DuckAdmin\Admin\System\AdminApp;
+
+/**
+ * AdminApp（myadmin）子应用 DuckCoverage 测试列表（--replay 用）
+ * 流程：删除测试库 → GET 安装页 → POST 安装（runtime/admin-duckcoverage.db，创建默认管理员）→ 管理员登录 → 管理页
+ */
+class TestLister
+{
+    use SingletonTrait;
+
+    public const TEST_DB = 'admin-duckcoverage.db';
+    public const ADMIN_NAME = 'admin';
+    public const ADMIN_PASSWORD = 'adminadmin';
+
+    public static function BeforeTest()
+    {
+        static::_()->_BeforeTest();
+    }
+
+    public function _BeforeTest()
+    {
+        // 删除测试库文件，从干净状态开始
+        @unlink(Helper::PathOfRuntime() . self::TEST_DB);
+    }
+
+    public function getTestList()
+    {
+        // 头部指令：#PHASE / #URL_PREFIX，由子 Tester 在自身 phase 下生成
+        $str = '#PHASE ' . AdminApp::_()->getThisPhaseName() . "\n";
+        $prefix = (string) AdminApp::_()->options['controller_url_prefix'];
+        $str .= '#URL_PREFIX ' . $prefix . "\n";
+
+        $list = <<<EOT
+#PHASE {phase}
+#URL_PREFIX {prefix}
+#CALL {static}::BeforeTest
+#WEB install
+#WEB install driver=sqlite&database[file]=runtime/{test_db}&admin_name={admin}&admin_password={password}&admin_password_confirm={password}
+#WEB Login/login
+#WEB Login/login username={admin}&password={password}
+
+EOT;
+        $phase = AdminApp::_()->getThisPhaseName();
+        $prefix = (string) AdminApp::_()->options['controller_url_prefix'];
+
+        $args = [
+            'phase' => $phase,
+            'prefix' => $prefix,
+            'static' => static::class,
+            'test_db' => self::TEST_DB,
+            'admin' => self::ADMIN_NAME,
+            'password' => self::ADMIN_PASSWORD,
+        ];
+        $list = str_replace(array_map(fn($k) => '{' . $k . '}', array_keys($args)), array_values($args), $list);
+        $list = str_replace('#WEB ', '#WEB ' . $prefix, $list);
+
+        return $list;
+    }
+}
