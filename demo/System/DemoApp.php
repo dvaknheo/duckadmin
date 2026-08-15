@@ -6,11 +6,14 @@
 namespace DuckAdminDemo\System;
 
 
-use DuckAdminDemo\Test\TestLister;
 use DuckPhp\DuckPhp;
 use DuckPhp\Foundation\Controller\Helper;
+
 use DuckCoverage\DuckCoverage;
-use DuckAdminDemo\Test\MyTester;
+
+use DuckAdminDemo\System\TestLister;
+use DuckAdmin\Admin\System\AdminApp;
+use DuckAdmin\User\System\UserApp;
 
 class DemoApp extends DuckPhp
 {
@@ -19,17 +22,19 @@ class DemoApp extends DuckPhp
         'path' => __DIR__.'/../',
         'namespace' => 'DuckAdminDemo',
         
+        'data_file_enable' => true,
+        
         'controller_resource_prefix' => '/',  //for workerman local file
         'path_resource' => 'public',          //for workerman local file
         
         'app' => [
 //*
-            \DuckAdmin\Admin\System\AdminApp::class => [
+            AdminApp::class => [
                 'controller_url_prefix' => 'admin/',
                 'controller_resource_prefix' => 'res/',
             ],
 //*/
-            \DuckAdmin\User\System\UserApp::class => [
+            UserApp::class => [
                 'controller_url_prefix' => 'user/',             // 访问路径
                 'controller_resource_prefix' => 'res/',    // 资源文件前缀
             ],
@@ -45,26 +50,19 @@ class DemoApp extends DuckPhp
         ],
 
         'duckcoverage_enable' => true,
-        'duckcoverage_path_dump' => 'test_coveragedumps',
-        'duckcoverage_path_report' => 'test_reports',
         'duckcoverage_group'=>'',
         'duckcoverage_name'=>'',
 
         'duckcoverage_save_web_request_list' =>true,
         'duckcoverage_save_local_call_list' =>false,
 
-        'duckcoverage_report_direct'=>true,
-        'duckcoverage_echo_back'=>false,
+        //'duckcoverage_report_direct'=>true,
+        //'duckcoverage_echo_back'=>false,
         
         'duckcoverage_path_src'=> null,  //$path_src,
         'duckcoverage_callback'=> [TestLister::class ,'GetTestList'],
 
         'duckcoverage_web_base_url' => 'http://admin.duckphp-local.com/',
-
-        // 'duckcoverage_server_port'=> 8080,
-        // 'duckcoverage_homepage' =>'/index.php/',
-        // 'duckcoverage_path_document'=>'public',
-        // 'duckcoverage_new_server'=>true,
     ];
     public function __construct()
     {
@@ -94,11 +92,10 @@ class DemoApp extends DuckPhp
         Helper::Show($data,'main');
     }
 
-    protected function initComponentsOfRoot($components, $default): void
+    protected function onPrepare(): void
     {
-        if ($this->options['duckcoverage_enable'] ?? false) {
-            $this->options['data_file_json_file'] = 'DuckPhpData-test.config.json';
-        }
-        parent::initComponentsOfRoot($components, $default);
+        DuckCoverage::_()->beforeInit(); //mover  json data ;
+        parent::onPrepare();
+        // something from setting;
     }
 }

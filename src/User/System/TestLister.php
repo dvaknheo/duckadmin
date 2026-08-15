@@ -1,11 +1,11 @@
 <?php
-namespace DuckAdmin\User\Test;
+namespace DuckAdmin\User\System;
 
 use DuckPhp\Component\DbManager;
 use DuckPhp\Core\CoreHelper;
 use DuckPhp\Foundation\SingletonTrait;
 
-use DuckAdmin\User\System\DuckUserApp;
+use DuckAdmin\User\System\UserApp;
 use DuckAdmin\User\Model\UserModel;
 use DuckAdmin\User\Controller\UserAction;
 
@@ -45,8 +45,8 @@ class TestLister
     public function getTestList()
     {
         // 头部指令:#PHASE / #URL_PREFIX,由子 Tester 在自身 phase 下生成
-        $str = '#PHASE '.DuckUserApp::_()->getThisPhaseName()."\n";
-        $str .= '#URL_PREFIX '.DuckUserApp::_()->options['controller_url_prefix']."\n";
+        $str = '#PHASE '.UserApp::_()->getThisPhaseName()."\n";
+        $str .= '#URL_PREFIX '.UserApp::_()->options['controller_url_prefix']."\n";
 $list = <<<EOT
 #CALL {static}::BeforeTest
 #WEB index
@@ -68,10 +68,10 @@ $list = <<<EOT
 
 EOT;
 
-        $prefix = DuckUserApp::_()->options['controller_url_prefix'];
+        $prefix = UserApp::_()->options['controller_url_prefix'];
 
-        $phase = DuckUserApp::_()->getThisPhaseName()."\n";
-        $str .= '#URL_PREFIX '.DuckUserApp::_()->options['controller_url_prefix']."\n";
+        $phase = UserApp::_()->getThisPhaseName()."\n";
+        $str .= '#URL_PREFIX '.UserApp::_()->options['controller_url_prefix']."\n";
 
         $args = [
             'phase' => $phase,
@@ -87,9 +87,9 @@ EOT;
     protected function getNextInsertId($table)
     {
         
-        $database_driver = DuckUserApp::_()->options['database_driver'];
+        $database_driver = UserApp::_()->options['database_driver'];
         if($database_driver ==='mysql'){
-            $sql = "show table status where Name ='".DuckUserApp::_()->options['table_prefix'] .$table."'";
+            $sql = "show table status where Name ='".UserApp::_()->options['table_prefix'] .$table."'";
             $ret = DbManager::Db()->fetch($sql)["Auto_increment"];
         }
         if($database_driver ==='sqlite'){
