@@ -6,7 +6,7 @@
 namespace DuckAdmin\Admin\Controller;
 
 use DuckAdmin\Admin\Business\AdminBusiness;
-use DuckPhp\Core\SingletonTrait;
+use DuckPhp\Foundation\SingletonTrait;
 
 class AppAction
 {

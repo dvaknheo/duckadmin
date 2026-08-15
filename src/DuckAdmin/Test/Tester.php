@@ -4,7 +4,7 @@ namespace DuckAdmin\Test;
 use DuckPhp\Foundation\Helper;
 use DuckPhp\Component\DbManager;
 use DuckPhp\Core\PhaseContainer;
-use DuckPhp\Core\SingletonTrait;
+use DuckPhp\Foundation\SingletonTrait;
 use DuckAdmin\System\DuckAdminApp;
 
 
