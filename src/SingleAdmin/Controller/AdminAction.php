@@ -1,20 +1,18 @@
 <?php declare(strict_types=1);
 /**
  * DuckAdmin SingleAdmin - AdminAction
- * 极简 GlobalAdmin 替代:让 Helper::Admin() 可用(实现 AdminActionInterface)
+ * 极简回调类:由 GlobalAdmin 以 admin_callback_* 回调调用(不实现 AdminActionInterface)
  * 不使用数据库;登录态基于 Session;single_admin_password 由 SingleAdminApp 配置
  */
 namespace DuckAdmin\SingleAdmin\Controller;
 
 use DuckPhp\Core\App;
-use DuckPhp\Core\View;
 use DuckPhp\Foundation\SingletonTrait;
-use DuckPhp\GlobalAdmin\AdminActionInterface;
 use DuckPhp\GlobalAdmin\AdminServiceInterface;
 
 use DuckAdmin\SingleAdmin\Business\AdminService;
 
-class AdminAction implements AdminActionInterface
+class AdminAction
 {
     use SingletonTrait;
 
@@ -56,78 +54,10 @@ class AdminAction implements AdminActionInterface
         return [];
     }
 
-    public function service(): AdminServiceInterface
-    {
-        return AdminService::_();
-    }
-
     public function localService(): AdminServiceInterface
     {
         return AdminService::_();
     }
 
 
-
-    ////////////////// urls
-
-    protected function urlFor(string $key): string
-    {
-        return __url((string)(App::_()->options[$key] ?? ''));
-    }
-
-    public function urlForLogin(?string $url_back = null, ?array $ext = null): string
-    {
-        return $this->urlFor('admin_url_login');
-    }
-
-    public function urlForLogout(?string $url_back = null, ?array $ext = null): string
-    {
-        return $this->urlFor('admin_url_logout');
-    }
-
-    public function urlForHome(?string $url_back = null, ?array $ext = null): string
-    {
-        return $this->urlFor('admin_url_home');
-    }
-
-    ////////////////// view
-
-    public function addExtViewData(array $input): array
-    {
-        $input['__logined_id'] ??= $this->id(false);
-        $input['__logined_name'] ??= $this->name(false);
-        $input['__logined_url_logout'] ??= $this->urlForLogout();
-        return $input;
-    }
-
-    public function mergeViewData(array $input): array
-    {
-        $input['__logined_id'] ??= $this->id(false);
-        $input['__logined_name'] ??= $this->name(false);
-        $input['__logined_url_logout'] ??= $this->urlForLogout();
-        return $input;
-    }
-
-    public function show(array $data = [], string $view = ''): void
-    {
-        $data = $this->mergeViewData($data);
-        View::_()->_Show($data, $view);
-    }
-
-    //////////////////
-
-    public function canAccess(?string $class = null, ?string $method = null, ?string $url = null): bool
-    {
-        return (bool)Session::_()->getUserId();
-    }
-
-    public function log(string $string, ?string $type = null, array $ext = [])
-    {
-        return;
-    }
-
-    public function isSuper(): bool
-    {
-        return true;
-    }
 }
