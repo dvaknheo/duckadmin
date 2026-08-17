@@ -32,7 +32,7 @@ class UserAction implements UserActionInterface
         $user = Session::_()->getCurrentUser();
         $id = $user['id'] ?? null;
         if ($check_login && !$id) {
-            Helper::Show302(__url($this->options['user_url_login'] ?? ''));
+            Helper::Show302(__url(App::_()->options['user_url_login'] ?? ''));
             Helper::exit();
         }
         return $id ?? 0;
@@ -43,7 +43,7 @@ class UserAction implements UserActionInterface
         $user = Session::_()->getCurrentUser();
         $name = $user['name'] ?? '';
         if ($check_login && $name === '') {
-            Helper::Show302(__url($this->options['user_url_login'] ?? ''));
+            Helper::Show302(__url(App::_()->options['user_url_login'] ?? ''));
             Helper::exit();
         }
         return $name;
@@ -70,7 +70,7 @@ class UserAction implements UserActionInterface
 
     protected function urlFor(string $key): string
     {
-        return __url((string)($this->options[$key] ?? ''));
+        return __url((string)(App::_()->options[$key] ?? ''));
     }
 
     public function urlForRegist(?string $url_back = null, ?array $ext = null): string
@@ -94,6 +94,14 @@ class UserAction implements UserActionInterface
     }
 
     ////////////////// view
+
+    public function addExtViewData(array $input): array
+    {
+        $input['__logined_id'] ??= $this->id(false);
+        $input['__logined_name'] ??= $this->name(false);
+        $input['__logined_url_logout'] ??= $this->urlForLogout();
+        return $input;
+    }
 
     public function mergeViewData(array $input): array
     {
