@@ -9,6 +9,7 @@ DuckPhp\Core\AutoLoader::RunQuickly([
     'psr-4'=>[
         "DuckAdminDemo\\" => __DIR__."/../",
         "DuckAdmin\\SingleAdmin\\" => __DIR__."/../../src/SingleAdmin/",
+        "DuckAdmin\\DemoUsers\\" => __DIR__."/../../src/DemoUsers/",
     ],
 ]);
 $options=[

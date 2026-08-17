@@ -38,6 +38,7 @@ class DemoApp extends DuckPhp
             UserApp::class => [
                 'controller_url_prefix' => 'user/',             // 访问路径
                 'controller_resource_prefix' => 'res/',    // 资源文件前缀
+                'class_user' => null,   // 关闭:class_user 各用户系统不能同时使用
             ],
 //*/
             \SimpleBlog\System\SimpleBlogApp::class => [
@@ -47,6 +48,9 @@ class DemoApp extends DuckPhp
 //*/
             \DuckAdmin\SingleAdmin\System\SingleAdminApp::class => [
                 'controller_url_prefix' => 'single/',
+            ],
+            \DuckAdmin\DemoUsers\System\DemoUsersApp::class => [
+                'controller_url_prefix' => 'users/',
             ],
         ],
         'ext'=> [

@@ -14,6 +14,7 @@ if(is_file($file)){
     'psr-4'=>[
         'DuckAdminDemo\\' => __DIR__.'/',
         'DuckAdmin\\SingleAdmin\\' => __DIR__.'/../src/SingleAdmin/',
+        'DuckAdmin\\DemoUsers\\' => __DIR__.'/../src/DemoUsers/',
     ],
 ]);
 
