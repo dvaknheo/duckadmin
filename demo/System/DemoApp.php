@@ -32,6 +32,7 @@ class DemoApp extends DuckPhp
             AdminApp::class => [
                 'controller_url_prefix' => 'admin/',
                 'controller_resource_prefix' => 'res/',
+                'class_admin' => null,   // 关闭:class_admin 各 admin 系统不能同时使用
             ],
 //*/
             UserApp::class => [
@@ -44,6 +45,9 @@ class DemoApp extends DuckPhp
                 'controller_resource_prefix' => 'res/',
             ],
 //*/
+            \DuckAdmin\SingleAdmin\System\SingleAdminApp::class => [
+                'controller_url_prefix' => 'single/',
+            ],
         ],
         'ext'=> [
             DuckCoverage::class => true,

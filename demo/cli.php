@@ -13,6 +13,7 @@ if(is_file($file)){
 \DuckPhp\Core\AutoLoader::RunQuickly([
     'psr-4'=>[
         'DuckAdminDemo\\' => __DIR__.'/',
+        'DuckAdmin\\SingleAdmin\\' => __DIR__.'/../src/SingleAdmin/',
     ],
 ]);
 

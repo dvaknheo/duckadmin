@@ -7,7 +7,8 @@ require_once __DIR__.'/../../vendor/autoload.php';
 
 DuckPhp\Core\AutoLoader::RunQuickly([
     'psr-4'=>[
-        "DuckAdminDemo\\" => __DIR__."/../"
+        "DuckAdminDemo\\" => __DIR__."/../",
+        "DuckAdmin\\SingleAdmin\\" => __DIR__."/../../src/SingleAdmin/",
     ],
 ]);
 $options=[
