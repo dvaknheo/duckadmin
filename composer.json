@@ -19,6 +19,9 @@
         "psr-4": {
             "DuckAdmin\\Admin\\": "src/Admin/",
             "DuckAdmin\\User\\": "src/User/",
+            "DuckAdmin\\SingleAdmin\\": "src/SingleAdmin/",
+            "DuckAdmin\\DemoUsers\\": "src/DemoUsers/",
+
             "DuckAdmin\\": "src/DuckAdmin",
             "SimpleBlog\\": "src/SimpleBlog"
         }

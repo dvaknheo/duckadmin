@@ -18,14 +18,10 @@ use DuckAdmin\User\System\UserApp;
 class DemoApp extends DuckPhp
 {
     public $options = [
-        
         'path' => __DIR__.'/../',
         'namespace' => 'DuckAdminDemo',
-        
+
         'data_file_enable' => true,
-        
-        'controller_resource_prefix' => '/',  //for workerman local file
-        'path_resource' => 'public',          //for workerman local file
         
         'app' => [
 //*
@@ -64,9 +60,6 @@ class DemoApp extends DuckPhp
         'duckcoverage_save_web_request_list' =>true,
         'duckcoverage_save_local_call_list' =>false,
 
-        //'duckcoverage_report_direct'=>true,
-        //'duckcoverage_echo_back'=>false,
-        
         'duckcoverage_path_src'=> null,  //$path_src,
         'duckcoverage_callback'=> [TestLister::class ,'GetTestList'],
 
