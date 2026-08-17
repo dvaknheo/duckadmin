@@ -31,6 +31,7 @@ class DemoUsersApp extends DuckPhp
         'user_callback_for_id' =>      [UserAction::class, 'id'],
         'user_callback_for_name' =>    [UserAction::class, 'name'],
         'user_callback_for_data' =>    [UserAction::class, 'data'],
+        'user_callback_for_local_service' => [UserAction::class, 'localService'],
 
         'user_url_home' => 'Home/index',
         'user_url_login' => '',       // 默认 index(MainController)
