@@ -61,10 +61,7 @@ class AdminAction implements AdminActionInterface
         return AdminService::_();
     }
 
-    public function localService(): AdminServiceInterface
-    {
-        return AdminService::_();
-    }
+
 
     ////////////////// urls
 

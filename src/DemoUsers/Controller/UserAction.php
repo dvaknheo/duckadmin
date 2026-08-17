@@ -61,12 +61,6 @@ class UserAction implements UserActionInterface
     {
         return UserService::_();
     }
-
-    public function localService(): UserServiceInterface
-    {
-        return UserService::_();
-    }
-
     ////////////////// urls
 
     protected function urlFor(string $key): string
