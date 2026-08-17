@@ -27,8 +27,6 @@ class SingleAdminApp extends DuckPhp
         'admin_callback_for_id' =>      [AdminAction::class, 'id'],
         'admin_callback_for_name' =>    [AdminAction::class, 'name'],
         'admin_callback_for_data' =>    [AdminAction::class, 'data'],
-        'admin_callback_for_local_service' => [AdminAction::class, 'localService'],
-        'admin_callback_for_add_ext_view_data' => [AdminAction::class, 'addExtViewData'],
 
         'admin_url_home' => 'Home/index',
         'admin_url_login' => '',
