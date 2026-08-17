@@ -31,8 +31,8 @@ class DuckAdminApp extends DuckPhp
         'exception_for_controller'  => ControllerException::class,
         'exception_reporter' =>  ExceptionReporter::class,
         
-        //'class_admin'=> GlobalAdmin::class,
-        'class_admin'=> Admin::class,
+        //'admin_provider'=> GlobalAdmin::class,
+        'admin_provider'=> Admin::class,
         
         //'database_driver'=>'mysql',
         'database_driver'=>'sqlite',

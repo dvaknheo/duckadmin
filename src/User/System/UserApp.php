@@ -37,7 +37,7 @@ class UserApp extends DuckPhp
         'session_prefix' => 'duckuser_',  // Session 前缀
         
         /////////////////
-        'class_user' => GlobalUser::class,
+        'user_provider' => GlobalUser::class,
         'user_callback_for_id' =>       [UserAction::class,'id'],
         'user_callback_for_name' =>     [UserAction::class,'name'],
         'user_callback_for_local_service' =>  [UserAction::class,'service'],

@@ -51,7 +51,7 @@ class AdminApp extends DuckPhp
         // 控制器类名调整：自动首字母大写
         'controller_class_adjust' => 'uc_class',
 
-        'class_admin' => GlobalAdmin::class,
+        'admin_provider' => GlobalAdmin::class,
 
         'admin_url_home' => 'Dashboar/index',
         'admin_url_login' => 'Login/login',

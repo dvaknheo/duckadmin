@@ -24,7 +24,7 @@ class DemoUsersApp extends DuckPhp
             ['username' => 'user', 'password' => '123456', 'name' => '演示用户'],
         ],
 
-        'class_user' => UserAction::class,
+        'user_provider' => UserAction::class,
         'user_callback_for_id' =>       [UserAction::class, 'id'],
         'user_callback_for_name' =>     [UserAction::class, 'name'],
         'user_callback_for_local_service' =>  [UserAction::class, 'service'],

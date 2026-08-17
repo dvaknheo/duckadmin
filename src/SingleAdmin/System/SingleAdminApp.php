@@ -20,7 +20,7 @@ class SingleAdminApp extends DuckPhp
         // 超级管理员登录密码(无数据库)
         'single_admin_password' => '123456',
 
-        'class_admin' => AdminAction::class,
+        'admin_provider' => AdminAction::class,
 
         'admin_url_home' => 'Home/index',
         'admin_url_login' => '',
