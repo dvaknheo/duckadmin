@@ -32,7 +32,7 @@ class AdminAction implements AdminActionInterface
     {
         $id = Session::_()->getUserId();
         if ($check_login && !$id) {
-            Helper::Show302(__url($this->options['admin_url_login'] ?? 'login'));
+            Helper::Show302(__url(App::_()->options['admin_url_login'] ?? ''));
             Helper::exit();
         }
         return $id ?? 0;
@@ -42,7 +42,7 @@ class AdminAction implements AdminActionInterface
     {
         $name = Session::_()->getUsername() ?? '';
         if ($check_login && $name === '') {
-            Helper::Show302(__url($this->options['admin_url_login'] ?? 'login'));
+            Helper::Show302(__url(App::_()->options['admin_url_login'] ?? ''));
             Helper::exit();
         }
         return $name;
@@ -72,7 +72,7 @@ class AdminAction implements AdminActionInterface
 
     protected function urlFor(string $key): string
     {
-        return __url((string)($this->options[$key] ?? 'login'));
+        return __url((string)(App::_()->options[$key] ?? ''));
     }
 
     public function urlForLogin(?string $url_back = null, ?array $ext = null): string
@@ -91,6 +91,14 @@ class AdminAction implements AdminActionInterface
     }
 
     ////////////////// view
+
+    public function addExtViewData(array $input): array
+    {
+        $input['__logined_id'] ??= $this->id(false);
+        $input['__logined_name'] ??= $this->name(false);
+        $input['__logined_url_logout'] ??= $this->urlForLogout();
+        return $input;
+    }
 
     public function mergeViewData(array $input): array
     {

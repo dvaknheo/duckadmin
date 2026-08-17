@@ -6,6 +6,7 @@
 namespace DuckAdmin\SingleAdmin\System;
 
 use DuckPhp\DuckPhp;
+use DuckPhp\GlobalAdmin\GlobalAdmin;
 
 use DuckAdmin\SingleAdmin\Controller\AdminAction;
 
@@ -20,7 +21,14 @@ class SingleAdminApp extends DuckPhp
         // 超级管理员登录密码(无数据库)
         'single_admin_password' => '123456',
 
-        'admin_provider' => AdminAction::class,
+        // 保留 duckphp 的 GlobalAdmin,由 AdminAction 提供 admin_callback_* 实现
+        'admin_provider' => GlobalAdmin::class,
+
+        'admin_callback_for_id' =>      [AdminAction::class, 'id'],
+        'admin_callback_for_name' =>    [AdminAction::class, 'name'],
+        'admin_callback_for_data' =>    [AdminAction::class, 'data'],
+        'admin_callback_for_local_service' => [AdminAction::class, 'localService'],
+        'admin_callback_for_add_ext_view_data' => [AdminAction::class, 'addExtViewData'],
 
         'admin_url_home' => 'Home/index',
         'admin_url_login' => '',
