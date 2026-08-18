@@ -30,7 +30,7 @@ class SingleAdminApp extends DuckPhp
         'admin_callback_for_local_service' => [AdminAction::class, 'localService'],
 
         'admin_url_home' => 'Home/index',
-        'admin_url_login' => '',
+        'admin_url_login' => 'index',
         'admin_url_logout' => 'logout',
 
         'admin_view_file_header' => '_sys/inc-head',
