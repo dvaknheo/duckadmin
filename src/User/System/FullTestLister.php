@@ -9,7 +9,7 @@ use DuckAdmin\User\System\UserApp;
 use DuckAdmin\User\Model\UserModel;
 use DuckAdmin\User\Controller\UserAction;
 
-class TestLister
+class FullTestLister
 {
     use SingletonTrait;
     

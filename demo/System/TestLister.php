@@ -40,7 +40,7 @@ class TestLister
         $user_app = UserApp::class;
         $last_phase = App::Phase();
         if (App::_()->toChildPhase($user_app)) {
-            $str .= \DuckAdmin\User\System\TestLister::_()->getTestList();
+            $str .= \DuckAdmin\User\System\FullTestLister::_()->getTestList();
             App::Phase($last_phase);
         }
         

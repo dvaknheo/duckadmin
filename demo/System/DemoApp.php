@@ -34,7 +34,7 @@ class DemoApp extends DuckPhp
             UserApp::class => [
                 'controller_url_prefix' => 'user/',             // 访问路径
                 'controller_resource_prefix' => 'res/',    // 资源文件前缀
-                'user_provider' => null,   // 关闭:user_provider 各用户系统不能同时使用
+                //'user_provider' => null,   // 关闭:user_provider 各用户系统不能同时使用
             ],
 //*/
             \SimpleBlog\System\SimpleBlogApp::class => [
@@ -47,6 +47,7 @@ class DemoApp extends DuckPhp
             ],
             \DuckAdmin\DemoUsers\System\DemoUsersApp::class => [
                 'controller_url_prefix' => 'users/',
+                'user_provider' => null,
             ],
         ],
         'ext'=> [
@@ -60,7 +61,7 @@ class DemoApp extends DuckPhp
         'duckcoverage_save_web_request_list' =>true,
         'duckcoverage_save_local_call_list' =>false,
 
-        'duckcoverage_path_src'=> null,  //$path_src,
+        'duckcoverage_path_src'=> 'src',  //$path_src,
         'duckcoverage_callback'=> [TestLister::class ,'GetTestList'],
 
         'duckcoverage_web_base_url' => 'http://admin.duckphp-local.com/',
@@ -76,6 +77,7 @@ class DemoApp extends DuckPhp
             'controller_class_postfix' => '',
             'controller_method_prefix' => 'action_',
         ];
+        $this->options['duckcoverage_path_src'] = realpath(__DIR__ . '/../../') . '/src';
 
         $this->options = array_merge($this->options,$ext_options); 
         parent::__construct();
