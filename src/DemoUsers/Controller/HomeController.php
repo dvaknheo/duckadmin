@@ -14,6 +14,6 @@ class HomeController extends Base
             Helper::Show302(__url('index'));
             return;
         }
-        Helper::User()->show(get_defined_vars(), 'home');
+        Helper::Show(get_defined_vars(), 'home');
     }
 }

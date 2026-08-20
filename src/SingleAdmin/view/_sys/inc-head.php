@@ -1,3 +1,9 @@
+<?php declare(strict_types=1);
+if (isset($__view_data['header'])) {
+    echo $__view_data['header'];
+    return;
+}
+?>
 <!DOCTYPE html>
 <html>
 <head>

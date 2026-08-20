@@ -20,7 +20,8 @@ class SingleAdminApp extends DuckPhp
 
         // 超级管理员登录密码(无数据库)
         'single_admin_password' => '123456',
-
+        'installed' =>true,
+        'use_admin_view'=>true,
         // 保留 duckphp 的 GlobalAdmin,由 AdminAction 提供 admin_callback_* 实现
         'admin_provider' => GlobalAdmin::class,
 

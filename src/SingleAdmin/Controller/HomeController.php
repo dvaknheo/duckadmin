@@ -5,15 +5,19 @@
  */
 namespace DuckAdmin\SingleAdmin\Controller;
 
-class HomeController extends Base
+use DuckPhp\Foundation\Controller\AdminControllerBase;
+
+class HomeController extends AdminControllerBase
 {
     public function index()
     {
-        // 未登录跳登录页
-        if (!Session::_()->isLogin()) {
-            Helper::Show302(__url('index'));
-            return;
+        $data = [];
+        try{
+            Helper::Show($data, 'home');
+        }catch(\Throwable $ex){
+            echo "<pre>\n";
+            echo $ex;
+            echo "</pre>\n";
         }
-        Helper::Admin()->show(get_defined_vars(), 'home');
     }
 }
