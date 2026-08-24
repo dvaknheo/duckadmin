@@ -9,15 +9,11 @@ use DuckPhp\Core\App;
 use DuckAdmin\User\Business\UserBusiness;
 use DuckAdmin\User\Business\InstallBusiness;
 
-class MainController extends Base
+class MainController
 {
     public function __construct()
     {
-        // this override for skip auth
-        $method = Helper::getRouteCallingMethod();
-        if ($method !== 'install') {
-            Helper::checkInstall('install');
-        }
+        Helper::checkInstall();
     }
     /**
      * DuckUser 安装：GET 展示环境自检与安装按钮；POST 执行安装

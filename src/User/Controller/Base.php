@@ -6,18 +6,18 @@
 
 namespace DuckAdmin\User\Controller;
 use DuckPhp\Foundation\SingletonTrait;
+use DuckPhp\Foundation\Controller\UserControllerBase;
 
-class Base
+class Base extends UserControllerBase
 {
-    use SingletonTrait;
-    public function __construct()
+    protected function initController()
     {
-        $this->initController(static::class);
-    }
-    protected function initController($class)
-    {
-        Helper::checkInstall('install');
-        Helper::User()->checkAccess(null, null,null);
+        
+        //Helper::checkInstall('install');
+        //$flag = Helper::User()->canAccess(null, null,null);
+        //Helper::ControllerThrowOn(!$flag,"cannot login");
+        
+        parent::initController();
         Helper::setViewHeadFoot('_sys/inc-head','_sys/inc-foot');
         
         $csrf_token = Helper::_()->csrfToken();

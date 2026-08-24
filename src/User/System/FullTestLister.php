@@ -30,52 +30,35 @@ class FullTestLister
     public function _AfterTest()
     {
         return;
-        $table = UserModel::_()->table();
-        $sql = "select id from $table order by id desc  limit 1";
-        $id = DbManager::Db()->fetchColumn($sql);
-        UserAction::_()->batchGetUsernames([$id]);
-        try{
-            //UserAction::_()->checkLogin();
-        }catch(\Exception $ex){}
-
-        $table = UserModel::_()->table();
-        $sql = "delete from $table where username = ?";
-        $ret = DbManager::Db()->execute($sql,'user_test');
     }
     public function getTestList()
     {
         // 头部指令:#PHASE / #URL_PREFIX,由子 Tester 在自身 phase 下生成
-        $str = '#PHASE '.UserApp::_()->getThisPhaseName()."\n";
-        $str .= '#URL_PREFIX '.UserApp::_()->options['controller_url_prefix']."\n";
+        $str = ''; // '#PHASE '.UserApp::_()->getThisPhaseName()."\n";
 $list = <<<EOT
-#CALL {static}::BeforeTest
-#WEB index
-#WEB register
-#WEB register name={username}&password=123456&password_confirm=123456
-#WEB register name={username}&ssssssssssssssssssssssamename=1
-#WEB Home/index?_r=1
-#WEB logout
-#WEB index
-#WEB login
-#WEB login name={username}&password=nolllllllllllllllllllogin
-#WEB login name={username}&password=123456
-#WEB Home/index?_r=2
-#WEB Home/password
-#WEB Home/password oldpassword=123456&newpassword=654321&newpassword_confirm=654321
-#WEB Home/password oldpassword=654321&newpassword=123456&newpassword_confirm=123456
-#WEB Home/password oldpassword=654321&newpassword=123456&newpassword_confirm=123456
-#CALL {static}::AfterTest
-
+PHASE {phase}
+WEB index
+WEB register
+WEB register name={username}&password=123456&password_confirm=123456
+WEB register name={username}&ssssssssssssssssssssssamename=1
+WEB Home/index?_r=1
+WEB logout
+WEB index
+WEB login
+WEB login name={username}&password=nolllllllllllllllllllogin
+WEB login name={username}&password=123456
+WEB Home/index?_r=2
+WEB Home/password
+WEB Home/password oldpassword=123456&newpassword=654321&newpassword_confirm=654321
+WEB Home/password oldpassword=654321&newpassword=123456&newpassword_confirm=123456
+WEB Home/password oldpassword=654321&newpassword=123456&newpassword_confirm=123456
 EOT;
 
-        $prefix = UserApp::_()->options['controller_url_prefix'];
-
+        $prefix = '/'.UserApp::_()->options['controller_url_prefix'];
         $phase = UserApp::_()->getThisPhaseName()."\n";
-        $str .= '#URL_PREFIX '.UserApp::_()->options['controller_url_prefix']."\n";
 
         $args = [
             'phase' => $phase,
-            
             'username' =>'user_test',
         ];
         $args ['static'] = static::class;

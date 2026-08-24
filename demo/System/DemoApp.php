@@ -32,6 +32,7 @@ class DemoApp extends DuckPhp
             ],
 //*/
             UserApp::class => [
+                'is_debug'=>true,
                 'controller_url_prefix' => 'user/',             // 访问路径
                 'controller_resource_prefix' => 'res/',    // 资源文件前缀
                 //'user_provider' => null,   // 关闭:user_provider 各用户系统不能同时使用
@@ -50,18 +51,10 @@ class DemoApp extends DuckPhp
                 'user_provider' => null,
             ],
         ],
-        'ext'=> [
-            DuckCoverage::class => true,
-        ],
 
         'duckcoverage_enable' => true,
-        'duckcoverage_group'=>'',
-        'duckcoverage_name'=>'',
-
-        'duckcoverage_save_web_request_list' =>true,
-        'duckcoverage_save_local_call_list' =>false,
-
-        'duckcoverage_path_src'=> 'src',  //$path_src,
+        'duckcoverage_reg_web_request' =>false,
+        'duckcoverage_path_src'=> 'src',
         'duckcoverage_callback'=> [TestLister::class ,'GetTestList'],
 
         'duckcoverage_web_base_url' => 'http://admin.duckphp-local.com/',
@@ -97,8 +90,16 @@ class DemoApp extends DuckPhp
 
     protected function onPrepare(): void
     {
-        DuckCoverage::_()->beforeInit(); //mover  json data ;
         parent::onPrepare();
-        // something from setting;
+        DuckCoverage::_()->beforeInit(); //mover  json data ;
     }
+    public function serve(): bool
+    {
+        DuckCoverage::_()->_OnBeforeRun();
+        $flag = parent::serve();
+        DuckCoverage::_()->_OnAfterRun();
+
+        return $flag;
+    }
+
 }
