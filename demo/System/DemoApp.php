@@ -53,8 +53,7 @@ class DemoApp extends DuckPhp
         ],
 
         'duckcoverage_enable' => true,
-        'duckcoverage_reg_web_request' =>false,
-        'duckcoverage_path_src'=> 'src',
+        //'duckcoverage_path_src'=> 'src/User/',
         'duckcoverage_callback'=> [TestLister::class ,'GetTestList'],
 
         'duckcoverage_web_base_url' => 'http://admin.duckphp-local.com/',
@@ -70,7 +69,7 @@ class DemoApp extends DuckPhp
             'controller_class_postfix' => '',
             'controller_method_prefix' => 'action_',
         ];
-        $this->options['duckcoverage_path_src'] = realpath(__DIR__ . '/../../') . '/src';
+        $this->options['duckcoverage_path_src'] = realpath(__DIR__ . '/../../') . '/src/User/';
 
         $this->options = array_merge($this->options,$ext_options); 
         parent::__construct();
@@ -91,15 +90,8 @@ class DemoApp extends DuckPhp
     protected function onPrepare(): void
     {
         parent::onPrepare();
-        DuckCoverage::_()->beforeInit(); //mover  json data ;
+        if(class_exists(DuckCoverage::class)){
+            DuckCoverage::Prepare();
+        }
     }
-    public function serve(): bool
-    {
-        DuckCoverage::_()->_OnBeforeRun();
-        $flag = parent::serve();
-        DuckCoverage::_()->_OnAfterRun();
-
-        return $flag;
-    }
-
 }

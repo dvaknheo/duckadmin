@@ -39,6 +39,7 @@ class TestLister
         // #PHASE / #URL_PREFIX 头部指令由子 Tester 的 getTestList() 自身生成
         $user_app = UserApp::class;
         $last_phase = App::Phase();
+        
         if (App::_()->toChildPhase($user_app)) {
             $str .= \DuckAdmin\User\System\FullTestLister::_()->getTestList();
             App::Phase($last_phase);
@@ -46,5 +47,25 @@ class TestLister
         
         return $str;
     }
+    public function getChildTestList($child)
+    {
+            // $app->toChildPhase($user_app);
+            // $callback = App::_()->options['duckcover_test_callback'];
+            // App::Phase($app->getThisPhaseName());
+    }
+    public function mergeChildTests()
+    {
+        // $ret ='';
+        // $app = App::_();
+        // foreach ($app->options['app'] as child) {
+        //     $app->toChildPhase($user_app);
+        //     $callback = App::_()->options['duckcover_test_callback'];
+
+        //     App::Phase($app->getThisPhaseName());
+
+        // }
+        // return $ret;
+    }
+    
 
 }

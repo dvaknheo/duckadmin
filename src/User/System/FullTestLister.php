@@ -53,6 +53,10 @@ WEB Home/password oldpassword=123456&newpassword=654321&newpassword_confirm=6543
 WEB Home/password oldpassword=654321&newpassword=123456&newpassword_confirm=123456
 WEB Home/password oldpassword=654321&newpassword=123456&newpassword_confirm=123456
 EOT;
+$list = <<<EOT
+PHASE {phase}
+WEB register
+EOT;
 
         $prefix = '/'.UserApp::_()->options['controller_url_prefix'];
         $phase = UserApp::_()->getThisPhaseName()."\n";
@@ -63,7 +67,7 @@ EOT;
         ];
         $args ['static'] = static::class;
         $list = $this->replace_string($list,$args);
-        $list = str_replace('#WEB ','#WEB '.$prefix,$list);
+        $list = str_replace('WEB ','WEB '.$prefix,$list); // 按行替换，应该用正则
         return $str.$list;
     }
     ////[[[[
