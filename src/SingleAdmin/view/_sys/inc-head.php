@@ -17,5 +17,5 @@ body { font-family: sans-serif; margin: 0; }
 </style>
 </head>
 <body>
-<div class="head"><h1>SingleAdmin</h1></div>
+<div class="head"><h1>SingleAdmin</h1><a href="<?=$__logined_url_logout??''?>">登出</a></div>
 <div class="container">

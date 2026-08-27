@@ -7,7 +7,7 @@ namespace DuckAdmin\SingleAdmin\Controller;
 
 use DuckPhp\Core\App;
 
-class MainController extends Base
+class MainController
 {
     public function index()
     {

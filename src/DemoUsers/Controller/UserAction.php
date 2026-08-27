@@ -16,14 +16,6 @@ class UserAction
 {
     use SingletonTrait;
 
-    public $options = [];
-
-    public function init(array $options, ?object $context = null)
-    {
-        $this->options = $options;
-        return $this;
-    }
-
     //////////////////
 
     public function id(bool $check_login = true)
@@ -60,4 +52,5 @@ class UserAction
     {
         return UserService::_();
     }
+    ///////////    
 }

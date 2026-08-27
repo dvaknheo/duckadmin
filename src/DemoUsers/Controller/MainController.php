@@ -7,7 +7,7 @@ namespace DuckAdmin\DemoUsers\Controller;
 
 use DuckAdmin\DemoUsers\Business\UserService;
 
-class MainController extends Base
+class MainController
 {
     public function index()
     {
@@ -31,7 +31,7 @@ class MainController extends Base
         $user = UserService::_()->verifyLogin($username, $password);
         if ($user) {
             Session::_()->setCurrentUser($user);
-            Helper::Show302(__url('Home/index'));
+            Helper::Show302(__url(Helper::Options('user_url_home','Home/index')));
             return;
         }
         Helper::Show(['error' => '用户名或密码错误'], 'main');
@@ -39,7 +39,8 @@ class MainController extends Base
 
     public function logout()
     {
+        //TODO 触发事件
         Session::_()->unsetCurrentUser();
-        Helper::Show302(__url('index'));
+        Helper::Show302(__url(Helper::Options('user_url_login','')));
     }
 }

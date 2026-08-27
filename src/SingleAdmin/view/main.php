@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>SingleAdmin 登录</title>
+<title>后台系统 登录</title>
 <style>
 body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #f5f5f5; }
 .login-box { background: #fff; padding: 2em 3em; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,.15); width: 300px; }
@@ -15,13 +15,12 @@ button { width: 100%; margin-top: 1.2em; padding: .6em; background: #4a7; color:
 </head>
 <body>
 <div class="login-box">
-    <h1>SingleAdmin 登录</h1>
+    <h1>后台系统 登录</h1>
 <?php if (!empty($error)) { ?>
     <p class="error"><?=__h($error)?></p>
 <?php } ?>
     <form method="post">
-        <label>用户名</label>
-        <input type="text" name="username" value="admin">
+        <input type="hidden" name="username" value="admin">
         <label>密码</label>
         <input type="password" name="password">
         <button type="submit">登录</button>

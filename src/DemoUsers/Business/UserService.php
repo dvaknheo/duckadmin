@@ -47,7 +47,9 @@ class UserService implements UserServiceInterface
     {
         return true;
     }
-
+    /**
+     * @param string $user_id
+     */
     public function log($user_id, string $string, ?string $type = null, array $ext = [])
     {
         return;
