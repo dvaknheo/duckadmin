@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>DemoUsers 登录</title>
+<title>预设用户系统登录</title>
 <style>
 body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #f5f5f5; }
 .login-box { background: #fff; padding: 2em 3em; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,.15); width: 300px; }
@@ -15,7 +15,7 @@ button { width: 100%; margin-top: 1.2em; padding: .6em; background: #48a; color:
 </head>
 <body>
 <div class="login-box">
-    <h1>DemoUsers 登录</h1>
+    <h1>登录</h1>
 <?php if (!empty($error)) { ?>
     <p class="error"><?=__h($error)?></p>
 <?php } ?>
