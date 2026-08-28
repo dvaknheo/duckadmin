@@ -11,5 +11,6 @@ body { font-family: sans-serif; margin: 0; }
 </style>
 </head>
 <body>
+<img src="<?=__res('duckphp.svg')?>">
 <div class="head"><h1>DemoUsers</h1></div>
 <div class="container">

@@ -18,7 +18,7 @@ class DemoUsersApp extends DuckPhp
         'path' => __DIR__ . '/../',
         'namespace' => "DuckAdmin\\DemoUsers",
         'name' => 'DemoUsers',
-
+        'controller_resource_prefix'=>'',
         // 预设用户数组:下标 0 空占位,用户 id = 数组下标(禁止 id=0)
         'demo_users' => [
             [],

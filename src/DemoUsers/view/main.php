@@ -15,7 +15,8 @@ button { width: 100%; margin-top: 1.2em; padding: .6em; background: #48a; color:
 </head>
 <body>
 <div class="login-box">
-    <h1>登录</h1>
+    <h1><img src="<?=__res('duckphp.svg')?>">
+登录</h1>
 <?php if (!empty($error)) { ?>
     <p class="error"><?=__h($error)?></p>
 <?php } ?>
