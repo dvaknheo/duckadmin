@@ -36,7 +36,7 @@ class FullTestLister
         // 头部指令:#PHASE / #URL_PREFIX,由子 Tester 在自身 phase 下生成
         $str = ''; // '#PHASE '.UserApp::_()->getThisPhaseName()."\n";
 $list = <<<EOT
-PHASE {phase}
+COMMENT tests for x
 WEB index
 WEB register
 WEB register name={username}&password=123456&password_confirm=123456
