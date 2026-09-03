@@ -5,8 +5,6 @@
  */
 namespace DuckAdmin\DemoUsers\Controller;
 
-use DuckAdmin\DemoUsers\Business\UserService;
-
 class MainController
 {
     public function index()
@@ -25,12 +23,8 @@ class MainController
 
     private function doLogin()
     {
-        $username = (string)Helper::POST('username', '');
-        $password = (string)Helper::POST('password', '');
-
-        $user = UserService::_()->verifyLogin($username, $password);
+        $user = UserAction::_()->login(Helper::POST());
         if ($user) {
-            Session::_()->setCurrentUser($user);
             Helper::Show302(__url(Helper::Options('user_url_home','Home/index')));
             return;
         }
@@ -39,8 +33,7 @@ class MainController
 
     public function logout()
     {
-        //TODO 触发事件
-        Session::_()->unsetCurrentUser();
+        UserAction::_()->logout();
         Helper::Show302(__url(Helper::Options('user_url_login','')));
     }
 }

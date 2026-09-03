@@ -9,7 +9,7 @@ use DuckPhp\Core\App;
 use DuckPhp\Foundation\SingletonTrait;
 use DuckPhp\GlobalUser\UserServiceInterface;
 
-class UserService implements UserServiceInterface
+class UserBusiness implements UserServiceInterface
 {
     use SingletonTrait;
 
@@ -17,7 +17,7 @@ class UserService implements UserServiceInterface
      * 预设用户列表(下标 0 空占位,用户 id = 数组下标,禁止 id=0)
      * @return array<int, array<string, mixed>>
      */
-    public function getUserList(): array
+    protected function getUserList(): array
     {
         return (array)(App::_()->options['demo_users'] ?? []);
     }
