@@ -8,7 +8,7 @@ namespace DuckAdmin\DemoUsers\System;
 use DuckPhp\DuckPhp;
 use DuckPhp\GlobalUser\GlobalUser;
 
-use DuckAdmin\DemoUsers\Controller\UserAction;
+use DuckAdmin\DemoUsers\Controller\AppAction;
 
 class DemoUsersApp extends DuckPhp
 {
@@ -29,10 +29,10 @@ class DemoUsersApp extends DuckPhp
         // 保留 duckphp 的 GlobalUser,由 UserAction 提供 user_callback_* 实现
         'user_provider' => GlobalUser::class,
 
-        'user_callback_for_id' =>      [UserAction::class, 'id'],
-        'user_callback_for_name' =>    [UserAction::class, 'name'],
-        'user_callback_for_data' =>    [UserAction::class, 'data'],
-        'user_callback_for_local_service' => [UserAction::class, 'localService'],
+        'user_callback_for_id' =>      [AppAction::class, 'id'],
+        'user_callback_for_name' =>    [AppAction::class, 'name'],
+        'user_callback_for_data' =>    [AppAction::class, 'data'],
+        'user_callback_for_local_service' => [AppAction::class, 'localService'],
 
         'user_url_home' => 'Home/index',
         'user_url_login' => '',       // 默认 index(MainController)

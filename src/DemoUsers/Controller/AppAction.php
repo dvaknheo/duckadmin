@@ -12,7 +12,7 @@ use DuckPhp\GlobalUser\UserServiceInterface;
 
 use DuckAdmin\DemoUsers\Business\UserService;
 
-class UserAction
+class AppAction
 {
     use SingletonTrait;
 

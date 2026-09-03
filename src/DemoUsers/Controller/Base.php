@@ -8,6 +8,5 @@ class Base
 {
     public function __construct()
     {
-        Helper::setViewHeadFoot('_sys/inc-head', '_sys/inc-foot');
     }
 }

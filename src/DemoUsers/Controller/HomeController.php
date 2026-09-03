@@ -5,15 +5,12 @@
  */
 namespace DuckAdmin\DemoUsers\Controller;
 
-class HomeController extends Base
+use DuckPhp\Foundation\Controller\UserControllerBase;
+
+class HomeController extends UserControllerBase
 {
     public function index()
     {
-        // 未登录跳登录页
-        if (!Session::_()->isLogin()) {
-            Helper::Show302(__url('index'));
-            return;
-        }
         Helper::Show(get_defined_vars(), 'home');
     }
 }
