@@ -6,27 +6,19 @@
  */
 namespace DuckAdmin\DemoUsers\Controller;
 
-use DuckPhp\Core\App;
 use DuckPhp\Foundation\SingletonTrait;
-use DuckPhp\GlobalUser\UserServiceInterface;
-
-use DuckAdmin\DemoUsers\Business\UserService;
+use DuckAdmin\DemoUsers\Business\UserBusiness;
 
 class UserAction
 {
+    use SingletonTrait;
     public function login($post)
     {
         Helper::FireGlobalEvent(Helper::$EVENT_ACTION_LOGINING,$post);
 
-        $username = (string)($post['username']??'');
-        $password = (string)($post['password']??'');
-
-        $user = UserBuseness::_()->verifyLogin($username, $password);
-
-        if ($user) {
-            Session::_()->setCurrentUser($user);
-            Helper::FireGlobalEvent(Helper::$EVENT_ACTION_LOGINED,$post);
-        }
+        $user = UserBusiness::_()->login($post);
+        Session::_()->setCurrentUser($user);
+        Helper::FireGlobalEvent(Helper::$EVENT_ACTION_LOGINED,$post);
         return $user;
     }
 

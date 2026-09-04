@@ -23,12 +23,13 @@ class MainController
 
     private function doLogin()
     {
+        try{
         $user = UserAction::_()->login(Helper::POST());
-        if ($user) {
             Helper::Show302(__url(Helper::Options('user_url_home','Home/index')));
             return;
+        }catch(\Exception $ex){
+            Helper::Show(['error' => $ex->getMessage()], 'main');
         }
-        Helper::Show(['error' => '用户名或密码错误'], 'main');
     }
 
     public function logout()

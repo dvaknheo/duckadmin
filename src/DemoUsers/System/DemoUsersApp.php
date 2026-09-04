@@ -18,15 +18,9 @@ class DemoUsersApp extends DuckPhp
         'path' => __DIR__ . '/../',
         'namespace' => "DuckAdmin\\DemoUsers",
         'name' => 'DemoUsers',
-        'controller_resource_prefix'=>'',
-        // 预设用户数组:下标 0 空占位,用户 id = 数组下标(禁止 id=0)
-        'demo_users' => [
-            [],
-            ['username' => 'admin', 'password' => '123456', 'name' => '管理员'],
-            ['username' => 'user', 'password' => '123456', 'name' => '演示用户'],
-        ],
+        'installed' => true,
+        'duckcoverage_callback' => [self::class ,'getTestOrderList'],
 
-        // 保留 duckphp 的 GlobalUser,由 UserAction 提供 user_callback_* 实现
         'user_provider' => GlobalUser::class,
 
         'user_callback_for_id' =>      [AppAction::class, 'id'],
@@ -45,15 +39,20 @@ class DemoUsersApp extends DuckPhp
         // 错误页面
         'error_404' => '_sys/error_404',
         'error_500' => '_sys/error_500',
+
+        'demo_usersx' => [
+            't1'=>'12456',
+            't2'=>'',
+        ],
     ];
     public function __construct()
     {
         parent::__construct();
+        $this->options['duckcoverage_callback'] = [static::class ,'getTestOrderList'];
     }
-
-    //@override
-    protected function onInited(): void
+    public static function getTestOrderList(): string
     {
-        parent::onInited();
+        //
+        return '';
     }
 }

@@ -10,7 +10,7 @@ use DuckPhp\Core\App;
 use DuckPhp\Foundation\SingletonTrait;
 use DuckPhp\GlobalUser\UserServiceInterface;
 
-use DuckAdmin\DemoUsers\Business\UserService;
+use DuckAdmin\DemoUsers\Business\UserBusiness;
 
 class AppAction
 {
@@ -50,7 +50,7 @@ class AppAction
 
     public function localService(): UserServiceInterface
     {
-        return UserService::_();
+        return UserBusiness::_();
     }
     ///////////    
 }

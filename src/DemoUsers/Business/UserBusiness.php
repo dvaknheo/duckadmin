@@ -7,41 +7,12 @@ namespace DuckAdmin\DemoUsers\Business;
 
 use DuckPhp\Core\App;
 use DuckPhp\Foundation\SingletonTrait;
+use DuckPhp\Foundation\Business\Helper;
 use DuckPhp\GlobalUser\UserServiceInterface;
 
 class UserBusiness implements UserServiceInterface
 {
     use SingletonTrait;
-
-    /**
-     * 预设用户列表(下标 0 空占位,用户 id = 数组下标,禁止 id=0)
-     * @return array<int, array<string, mixed>>
-     */
-    protected function getUserList(): array
-    {
-        return (array)(App::_()->options['demo_users'] ?? []);
-    }
-
-    /**
-     * 校验用户名密码是否命中预设用户
-     * @return array<string, mixed>|null ['id'=>int, 'username'=>string, 'name'=>string]
-     */
-    public function verifyLogin(string $username, string $password): ?array
-    {
-        foreach ($this->getUserList() as $id => $user) {
-            if ((int)$id <= 0) {
-                continue; // 跳过 id=0 占位
-            }
-            if (($user['username'] ?? '') === $username && ($user['password'] ?? '') === $password) {
-                return [
-                    'id' => (int)$id,
-                    'username' => $username,
-                    'name' => (string)($user['name'] ?? $username),
-                ];
-            }
-        }
-        return null;
-    }
 
     public function canAccess($user_id, string $class, string $method, ?string $url = null): bool
     {
@@ -64,5 +35,39 @@ class UserBusiness implements UserServiceInterface
             }
         }
         return $ret;
+    }
+    /////////////
+
+    /**
+     * 预设用户列表(下标 0 空占位,用户 id = 数组下标,禁止 id=0)
+     * @return array<int, array<string, mixed>>
+     */
+    protected function getUserList(): array
+    {
+        return (array)(App::_()->options['demo_usersx'] ?? []);
+    }
+
+    public function login(array $post): ?array
+    {
+        Helper::FireGlobalEvent(Helper::$EVENT_LOGINING);
+        
+        $username = (string)($post['username']??'');
+        $password = (string)($post['password']??'');
+
+        $user_array = App::_()->options['demo_users'];
+        
+        $usernames = \array_keys($user_array);
+        $passwords = \array_values($user_array);
+        $id = \array_search($username, $usernames, true);
+        Helper::BusinessThrowOn($id === false, "没有这个用户名");
+        Helper::BusinessThrowOn(empty($passwords[$id]), "用户被禁用");
+        Helper::BusinessThrowOn($password !== $passwords[$id], "密码错误");
+
+        $user = [
+            'id'=>$id+1,
+            'username'=>$username,
+        ];
+        Helper::FireGlobalEvent(Helper::$EVENT_LOGINED, $user);
+        return $user;
     }
 }
