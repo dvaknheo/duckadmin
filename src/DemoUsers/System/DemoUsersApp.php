@@ -40,9 +40,7 @@ class DemoUsersApp extends DuckPhp
         'error_404' => '_sys/error_404',
         'error_500' => '_sys/error_500',
 
-        'demo_usersx' => [
-            't1'=>'12456',
-            't2'=>'',
+        'demo_users' => [
         ],
     ];
     public function __construct()

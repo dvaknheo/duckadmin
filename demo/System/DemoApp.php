@@ -22,13 +22,14 @@ class DemoApp extends DuckPhp
         'namespace' => 'DuckAdminDemo',
 
         'data_file_enable' => true,
-        
+        'duckcoverage_callback'=> [TestLister::class ,'GetTestList'],
+
         'app' => [
 //*
             AdminApp::class => [
                 'controller_url_prefix' => 'admin/',
                 'controller_resource_prefix' => 'res/',
-                'admin_provider' => null,   // 关闭:admin_provider 各 admin 系统不能同时使用
+                //'admin_provider' => null,   // 关闭:admin_provider 各 admin 系统不能同时使用
             ],
 //*/
             UserApp::class => [
@@ -40,21 +41,24 @@ class DemoApp extends DuckPhp
 //*/
             \SimpleBlog\System\SimpleBlogApp::class => [
                 'controller_url_prefix' => 'blog/',
-                'controller_resource_prefix' => 'res/',
             ],
 //*/
             \DuckAdmin\SingleAdmin\System\SingleAdminApp::class => [
                 'controller_url_prefix' => 'single/',
+                //'admin_provider' => null,   // 关闭:admin_provider 各 admin 系统不能同时使用
             ],
             \DuckAdmin\DemoUsers\System\DemoUsersApp::class => [
                 'controller_url_prefix' => 'users/',
                 'user_provider' => null,
+                'demo_users'=>[
+                    't1'=>'123456',
+                    't2'=>'123456',
+                ],
             ],
         ],
 
         'duckcoverage_enable' => true,
         //'duckcoverage_path_src'=> 'src/User/',
-        'duckcoverage_callback'=> [TestLister::class ,'GetTestList'],
 
         'duckcoverage_web_base_url' => 'http://admin.duckphp-local.com/',
     ];
@@ -91,7 +95,7 @@ class DemoApp extends DuckPhp
     {
         parent::onPrepare();
         if(class_exists(DuckCoverage::class)){
-            DuckCoverage::Prepare();
+            DuckCoverage::Prepare([]);
         }
     }
 }

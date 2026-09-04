@@ -18,25 +18,15 @@ class TestLister
     {
         return static::_()->_GetTestList();
     }
-
-    public function installTest()
-    {
-        var_dump(DATE(DATE_ATOM));
-    }
-    public function cleanAll()
-    {
-        @unlink(App::_()->options['ext_options_file']);
-        App::_()->options['ext_options_file_enable']=true;
-        $db_file = 'db_fortest.db';
-        @unlink(Helper::PathOfRuntime().$db_file);
-    }
-
     public function _GetTestList()
     {
         $static = static::class;
-        $str ='';
-        // 通过 App 切到 User 子 phase 调用子 Tester;
-        // #PHASE / #URL_PREFIX 头部指令由子 Tester 的 getTestList() 自身生成
+        $str = <<<'EOT'
+#PHASE_BEGIN
+
+#PHASE_END
+
+EOT;
         $user_app = UserApp::class;
         $last_phase = App::Phase();
         
@@ -47,25 +37,6 @@ class TestLister
         
         return $str;
     }
-    public function getChildTestList($child)
-    {
-            // $app->toChildPhase($user_app);
-            // $callback = App::_()->options['duckcover_test_callback'];
-            // App::Phase($app->getThisPhaseName());
-    }
-    public function mergeChildTests()
-    {
-        // $ret ='';
-        // $app = App::_();
-        // foreach ($app->options['app'] as child) {
-        //     $app->toChildPhase($user_app);
-        //     $callback = App::_()->options['duckcover_test_callback'];
-
-        //     App::Phase($app->getThisPhaseName());
-
-        // }
-        // return $ret;
-    }
-    
+   
 
 }
