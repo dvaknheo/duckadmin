@@ -30,8 +30,13 @@ class FullTestLister
     public function _AfterTest()
     {
         return;
+    
     }
-    public function getTestList()
+    public static function GetTestList()
+    {
+        return static::_()->_GetTestList();
+    }
+    public function _GetTestList()
     {
         // 头部指令:#PHASE / #URL_PREFIX,由子 Tester 在自身 phase 下生成
         $str = ''; // '#PHASE '.UserApp::_()->getThisPhaseName()."\n";
@@ -57,7 +62,6 @@ $list = <<<EOT
 PHASE {phase}
 WEB register
 EOT;
-
         $prefix = '/'.UserApp::_()->options['controller_url_prefix'];
         $phase = UserApp::_()->getThisPhaseName()."\n";
 
@@ -67,8 +71,7 @@ EOT;
         ];
         $args ['static'] = static::class;
         $list = $this->replace_string($list,$args);
-        $list = str_replace('WEB ','WEB '.$prefix,$list); // 按行替换，应该用正则
-        return $str.$list;
+        return $list;
     }
     ////[[[[
     protected function getNextInsertId($table)

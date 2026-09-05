@@ -51,6 +51,6 @@ class UserApp extends DuckPhp
         ///////////////////
         'home_url' => 'Home/index',
 
-        //'duckcoverage_callback'=> [TestLister::class ,'GetTestList'],
+        'duckcoverage_test_lister'=> [FullTestLister::class ,'GetTestList'],
     ];
 }

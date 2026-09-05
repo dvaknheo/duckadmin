@@ -20,21 +20,13 @@ class TestLister
     }
     public function _GetTestList()
     {
-        $static = static::class;
-        $str = <<<'EOT'
+        $user_app = UserApp::class;
+        $str = <<<EOT
 #PHASE_BEGIN
-
+#INCLUDE_CHILD {$user_app}
 #PHASE_END
 
 EOT;
-        $user_app = UserApp::class;
-        $last_phase = App::Phase();
-        
-        if (App::_()->toChildPhase($user_app)) {
-            $str .= \DuckAdmin\User\System\FullTestLister::_()->getTestList();
-            App::Phase($last_phase);
-        }
-        
         return $str;
     }
    

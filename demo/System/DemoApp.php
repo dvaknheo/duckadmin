@@ -20,9 +20,7 @@ class DemoApp extends DuckPhp
     public $options = [
         'path' => __DIR__.'/../',
         'namespace' => 'DuckAdminDemo',
-
         'data_file_enable' => true,
-        'duckcoverage_callback'=> [TestLister::class ,'GetTestList'],
 
         'app' => [
 //*
@@ -57,8 +55,7 @@ class DemoApp extends DuckPhp
             ],
         ],
 
-        'duckcoverage_enable' => true,
-        //'duckcoverage_path_src'=> 'src/User/',
+        'duckcoverage_test_lister'=> [TestLister::class ,'GetTestList'],
 
         'duckcoverage_web_base_url' => 'http://admin.duckphp-local.com/',
     ];
