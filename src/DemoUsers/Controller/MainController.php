@@ -11,7 +11,7 @@ class MainController
     {
         // 已登录直接去主页
         if (Session::_()->isLogin()) {
-            Helper::Show302(__url('Home/index'));
+            Helper::Show302(__url(Helper::Options('user_url_home','Home/index')));
             return;
         }
         // POST 处理登录

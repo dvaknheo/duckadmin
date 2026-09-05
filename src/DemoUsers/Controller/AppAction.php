@@ -32,7 +32,7 @@ class AppAction
     public function name(bool $check_login = true): string
     {
         $user = Session::_()->getCurrentUser();
-        $name = $user['name'] ?? '';
+        $name = $user['username'] ?? '';
         if ($check_login && $name === '') {
             Helper::Show302(__url(App::_()->options['user_url_login'] ?? ''));
             Helper::exit();
