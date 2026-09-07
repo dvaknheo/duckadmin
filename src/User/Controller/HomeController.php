@@ -6,9 +6,9 @@
 namespace DuckAdmin\User\Controller;
 
 use DuckAdmin\User\Business\UserBusiness;
-use DuckPhp\GlobalUser\UserControllerInterface;
+use DuckPhp\Foundation\Controller\UserControllerBase;
 
-class HomeController extends Base implements UserControllerInterface
+class HomeController extends UserControllerBase
 {
     public function index()
     {

@@ -2,10 +2,7 @@
 namespace DuckAdmin\User\Controller;
 
 use DuckPhp\Foundation\Controller\AdminControllerBase;
-use DuckPhp\GlobalAdmin\AdminControllerInterface;
-
 use DuckAdmin\User\Business\UserAdminBusiness;
-use DuckAdmin\User\Controller\Helper;
 
 /**
  * 管理员列表 

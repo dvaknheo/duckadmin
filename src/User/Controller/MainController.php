@@ -11,75 +11,63 @@ use DuckAdmin\User\Business\InstallBusiness;
 
 class MainController
 {
-    public function __construct()
-    {
-        Helper::checkInstall();
-    }
     /**
      * DuckUser 安装：GET 展示环境自检与安装按钮；POST 执行安装
      */
     public function index()
     {
-        $url_reg = Helper::User()->urlForRegist();
-        $url_login = Helper::User()->urlForLogin();
+        $data =[];
+        $data['url_reg'] = Helper::User()->urlForRegist();
+        $data['url_login'] = Helper::User()->urlForLogin();
         
-        Helper::Show(get_defined_vars(), 'main');
+        Helper::Show($data, 'main');
     }
     public function register()
     {
-        $post = Helper::POST();
-        
-        if (!$post) {
-            $csrf_field = Helper::_()->csrfField();
-            $url_register = Helper::User()->urlForRegist();
-            
-            Helper::Show(get_defined_vars(), 'register');
+        $data = [];
+        $data['url_register'] = Helper::User()->urlForRegist();
+
+        if (!Helper::IsPOST()) {
+            $data['csrf_field'] = Helper::_()->csrfField();
+            Helper::Show($data, 'register');
             return;
         }
         try {
-            $user = UserAction::_()->regist($post);
-            Helper::_()->goHome();
-        } catch (\Exception $ex) {
-            $error = $ex->getMessage();
-            $name = Helper::POST('name', '');
-            Helper::Show(get_defined_vars(), 'register');
+            Helper::User()->register(Helper::Post());
             return;
+        } catch (\Exception $ex) {
+            $data['error'] = $ex->getMessage();
         }
+        $data['csrf_field'] = Helper::_()->csrfField();
+        $data['name'] = __h(Helper::POST('name', ''));
 
+        Helper::Show(get_defined_vars(), 'register');
     }
     public function login()
     {
-        $post = Helper::POST();
-        if (!$post) {
-            $csrf_field = Helper::_()->csrfField();
-            $url_login = Helper::User()->urlForLogin();
-            $back_url = Helper::GET('b','');
-            Helper::Show(get_defined_vars(),'login');
+        $data = [];
+        if (!Helper::IsPOST()) {
+            $data['csrf_field'] = Helper::_()->csrfField();
+            $data['url_login'] = Helper::User()->urlForLogin();
+            $data['back_url'] =Helper::GET('b','');
+            Helper::Show($data,'login');
             return;
         }
         try {
-            UserAction::_()->login($post);
-            $back_url = Helper::GET('b','');
-            
-            if(!$back_url){
-                Helper::_()->goHome();
-            }else{
-                $last_phase = App::Phase(App::Root());
-                $back_url = __url($back_url);
-                Helper::Show302($back_url);
-                App::Phase($last_phase);
-            }
-        } catch (\Exception $ex) {
-            $error = $ex->getMessage();
-            $name =  __h( Helper::POST('name', ''));
-            Helper::Show(get_defined_vars(), 'login');
+            Helper::User()->login(Helper::POST());
+            //$back_url = Helper::GET('b','');
             return;
+        } catch (\Exception $ex) {
+            $data['error'] = $ex->getMessage();
         }
+
+        $data['csrf_field'] = Helper::_()->csrfField();
+        $data['name'] = __h(Helper::POST('name', ''));
+
+        Helper::Show($data, 'login');
     }
     public function logout()
     {
-        UserAction::_()->logout();
-        
-        Helper::Show302('index');
+        Helper::User()->logout();
     }
 }

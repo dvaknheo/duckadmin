@@ -20,13 +20,6 @@ class Session
         $ret = $this->get('user',[]);
         return $ret;
     }
-    /*
-    public function getCurrentUid()
-    {
-        $user = $this->getCurrentUser();
-        return $user['id'];
-    }
-    */
     public function setCurrentUser($user)
     {
         $this->set('user',$user);
@@ -35,12 +28,6 @@ class Session
     {
         $this->set('user',[]);
     }
-    /*
-    public function getToken()
-    {
-        return $this->get('_token');
-    }
-    */
 
     ////////////////////////////////////////////////////////////////////////
     public function csrfToken()
