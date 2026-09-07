@@ -61,9 +61,8 @@ class DemoApp extends DuckPhp
             ],
 //*/
 //*
-
             \DuckAdmin\User\System\UserApp::class => [
-                'controller_url_prefix' => 'user/',             // 访问路径
+                'controller_url_prefix' => 'tuser/',             // 访问路径
                 'duckcoverage_test_lister' => null,
                 'is_debug'=>true,
                 'controller_resource_prefix' => 'res/',    // 资源文件前缀

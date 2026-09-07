@@ -28,9 +28,12 @@ CALL DuckAdmin\DemoUsers\Business\UserBusiness@login post=
 EOT;
 
         $list = <<<EOT
+#PHASE_BEGIN
 WEB index
 WEB logout
 WEB Home/index
+#PHASE_END
+
 EOT;
         return $list;
     }
