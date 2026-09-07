@@ -6,23 +6,10 @@
 namespace DuckAdmin\Admin\Controller;
 
 use DuckAdmin\Admin\Model\PermissionModel;
-use DuckPhp\GlobalAdmin\AdminControllerInterface;
+use DuckPhp\GlobalAdmin\AdminControllerBase;
 
-class Base implements AdminControllerInterface
+class Base extends AdminControllerBase
 {
-    public function __construct()
-    {
-        $this->initController();
-    }
-    protected function initController()
-    {
-        Helper::checkInstall('install');
-        Helper::AdminId(true);
-        // 统一设置页眉页脚
-        Helper::setViewHeadFoot('admin/header', 'admin/footer');
-        // 请求级权限校验(按 url 精确匹配,超管放行)
-        AdminAction::_()->checkAccess();
-    }
     /**
      * 加载菜单(按当前管理员权限过滤,查 admin_permissions 组树)
      */

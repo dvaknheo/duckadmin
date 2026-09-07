@@ -19,7 +19,11 @@ class DemoUsersApp extends DuckPhp
         'namespace' => "DuckAdmin\\DemoUsers",
         'name' => 'DemoUsers',
         'installed' => true,
-        'duckcoverage_callback' => [self::class ,'getTestOrderList'],
+        'duckcoverage_test_lister' => [self::class ,'GetTestOrderList'],
+        // 错误页面
+        'error_404' => '_sys/error_404',
+        'error_500' => '_sys/error_500',
+
 
         'user_provider' => GlobalUser::class,
 
@@ -36,21 +40,9 @@ class DemoUsersApp extends DuckPhp
         'user_view_file_header' => '_sys/inc-head',
         'user_view_file_footer' => '_sys/inc-foot',
 
-        // 错误页面
-        'error_404' => '_sys/error_404',
-        'error_500' => '_sys/error_500',
 
         'demo_users' => [
         ],
+
     ];
-    public function __construct()
-    {
-        parent::__construct();
-        $this->options['duckcoverage_callback'] = [static::class ,'getTestOrderList'];
-    }
-    public static function getTestOrderList(): string
-    {
-        //
-        return '';
-    }
 }

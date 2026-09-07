@@ -28,6 +28,26 @@ class AdminBusiness extends Base
         return RoleModel::_()->isSuperRole((int)$admin_id);
     }
 
+    public function checkInstall(array $post): array
+    {
+        $admin_name = (string)($post['admin_name'] ?? '');
+        $password = (string)($post['admin_password'] ?? '');
+        $password_confirm = (string)($post['admin_password_confirm'] ?? '');
+
+        if ($admin_name === '') {
+            throw new \Exception('请填写管理员账号');
+        }
+        if ($password === '') {
+            throw new \Exception('请填写管理员密码');
+        }
+        if (strlen($password) < 6) {
+            throw new \Exception('管理员密码至少 6 位');
+        }
+        if ($password !== $password_confirm) {
+            throw new \Exception('两次输入的密码不一致');
+        }
+        return [];
+    }
     /**
      * 安装系统:插入默认角色/权限种子,创建管理员(表由安装器 doSchema 建)
      * @param array<string, mixed> $input 含 admin_name / admin_password / admin_realname / admin_email

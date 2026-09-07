@@ -40,23 +40,7 @@ class AppAction
      */
     public function checkInstall(array $post): array
     {
-        $admin_name = (string)($post['admin_name'] ?? '');
-        $password = (string)($post['admin_password'] ?? '');
-        $password_confirm = (string)($post['admin_password_confirm'] ?? '');
-
-        if ($admin_name === '') {
-            throw new \Exception('请填写管理员账号');
-        }
-        if ($password === '') {
-            throw new \Exception('请填写管理员密码');
-        }
-        if (strlen($password) < 6) {
-            throw new \Exception('管理员密码至少 6 位');
-        }
-        if ($password !== $password_confirm) {
-            throw new \Exception('两次输入的密码不一致');
-        }
-        return [];
+        return AdminBusiness::_()->checkInstall($post);
     }
 
     /**
@@ -70,4 +54,43 @@ class AppAction
         AdminBusiness::_()->install($post);
         return [];
     }
+    ////////////////////////////////////////
+    public function id($check_login = true):int
+    {
+        $ret = Session::_()->getUserId() ?? 0;
+        Helper::ControllerThrowOn( $check_login && !$ret, "No Login1", -1, UserException::class);
+        return $ret;
+            
+    }
+    //@override
+    public function name($check_login = true):string
+    {
+        $ret = Session::_()->getUsername() ?? 0;
+        Helper::ControllerThrowOn( $check_login && !$ret, "No Login2", -2, UserException::class);
+        return $ret;
+    }
+    public function data()
+    {
+        return Session::_()->getCurrentUser();
+    }
+    //@override
+    public function localService()
+    {
+        return AdminBusiness::_();
+    }
+    //@override
+    public function addExtViewData(array $input): array
+    {
+        $input['app_name'] = 'Admin System';
+        
+        $user = [
+            'id' => Session::_()->getUserId(),
+            'username' => Session::_()->getUsername(),
+            'realname' => Session::_()->getRealname(),
+        ];
+        $input['menus'] = $this->loadMenus();
+        $input['current_user'] = $user;
+        return $input;
+    }
+
 }

@@ -62,6 +62,5 @@ class Session
         $this->unset('user_id');
         $this->unset('username');
         $this->unset('realname');
-        session_destroy();
     }
 }

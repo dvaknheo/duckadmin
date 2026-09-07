@@ -38,7 +38,8 @@ class FullTestLister
     }
     public function _GetTestList()
     {
-        // 头部指令:#PHASE / #URL_PREFIX,由子 Tester 在自身 phase 下生成
+        $str = \DuckCoverage\DuckCoverage::_()->genTestListOfAll();
+        file_put_contents(__FILE__.'.log',$str);
         $str = ''; // '#PHASE '.UserApp::_()->getThisPhaseName()."\n";
 $list = <<<EOT
 COMMENT tests for x

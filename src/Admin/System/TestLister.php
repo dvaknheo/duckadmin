@@ -30,34 +30,23 @@ class TestLister
 
     public function getTestList()
     {
-        // 头部指令：#PHASE / #URL_PREFIX，由子 Tester 在自身 phase 下生成
-        $str = '#PHASE ' . AdminApp::_()->getThisPhaseName() . "\n";
-        $prefix = (string) AdminApp::_()->options['controller_url_prefix'];
-        $str .= '#URL_PREFIX ' . $prefix . "\n";
 
         $list = <<<EOT
-#PHASE {phase}
-#URL_PREFIX {prefix}
-#CALL {static}::BeforeTest
-#WEB install
-#WEB install driver=sqlite&database[file]=runtime/{test_db}&admin_name={admin}&admin_password={password}&admin_password_confirm={password}
-#WEB Login/login
-#WEB Login/login username={admin}&password={password}
+#PHASE_BEGIN
+CALL {static}::BeforeTest
+WEB install
+WEB install driver=sqlite&database[file]=runtime/{test_db}&admin_name={admin}&admin_password={password}&admin_password_confirm={password}
+WEB Login/login
+WEB Login/login username={admin}&password={password}
+#PHASE_END
 
 EOT;
-        $phase = AdminApp::_()->getThisPhaseName();
-        $prefix = (string) AdminApp::_()->options['controller_url_prefix'];
-
         $args = [
-            'phase' => $phase,
-            'prefix' => $prefix,
-            'static' => static::class,
             'test_db' => self::TEST_DB,
             'admin' => self::ADMIN_NAME,
             'password' => self::ADMIN_PASSWORD,
         ];
         $list = str_replace(array_map(fn($k) => '{' . $k . '}', array_keys($args)), array_values($args), $list);
-        $list = str_replace('#WEB ', '#WEB ' . $prefix, $list);
 
         return $list;
     }

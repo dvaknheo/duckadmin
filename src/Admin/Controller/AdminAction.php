@@ -18,7 +18,6 @@ class AdminAction
     use SingletonTrait;
     public function __construct()
     {
-        // override parent
     }
     
     protected $admin = null;
@@ -115,20 +114,6 @@ class AdminAction
         Session::_()->setCurrentAdmin([]);
     }
     
-    //@override
-    public function addExtViewData(array $input): array
-    {
-        $input['app_name'] = 'Admin System';
-        
-        $user = [
-            'id' => Session::_()->getUserId(),
-            'username' => Session::_()->getUsername(),
-            'realname' => Session::_()->getRealname(),
-        ];
-        $input['menus'] = $this->loadMenus();
-        $input['current_user'] = $user;
-        return $input;
-    }
     protected function loadMenus(): array
     {
         $admin_id = (int)Helper::AdminId(false);

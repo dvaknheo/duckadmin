@@ -15,7 +15,7 @@ class MainController
             return;
         }
         // POST 处理登录
-        if (Helper::SERVER('REQUEST_METHOD', 'GET') === 'POST') {
+        if (Helper::SERVER('REQUEST_METHOD') === 'POST') {
             return $this->doLogin();
         }
         Helper::Show(get_defined_vars(), 'main');
