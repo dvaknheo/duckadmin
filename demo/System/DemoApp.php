@@ -5,46 +5,29 @@
  */
 namespace DuckAdminDemo\System;
 
-
 use DuckPhp\DuckPhp;
-use DuckPhp\Foundation\Controller\Helper;
-
-use DuckCoverage\DuckCoverage;
-
 use DuckAdminDemo\System\TestLister;
-use DuckAdmin\Admin\System\AdminApp;
-use DuckAdmin\User\System\UserApp;
 
 class DemoApp extends DuckPhp
 {
     public $options = [
         'path' => __DIR__.'/../',
         'namespace' => 'DuckAdminDemo',
+        'installed' => true,
         'data_file_enable' => true,
+
+        'duckcoverage_test_lister'=> [TestLister::class ,'GetTestList'],
+        'duckcoverage_web_base_url' => 'http://admin.duckphp-local.com/',
 
         'app' => [
 //*
-            AdminApp::class => [
+            \DuckAdmin\Admin\System\AdminApp::class => [
                 'controller_url_prefix' => 'admin/',
                 'controller_resource_prefix' => 'res/',
                 //'admin_provider' => null,   // 关闭:admin_provider 各 admin 系统不能同时使用
             ],
 //*/
-            UserApp::class => [
-                'is_debug'=>true,
-                'controller_url_prefix' => 'user/',             // 访问路径
-                'controller_resource_prefix' => 'res/',    // 资源文件前缀
-                //'user_provider' => null,   // 关闭:user_provider 各用户系统不能同时使用
-            ],
-//*/
-            \SimpleBlog\System\SimpleBlogApp::class => [
-                'controller_url_prefix' => 'blog/',
-            ],
-//*/
-            \DuckAdmin\SingleAdmin\System\SingleAdminApp::class => [
-                'controller_url_prefix' => 'single/',
-                //'admin_provider' => null,   // 关闭:admin_provider 各 admin 系统不能同时使用
-            ],
+//*
             \DuckAdmin\DemoUsers\System\DemoUsersApp::class => [
                 'controller_url_prefix' => 'users/',
                 'user_provider' => null,
@@ -53,46 +36,46 @@ class DemoApp extends DuckPhp
                     't2'=>'123456',
                 ],
             ],
+//*/
+/*
+            \DuckAdmin\System\DuckAdminApp => [
+
+            ],
+//*/
+/*
+            \DuckAdmin\SimpleBlog\System\SimpleBlogApp::class => [
+                'controller_url_prefix' => 'blog/',
+            ],
+//*/
+//*
+
+            \DuckAdmin\SingleAdmin\System\SingleAdminApp::class => [
+                'controller_url_prefix' => 'single/',
+                //'admin_provider' => null,   // 关闭:admin_provider 各 admin 系统不能同时使用
+            ],
+//*/
+//*
+
+            \DuckAdmin\User\System\UserApp::class => [
+                'controller_url_prefix' => 'user/',             // 访问路径
+
+                'is_debug'=>true,
+                'controller_resource_prefix' => 'res/',    // 资源文件前缀
+                //'user_provider' => null,   // 关闭:user_provider 各用户系统不能同时使用
+            ],
+//*/
         ],
-
-        'duckcoverage_test_lister'=> [TestLister::class ,'GetTestList'],
-
-        'duckcoverage_web_base_url' => 'http://admin.duckphp-local.com/',
     ];
     public function __construct()
     {
-        // embed welcomepage to this class
-        $path = explode('\\', static::class);
-        $short_class = array_pop($path);
-        $ext_options =  [
-            'namespace_controller' =>  "\\" . __NAMESPACE__ ,
-            'controller_welcome_class' => $short_class ,
-            'controller_class_postfix' => '',
-            'controller_method_prefix' => 'action_',
-        ];
-        $this->options['duckcoverage_path_src'] = realpath(__DIR__ . '/../../') . '/src/User/';
-
-        $this->options = array_merge($this->options,$ext_options); 
         parent::__construct();
     }
-
-    public function action_index()
-    {
-        $data = [];
-        $data['url_blog'] = __url(\SimpleBlog\System\SimpleBlogApp::_()->options['controller_url_prefix']) . 'index';
-        $data['url_user'] = __url(\DuckAdmin\User\System\UserApp::_()->options['controller_url_prefix']) . 'index';
-        $data['url_admin'] = __url(\DuckAdmin\Admin\System\AdminApp::_()->options['controller_url_prefix']) . 'index';
-        
-        $data ['duckadmin_demo_enable_test'] = $this->options['duckadmin_demo_enable_test'] ?? false;
-        
-        Helper::Show($data,'main');
-    }
-
     protected function onPrepare(): void
     {
         parent::onPrepare();
-        if(class_exists(DuckCoverage::class)){
-            DuckCoverage::Prepare([]);
+        if(class_exists(\DuckCoverage\DuckCoverage::class)){
+            $this->options['duckcoverage_path_src'] = realpath(__DIR__ . '/../../') . '/src/User/';
+            \DuckCoverage\DuckCoverage::Prepare([]);
         }
     }
 }
