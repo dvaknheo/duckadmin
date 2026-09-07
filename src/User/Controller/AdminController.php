@@ -1,7 +1,7 @@
 <?php
 namespace DuckAdmin\User\Controller;
 
-use DuckPhp\Foundation\SingletonTrait;
+use DuckPhp\Foundation\Controller\AdminControllerBase;
 use DuckPhp\GlobalAdmin\AdminControllerInterface;
 
 use DuckAdmin\User\Business\UserAdminBusiness;
@@ -10,23 +10,10 @@ use DuckAdmin\User\Controller\Helper;
 /**
  * 管理员列表 
  */
-class AdminController implements AdminControllerInterface
+class AdminController extends AdminControllerBase
 {
-    use SingletonTrait;
-
-    public function __construct()
-    {
-        $this->initController();
-    }
-    protected function initController()
-    {
-        Helper::Admin()->checkAccess();
-        Helper::setViewHeadFoot('_sys/inc-head','_sys/inc-foot');
-
-    }
     /**
-     * 浏览
-     * @return Response
+     * 首页
      */
     public function index()
     {
@@ -54,8 +41,6 @@ class AdminController implements AdminControllerInterface
 
     /**
      * 删除
-     * @param 
-     * @return Response
      */
     public function delete()
     {
@@ -69,8 +54,6 @@ class AdminController implements AdminControllerInterface
     }
     /**
      * 还原
-     * @param 
-     * @return Response
      */
     public function undelete()
     {
