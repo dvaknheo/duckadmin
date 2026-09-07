@@ -14,11 +14,11 @@ class UserAction
     use SingletonTrait;
     public function login($post)
     {
-        Helper::FireGlobalEvent(Helper::$EVENT_ACTION_LOGINING,$post);
+        Helper::FireGlobalEvent(Helper::$EVENT_ACTION_LOGINING, $post);
 
         $user = UserBusiness::_()->login($post);
         Session::_()->setCurrentUser($user);
-        Helper::FireGlobalEvent(Helper::$EVENT_ACTION_LOGINED,$post);
+        Helper::FireGlobalEvent(Helper::$EVENT_ACTION_LOGINED, $post);
         return $user;
     }
 

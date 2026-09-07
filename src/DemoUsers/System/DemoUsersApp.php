@@ -19,7 +19,7 @@ class DemoUsersApp extends DuckPhp
         'namespace' => "DuckAdmin\\DemoUsers",
         'name' => 'DemoUsers',
         'installed' => true,
-        'duckcoverage_test_lister' => [self::class ,'GetTestOrderList'],
+        'duckcoverage_test_lister' => [TestLister::class ,'GetTestOrderList'],
         // 错误页面
         'error_404' => '_sys/error_404',
         'error_500' => '_sys/error_500',

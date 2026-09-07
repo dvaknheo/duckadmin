@@ -20,14 +20,17 @@ class TestLister
     }
     public function _GetTestList()
     {
-        $user_app = UserApp::class;
-        $str = <<<EOT
+        $list = <<<EOT
 #PHASE_BEGIN
-#INCLUDE_CHILD {$user_app}
+COMMENT XXX
+#INCLUDE_CHILD DuckAdmin\Admin\System\AdminApp
+#INCLUDE_CHILD DuckAdmin\DemoUsers\System\DemoUsersApp
+#INCLUDE_CHILD DuckAdmin\SingleAdmin\System\SingleAdminApp
+#INCLUDE_CHILD DuckAdmin\User\System\UserApp
 #PHASE_END
 
 EOT;
-        return $str;
+        return $list;
     }
    
 

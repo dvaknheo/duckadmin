@@ -17,7 +17,21 @@ class TestLister
     }
     public static function _GetTestOrderList(): string
     {
-        $list = '';
+        $list_referenct = <<<EOT
+WEB users/Home/index
+WEB users/
+WEB users/logout
+CALL DuckAdmin\DemoUsers\Business\UserBusiness@canAccess user_id=&class=&method=&url=
+CALL DuckAdmin\DemoUsers\Business\UserBusiness@log user_id=&string=&type=&ext=
+CALL DuckAdmin\DemoUsers\Business\UserBusiness@batchGetUsernames ids=
+CALL DuckAdmin\DemoUsers\Business\UserBusiness@login post=
+EOT;
+
+        $list = <<<EOT
+WEB index
+WEB logout
+WEB Home/index
+EOT;
         return $list;
     }
 

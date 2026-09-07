@@ -6,7 +6,7 @@
 namespace DuckAdmin\Admin\Controller;
 
 use DuckAdmin\Admin\Model\PermissionModel;
-use DuckPhp\GlobalAdmin\AdminControllerBase;
+use DuckPhp\Foundation\Controller\AdminControllerBase;
 
 class Base extends AdminControllerBase
 {

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>500 - 服务器错误</title>
     <style>
-        body { font-family: sans-serif; text-align: center; padding: 80px 20px; color: #333; }
+        body { font-family: sans-serif; text-align: left; padding: 80px 20px; color: #333; }
         h1 { font-size: 72px; margin: 0; color: #e74c3c; }
         p { font-size: 18px; margin: 20px 0; color: #666; }
         a { color: #3498db; text-decoration: none; }

@@ -5,6 +5,7 @@
  */
 namespace DuckAdminDemo\System;
 
+use DuckPhp\Core\App;
 use DuckPhp\DuckPhp;
 use DuckAdminDemo\System\TestLister;
 
@@ -25,13 +26,16 @@ class DemoApp extends DuckPhp
             \DuckAdmin\Admin\System\AdminApp::class => [
                 'controller_url_prefix' => 'admin/',
                 'controller_resource_prefix' => 'res/',
-                //'admin_provider' => null,   // 关闭:admin_provider 各 admin 系统不能同时使用
+                'admin_provider' => null,   // 关闭:admin_provider 各 admin 系统不能同时使用
+                'duckcoverage_test_lister' => null, //[TestLister::class ,'GetTestList'],
             ],
 //*/
 //*
             \DuckAdmin\DemoUsers\System\DemoUsersApp::class => [
                 'controller_url_prefix' => 'users/',
-                'user_provider' => null,
+                'is_debug'=>true,
+                //'duckcoverage_test_lister' => null,
+                //'user_provider' => null,
                 'demo_users'=>[
                     't1'=>'123456',
                     't2'=>'123456',
@@ -52,6 +56,7 @@ class DemoApp extends DuckPhp
 
             \DuckAdmin\SingleAdmin\System\SingleAdminApp::class => [
                 'controller_url_prefix' => 'single/',
+                'duckcoverage_test_lister' => null,
                 //'admin_provider' => null,   // 关闭:admin_provider 各 admin 系统不能同时使用
             ],
 //*/
@@ -59,10 +64,10 @@ class DemoApp extends DuckPhp
 
             \DuckAdmin\User\System\UserApp::class => [
                 'controller_url_prefix' => 'user/',             // 访问路径
-
+                'duckcoverage_test_lister' => null,
                 'is_debug'=>true,
                 'controller_resource_prefix' => 'res/',    // 资源文件前缀
-                //'user_provider' => null,   // 关闭:user_provider 各用户系统不能同时使用
+                'user_provider' => null,   // 关闭:user_provider 各用户系统不能同时使用
             ],
 //*/
         ],
@@ -75,8 +80,29 @@ class DemoApp extends DuckPhp
     {
         parent::onPrepare();
         if(class_exists(\DuckCoverage\DuckCoverage::class)){
-            $this->options['duckcoverage_path_src'] = realpath(__DIR__ . '/../../') . '/src/User/';
+            $this->options['duckcoverage_path_src'] = realpath(__DIR__ . '/../../') . '/src/';
             \DuckCoverage\DuckCoverage::Prepare([]);
         }
+    }
+    protected function onInited():void
+    {
+        foreach($this->options['app'] as $app => $default) {
+            $this->_ChildCall($app,function()use($app){
+                //echo $app; echo PHP_EOL;
+                // $str = \DuckCoverage\DuckCoverage::_()->genTestListOfAll();
+                // $name = basename(str_replace("\\","/",$app));
+                // file_put_contents(__DIR__."/{$name}.txt",$str);
+                
+            });
+
+        }
+    }
+    public function _ChildCall($child_app, $callback, ...$args)
+    {
+        $last_Phase = App::Phase();
+        App::_()->toThisChild($child_app);
+        $ret = ($callback)(...$args);
+        App::Phase($last_Phase);
+        return $ret;
     }
 }
