@@ -70,4 +70,14 @@ class UserBusiness implements UserServiceInterface
         Helper::FireGlobalEvent(Helper::$EVENT_LOGINED, $user);
         return $user;
     }
+    public function register(array $post)
+    {
+        $user = [];
+        Helper::BusinessThrowOn(true, "尚未实现");
+
+        Helper::FireGlobalEvent(Helper::$EVENT_LOGINING);
+        Helper::FireGlobalEvent(Helper::$EVENT_LOGINED, $user);
+        return $user;
+    }
+
 }

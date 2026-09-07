@@ -19,7 +19,6 @@ class DemoUsersApp extends DuckPhp
         'name' => 'DemoUsers',
         'installed' => true,
         'duckcoverage_test_lister' => [TestLister::class ,'GetTestOrderList'],
-        // 错误页面
         'error_404' => '_sys/error_404',
         'error_500' => '_sys/error_500',
         'user_view_file_header' => '_sys/inc-head',
@@ -28,11 +27,7 @@ class DemoUsersApp extends DuckPhp
 
         'user_provider' => GlobalUserEx::class,
 
-        'user_callback_for_id' =>      [AppAction::class, 'id'],
-        'user_callback_for_name' =>    [AppAction::class, 'name'],
-        'user_callback_for_data' =>    [AppAction::class, 'data'],
         'user_callback_for_local_service' => [AppAction::class, 'localService'],
-
         'user_callback_for_login_service' => [AppAction::class, 'localService'],
         'user_callback_for_login_session' => [AppAction::class, 'getSession'],
 
@@ -40,8 +35,6 @@ class DemoUsersApp extends DuckPhp
         'user_url_login' => 'index',
         'user_url_logout' => 'logout',
         'user_url_regist' => 'index',
-
-
 
         'demo_users' => [
         ],

@@ -64,10 +64,10 @@ class GlobalUserEx extends GlobalUser
         }
         return ($callback)();
     }
-    public function regist($post)
+    public function register($post)
     {
         Helper::FireGlobalEvent(Helper::$EVENT_ACTION_REGISTING, $post);
-        $user = $this->getLoginBusiness()->regist($post);
+        $user = $this->getLoginBusiness()->register($post);
         $this->getLoginSession()->setCurrentUser($user);
         Helper::FireGlobalEvent(Helper::$EVENT_ACTION_REGISTED, $post);
         Helper::Show302(__url($this->options['user_url_home']));
@@ -88,9 +88,5 @@ class GlobalUserEx extends GlobalUser
         $this->getLoginSession()->unsetCurrentUser();
         Helper::FireGlobalEvent(Helper::$EVENT_ACTION_LOGOUTED, $user_id);
         Helper::Show302(__url($this->options['user_url_login']));
-    }
-    public function isLogin()
-    {
-        return (bool)$this->getLoginSession()->getCurrentUser();
     }
 }
