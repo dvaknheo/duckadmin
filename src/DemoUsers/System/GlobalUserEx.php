@@ -7,7 +7,7 @@ namespace DuckAdmin\DemoUsers\System;
 
 use DuckPhp\Foundation\Controller\Helper;
 use DuckPhp\GlobalUser\GlobalUser;
-
+use DuckPhp\GlobalUser\UserException;
 class GlobalUserEx extends GlobalUser
 {
     public $options = [
@@ -22,13 +22,13 @@ class GlobalUserEx extends GlobalUser
     public function id(bool $check_login = true)
     {
         $id = $this->getLoginSession()->getCurrentUserId();
-        Helper::ThrowOn($check_login && !$id,"NoLogin", -1, \Excetpion::class);
+        Helper::ControllerThrowOn($check_login && !$id," NoLogin 1", -1, UserException::class);
         return $id ?? 0;
     }
     public function name(bool $check_login = true): string
     {
         $name = $this->getLoginSession()->getCurrentUserName();
-        Helper::ThrowOn($check_login && !$name,"NoLogin", -2, \UserExcetpion::class);
+        Helper::ControllerThrowOn($check_login && !$name, "NoLogin 2", -2, UserException::class);
         return $name;
     }
 
@@ -42,11 +42,26 @@ class GlobalUserEx extends GlobalUser
     protected function getLoginBusiness()
     {
         $callback = $this->options['user_callback_for_login_service'];
+        if (is_array($callback) && is_string($callback[0])) {
+            $class = $callback[0];
+            $flag = $this->options['user_enable_callback_singleton'] ?? true;
+            if ($flag) {
+                $callback[0] = $class::_();
+            }
+        }
+
         return ($callback)();
     }
     protected function getLoginSession()
     {
         $callback = $this->options['user_callback_for_login_session'];
+        if (is_array($callback) && is_string($callback[0])) {
+            $class = $callback[0];
+            $flag = $this->options['user_enable_callback_singleton'] ?? true;
+            if ($flag) {
+                $callback[0] = $class::_();
+            }
+        }
         return ($callback)();
     }
     public function regist($post)

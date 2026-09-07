@@ -10,7 +10,7 @@ class MainController
     public function index()
     {
         $data = [];
-        if (!Helper::UserId(false)) {
+        if (Helper::UserId(false)) {
             Helper::Show302(Helper::User()->urlForHome());
             return;
         }
@@ -20,7 +20,7 @@ class MainController
                 $user = Helper::User()->login(Helper::POST());
                 return;
             }catch(\Exception $ex){
-                Helper::Show(['error' => $ex->getMessage()], 'main');
+                $data['error'] = $ex->getMessage();
             }
         }
         Helper::Show($data, 'main');

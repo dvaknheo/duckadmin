@@ -17,7 +17,7 @@ class Session
     public function getCurrentUserName(): string
     {
         $user = $this->get('user', []);
-        return $user['name'] ?? '';
+        return $user['username'] ?? '';
     }
 
     public function getCurrentUser(): array

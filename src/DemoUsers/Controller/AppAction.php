@@ -22,12 +22,9 @@ class AppAction
         return UserBusiness::_();
     }
     ///////////
-    public function getBusiness(): UserLoginServiceInterface
+    public function getSession()
     {
-        return UserBusiness::_();
-    }
-    public function getSession(): UserLoginSessionInterface
-    {
+        //: UserLoginSessionInterface
         return Session::_();
     }
 }

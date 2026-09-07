@@ -33,13 +33,13 @@ class DemoUsersApp extends DuckPhp
         'user_callback_for_data' =>    [AppAction::class, 'data'],
         'user_callback_for_local_service' => [AppAction::class, 'localService'],
 
-        'user_callback_for_login_service' => [AppAction::class, 'getUserBusiness'],
+        'user_callback_for_login_service' => [AppAction::class, 'localService'],
         'user_callback_for_login_session' => [AppAction::class, 'getSession'],
 
         'user_url_home' => 'Home/index',
-        'user_url_login' => 'login',
+        'user_url_login' => 'index',
         'user_url_logout' => 'logout',
-        'user_url_regist' => 'regist',
+        'user_url_regist' => 'index',
 
 
 
