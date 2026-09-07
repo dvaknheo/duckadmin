@@ -25,7 +25,6 @@ class UserApp extends DuckPhp
         ],
         'web_installer_use_database' => true,
         'web_installer_database_drivers' => ['sqlite' => true],
-        'web_installer_use_redis' => false,
         'web_installer_view' => 'install',
 
         'exception_reporter' => ExceptionReporter::class,
@@ -37,18 +36,18 @@ class UserApp extends DuckPhp
         'session_prefix' => 'duckuser_',  // Session 前缀
         
         /////////////////
-        'user_provider' => GlobalUser::class,
+        'user_provider' => GlobalUserEx::class,
         'user_callback_for_local_service' =>  [UserAction::class,'service'],
-        
+        'user_callback_for_login_service' => [UserAction::class,'service'],
+        'user_callback_for_login_session' => [UserAction::class,'session'],
+
         'user_url_home' => 'Home/index',
         'user_url_regist' => 'register',
         'user_url_login' => 'login',
         'user_url_logout' => 'logout',
         'user_view_file_header' => '_sys/inc-head',
         'user_view_file_footer' => '_sys/inc-foot',
-
         ///////////////////
-        'home_url' => 'Home/index',
 
         'duckcoverage_test_lister'=> [FullTestLister::class ,'GetTestList'],
     ];
