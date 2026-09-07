@@ -6,7 +6,6 @@
 namespace DuckAdmin\DemoUsers\System;
 
 use DuckPhp\DuckPhp;
-use DuckPhp\GlobalUser\GlobalUser;
 
 use DuckAdmin\DemoUsers\Controller\AppAction;
 
@@ -23,22 +22,25 @@ class DemoUsersApp extends DuckPhp
         // 错误页面
         'error_404' => '_sys/error_404',
         'error_500' => '_sys/error_500',
+        'user_view_file_header' => '_sys/inc-head',
+        'user_view_file_footer' => '_sys/inc-foot',
 
 
-        'user_provider' => GlobalUser::class,
+        'user_provider' => GlobalUserEx::class,
 
         'user_callback_for_id' =>      [AppAction::class, 'id'],
         'user_callback_for_name' =>    [AppAction::class, 'name'],
         'user_callback_for_data' =>    [AppAction::class, 'data'],
         'user_callback_for_local_service' => [AppAction::class, 'localService'],
 
-        'user_url_home' => 'Home/index',
-        'user_url_login' => '',       // 默认 index(MainController)
-        'user_url_logout' => 'logout',
-        'user_url_regist' => '',
+        'user_callback_for_login_service' => [AppAction::class, 'getUserBusiness'],
+        'user_callback_for_login_session' => [AppAction::class, 'getSession'],
 
-        'user_view_file_header' => '_sys/inc-head',
-        'user_view_file_footer' => '_sys/inc-foot',
+        'user_url_home' => 'Home/index',
+        'user_url_login' => 'login',
+        'user_url_logout' => 'logout',
+        'user_url_regist' => 'regist',
+
 
 
         'demo_users' => [

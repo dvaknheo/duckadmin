@@ -11,46 +11,23 @@ use DuckPhp\Foundation\SingletonTrait;
 use DuckPhp\GlobalUser\UserServiceInterface;
 
 use DuckAdmin\DemoUsers\Business\UserBusiness;
+use DuckAdmin\DemoUsers\System\UserLoginServiceInterface;
+use DuckAdmin\DemoUsers\System\UserLoginSessionInterface;
 
 class AppAction
 {
     use SingletonTrait;
-
-    //////////////////
-
-    public function id(bool $check_login = true)
-    {
-        $user = Session::_()->getCurrentUser();
-        $id = $user['id'] ?? null;
-        if ($check_login && !$id) {
-            Helper::Show302(__url(App::_()->options['user_url_login'] ?? ''));
-            Helper::exit();
-        }
-        return $id ?? 0;
-    }
-
-    public function name(bool $check_login = true): string
-    {
-        $user = Session::_()->getCurrentUser();
-        $name = $user['username'] ?? '';
-        if ($check_login && $name === '') {
-            Helper::Show302(__url(App::_()->options['user_url_login'] ?? ''));
-            Helper::exit();
-        }
-        return $name;
-    }
-
-    public function data(bool $check_login = true): array
-    {
-        if ($check_login) {
-            $this->id(true);
-        }
-        return Session::_()->getCurrentUser();
-    }
-
     public function localService(): UserServiceInterface
     {
         return UserBusiness::_();
     }
-    ///////////    
+    ///////////
+    public function getBusiness(): UserLoginServiceInterface
+    {
+        return UserBusiness::_();
+    }
+    public function getSession(): UserLoginSessionInterface
+    {
+        return Session::_();
+    }
 }

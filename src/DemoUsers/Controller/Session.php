@@ -9,18 +9,21 @@ use DuckPhp\Foundation\SessionTrait;
 class Session
 {
     use SessionTrait;
+    public function getCurrentUserId()
+    {
+        $user = $this->get('user', []);
+        return $user['id'] ?? 0;
+    }
+    public function getCurrentUserName(): string
+    {
+        $user = $this->get('user', []);
+        return $user['name'] ?? '';
+    }
 
     public function getCurrentUser(): array
     {
         return $this->get('user', []);
     }
-
-    public function isLogin(): bool
-    {
-        $user = $this->getCurrentUser();
-        return !empty($user['id']);
-    }
-
     public function setCurrentUser(array $user): void
     {
         $this->set('user', $user);

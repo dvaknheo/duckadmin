@@ -11,6 +11,7 @@ class HomeController extends UserControllerBase
 {
     public function index()
     {
-        Helper::Show(get_defined_vars(), 'home');
+        $data = [];
+        Helper::Show($data, 'home');
     }
 }

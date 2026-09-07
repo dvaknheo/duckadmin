@@ -9,32 +9,24 @@ class MainController
 {
     public function index()
     {
-        // 已登录直接去主页
-        if (Session::_()->isLogin()) {
-            Helper::Show302(__url(Helper::Options('user_url_home','Home/index')));
+        $data = [];
+        if (!Helper::UserId(false)) {
+            Helper::Show302(Helper::User()->urlForHome());
             return;
         }
         // POST 处理登录
-        if (Helper::SERVER('REQUEST_METHOD') === 'POST') {
-            return $this->doLogin();
+        if (Helper::IsPost()) {
+            try{
+                $user = Helper::User()->login(Helper::POST());
+                return;
+            }catch(\Exception $ex){
+                Helper::Show(['error' => $ex->getMessage()], 'main');
+            }
         }
-        Helper::Show(get_defined_vars(), 'main');
+        Helper::Show($data, 'main');
     }
-
-    private function doLogin()
-    {
-        try{
-        $user = UserAction::_()->login(Helper::POST());
-            Helper::Show302(__url(Helper::Options('user_url_home','Home/index')));
-            return;
-        }catch(\Exception $ex){
-            Helper::Show(['error' => $ex->getMessage()], 'main');
-        }
-    }
-
     public function logout()
     {
-        UserAction::_()->logout();
-        Helper::Show302(__url(Helper::Options('user_url_login','')));
+        Helper::User()->logout();
     }
 }
