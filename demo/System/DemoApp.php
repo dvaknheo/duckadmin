@@ -11,6 +11,7 @@ use DuckAdminDemo\System\TestLister;
 class DemoApp extends DuckPhp
 {
     public $options = [
+        'is_debug' => true,
         'path' => __DIR__.'/../',
         'namespace' => 'DuckAdminDemo',
         'installed' => true,

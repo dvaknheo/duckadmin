@@ -8,10 +8,10 @@ namespace DuckAdminDemo\Controller;
 use DuckPhp\Foundation\Controller\Helper;
 class MainController
 {
-    public function action_index()
+    public function index()
     {
         $data = [];
-        $data['url_blog'] = __url(\DuckAdmin\SimpleBlog\System\SimpleBlogApp::_()->options['controller_url_prefix']) . 'index';
+        //$data['url_blog'] = __url(\DuckAdmin\SimpleBlog\System\SimpleBlogApp::_()->options['controller_url_prefix']) . 'index';
         $data['url_user'] = __url(\DuckAdmin\User\System\UserApp::_()->options['controller_url_prefix']) . 'index';
         $data['url_admin'] = __url(\DuckAdmin\Admin\System\AdminApp::_()->options['controller_url_prefix']) . 'index';
         Helper::Show($data,'main');
