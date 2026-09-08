@@ -5,10 +5,12 @@
 namespace DuckAdmin\DemoUsers\Controller;
 
 use DuckPhp\Foundation\SessionTrait;
+use DuckPhp\Foundation\Controller\UserSessionTrait;
 
 class Session
 {
     use SessionTrait;
+    use UserSessionTrait;
     public function getCurrentUserId()
     {
         $user = $this->get('user', []);
@@ -17,20 +19,6 @@ class Session
     public function getCurrentUserName(): string
     {
         $user = $this->get('user', []);
-        return $user['username'] ?? '';
-    }
-
-    public function getCurrentUser(): array
-    {
-        return $this->get('user', []);
-    }
-    public function setCurrentUser(array $user): void
-    {
-        $this->set('user', $user);
-    }
-
-    public function unsetCurrentUser(): void
-    {
-        $this->set('user', []);
+        return $user['name'] ?? '';
     }
 }

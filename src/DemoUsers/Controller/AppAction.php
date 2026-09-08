@@ -6,25 +6,20 @@
  */
 namespace DuckAdmin\DemoUsers\Controller;
 
-use DuckPhp\Core\App;
 use DuckPhp\Foundation\SingletonTrait;
 use DuckPhp\GlobalUser\UserServiceInterface;
-
+use DuckPhp\GlobalUser\UserSessionInterface;
 use DuckAdmin\DemoUsers\Business\UserBusiness;
-use DuckAdmin\DemoUsers\System\UserLoginServiceInterface;
-use DuckAdmin\DemoUsers\System\UserLoginSessionInterface;
 
 class AppAction
 {
     use SingletonTrait;
-    public function localService(): UserServiceInterface
+    public function service(): UserServiceInterface
     {
         return UserBusiness::_();
     }
-    ///////////
-    public function getSession()
+    public function session(): UserSessionInterface
     {
-        //: UserLoginSessionInterface
         return Session::_();
     }
 }

@@ -21,19 +21,19 @@ class DemoUsersApp extends DuckPhp
         'duckcoverage_test_lister' => [TestLister::class ,'GetTestOrderList'],
         'error_404' => '_sys/error_404',
         'error_500' => '_sys/error_500',
-        'user_view_file_header' => '_sys/inc-head',
-        'user_view_file_footer' => '_sys/inc-foot',
-
 
         'user_provider' => GlobalUser::class,
 
-        'user_callback_for_local_service' => [AppAction::class, 'localService'],
-        'user_callback_for_login_session' => [AppAction::class, 'getSession'],
+        'user_callback_for_local_service' => [AppAction::class, 'service'],
+        'user_callback_for_login_session' => [AppAction::class, 'session'],
 
-        'user_url_home' => 'Home/index',
+        'user_view_file_header' => '_sys/inc-head',
+        'user_view_file_footer' => '_sys/inc-foot',
+
+        'user_url_register' => 'index',
         'user_url_login' => 'index',
         'user_url_logout' => 'logout',
-        'user_url_regist' => 'index',
+        'user_url_home' => 'Home/index',
 
         'demo_users' => [
         ],

@@ -58,7 +58,7 @@ class UserBusiness implements UserServiceInterface
 
         $user = [
             'id'=>$id+1,
-            'username'=>$username,
+            'name'=>$username,
         ];
         Helper::FireGlobalEvent(Helper::$EVENT_LOGINED, $user);
         return $user;
