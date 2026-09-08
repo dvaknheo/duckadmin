@@ -6,6 +6,7 @@
 namespace DuckAdmin\DemoUsers\System;
 
 use DuckPhp\Foundation\SingletonTrait;
+use DuckPhp\Foundation\Controller\Helper;
 
 
 class TestLister
@@ -25,17 +26,31 @@ CALL DuckAdmin\DemoUsers\Business\UserBusiness@canAccess user_id=&class=&method=
 CALL DuckAdmin\DemoUsers\Business\UserBusiness@log user_id=&string=&type=&ext=
 CALL DuckAdmin\DemoUsers\Business\UserBusiness@batchGetUsernames ids=
 CALL DuckAdmin\DemoUsers\Business\UserBusiness@login post=
+
+
 EOT;
 
         $list = <<<EOT
 #PHASE_BEGIN
 WEB index
-WEB logout
+WEB index username=t1&password=bad1
+WEB index username=t1&password=123456
+WEB index
 WEB Home/index
+SETWEB _ {static}@checkUser _ _
+WEB index
+WEB logout
 #PHASE_END
 
 EOT;
+        $list = str_replace('{static}', static::class, $list);
         return $list;
+    }
+    public function checkUser()
+    {
+        file_put_contents(__FILE__ .'.log',DATE(DATE_ATOM));
+        Helper::User()->data();
+        return;
     }
 
 }

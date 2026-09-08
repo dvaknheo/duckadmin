@@ -5,7 +5,6 @@
  */
 namespace DuckAdmin\DemoUsers\Business;
 
-use DuckPhp\Core\App;
 use DuckPhp\Foundation\SingletonTrait;
 use DuckPhp\Foundation\Business\Helper;
 use DuckPhp\GlobalUser\UserServiceInterface;
@@ -29,24 +28,18 @@ class UserBusiness implements UserServiceInterface
     public function batchGetUsernames(array $ids): array
     {
         $ret = [];
-        foreach ($this->getUserList() as $id => $user) {
+        $user_array = App::_()->options['demo_users'];
+        $usernames = \array_keys($user_array);
+
+        foreach ($usernames as $i => $name) {
+            $id = $i+1;
             if (in_array((int)$id, array_map('intval', $ids), true)) {
-                $ret[$id] = (string)($user['username'] ?? '');
+                $ret[$id] = $name;
             }
         }
         return $ret;
     }
     /////////////
-
-    /**
-     * 预设用户列表(下标 0 空占位,用户 id = 数组下标,禁止 id=0)
-     * @return array<int, array<string, mixed>>
-     */
-    protected function getUserList(): array
-    {
-        return (array)(App::_()->options['demo_usersx'] ?? []);
-    }
-
     public function login(array $post): ?array
     {
         Helper::FireGlobalEvent(Helper::$EVENT_LOGINING);
@@ -54,14 +47,14 @@ class UserBusiness implements UserServiceInterface
         $username = (string)($post['username']??'');
         $password = (string)($post['password']??'');
 
-        $user_array = App::_()->options['demo_users'];
+        $user_array = Helper::AppOptions('demo_users', []);
         
         $usernames = \array_keys($user_array);
         $passwords = \array_values($user_array);
         $id = \array_search($username, $usernames, true);
-        Helper::BusinessThrowOn($id === false, "没有这个用户名");
-        Helper::BusinessThrowOn(empty($passwords[$id]), "用户被禁用");
-        Helper::BusinessThrowOn($password !== $passwords[$id], "密码错误");
+        Helper::ThrowOn($id === false, "没有这个用户名");
+        Helper::ThrowOn(empty($passwords[$id]), "用户被禁用");
+        Helper::ThrowOn($password !== $passwords[$id], "密码错误");
 
         $user = [
             'id'=>$id+1,
@@ -73,11 +66,10 @@ class UserBusiness implements UserServiceInterface
     public function register(array $post)
     {
         $user = [];
-        Helper::BusinessThrowOn(true, "尚未实现");
-
-        Helper::FireGlobalEvent(Helper::$EVENT_LOGINING);
-        Helper::FireGlobalEvent(Helper::$EVENT_LOGINED, $user);
-        return $user;
+        Helper::ThrowOn(true, "尚未实现");
+        // Helper::FireGlobalEvent(Helper::$EVENT_LOGINING);
+        // Helper::FireGlobalEvent(Helper::$EVENT_LOGINED, $user);
+        return $user;   // @codeCoverageIgnore
     }
 
 }
