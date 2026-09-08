@@ -5,10 +5,7 @@
  */
 namespace DuckAdminDemo\System;
 
-use DuckPhp\Core\App;
 use DuckPhp\Foundation\SingletonTrait;
-use DuckPhp\Foundation\Helper;
-use DuckAdmin\User\System\UserApp;
 
 class TestLister
 {
@@ -22,7 +19,7 @@ class TestLister
     {
         $list = <<<EOT
 #PHASE_BEGIN
-COMMENT XXX
+COMMENT DuckAdminTests;
 #INCLUDE_CHILD DuckAdmin\Admin\System\AdminApp
 #INCLUDE_CHILD DuckAdmin\DemoUsers\System\DemoUsersApp
 #INCLUDE_CHILD DuckAdmin\SingleAdmin\System\SingleAdminApp

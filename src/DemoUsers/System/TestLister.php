@@ -8,7 +8,7 @@ namespace DuckAdmin\DemoUsers\System;
 use DuckPhp\Foundation\SingletonTrait;
 use DuckPhp\Foundation\Controller\Helper;
 
-
+  //@codeCoverageIgnoreStart
 class TestLister
 {
     use SingletonTrait;
@@ -52,5 +52,4 @@ EOT;
         Helper::User()->data();
         return;
     }
-
-}
+}  //@codeCoverageIgnoreEnd

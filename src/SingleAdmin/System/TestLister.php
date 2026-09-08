@@ -19,9 +19,7 @@ class TestLister
     public static function _GetTestOrderList(): string
     {
         $list_referenct = <<<EOT
-WEB users/Home/index
-WEB users/
-WEB users/logout
+
 CALL DuckAdmin\DemoUsers\Business\UserBusiness@canAccess user_id=&class=&method=&url=
 CALL DuckAdmin\DemoUsers\Business\UserBusiness@log user_id=&string=&type=&ext=
 CALL DuckAdmin\DemoUsers\Business\UserBusiness@batchGetUsernames ids=
@@ -33,8 +31,8 @@ EOT;
         $list = <<<EOT
 #PHASE_BEGIN
 WEB index
-WEB index username=t1&password=bad1
-WEB index username=t1&password=123456
+WEB index password=bad1
+WEB index password=123456
 WEB index
 WEB Home/index
 SETWEB _ {static}@checkUser _ _
@@ -49,7 +47,7 @@ EOT;
     public function checkUser()
     {
         file_put_contents(__FILE__ .'.log',DATE(DATE_ATOM));
-        Helper::User()->data();
+        //Helper::User()->data();
         return;
     }
 

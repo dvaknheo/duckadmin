@@ -56,7 +56,7 @@ class DemoApp extends DuckPhp
 
             \DuckAdmin\SingleAdmin\System\SingleAdminApp::class => [
                 'controller_url_prefix' => 'single/',
-                'duckcoverage_test_lister' => null,
+                //'duckcoverage_test_lister' => null,
                 //'admin_provider' => null,   // 关闭:admin_provider 各 admin 系统不能同时使用
             ],
 //*/

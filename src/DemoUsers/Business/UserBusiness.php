@@ -7,6 +7,7 @@ namespace DuckAdmin\DemoUsers\Business;
 
 use DuckPhp\Foundation\SingletonTrait;
 use DuckPhp\Foundation\Business\Helper;
+use DuckPhp\GlobalUser\GlobalUser;
 use DuckPhp\GlobalUser\UserServiceInterface;
 
 class UserBusiness implements UserServiceInterface
@@ -42,7 +43,7 @@ class UserBusiness implements UserServiceInterface
     /////////////
     public function login(array $post): ?array
     {
-        Helper::FireGlobalEvent(Helper::$EVENT_LOGINING);
+        Helper::FireGlobalEvent(GlobalUser::EVENT_SERVICE_USER_LOGINING, $post);
         
         $username = (string)($post['username']??'');
         $password = (string)($post['password']??'');
@@ -60,20 +61,18 @@ class UserBusiness implements UserServiceInterface
             'id'=>$id+1,
             'name'=>$username,
         ];
-        Helper::FireGlobalEvent(Helper::$EVENT_LOGINED, $user);
+        Helper::FireGlobalEvent(GlobalUser::EVENT_SERVICE_USER_LOGINED, $user);
         return $user;
     }
     public function logout($id)
     {
-        // do nothing.
+        Helper::FireGlobalEvent(GlobalUser::EVENT_SERVICE_USER_LOGOUTING, $id);
+        //only fire event
+        Helper::FireGlobalEvent(GlobalUser::EVENT_SERVICE_USER_LOGOUTED, $id);
     }
     public function register(array $post)
     {
-        $user = [];
-        Helper::ThrowOn(true, "尚未实现");
-        // Helper::FireGlobalEvent(Helper::$EVENT_LOGINING);
-        // Helper::FireGlobalEvent(Helper::$EVENT_LOGINED, $user);
-        return $user;   // @codeCoverageIgnore
+        //override do nothing, not fire event
     }
 
 }
