@@ -20,8 +20,6 @@ class DemoUsersApp extends DuckPhp
         'name' => 'DemoUsers',
         'installed' => true,
         'duckcoverage_test_lister' => [TestLister::class ,'GetTestOrderList'],
-        'error_404' => '_sys/error_404',
-        'error_500' => '_sys/error_500',
 
         'user_provider' => GlobalUser::class,
 

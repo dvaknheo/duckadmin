@@ -79,7 +79,7 @@ class DemoApp extends DuckPhp
     {
         parent::onPrepare();
         if(class_exists(\DuckCoverage\DuckCoverage::class)){
-            $this->options['duckcoverage_path_src'] = realpath(__DIR__ . '/../../') . '/src/';
+            $this->options['duckcoverage_path_src'] = realpath(__DIR__ . '/../../') . '/src/DemoUsers/';
             \DuckCoverage\DuckCoverage::Prepare([]);
         }
     }

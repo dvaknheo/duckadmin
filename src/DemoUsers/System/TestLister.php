@@ -41,9 +41,6 @@ SETWEB _ _ {phase}!{static}@moreTest2 _
 WEB Home/index
 WEB logout
 
-CALL {static}@testView
-CALL {static}::GetTestOrderList
-
 #PHASE_END
 
 EOT;
@@ -51,10 +48,7 @@ EOT;
         $list = str_replace('{phase}', App::Phase(), $list);
         return $list;
     }
-    public function testView()
-    {
-        \DuckPhp\Core\View::Render('_sys/error_404', []);
-    }
+
     public function moreTest2()
     {
         try {
