@@ -63,6 +63,10 @@ class UserBusiness implements UserServiceInterface
         Helper::FireGlobalEvent(Helper::$EVENT_LOGINED, $user);
         return $user;
     }
+    public function logout($id)
+    {
+        // do nothing.
+    }
     public function register(array $post)
     {
         $user = [];
