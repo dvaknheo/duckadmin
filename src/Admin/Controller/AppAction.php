@@ -55,29 +55,16 @@ class AppAction
         return [];
     }
     ////////////////////////////////////////
-    public function id($check_login = true):int
-    {
-        $ret = Session::_()->getUserId() ?? 0;
-        Helper::ControllerThrowOn( $check_login && !$ret, "No Login1", -1, UserException::class);
-        return $ret;
-            
-    }
-    //@override
-    public function name($check_login = true):string
-    {
-        $ret = Session::_()->getUsername() ?? 0;
-        Helper::ControllerThrowOn( $check_login && !$ret, "No Login2", -2, UserException::class);
-        return $ret;
-    }
-    public function data()
-    {
-        return Session::_()->getCurrentUser();
-    }
     //@override
     public function localService()
     {
         return AdminBusiness::_();
     }
+    public function session()
+    {
+        return Session::_();
+    }
+
     //@override
     public function addExtViewData(array $input): array
     {

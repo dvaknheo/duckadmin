@@ -58,10 +58,9 @@ class AdminApp extends DuckPhp
         'admin_url_logout' => 'logout',
 
         //页眉页脚
-        'admin_callback_for_id' =>      [AppAction::class,'id'],
-        'admin_callback_for_name' =>    [AppAction::class,'name'],
-        'admin_callback_for_data' =>    [AppAction::class,'data'],
         'admin_callback_for_local_service' => [AppAction::class,'localService'],
+        'admin_callback_for_session' => [AppAction::class,'session'],
+
         'admin_callback_for_add_ext_view_data' => [AppAction::class,'addExtViewData'],
     ];
   
