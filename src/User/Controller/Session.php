@@ -6,6 +6,7 @@
 namespace DuckAdmin\User\Controller;
 
 use DuckPhp\Foundation\SessionTrait;
+use DuckPhp\Foundation\Controller\UserSessionTrait;
 
 /**
  * Session 本质上和 Model 一样不做逻辑运算，不抛异常
@@ -13,21 +14,7 @@ use DuckPhp\Foundation\SessionTrait;
 class Session 
 {
     use SessionTrait;
-
-    /////////////////////////////////////
-    public function getCurrentUser()
-    {
-        $ret = $this->get('user',[]);
-        return $ret;
-    }
-    public function setCurrentUser($user)
-    {
-        $this->set('user',$user);
-    }
-    public function unsetCurrentUser()
-    {
-        $this->set('user',[]);
-    }
+    use UserSessionTrait;
 
     ////////////////////////////////////////////////////////////////////////
     public function csrfToken()

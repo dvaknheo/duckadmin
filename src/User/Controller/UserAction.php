@@ -5,9 +5,6 @@
  */
 namespace DuckAdmin\User\Controller;
 
-use DuckPhp\GlobalUser\UserActionInterface;
-use DuckPhp\Core\App;
-
 use DuckAdmin\User\Business\UserBusiness;
 
 class UserAction extends Base

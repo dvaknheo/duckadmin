@@ -25,7 +25,10 @@ class UserBusiness
     {
         return;
     }
-    
+    public function batchGetUsernames($ids)
+    {
+        return UserModel::_()->batchGetUsernames($ids);
+    } 
     public function register($form)
     {
         Helper::FireGlobalEvent("regist",$form);
@@ -67,6 +70,10 @@ class UserBusiness
         Helper::FireGlobalEvent("logined",$form);
         return $user;
     }
+    public function logout($id)
+    {
+        //do nothing.
+    }
     public function changePassword($uid, $password, $new_password)
     {
         Helper::BusinessThrowOn($new_password === '', "空密码");
@@ -79,13 +86,5 @@ class UserBusiness
         Helper::BusinessThrowOn(!$flag, "旧密码错误");
         
         UserModel::_()->updatePassword($uid, $new_password);
-    }
-    public function batchGetUsernames($ids)
-    {
-        return UserModel::_()->batchGetUsernames($ids);
-    }
-    public function getUserList()
-    {
-        //
     }
 }

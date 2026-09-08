@@ -5,10 +5,6 @@
  */
 namespace DuckAdmin\User\Controller;
 
-use DuckPhp\Core\App;
-use DuckAdmin\User\Business\UserBusiness;
-use DuckAdmin\User\Business\InstallBusiness;
-
 class MainController
 {
     /**
@@ -41,7 +37,7 @@ class MainController
         $data['csrf_field'] = Helper::_()->csrfField();
         $data['name'] = __h(Helper::POST('name', ''));
 
-        Helper::Show(get_defined_vars(), 'register');
+        Helper::Show($data, 'register');
     }
     public function login()
     {
