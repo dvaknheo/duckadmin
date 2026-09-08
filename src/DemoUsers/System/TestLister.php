@@ -6,9 +6,10 @@
 namespace DuckAdmin\DemoUsers\System;
 
 use DuckPhp\Foundation\SingletonTrait;
+use DuckPhp\Core\App;
 use DuckPhp\Foundation\Controller\Helper;
 
-  //@codeCoverageIgnoreStart
+//@codeCoverageIgnoreStart
 class TestLister
 {
     use SingletonTrait;
@@ -36,20 +37,36 @@ WEB index
 WEB index username=t1&password=bad1
 WEB index username=t1&password=123456
 WEB index
+SETWEB _ _ {phase}!{static}@moreTest2 _
 WEB Home/index
-SETWEB _ {static}@checkUser _ _
-WEB index
 WEB logout
+
+CALL {static}@testView
+CALL {static}::GetTestOrderList
+
 #PHASE_END
 
 EOT;
         $list = str_replace('{static}', static::class, $list);
+        $list = str_replace('{phase}', App::Phase(), $list);
         return $list;
     }
-    public function checkUser()
+    public function testView()
     {
-        file_put_contents(__FILE__ .'.log',DATE(DATE_ATOM));
-        Helper::User()->data();
-        return;
+        \DuckPhp\Core\View::Render('_sys/error_404', []);
     }
-}  //@codeCoverageIgnoreEnd
+    public function moreTest2()
+    {
+        try {
+
+            \DuckAdmin\DemoUsers\Business\UserBusiness::_()->register([]);
+            \DuckAdmin\DemoUsers\Business\UserBusiness::_()->log(0, '');
+            \DuckAdmin\DemoUsers\Business\UserBusiness::_()->batchGetUsernames([1,2]);
+            
+        } catch (\Throwable $ex) {
+            file_put_contents(__FILE__.'.error.log',$ex->getMessage().PHP_EOL.$ex->getTraceAsString().PHP_EOL,FILE_APPEND);
+        }
+        return;
+
+    }
+}//@codeCoverageIgnoreEnd

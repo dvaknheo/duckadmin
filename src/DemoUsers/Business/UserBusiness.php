@@ -18,9 +18,6 @@ class UserBusiness implements UserServiceInterface
     {
         return true;
     }
-    /**
-     * @param string $user_id
-     */
     public function log($user_id, string $string, ?string $type = null, array $ext = [])
     {
         return;
@@ -29,7 +26,7 @@ class UserBusiness implements UserServiceInterface
     public function batchGetUsernames(array $ids): array
     {
         $ret = [];
-        $user_array = App::_()->options['demo_users'];
+        $user_array = Helper::AppOptions('demo_users', []);
         $usernames = \array_keys($user_array);
 
         foreach ($usernames as $i => $name) {
