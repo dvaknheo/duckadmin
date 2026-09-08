@@ -9,7 +9,7 @@ namespace DuckAdmin\SingleAdmin\Controller;
 use DuckPhp\Foundation\SingletonTrait;
 use DuckPhp\GlobalAdmin\AdminServiceInterface;
 
-use DuckAdmin\SingleAdmin\Business\AdminService;
+use DuckAdmin\SingleAdmin\Business\AdminBusiness;
 
 class AdminAction
 {
@@ -17,7 +17,7 @@ class AdminAction
 
     public function localService(): AdminServiceInterface
     {
-        return AdminService::_();
+        return AdminBusiness::_();
     }
     public function session()
     {

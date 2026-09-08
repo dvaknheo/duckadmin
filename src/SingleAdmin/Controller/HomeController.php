@@ -6,6 +6,7 @@
 namespace DuckAdmin\SingleAdmin\Controller;
 
 use DuckPhp\Foundation\Controller\AdminControllerBase;
+use DuckPhp\Foundation\Controller\Helper;
 
 class HomeController extends AdminControllerBase
 {

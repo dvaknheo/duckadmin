@@ -5,7 +5,7 @@
  */
 namespace DuckAdmin\SingleAdmin\Controller;
 
-use DuckPhp\Core\App;
+use DuckPhp\Foundation\Controller\Helper;
 
 class MainController
 {
