@@ -12,12 +12,6 @@ class HomeController extends AdminControllerBase
     public function index()
     {
         $data = [];
-        try{
-            Helper::Show($data, 'home');
-        }catch(\Throwable $ex){
-            echo "<pre>\n";
-            echo $ex;
-            echo "</pre>\n";
-        }
+        Helper::Show($data, 'home');
     }
 }

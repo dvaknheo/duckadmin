@@ -17,7 +17,7 @@ class MainController
         // POST 处理登录
         if (Helper::IsPost()) {
             try{
-                $user = Helper::User()->login(Helper::POST());
+                Helper::User()->login(Helper::POST());
                 return;
             }catch(\Exception $ex){
                 $data['error'] = $ex->getMessage();

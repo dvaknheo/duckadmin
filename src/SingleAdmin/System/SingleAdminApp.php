@@ -25,10 +25,8 @@ class SingleAdminApp extends DuckPhp
         // 保留 duckphp 的 GlobalAdmin,由 AdminAction 提供 admin_callback_* 实现
         'admin_provider' => GlobalAdmin::class,
 
-        'admin_callback_for_id' =>      [AdminAction::class, 'id'],
-        'admin_callback_for_name' =>    [AdminAction::class, 'name'],
-        'admin_callback_for_data' =>    [AdminAction::class, 'data'],
         'admin_callback_for_local_service' => [AdminAction::class, 'localService'],
+        'admin_callback_for_session' => [AdminAction::class, 'session'],
 
         'admin_url_home' => 'Home/index',
         'admin_url_login' => 'index',
@@ -41,11 +39,6 @@ class SingleAdminApp extends DuckPhp
         'error_404' => '_sys/error_404',
         'error_500' => '_sys/error_500',
     ];
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     //@override
     protected function onInited(): void
     {
