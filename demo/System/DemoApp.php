@@ -27,7 +27,7 @@ class DemoApp extends DuckPhp
                 'controller_url_prefix' => 'admin/',
                 'controller_resource_prefix' => 'res/',
                 'admin_provider' => null,   // 关闭:admin_provider 各 admin 系统不能同时使用
-                'duckcoverage_test_lister' => null, //[TestLister::class ,'GetTestList'],
+                //'duckcoverage_test_lister' => null, //[TestLister::class ,'GetTestList'],
             ],
 //*/
 //*
@@ -79,29 +79,12 @@ class DemoApp extends DuckPhp
     {
         parent::onPrepare();
         if(class_exists(\DuckCoverage\DuckCoverage::class)){
-            $this->options['duckcoverage_path_src'] = realpath(__DIR__ . '/../../') . '/src/DemoUsers/';
+            $this->options['duckcoverage_path_src'] = realpath(__DIR__ . '/../../') . '/src/SingleAdmin/';
             \DuckCoverage\DuckCoverage::Prepare([]);
         }
     }
     protected function onInited():void
     {
-        foreach($this->options['app'] as $app => $default) {
-            $this->_ChildCall($app,function()use($app){
-                //echo $app; echo PHP_EOL;
-                // $str = \DuckCoverage\DuckCoverage::_()->genTestListOfAll();
-                // $name = basename(str_replace("\\","/",$app));
-                // file_put_contents(__DIR__."/{$name}.txt",$str);
-                
-            });
 
-        }
-    }
-    public function _ChildCall($child_app, $callback, ...$args)
-    {
-        $last_Phase = App::Phase();
-        App::_()->toThisChild($child_app);
-        $ret = ($callback)(...$args);
-        App::Phase($last_Phase);
-        return $ret;
     }
 }

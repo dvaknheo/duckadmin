@@ -6,11 +6,13 @@
 namespace DuckAdmin\SingleAdmin\Controller;
 
 use DuckPhp\Foundation\Controller\Helper;
+use DuckAdmin\SingleAdmin\Business\AdminBusiness;
 
 class MainController
 {
     public function index()
     {
+
         $data = [];
         // 已登录直接去主页
         if (Helper::AdminId(false)) {
@@ -19,6 +21,7 @@ class MainController
         }
         // POST 处理登录
         if (Helper::IsPost()) {
+            var_dump("ISPOST");
             try{
                 Helper::Admin()->login(Helper::POST());
                 return;

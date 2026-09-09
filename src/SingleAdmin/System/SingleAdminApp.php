@@ -17,12 +17,9 @@ class SingleAdminApp extends DuckPhp
         'path' => __DIR__ . '/../',
         'namespace' => "DuckAdmin\\SingleAdmin",
         'name' => 'SingleAdmin',
-
-        // 超级管理员登录密码(无数据库)
-        'single_admin_password' => '123456',
         'installed' =>true,
-        'use_admin_view'=>true,
-        // 保留 duckphp 的 GlobalAdmin,由 AdminAction 提供 admin_callback_* 实现
+
+
         'admin_provider' => GlobalAdmin::class,
 
         'admin_callback_for_local_service' => [AdminAction::class, 'localService'],
@@ -35,13 +32,17 @@ class SingleAdminApp extends DuckPhp
         'admin_view_file_header' => '_sys/inc-head',
         'admin_view_file_footer' => '_sys/inc-foot',
 
-        // 错误页面
-        'error_404' => '_sys/error_404',
-        'error_500' => '_sys/error_500',
+        'duckcoverage_test_lister' => [TestLister::class ,'GetTestOrderList'],
+
+        'single_admin_password' => '',
     ];
     //@override
     protected function onInited(): void
     {
         parent::onInited();
     }
+    public function _OnDefaultException($ex): void  //@codeCoverageIgnore
+    {
+        var_dump($ex);exit; //@codeCoverageIgnore
+    } //@codeCoverageIgnore
 }
