@@ -5,6 +5,7 @@
  */
 namespace DuckAdmin\SingleAdmin\System;
 
+use DuckPhp\Core\App;
 use DuckPhp\Foundation\SingletonTrait;
 use DuckPhp\Foundation\Controller\Helper;
 
@@ -38,10 +39,18 @@ WEB Home/index
 SETWEB _ {static}@checkUser _ _
 WEB index
 WEB logout
+
+#BUSINESS AdminBusiness@log admin_id=1&string=abc
+#BUSINESS AdminBusiness@isSuper admin_id=1
+
 #PHASE_END
 
 EOT;
+
         $list = str_replace('{static}', static::class, $list);
+        $list = str_replace('{phase}', App::Phase(), $list);
+        $list = str_replace('#BUSINESS ', 'CALL '. App::Phase().'!'.App::_()->options['namespace']."\\Business\\",$list);
+
         return $list;
     }
     public function checkUser()
