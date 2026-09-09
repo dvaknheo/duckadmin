@@ -9,7 +9,7 @@ use DuckPhp\Core\App;
 use DuckPhp\Foundation\SingletonTrait;
 use DuckPhp\Foundation\Controller\Helper;
 
-
+//@codeCoverageIgnoreStart
 class TestLister
 {
     use SingletonTrait;
@@ -60,4 +60,4 @@ EOT;
         return;
     }
 
-}
+}//@codeCoverageIgnoreEnd

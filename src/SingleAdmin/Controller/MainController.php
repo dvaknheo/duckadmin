@@ -21,7 +21,6 @@ class MainController
         }
         // POST 处理登录
         if (Helper::IsPost()) {
-            var_dump("ISPOST");
             try{
                 Helper::Admin()->login(Helper::POST());
                 return;

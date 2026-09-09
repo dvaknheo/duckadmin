@@ -34,7 +34,7 @@ class DemoApp extends DuckPhp
             \DuckAdmin\DemoUsers\System\DemoUsersApp::class => [
                 'controller_url_prefix' => 'users/',
                 'is_debug'=>true,
-                //'duckcoverage_test_lister' => null,
+                'duckcoverage_test_lister' => null,
                 //'user_provider' => null,
                 'demo_users'=>[
                     't1'=>'123456',
@@ -56,6 +56,8 @@ class DemoApp extends DuckPhp
 
             \DuckAdmin\SingleAdmin\System\SingleAdminApp::class => [
                 'controller_url_prefix' => 'single/',
+                'single_admin_password' => '123456',
+
                 //'duckcoverage_test_lister' => null,
                 //'admin_provider' => null,   // 关闭:admin_provider 各 admin 系统不能同时使用
             ],
