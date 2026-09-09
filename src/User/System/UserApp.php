@@ -31,9 +31,8 @@ class UserApp extends DuckPhp
         'session_prefix' => 'duckuser_',  // Session 前缀
         
         /////////////////
-        'user_provider' => GlobalUserEx::class,
+        'user_provider' => GlobalUser::class,
         'user_callback_for_local_service' =>  [UserAction::class,'service'],
-        'user_callback_for_login_service' => [UserAction::class,'service'],
         'user_callback_for_login_session' => [UserAction::class,'session'],
 
         'user_url_home' => 'Home/index',
@@ -44,6 +43,6 @@ class UserApp extends DuckPhp
         'user_view_file_footer' => '_sys/inc-foot',
         ///////////////////
 
-        'duckcoverage_test_lister'=> [FullTestLister::class ,'GetTestList'],
+        'duckcoverage_test_lister'=> [TestLister::class ,'GetTestList'],
     ];
 }
