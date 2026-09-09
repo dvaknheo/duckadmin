@@ -19,7 +19,15 @@ class AdminBusiness implements AdminServiceInterface
         return true;
     }
 
-    public function log($admin_id, string $string, ?string $type = null, array $ext = [])
+    /**
+     * Summary of log
+     * @param mixed $admin_id
+     * @param string $str
+     * @param mixed $type
+     * @param array $ext
+     * @return void
+     */
+    public function log($admin_id, string $str, ?string $type = null, array $ext = []) //@codeCoverageIgnore
     {
         return;
     }

@@ -20,7 +20,7 @@ class DemoApp extends DuckPhp
 
         'duckcoverage_test_lister'=> [TestLister::class ,'GetTestList'],
         'duckcoverage_web_base_url' => 'http://admin.duckphp-local.com/',
-
+        'duckcoverage_report_direct ' => false,
         'app' => [
 //*
             \DuckAdmin\Admin\System\AdminApp::class => [

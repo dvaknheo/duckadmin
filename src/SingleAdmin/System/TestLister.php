@@ -22,7 +22,7 @@ class TestLister
         $list_referenct = <<<EOT
 
 CALL DuckAdmin\DemoUsers\Business\UserBusiness@canAccess user_id=&class=&method=&url=
-CALL DuckAdmin\DemoUsers\Business\UserBusiness@log user_id=&string=&type=&ext=
+CALL DuckAdmin\DemoUsers\Business\UserBusiness@log user_id=&str=abc&type=&ext=
 CALL DuckAdmin\DemoUsers\Business\UserBusiness@batchGetUsernames ids=
 CALL DuckAdmin\DemoUsers\Business\UserBusiness@login post=
 
@@ -36,11 +36,10 @@ WEB index password=bad1
 WEB index password=123456
 WEB index
 WEB Home/index
-SETWEB _ {static}@checkUser _ _
 WEB index
 WEB logout
 
-#BUSINESS AdminBusiness@log admin_id=1&string=abc
+#BUSINESS AdminBusiness@log admin_id=1&str=abc
 #BUSINESS AdminBusiness@isSuper admin_id=1
 
 #PHASE_END
@@ -55,7 +54,6 @@ EOT;
     }
     public function checkUser()
     {
-        file_put_contents(__FILE__ .'.log',DATE(DATE_ATOM));
         //Helper::User()->data();
         return;
     }
