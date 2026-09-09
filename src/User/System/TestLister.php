@@ -29,7 +29,8 @@ class TestLister
 }
 /*
 // 首先，我们要搞安装系统
-我们从注册登录
+我们从注册登录 安装开始
+WEB /fulluser/install driver=sqlite&database%5Bfile%5D=runtime%2Ft1.db&database%5Bhost%5D=127.0.0.1&database%5Bport%5D=&database%5Bdbname%5D=&database%5Busername%5D=&database%5Bpassword%5D=&action=install
 
 $list = <<<EOT
 COMMENT tests for x

@@ -34,7 +34,7 @@ class DemoApp extends DuckPhp
             \DuckAdmin\DemoUsers\System\DemoUsersApp::class => [
                 'controller_url_prefix' => 'users/',
                 'is_debug'=>true,
-                'duckcoverage_test_lister' => null,
+                //'duckcoverage_test_lister' => null,
                 //'user_provider' => null,
                 'demo_users'=>[
                     't1'=>'123456',
@@ -64,8 +64,8 @@ class DemoApp extends DuckPhp
 //*/
 //*
             \DuckAdmin\User\System\UserApp::class => [
-                'controller_url_prefix' => 'tuser/',             // 访问路径
-                'duckcoverage_test_lister' => null,
+                'controller_url_prefix' => 'fulluser/',             // 访问路径
+                //'duckcoverage_test_lister' => null,
                 'is_debug'=>true,
                 'controller_resource_prefix' => 'res/',    // 资源文件前缀
                 'user_provider' => null,   // 关闭:user_provider 各用户系统不能同时使用
@@ -81,7 +81,7 @@ class DemoApp extends DuckPhp
     {
         parent::onPrepare();
         if(class_exists(\DuckCoverage\DuckCoverage::class)){
-            $this->options['duckcoverage_path_src'] = realpath(__DIR__ . '/../../') . '/src/SingleAdmin/';
+            $this->options['duckcoverage_path_src'] = realpath(__DIR__ . '/../../') . '/src/User/';
             \DuckCoverage\DuckCoverage::Prepare([]);
         }
     }

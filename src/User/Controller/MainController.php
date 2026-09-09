@@ -7,13 +7,21 @@ namespace DuckAdmin\User\Controller;
 
 class MainController
 {
+    public function __construct()
+    {
+        $this->initController();
+    }
+    protected function initController()
+    {
+        Helper::checkInstall();
+    }
     /**
      * DuckUser 安装：GET 展示环境自检与安装按钮；POST 执行安装
      */
     public function index()
     {
         $data =[];
-        $data['url_reg'] = Helper::User()->urlForRegist();
+        $data['url_reg'] = Helper::User()->urlForRegister();
         $data['url_login'] = Helper::User()->urlForLogin();
         
         Helper::Show($data, 'main');
@@ -21,7 +29,7 @@ class MainController
     public function register()
     {
         $data = [];
-        $data['url_register'] = Helper::User()->urlForRegist();
+        $data['url_register'] = Helper::User()->urlForRegister();
 
         if (!Helper::IsPOST()) {
             $data['csrf_field'] = Helper::_()->csrfField();

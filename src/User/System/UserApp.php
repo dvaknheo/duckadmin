@@ -23,6 +23,7 @@ class UserApp extends DuckPhp
         'ext' => [
             RouteHookWebInstaller::class => true,
         ],
+        'web_installer_use_redis' => false,
         'web_installer_use_database' => true,
         'web_installer_database_drivers' => ['sqlite' => true],
         'web_installer_view' => 'install',
