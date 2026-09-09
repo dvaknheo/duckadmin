@@ -27,11 +27,6 @@ class UserApp extends DuckPhp
         'web_installer_database_drivers' => ['sqlite' => true],
         'web_installer_view' => 'install',
 
-        'exception_reporter' => ExceptionReporter::class,
-        'exception_for_project'  => ProjectException::class,
-        'exception_for_business'  => BusinessException::class,
-        'exception_for_controller'  => ControllerException::class,
-        
         //'table_prefix' => '',   // 表前缀
         'session_prefix' => 'duckuser_',  // Session 前缀
         
