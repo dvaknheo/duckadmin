@@ -28,7 +28,7 @@ class TestLister
 
 }
 /*
-
+// 首先，我们要搞安装系统
 我们从注册登录
 
 $list = <<<EOT

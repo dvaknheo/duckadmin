@@ -29,6 +29,7 @@ class MainController
             return;
         }
         try {
+            Helper::ThrowOn(empty(Helper::AppOptions('user_provider')), "本用户系统已经关闭");
             Helper::User()->register(Helper::Post());
             return;
         } catch (\Exception $ex) {
@@ -50,6 +51,7 @@ class MainController
             return;
         }
         try {
+            Helper::ThrowOn(empty(Helper::AppOptions('user_provider')), "本用户系统已经关闭");
             Helper::User()->login(Helper::POST());
             //$back_url = Helper::GET('b','');
             return;
@@ -64,6 +66,10 @@ class MainController
     }
     public function logout()
     {
+        if (empty(Helper::AppOptions('user_provider'))) {
+            Helper::Show302(Helper::User()->urlForHome());
+            return;
+        }
         Helper::User()->logout();
     }
 }

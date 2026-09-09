@@ -13,44 +13,29 @@ class MainController
     }
     public function login()
     {
-        if (Helper::SERVER('REQUEST_METHOD') === 'POST') {
-            return $this->doLogin();
-        }
-        
-        //TODO GET 已登录则跳转首页
-        //Helper::Show302(__url(''));
-        Helper::Show(get_defined_vars(), 'admin/login');
+        $data = [];
+        if (Helper::IsPost()) {
+            try{
+                Helper::ThrowOn(empty(Helper::AppOptions('admin_provider')), "本登录系统已经关闭");
+
+                $username = Helper::POST('username', '');
+                $password = Helper::POST('password', '');
+                Helper::ThrowOn((empty($username) || empty($password)), '请输入用户名和密码');
+
+                Helper::Admin()->login(Helper::POST());
+                return;
+            }catch(\Exception $ex) {
+                $data['error'] = $ex->getMessage();
+            }
+        }        
+        Helper::Show($data, 'admin/login');
     }
-    
-    /**
-     * 处理登录 POST
-     */
-    private function doLogin()
-    {
-        $username = Helper::POST('username', '');
-        $password = Helper::POST('password', '');
-        
-        if (empty($username) || empty($password)) {
-            Helper::Show(['error' => '请输入用户名和密码'], 'admin/login');
-            return;
-        }
-        
-        $result = AuthBusiness::_()->verify($username, $password);
-        
-        if ($result['success']) {
-            Session::_()->setLogin($result['user_id'], $username, $result['realname']);
-            Helper::Show302(__url(''));
-        } else {
-            Helper::Show(['error' => $result['message']], 'admin/login');
-        }
-    }
-    /**
-     * 退出登录
-     */
     public function logout()
     {
-        //AdminAction
-        Session::_()->logout();
-        Helper::Show302(__url('login/login'));
+        if (empty(Helper::AppOptions('admin_provider'))) {
+            Helper::Show302(Helper::Admin()->urlForHome());
+            return;
+        }
+        Helper::Admin()->logout();
     }
 }
