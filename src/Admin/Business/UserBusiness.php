@@ -4,7 +4,6 @@
  */
 namespace DuckAdmin\Admin\Business;
 
-use DuckAdmin\Admin\Controller\Session;
 use DuckAdmin\Admin\Model\AdminUserModel;
 use DuckAdmin\Admin\Model\RoleModel;
 
@@ -15,7 +14,7 @@ class UserBusiness extends Base
      */
     public function getList(int $page, int $pageSize, string $search = ''): array
     {
-        $admin_id = (int)Session::_()->getUserId();
+        $admin_id = $this->getCurrentAdminId();
         $roleIds = RoleBusiness::_()->getManageableRoleIds($admin_id);
         return AdminUserModel::_()->getPageList($page, $pageSize, $search, $roleIds);
     }
@@ -43,7 +42,7 @@ class UserBusiness extends Base
         }
         
         // 职位范围校验:目标职位必须是当前管理员可管理的子职位
-        $admin_id = (int)Session::_()->getUserId();
+        $admin_id = $this->getCurrentAdminId();
         foreach ($roleIds as $rid) {
             if (!RoleBusiness::_()->canManageRole($admin_id, (int)$rid)) {
                 return ['success' => false, 'message' => '目标职位不在你的管理范围内'];
@@ -72,7 +71,7 @@ class UserBusiness extends Base
         }
         
         // 职位范围校验:目标职位必须是当前管理员可管理的子职位
-        $admin_id = (int)Session::_()->getUserId();
+        $admin_id = $this->getCurrentAdminId();
         foreach ($roleIds as $rid) {
             if (!RoleBusiness::_()->canManageRole($admin_id, (int)$rid)) {
                 return ['success' => false, 'message' => '目标职位不在你的管理范围内'];

@@ -6,7 +6,13 @@ namespace DuckAdmin\Admin\Business;
 
 use DuckPhp\Foundation\SingletonTrait;
 
+use DuckAdmin\Admin\Controller\Session;
+
 class Base
 {
     use SingletonTrait;
+    public function getCurrentAdminId()
+    {
+        return (int)Session::_()->getCurrentAdminId();
+    }
 }

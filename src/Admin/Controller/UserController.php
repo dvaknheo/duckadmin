@@ -62,7 +62,7 @@ class UserController extends Base
         if ($result['success']) {
             Helper::Show302(__url('user/index'));
             return;
-        } else {
+        }
         $admin_id = (int)Session::_()->getUserId();
         $data['error'] = $result['message'];
         $data['title'] = '新增人员';
