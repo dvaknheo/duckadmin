@@ -30,7 +30,7 @@ class MainController
                 $password = Helper::POST('password', '');
                 Helper::ThrowOn((empty($username) || empty($password)), '请输入用户名和密码');
 
-                Helper::Admin()->login(Helper::POST());
+                AdminAction::_()->login(Helper::POST());
                 return;
             }catch(\Exception $ex) {
                 $data['error'] = $ex->getMessage();
@@ -40,10 +40,6 @@ class MainController
     }
     public function logout()
     {
-        if (empty(Helper::AppOptions('admin_provider'))) {
-            Helper::Show302(Helper::Admin()->urlForHome());
-            return;
-        }
-        Helper::Admin()->logout();
+        AdminAction::_()->logout();
     }
 }

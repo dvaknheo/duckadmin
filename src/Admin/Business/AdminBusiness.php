@@ -8,6 +8,7 @@ namespace DuckAdmin\Admin\Business;
 use DuckAdmin\Admin\Model\AdminUserModel;
 use DuckAdmin\Admin\Model\PermissionModel;
 use DuckAdmin\Admin\Model\RoleModel;
+use DuckPhp\GlobalAdmin\GlobalAdmin;
 
 class AdminBusiness extends Base
 {
@@ -89,7 +90,7 @@ class AdminBusiness extends Base
     }
     public function login($post)
     {
-        //Helper::FireGlobalEvent()
+        Helper::FireGlobalEvent(GlobalAdmin::EVENT_SERVICE_ADMIN_LOGINING, $post);
         $username = $post['username'];
         $password = $post['password'];
         $admin = AdminUserModel::_()->getByUsername($username);
@@ -106,14 +107,18 @@ class AdminBusiness extends Base
         ];
         
 
-        //Helper::FireGlobalEvent();
+        Helper::FireGlobalEvent(GlobalAdmin::EVENT_SERVICE_ADMIN_LOGINED, $ret);
         return $ret;
         
     }
-    public function logout($user_id)
+    public function logout($admin_id)
     {
-        //Helper::FireGlobalEvent();
-        //Helper::FireGlobalEvent();
+        Helper::FireGlobalEvent(GlobalAdmin::EVENT_SERVICE_ADMIN_LOGOUTING, $admin_id);
+        Helper::FireGlobalEvent(GlobalAdmin::EVENT_SERVICE_ADMIN_LOGOUTED, $admin_id);
         return;
+    }
+    public function loadMenus($admin_id)
+    {
+        return PermissionModel::_()->getUserMenus($admin_id);
     }
 }

@@ -5,18 +5,9 @@
  */
 namespace DuckAdmin\Admin\Controller;
 
-use DuckAdmin\Admin\Model\PermissionModel;
 use DuckPhp\Foundation\Controller\AdminControllerBase;
 
 class Base extends AdminControllerBase
 {
-    /**
-     * 加载菜单(按当前管理员权限过滤,查 admin_permissions 组树)
-     */
-    // protected function loadMenus(): array
-    // {
-    //     $admin_id = (int)Helper::AdminId(false);
-    //     return PermissionModel::_()->getUserMenus($admin_id);
-    // }
 
 }

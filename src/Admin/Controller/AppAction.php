@@ -7,7 +7,6 @@ namespace DuckAdmin\Admin\Controller;
 
 use DuckAdmin\Admin\Business\AdminBusiness;
 use DuckPhp\Foundation\SingletonTrait;
-use DuckAdmin\Admin\Model\PermissionModel;
 
 class AppAction
 {
@@ -73,7 +72,7 @@ class AppAction
         $admin = Session::_()->getCurrentAdmin();
         $input['current_user'] = $admin;
 
-        $input['menus'] = PermissionModel::_()->getUserMenus(Helper::AdminId(false));
+        $input['menus'] = AdminBusiness::_()->loadMenus(Session::_()->getCurrentAdminId());
         
         return $input;
     }
