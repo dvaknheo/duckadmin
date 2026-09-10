@@ -34,10 +34,10 @@ class UserApp extends DuckPhp
         /////////////////
         'user_provider' => GlobalUser::class,
         'user_callback_for_local_service' =>  [UserAction::class,'service'],
-        'user_callback_for_login_session' => [UserAction::class,'session'],
+        'user_callback_for_session' => [UserAction::class,'session'],
 
         'user_url_home' => 'Home/index',
-        'user_url_regist' => 'register',
+        'user_url_register' => 'register',
         'user_url_login' => 'login',
         'user_url_logout' => 'logout',
         'user_view_file_header' => '_sys/inc-head',

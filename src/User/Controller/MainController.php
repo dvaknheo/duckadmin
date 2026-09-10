@@ -15,9 +15,6 @@ class MainController
     {
         Helper::checkInstall();
     }
-    /**
-     * DuckUser 安装：GET 展示环境自检与安装按钮；POST 执行安装
-     */
     public function index()
     {
         $data =[];
@@ -31,17 +28,14 @@ class MainController
         $data = [];
         $data['url_register'] = Helper::User()->urlForRegister();
 
-        if (!Helper::IsPOST()) {
-            $data['csrf_field'] = Helper::_()->csrfField();
-            Helper::Show($data, 'register');
-            return;
-        }
-        try {
+        if (Helper::IsPOST()) {
+            try {
             Helper::ThrowOn(empty(Helper::AppOptions('user_provider')), "本用户系统已经关闭");
             Helper::User()->register(Helper::Post());
             return;
-        } catch (\Exception $ex) {
-            $data['error'] = $ex->getMessage();
+            } catch (\Exception $ex) {
+                $data['error'] = $ex->getMessage();
+            }
         }
         $data['csrf_field'] = Helper::_()->csrfField();
         $data['name'] = __h(Helper::POST('name', ''));
@@ -51,24 +45,19 @@ class MainController
     public function login()
     {
         $data = [];
-        if (!Helper::IsPOST()) {
-            $data['csrf_field'] = Helper::_()->csrfField();
-            $data['url_login'] = Helper::User()->urlForLogin();
-            $data['back_url'] =Helper::GET('b','');
-            Helper::Show($data,'login');
-            return;
+        if (Helper::IsPOST()) {
+            try {
+                Helper::ThrowOn(empty(Helper::AppOptions('user_provider')), "本用户系统已经关闭");
+                Helper::User()->login(Helper::POST());
+                return;
+            } catch (\Exception $ex) {
+                $data['error'] = $ex->getMessage();
+            }
         }
-        try {
-            Helper::ThrowOn(empty(Helper::AppOptions('user_provider')), "本用户系统已经关闭");
-            Helper::User()->login(Helper::POST());
-            //$back_url = Helper::GET('b','');
-            return;
-        } catch (\Exception $ex) {
-            $data['error'] = $ex->getMessage();
-        }
-
+        $data['url_login'] = Helper::User()->urlForLogin();
         $data['csrf_field'] = Helper::_()->csrfField();
         $data['name'] = __h(Helper::POST('name', ''));
+        $data['back_url'] =Helper::GET('b','');
 
         Helper::Show($data, 'login');
     }

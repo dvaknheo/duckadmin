@@ -1,36 +1,79 @@
 <?php declare(strict_types=1);
-/**
- * DuckAdmin DemoUsers - 预设用户系统
- * 不使用数据库、不使用安装系统;登录限定 demo_users 数组中的用户
- */
-namespace DuckAdmin\DemoUsers\System;
+namespace DuckAdmin\User\System;
 
 use DuckPhp\Foundation\SingletonTrait;
-
-
 class TestLister
 {
     use SingletonTrait;
-    public static function GetTestOrderList(): string
+    public static function GetTestList(): string
     {
-        return static::_()->_GetTestOrderList();
+        return static::_()->_GetTestList();
     }
     public static function GetShortTestOrderList(): string
     {
         return static::_()->_GetShortTestOrderList();
     }
 
-    public static function _GetTestOrderList(): string
+    public static function _GetTestList(): string
     {
-        $list = '';
+        $list_referenct = <<<EOT
+WEB users/Home/index
+WEB users/
+WEB users/logout
+UserBusiness UserBusiness@canAccess user_id=&class=&method=&url=
+CALL DuckAdmin\DemoUsers\Business\UserBusiness@log user_id=&string=&type=&ext=
+CALL DuckAdmin\DemoUsers\Business\UserBusiness@batchGetUsernames ids=
+CALL DuckAdmin\DemoUsers\Business\UserBusiness@login post=
+[m1 2026-09-10_02_31_40.211]MAN-WEB /fulluser/
+[m1 2026-09-10_02_31_41.292]MAN-WEB /fulluser/install
+[m1 2026-09-10_02_32_02.648]MAN-WEB /fulluser/install driver=sqlite&database%5Bfile%5D={db}&database%5Bhost%5D=127.0.0.1&database%5Bport%5D=&database%5Bdbname%5D=&database%5Busername%5D=&database%5Bpassword%5D=&action=install
+[m1 2026-09-10_02_32_05.952]MAN-WEB /fulluser/
+[m1 2026-09-10_02_32_09.635]MAN-WEB /fulluser/register
+[m1 2026-09-10_02_32_17.227]MAN-WEB /fulluser/register _token=Nos6FHBP3NNTC39H4JAXuOUY6fGFepgPYgiO7S7l&name=t1&password=123456&password_confirm=123456
+[m1 2026-09-10_02_32_18.575]MAN-WEB /fulluser/Home/index
+[m1 2026-09-10_02_32_56.475]MAN-WEB /fulluser/Home/index
+
+
+EOT;
+
+        $list = <<<EOT
+#PHASE_BEGIN
+CALL {static}@beginTest
+WEB install driver=sqlite&database%5Bfile%5D={db}&database%5Bhost%5D=127.0.0.1&database%5Bport%5D=&database%5Bdbname%5D=&database%5Busername%5D=&database%5Bpassword%5D=&action=install
+WEB index
+WEB register
+WEB register _token=Nos6FHBP3NNTC39H4JAXuOUY6fGFepgPYgiO7S7l&name=t1&password=123456&password_confirm=123456
+WEB register _token=Nos6FHBP3NNTC39H4JAXuOUY6fGFepgPYgiO7S7l&name=t1&password=123456&password_confirm=123456
+WEB login _token=Nos6FHBP3NNTC39H4JAXuOUY6fGFepgPYgiO7S7l&name=t1&password=123456&password_confirm=123456
+
+CALL {static}@endTest
+#PHASE_END
+
+EOT;
+        $file = UserApp::_()->getRuntimePath() .'DuckCoverage/DuckCoverage.watching.txt';
+        $watch_name = file_get_contents($file);
+        $db = "runtime/DuckCoverage/{$watch_name}.db";
+
+        $list = str_replace('{db}', $db, $list);
+        $list = str_replace('{static}', static::class, $list);
+        $list = str_replace('{phase}', UserApp::Phase(), $list);
+
         return $list;
+    }
+    public function beginTest()
+    {
+        
+        //我们要删除旧测试数据库文件
+    }
+    public function endTest()
+    {
+        //我们要删除旧测试数据库文件
     }
 
 }
 /*
 // 首先，我们要搞安装系统
 我们从注册登录 安装开始
-WEB /fulluser/install driver=sqlite&database%5Bfile%5D=runtime%2Ft1.db&database%5Bhost%5D=127.0.0.1&database%5Bport%5D=&database%5Bdbname%5D=&database%5Busername%5D=&database%5Bpassword%5D=&action=install
 
 $list = <<<EOT
 COMMENT tests for x

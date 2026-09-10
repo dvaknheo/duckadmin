@@ -15,11 +15,12 @@ class Session
 {
     use SessionTrait;
     use UserSessionTrait;
+    //@override
 
     ////////////////////////////////////////////////////////////////////////
     public function csrfToken()
     {
-        $token = $this->get('_token');
+        $token = $this->get('token');
         if (!isset($token)) {
             $token = $this->randomString(40);
             $this->set('_token', $token);

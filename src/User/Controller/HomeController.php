@@ -12,8 +12,9 @@ class HomeController extends UserControllerBase
 {
     public function index()
     {
-        $url_logout = Helper::User()->urlForLogout();
-        Helper::User()->show([],'');
+        $data = [];
+        $data['url_logout'] = Helper::User()->urlForLogout();
+        Helper::Show($data, 'Home/index'); //TODO 默认模式
     }
     public function password()
     {
@@ -33,6 +34,6 @@ class HomeController extends UserControllerBase
                 $error = $ex->getMessage();
             }
         }
-        Helper::Show(get_defined_vars());
+        Helper::Show(get_defined_vars(), 'Home/password');
     }
 }

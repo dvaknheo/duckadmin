@@ -21,9 +21,9 @@ class UserBusiness
     {
         return;
     }
-    public function checkAccess(int $id, string $class, string $method, ?string $url = null)
+    public function canAccess(int $id, string $class, string $method, ?string $url = null)
     {
-        return;
+        return true;
     }
     public function batchGetUsernames($ids)
     {
@@ -50,6 +50,7 @@ class UserBusiness
         
         $user = UserModel::_()->getUserById($uid);
         $user = UserModel::_()->unloadPassword($user);
+        $user['name'] = $user['username'];
         Helper::FireGlobalEvent("registed",$user);
         return $user;
     }
@@ -67,6 +68,7 @@ class UserBusiness
         Helper::BusinessThrowOn(!$flag, "密码错误");
         
         $user = UserModel::_()->unloadPassword($user);
+        $user['name'] = $user['username'];
         Helper::FireGlobalEvent("logined",$form);
         return $user;
     }

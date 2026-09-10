@@ -34,8 +34,8 @@ class DemoApp extends DuckPhp
             \DuckAdmin\DemoUsers\System\DemoUsersApp::class => [
                 'controller_url_prefix' => 'users/',
                 'is_debug'=>true,
-                //'duckcoverage_test_lister' => null,
-                //'user_provider' => null,
+                'duckcoverage_test_lister' => null,
+                'user_provider' => null,
                 'demo_users'=>[
                     't1'=>'123456',
                     't2'=>'123456',
@@ -68,7 +68,7 @@ class DemoApp extends DuckPhp
                 //'duckcoverage_test_lister' => null,
                 'is_debug'=>true,
                 'controller_resource_prefix' => 'res/',    // 资源文件前缀
-                'user_provider' => null,   // 关闭:user_provider 各用户系统不能同时使用
+                //'user_provider' => null,   // 关闭:user_provider 各用户系统不能同时使用
             ],
 //*/
         ],
