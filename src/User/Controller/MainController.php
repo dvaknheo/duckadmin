@@ -5,6 +5,8 @@
  */
 namespace DuckAdmin\User\Controller;
 
+use DuckPhp\GlobalUser\GlobalUser;
+
 class MainController
 {
     public function __construct()

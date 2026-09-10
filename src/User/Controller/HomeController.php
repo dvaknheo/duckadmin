@@ -14,11 +14,12 @@ class HomeController extends UserControllerBase
     {
         $data = [];
         $data['url_logout'] = Helper::User()->urlForLogout();
-        Helper::Show($data, 'Home/index'); //TODO 默认模式
+        Helper::Show($data);
     }
     public function password()
     {
-        $error = '';
+        $data =[];
+        $data['error'] = '';
         if (Helper::POST()) {
             try {
                 $uid = Helper::UserId();
@@ -29,11 +30,11 @@ class HomeController extends UserControllerBase
                 Helper::ControllerThrowOn($new_pass !== $confirm_pass, '重复密码不一致');
                 UserBusiness::_()->changePassword($uid, $old_pass, $new_pass);
                 
-                $error = "密码修改完毕"; 
+                $data['error'] = "密码修改完毕"; 
             } catch (\Exception $ex) {
-                $error = $ex->getMessage();
+                $data['error'] = $ex->getMessage();
             }
         }
-        Helper::Show(get_defined_vars(), 'Home/password');
+        Helper::Show($data);
     }
 }
