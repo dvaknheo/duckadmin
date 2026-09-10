@@ -55,7 +55,7 @@
             <div class="alert alert-danger"><?= __h($error ?? '') ?></div>
         <?php endif; ?>
         
-        <form method="post" action="<?= __url('login/login') ?>">
+        <form method="post" action="<?= __url('login') ?>">
             <div class="mb-3">
                 <label class="form-label">用户名</label>
                 <input type="text" name="username" class="form-control" placeholder="请输入用户名" required autofocus>

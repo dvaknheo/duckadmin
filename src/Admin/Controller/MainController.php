@@ -7,6 +7,14 @@ namespace DuckAdmin\Admin\Controller;
 
 class MainController
 {
+    public function __construct()
+    {
+        $this->initController();
+    }
+    protected function initController()
+    {
+        Helper::checkInstall();
+    }
     public function index()
     {
         Helper::Show([], 'admin/login');

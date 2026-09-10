@@ -26,7 +26,7 @@ class DemoApp extends DuckPhp
             \DuckAdmin\Admin\System\AdminApp::class => [
                 'controller_url_prefix' => 'admin/',
                 'controller_resource_prefix' => 'res/',
-                'admin_provider' => null,   // 关闭:admin_provider 各 admin 系统不能同时使用
+                //'admin_provider' => null,   // 关闭:admin_provider 各 admin 系统不能同时使用
                 //'duckcoverage_test_lister' => null, //[TestLister::class ,'GetTestList'],
             ],
 //*/
@@ -59,7 +59,7 @@ class DemoApp extends DuckPhp
                 'single_admin_password' => '123456',
 
                 //'duckcoverage_test_lister' => null,
-                //'admin_provider' => null,   // 关闭:admin_provider 各 admin 系统不能同时使用
+                'admin_provider' => null,   // 关闭:admin_provider 各 admin 系统不能同时使用
             ],
 //*/
 //*

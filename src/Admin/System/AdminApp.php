@@ -20,7 +20,7 @@ class AdminApp extends DuckPhp
         'name' => 'DuckAdmin',
         
         'data_file_enable' => true,
-
+        'installed' => false,
         // 错误页面
         'error_404' => '_sys/error_404',
         'error_500' => '_sys/error_500',
@@ -30,6 +30,7 @@ class AdminApp extends DuckPhp
         ],
 
         'web_installer_use_database' => true,
+        'web_installer_use_redis' => false,
         'web_installer_database_drivers' => ['sqlite' => true],
         'web_installer_view' => 'install',
         'web_installer_view_block_custom' => 'install_custom',
@@ -56,8 +57,8 @@ class AdminApp extends DuckPhp
         'admin_url_home' => 'Dashboard/index',
         'admin_url_login' => 'login',
         'admin_url_logout' => 'logout',
-
-        //页眉页脚
+        'admin_view_file_header' => 'admin/header',
+        'admin_view_file_footer' => 'admin/footer',
         'admin_callback_for_local_service' => [AppAction::class,'localService'],
         'admin_callback_for_session' => [AppAction::class,'session'],
 

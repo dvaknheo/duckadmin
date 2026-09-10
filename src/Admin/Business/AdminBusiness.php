@@ -11,7 +11,7 @@ use DuckAdmin\Admin\Model\RoleModel;
 
 class AdminBusiness extends Base
 {
-    public function checkAccess($admin_id, $class = null, $method = null, ?string $url = null): bool
+    public function canAccess($admin_id, $class = null, $method = null, ?string $url = null): bool
     {
         if (empty($url)) {
             return true;
@@ -33,6 +33,12 @@ class AdminBusiness extends Base
         $admin_name = (string)($post['admin_name'] ?? '');
         $password = (string)($post['admin_password'] ?? '');
         $password_confirm = (string)($post['admin_password_confirm'] ?? '');
+
+        // 这里应该用 Validator;
+        // Helper::ThrowOn(!$user, '请填写管理员账号');
+        // Helper::ThrowOn(!$user, '请填写管理员账号');
+        // Helper::ThrowOn(!$user, '请填写管理员账号');
+        // Helper::ThrowOn(!$user, '请填写管理员账号');
 
         if ($admin_name === '') {
             throw new \Exception('请填写管理员账号');
@@ -80,5 +86,34 @@ class AdminBusiness extends Base
         PermissionModel::_()->grantAllPermissions($super_role_id);
 
         return true;
+    }
+    public function login($post)
+    {
+        //Helper::FireGlobalEvent()
+        $username = $post['username'];
+        $password = $post['password'];
+        $admin = AdminUserModel::_()->getByUsername($username);
+        Helper::ThrowOn(!$admin, "用户名或密码错误1");
+        Helper::ThrowOn($admin['status'] == 0, "该账号已被禁用");
+        Helper::ThrowOn(!password_verify($password, $admin['password']), '用户名或密码错误2:');
+        
+        // 更新最后登录时间
+        AdminUserModel::_()->updateLoginTime((int)$admin['id']);
+        $ret = [
+            'id' => (int)$admin['id'],
+            'name' => $username,
+            'realname' => $admin['realname'] ?? $username,
+        ];
+        
+
+        //Helper::FireGlobalEvent();
+        return $ret;
+        
+    }
+    public function logout($user_id)
+    {
+        //Helper::FireGlobalEvent();
+        //Helper::FireGlobalEvent();
+        return;
     }
 }

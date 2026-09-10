@@ -24,6 +24,6 @@ class Base extends AdminControllerBase
      */
     protected function render(string $view, array $data = []): void
     {
-        Helper::Admin()->show($data, $view);
+        Helper::Show($data, $view);
     }
 }
