@@ -66,12 +66,6 @@ class AppAction
         return Session::_();
     }
 
-    protected function loadMenus(): array
-    {
-        $admin_id = (int)Helper::AdminId(false);
-        return PermissionModel::_()->getUserMenus($admin_id);
-    }
-
     //@override
     public function addExtViewData(array $input): array
     {
@@ -79,7 +73,7 @@ class AppAction
         $admin = Session::_()->getCurrentAdmin();
         $input['current_user'] = $admin;
 
-        $input['menus'] = $this->loadMenus();
+        $input['menus'] = PermissionModel::_()->getUserMenus(Helper::AdminId(false));
         
         return $input;
     }

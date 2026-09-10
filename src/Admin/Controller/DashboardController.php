@@ -11,6 +11,7 @@ class DashboardController extends Base
      */
     public function index()
     {
-        $this->render('admin/dashboard');
+        $data = [];
+        Helper::Show($data, 'admin/dashboard');
     }
 }

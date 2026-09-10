@@ -19,11 +19,5 @@ class AdminAction
     public function __construct()
     {
     }
-    
-    protected function loadMenus(): array
-    {
-        $admin_id = (int)Helper::AdminId(false);
-        return PermissionModel::_()->getUserMenus($admin_id); //TODO
-    }
 
 }

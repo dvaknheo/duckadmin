@@ -26,7 +26,7 @@ class UserController extends Base
         $data['title'] = '人员管理';
         $data['current_route'] = 'user';
         
-        $this->render('admin/user_list', $data);
+        Helper::Show($data, 'admin/user_list');
     }
     
     /**
@@ -39,7 +39,7 @@ class UserController extends Base
         $data['title'] = '新增人员';
         $data['current_route'] = 'user';
         $data['roles'] = RoleBusiness::_()->getAllManageable($admin_id);
-        $this->render('admin/user_form', $data);
+        Helper::Show($data, 'admin/user_form');
     }
     
     /**
@@ -61,15 +61,15 @@ class UserController extends Base
         $result = UserBusiness::_()->create($input, $roleIds);
         if ($result['success']) {
             Helper::Show302(__url('user/index'));
+            return;
         } else {
-            $admin_id = (int)Session::_()->getUserId();
-            $data['error'] = $result['message'];
-            $data['title'] = '新增人员';
-            $data['current_route'] = 'user';
-            $data['roles'] = RoleBusiness::_()->getAllManageable($admin_id);
-            $data['input'] = $input;
-            $this->render('admin/user_form', $data);
-        }
+        $admin_id = (int)Session::_()->getUserId();
+        $data['error'] = $result['message'];
+        $data['title'] = '新增人员';
+        $data['current_route'] = 'user';
+        $data['roles'] = RoleBusiness::_()->getAllManageable($admin_id);
+        $data['input'] = $input;
+        Helper::Show($data, 'admin/user_form');
     }
     
     /**
@@ -91,7 +91,7 @@ class UserController extends Base
         $admin_id = (int)Session::_()->getUserId();
         $data['roles'] = RoleBusiness::_()->getAllManageable($admin_id);
         $data['user_role_ids'] = RoleBusiness::_()->getUserRoleIds($id);
-        $this->render('admin/user_form', $data);
+        Helper::Show($data, 'admin/user_form');
     }
     
     /**
@@ -114,16 +114,17 @@ class UserController extends Base
         $result = UserBusiness::_()->update($id, $input, $roleIds);
         if ($result['success']) {
             Helper::Show302(__url('user/index'));
-        } else {
-            $admin_id = (int)Session::_()->getUserId();
-            $data['error'] = $result['message'];
-            $data['user'] = $input + ['id' => $id];
-            $data['title'] = '编辑人员';
-            $data['current_route'] = 'user';
-            $data['roles'] = RoleBusiness::_()->getAllManageable($admin_id);
-            $data['user_role_ids'] = $roleIds;
-            $this->render('admin/user_form', $data);
+            return;
         }
+        $admin_id = (int)Session::_()->getUserId();
+        $data['error'] = $result['message'];
+        $data['user'] = $input + ['id' => $id];
+        $data['title'] = '编辑人员';
+        $data['current_route'] = 'user';
+        $data['roles'] = RoleBusiness::_()->getAllManageable($admin_id);
+        $data['user_role_ids'] = $roleIds;
+        Helper::Show($data, 'admin/user_form');
+        
     }
     
     /**

@@ -25,7 +25,7 @@ class SystemController extends Base
         $data['title'] = '权限和菜单管理';
         $data['current_route'] = 'system';
 
-        $this->render('admin/system_index', $data);
+        Helper::Show($data, 'admin/system_index');
     }
 
     /**
@@ -38,7 +38,7 @@ class SystemController extends Base
         $data['added'] = $added;
         $data['title'] = '一键扫描结果';
         $data['current_route'] = 'system';
-        $this->render('admin/system_scan', $data);
+        Helper::Show($data, 'admin/system_scan');
     }
 
     /**
@@ -49,7 +49,7 @@ class SystemController extends Base
         $data['title'] = '新增菜单';
         $data['current_route'] = 'system';
         $data['permissions'] = PermissionBusiness::_()->getAll();
-        $this->render('admin/system_form', $data);
+        Helper::Show($data, 'admin/system_form');
     }
 
     /**
@@ -68,14 +68,14 @@ class SystemController extends Base
         $result = PermissionBusiness::_()->create($input);
         if ($result['success']) {
             Helper::Show302(__url('system/index'));
-        } else {
-            $data['error'] = $result['message'];
-            $data['title'] = '新增菜单';
-            $data['current_route'] = 'system';
-            $data['input'] = $input;
-            $data['permissions'] = PermissionBusiness::_()->getAll();
-            $this->render('admin/system_form', $data);
+            return;
         }
+        $data['error'] = $result['message'];
+        $data['title'] = '新增菜单';
+        $data['current_route'] = 'system';
+        $data['input'] = $input;
+        $data['permissions'] = PermissionBusiness::_()->getAll();
+        Helper::Show($data, 'admin/system_form');
     }
 
     /**
@@ -94,7 +94,7 @@ class SystemController extends Base
         $data['title'] = '编辑菜单';
         $data['current_route'] = 'system';
         $data['permissions'] = PermissionBusiness::_()->getAll();
-        $this->render('admin/system_form', $data);
+        Helper::Show($data, 'admin/system_form');
     }
 
     /**
@@ -114,14 +114,14 @@ class SystemController extends Base
         $result = PermissionBusiness::_()->update($id, $input);
         if ($result['success']) {
             Helper::Show302(__url('system/index'));
-        } else {
-            $data['error'] = $result['message'];
-            $data['perm'] = $input + ['id' => $id];
-            $data['title'] = '编辑菜单';
-            $data['current_route'] = 'system';
-            $data['permissions'] = PermissionBusiness::_()->getAll();
-            $this->render('admin/system_form', $data);
+            return;
         }
+        $data['error'] = $result['message'];
+        $data['perm'] = $input + ['id' => $id];
+        $data['title'] = '编辑菜单';
+        $data['current_route'] = 'system';
+        $data['permissions'] = PermissionBusiness::_()->getAll();
+        Helper::Show($data, 'admin/system_form');
     }
 
     /**

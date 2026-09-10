@@ -30,7 +30,7 @@ class RoleController extends Base
         $data['title'] = '职位管理';
         $data['current_route'] = 'role';
         
-        $this->render('admin/role_list', $data);
+        Helper::Show($data, 'admin/role_list');
     }
     
     /**
@@ -43,7 +43,7 @@ class RoleController extends Base
         $data['title'] = '新增职位';
         $data['current_route'] = 'role';
         $data['roles'] = RoleBusiness::_()->getAllManageable($admin_id);
-        $this->render('admin/role_form', $data);
+        Helper::Show($data, 'admin/role_form');
     }
     
     /**
@@ -66,7 +66,7 @@ class RoleController extends Base
             $data['current_route'] = 'role';
             $data['input'] = ['name' => $name, 'description' => $description, 'pid' => $pid];
             $data['roles'] = RoleBusiness::_()->getAllManageable($admin_id);
-            $this->render('admin/role_form', $data);
+            Helper::Show($data, 'admin/role_form');
         }
     }
     
@@ -88,7 +88,7 @@ class RoleController extends Base
         $data['current_route'] = 'role';
         $admin_id = (int)Session::_()->getUserId();
         $data['roles'] = RoleBusiness::_()->getAllManageable($admin_id);
-        $this->render('admin/role_form', $data);
+        Helper::Show($data, 'admin/role_form');
     }
     
     /**
@@ -112,7 +112,7 @@ class RoleController extends Base
             $data['title'] = '编辑职位';
             $data['current_route'] = 'role';
             $data['roles'] = RoleBusiness::_()->getAllManageable($admin_id);
-            $this->render('admin/role_form', $data);
+            Helper::Show($data, 'admin/role_form');
         }
     }
     
@@ -140,7 +140,7 @@ class RoleController extends Base
             $data['roles'] = RoleBusiness::_()->getAllManageable($admin_id);
             $data['title'] = '分配权限';
             $data['current_route'] = 'role';
-            $this->render('admin/role_permissions_select', $data);
+            Helper::Show($data, 'admin/role_permissions_select');
             return;
         }
         if (!RoleBusiness::_()->canManageRole($admin_id, $id)) {
@@ -180,7 +180,7 @@ class RoleController extends Base
         $data['title'] = '职位权限分配';
         $data['current_route'] = 'role';
         
-        $this->render('admin/role_permissions', $data);
+        Helper::Show($data, 'admin/role_permissions');
     }
 }
 

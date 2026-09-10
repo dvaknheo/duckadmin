@@ -13,17 +13,10 @@ class Base extends AdminControllerBase
     /**
      * 加载菜单(按当前管理员权限过滤,查 admin_permissions 组树)
      */
-    protected function loadMenus(): array
-    {
-        $admin_id = (int)Helper::AdminId(false);
-        return PermissionModel::_()->getUserMenus($admin_id);
-    }
-    
-    /**
-     * 渲染后台页面
-     */
-    protected function render(string $view, array $data = []): void
-    {
-        Helper::Show($data, $view);
-    }
+    // protected function loadMenus(): array
+    // {
+    //     $admin_id = (int)Helper::AdminId(false);
+    //     return PermissionModel::_()->getUserMenus($admin_id);
+    // }
+
 }
