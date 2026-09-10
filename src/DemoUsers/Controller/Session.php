@@ -5,8 +5,8 @@
 namespace DuckAdmin\DemoUsers\Controller;
 
 use DuckPhp\Foundation\SessionTrait;
-use DuckPhp\Foundation\Controller\UserSessionTrait;
 use DuckPhp\GlobalUser\UserSessionInterface;
+use DuckPhp\GlobalUser\UserSessionTrait;
 
 class Session implements UserSessionInterface
 {

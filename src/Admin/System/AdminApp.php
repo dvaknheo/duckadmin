@@ -60,6 +60,7 @@ class AdminApp extends DuckPhp
         'admin_view_file_header' => 'admin/header',
         'admin_view_file_footer' => 'admin/footer',
         'admin_callback_for_local_service' => [AppAction::class,'localService'],
+        'admin_callback_for_login_service' => [AppAction::class,'localService'],
         'admin_callback_for_session' => [AppAction::class,'session'],
 
         'admin_callback_for_add_ext_view_data' => [AppAction::class,'addExtViewData'],

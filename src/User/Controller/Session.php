@@ -6,7 +6,7 @@
 namespace DuckAdmin\User\Controller;
 
 use DuckPhp\Foundation\SessionTrait;
-use DuckPhp\Foundation\Controller\UserSessionTrait;
+use DuckPhp\GlobalUser\UserSessionTrait;
 
 /**
  * Session 本质上和 Model 一样不做逻辑运算，不抛异常

@@ -25,7 +25,7 @@ class AdminAction
         Helper::FireGlobalEvent(GlobalAdmin::EVENT_ACTION_ADMIN_LOGED, $post);
 
         if (Helper::AppOptions('admin_loginout_auto_redirect')??true) {
-            Helpler::Show302(Helper::Admin()->urlForHome());
+            Helper::Show302(Helper::Admin()->urlForHome());
         }
     }
     public function logout()

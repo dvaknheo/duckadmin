@@ -5,9 +5,10 @@
 namespace DuckAdmin\Admin\Controller;
 
 use DuckPhp\Foundation\SessionTrait;
-use DuckPhp\Foundation\Controller\AdminSessionTrait;
+use DuckPhp\GlobalAdmin\AdminSessionInterface;
+use DuckPhp\GlobalAdmin\AdminSessionTrait;
 
-class Session
+class Session implements AdminSessionInterface
 {
     use SessionTrait;
     use AdminSessionTrait;

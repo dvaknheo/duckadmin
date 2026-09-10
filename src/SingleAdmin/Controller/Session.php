@@ -4,8 +4,8 @@
  */
 namespace DuckAdmin\SingleAdmin\Controller;
 
-use DuckPhp\Foundation\Controller\AdminSessionTrait;
 use DuckPhp\Foundation\SessionTrait;
+use DuckPhp\GlobalAdmin\AdminSessionTrait;
 
 class Session
 {

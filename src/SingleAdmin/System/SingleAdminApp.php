@@ -23,6 +23,7 @@ class SingleAdminApp extends DuckPhp
         'admin_provider' => GlobalAdmin::class,
 
         'admin_callback_for_local_service' => [AdminAction::class, 'localService'],
+        'admin_callback_for_login_service' => [AdminAction::class, 'localService'],
         'admin_callback_for_session' => [AdminAction::class, 'session'],
 
         'admin_url_home' => 'Home/index',

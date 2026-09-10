@@ -24,6 +24,7 @@ class DemoUsersApp extends DuckPhp
         'user_provider' => GlobalUser::class,
 
         'user_callback_for_local_service' => [AppAction::class, 'service'],
+        'user_callback_for_login_service' => [AppAction::class, 'service'],
         'user_callback_for_session' => [AppAction::class, 'session'],
 
         'user_view_file_header' => '_sys/inc-head',

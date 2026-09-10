@@ -98,20 +98,20 @@ class PermissionModel extends Base
         // 目录
         $system_dir = $this->create(['name' => '系统管理', 'url' => '', 'type' => 0, 'parent_id' => 0, 'weight' => 5]);
         // 人员管理(原用户管理)
-        $user_id = $this->create(['name' => '人员管理', 'url' => 'user/index', 'type' => 1, 'parent_id' => $system_dir, 'weight' => 10]);
+        $user_id = $this->create(['name' => '人员管理', 'url' => 'User/index', 'type' => 1, 'parent_id' => $system_dir, 'weight' => 10]);
         foreach (['create', 'edit', 'delete'] as $i => $action) {
-            $this->create(['name' => '人员' . $action, 'url' => 'user/' . $action, 'type' => 2, 'parent_id' => $user_id, 'weight' => 10 + $i + 1]);
+            $this->create(['name' => '人员' . $action, 'url' => 'User/' . $action, 'type' => 2, 'parent_id' => $user_id, 'weight' => 10 + $i + 1]);
         }
         // 职位管理(原角色管理)
-        $role_id = $this->create(['name' => '职位管理', 'url' => 'role/index', 'type' => 1, 'parent_id' => $system_dir, 'weight' => 20]);
+        $role_id = $this->create(['name' => '职位管理', 'url' => 'Role/index', 'type' => 1, 'parent_id' => $system_dir, 'weight' => 20]);
         foreach (['create', 'edit', 'delete'] as $i => $action) {
-            $this->create(['name' => '职位' . $action, 'url' => 'role/' . $action, 'type' => 2, 'parent_id' => $role_id, 'weight' => 20 + $i + 1]);
+            $this->create(['name' => '职位' . $action, 'url' => 'Role/' . $action, 'type' => 2, 'parent_id' => $role_id, 'weight' => 20 + $i + 1]);
         }
-        $this->create(['name' => '分配权限', 'url' => 'role/permissions', 'type' => 1, 'parent_id' => $role_id, 'weight' => 25]);
+        $this->create(['name' => '分配权限', 'url' => 'Role/permissions', 'type' => 1, 'parent_id' => $role_id, 'weight' => 25]);
         // 权限和菜单管理(SystemController,超管专属)
-        $sys_id = $this->create(['name' => '权限和菜单管理', 'url' => 'system/index', 'type' => 1, 'parent_id' => $system_dir, 'weight' => 30]);
+        $sys_id = $this->create(['name' => '权限和菜单管理', 'url' => 'System/index', 'type' => 1, 'parent_id' => $system_dir, 'weight' => 30]);
         foreach (['scan', 'create', 'edit', 'delete'] as $i => $action) {
-            $this->create(['name' => $action === 'scan' ? '一键扫描' : '菜单' . $action, 'url' => 'system/' . $action, 'type' => 2, 'parent_id' => $sys_id, 'weight' => 30 + $i + 1]);
+            $this->create(['name' => $action === 'scan' ? '一键扫描' : '菜单' . $action, 'url' => 'System/' . $action, 'type' => 2, 'parent_id' => $sys_id, 'weight' => 30 + $i + 1]);
         }
     }
 
@@ -294,7 +294,7 @@ class PermissionModel extends Base
         if ($path === '' || $path === 'index' || $path === 'Dashboard/index') {
             return true; // 首页/仪表盘放行
         }
-        if ($path === 'role/permissions') {
+        if ($path === 'Role/permissions') {
             return true; // 分配权限页:访问由 RoleController 内部按职位管理范围控制
         }
         $sql = "SELECT COUNT(*) FROM admin_permissions p
