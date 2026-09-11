@@ -6,7 +6,6 @@
 namespace DuckAdmin\Admin\Controller;
 
 use DuckAdmin\Admin\Business\RoleBusiness;
-use DuckAdmin\Admin\Business\PermissionBusiness;
 
 /**
  * @menu_name 职位管理
@@ -32,7 +31,7 @@ class RoleController extends Base
             'create' => __url('Role/create'),
             'edit' => __url('Role/edit'),
             'delete' => __url('Role/delete'),
-            'permissions' => __url('Role/permissions'),
+            'permissions' => __url('Permission/index'),
         ];
 
         Helper::Show($data, 'Role/role_list');
@@ -131,39 +130,5 @@ class RoleController extends Base
         $id = (int)Helper::GET('id', '0');
         RoleBusiness::_()->delete($id);
         Helper::Show302(__url('Role/index'));
-    }
-
-    /** @action 分配权限 */
-    public function permissions()
-    {
-        $id = (int)Helper::GET('id', '0');
-
-        // 处理提交
-        if (Helper::SERVER('REQUEST_METHOD', '') === 'POST') {
-            $permissionIds = Helper::POST('permission_ids', []);
-            $permissionIds = is_array($permissionIds) ? $permissionIds : [];
-            RoleBusiness::_()->setPermissions($id, $permissionIds);
-            Helper::Show302(__url('Role/index'));
-        }
-
-        $role = RoleBusiness::_()->getById($id);
-        if (!$role) {
-            Helper::Show302(__url('Role/index'));
-            return;
-        }
-
-        // 获取可分配的权限树（超管：全部权限）
-        $permissions = PermissionBusiness::_()->getAll();
-        $data['permissions'] = $permissions;
-        $data['role'] = $role;
-        $data['role_permission_ids'] = RoleBusiness::_()->getRolePermissions($id);
-        $data['title'] = '职位权限分配';
-        $data['current_route'] = 'role';
-        $data['urls'] = [
-            'save' => __url('Role/permissions'),
-            'list' => __url('Role/index'),
-        ];
-
-        Helper::Show($data, 'Role/role_permissions');
     }
 }
