@@ -17,7 +17,7 @@ class MainController
     }
     public function index()
     {
-        Helper::Show([], 'admin/login');
+        Helper::Show([], 'Main/login');
     }
     public function login()
     {
@@ -36,7 +36,7 @@ class MainController
                 $data['error'] = $ex->getMessage();
             }
         }        
-        Helper::Show($data, 'admin/login');
+        Helper::Show($data, 'Main/login');
     }
     public function logout()
     {

@@ -12,7 +12,7 @@ class HomeController extends Base
     public function index()
     {
         $data = [];
-        Helper::Show($data, 'admin/dashboard');
+        Helper::Show($data, 'Home/dashboard');
     }
     public function profile()
     {
