@@ -128,6 +128,7 @@ class AppBusiness extends Base
         Helper::FireGlobalEvent(GlobalAdmin::EVENT_SERVICE_ADMIN_LOGINING, $post);
         $username = $post['username'];
         $password = $post['password'];
+        Helper::ThrowOn((empty($username) || empty($password)), '请输入用户名和密码');
         $admin = AdminModel::_()->getByUsername($username);
         Helper::ThrowOn(!$admin, "用户名或密码错误1");
         Helper::ThrowOn($admin['status'] == 0, "该账号已被禁用");
