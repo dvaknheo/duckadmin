@@ -1,13 +1,11 @@
 <?php declare(strict_types=1);
 /**
- * DuckPhp Admin System - User Business
+ * DuckPhp Admin System - Member Business
+ * 下属人员管理业务（非超管用）
  */
 namespace DuckAdmin\Admin\Business;
 
-use DuckAdmin\Admin\Model\AdminUserModel;
-use DuckAdmin\Admin\Model\RoleModel;
-
-class UserBusiness extends Base
+class MemberBusiness extends Base
 {
     /**
      * 获取人员列表(仅自己及下属:职位在管理范围内)
@@ -104,4 +102,3 @@ class UserBusiness extends Base
         return AdminUserModel::_()->getById($id);
     }
 }
-

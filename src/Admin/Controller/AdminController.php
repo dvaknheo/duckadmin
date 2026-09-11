@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 namespace DuckAdmin\Admin\Controller;
 
-use DuckAdmin\Admin\Business\UserBusiness;
+use DuckAdmin\Admin\Business\AdminBusiness;
 use DuckAdmin\Admin\Business\RoleBusiness;
 
 /**
@@ -16,7 +16,7 @@ class AdminController extends Base
         $search = Helper::GET('search', '');
         $pageSize = 15;
         
-        $data = UserBusiness::_()->getList($page, $pageSize, $search);
+        $data = AdminBusiness::_()->getList($page, $pageSize, $search);
         $data['page'] = $page;
         $data['pageSize'] = $pageSize;
         $data['search'] = $search;
@@ -51,7 +51,7 @@ class AdminController extends Base
         $roleIds = Helper::POST('role_ids', []);
         $roleIds = is_array($roleIds) ? $roleIds : [];
         
-        $result = UserBusiness::_()->create($input, $roleIds);
+        $result = AdminBusiness::_()->create($input, $roleIds);
         if ($result['success']) {
             Helper::Show302(__url('user/index'));
             return;
@@ -69,7 +69,7 @@ class AdminController extends Base
     public function edit()
     {
         $id = (int)Helper::GET('id', '0');
-        $user = UserBusiness::_()->getById($id);
+        $user = AdminBusiness::_()->getById($id);
         if (!$user) {
             Helper::Show302(__url('user/index'));
             return;
@@ -98,7 +98,7 @@ class AdminController extends Base
         $roleIds = Helper::POST('role_ids', []);
         $roleIds = is_array($roleIds) ? $roleIds : [];
         
-        $result = UserBusiness::_()->update($id, $input, $roleIds);
+        $result = AdminBusiness::_()->update($id, $input, $roleIds);
         if ($result['success']) {
             Helper::Show302(__url('user/index'));
             return;
@@ -118,7 +118,7 @@ class AdminController extends Base
     public function delete()
     {
         $id = (int)Helper::GET('id', '0');
-        UserBusiness::_()->delete($id);
+        AdminBusiness::_()->delete($id);
         Helper::Show302(__url('user/index'));
     }
 }
