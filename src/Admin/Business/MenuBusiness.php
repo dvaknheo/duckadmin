@@ -9,11 +9,6 @@ use DuckAdmin\Admin\Model\PermissionModel;
 
 class MenuBusiness extends Base
 {
-    public function getList(int $page, int $pageSize, string $search = ''): array
-    {
-        return PermissionModel::_()->getPageList($page, $pageSize, $search);
-    }
-
     public function create(array $input): array
     {
         if (empty($input['name'])) {
@@ -53,5 +48,37 @@ class MenuBusiness extends Base
     public function scanRoutes(): array
     {
         return PermissionModel::_()->scanRoutes();
+    }
+
+    /**
+     * 获取菜单树（用于后台管理展示）
+     */
+    public function getTree(): array
+    {
+        $all = PermissionModel::_()->getAll();
+        return $this->buildTree($all);
+    }
+
+    /**
+     * 构建树形结构
+     */
+    protected function buildTree(array $items): array
+    {
+        $map = [];
+        $tree = [];
+        foreach ($items as $item) {
+            $item['children'] = [];
+            $map[$item['id']] = $item;
+        }
+        foreach ($map as $id => &$node) {
+            $pid = (int)($node['parent_id'] ?? 0);
+            if ($pid && isset($map[$pid])) {
+                $map[$pid]['children'][] = &$node;
+            } else {
+                $tree[] = &$node;
+            }
+        }
+        unset($node);
+        return $tree;
     }
 }

@@ -11,14 +11,7 @@ class MenuController extends Base
     /** @menu 权限和菜单管理 */
     public function index()
     {
-        $page = max(1, (int)(Helper::GET('page', '1')));
-        $search = Helper::GET('search', '');
-        $pageSize = 15;
-
-        $data = MenuBusiness::_()->getList($page, $pageSize, $search);
-        $data['page'] = $page;
-        $data['pageSize'] = $pageSize;
-        $data['search'] = $search;
+        $data['tree'] = MenuBusiness::_()->getTree();
         $data['title'] = '权限和菜单管理';
         $data['current_route'] = 'system';
 
