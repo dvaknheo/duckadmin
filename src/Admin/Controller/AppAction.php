@@ -5,7 +5,7 @@
  */
 namespace DuckAdmin\Admin\Controller;
 
-use DuckAdmin\Admin\Business\AdminBusiness;
+use DuckAdmin\Admin\Business\AppBusiness;
 use DuckPhp\Foundation\SingletonTrait;
 
 class AppAction
@@ -40,7 +40,7 @@ class AppAction
      */
     public function checkInstall(array $post): array
     {
-        return AdminBusiness::_()->checkInstall($post);
+        return AppBusiness::_()->checkInstall($post);
     }
 
     /**
@@ -51,14 +51,14 @@ class AppAction
      */
     public function doInstall(array $post, array $ext_data = []): array
     {
-        AdminBusiness::_()->install($post);
+        AppBusiness::_()->install($post);
         return [];
     }
     ////////////////////////////////////////
     //@override
     public function localService()
     {
-        return AdminBusiness::_();
+        return AppBusiness::_();
     }
     public function session()
     {
@@ -69,10 +69,8 @@ class AppAction
     public function addExtViewData(array $input): array
     {
         $input['app_name'] = 'Admin System';
-        $admin = Session::_()->getCurrentAdmin();
-        $input['current_user'] = $admin;
-
-        $input['menus'] = AdminBusiness::_()->loadMenus(Session::_()->getCurrentAdminId());
+        $input['current_user'] = Session::_()->getCurrentAdmin();
+        $input['menus'] = AppBusiness::_()->loadMenus(Session::_()->getCurrentAdminId());
         
         return $input;
     }

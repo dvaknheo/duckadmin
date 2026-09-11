@@ -10,7 +10,7 @@ use DuckAdmin\Admin\Model\PermissionModel;
 use DuckAdmin\Admin\Model\RoleModel;
 use DuckPhp\GlobalAdmin\GlobalAdmin;
 
-class AdminBusiness extends Base
+class AppBusiness extends Base
 {
     public function canAccess($admin_id, $class = null, $method = null, ?string $url = null): bool
     {
@@ -35,7 +35,7 @@ class AdminBusiness extends Base
         $password = (string)($post['admin_password'] ?? '');
         $password_confirm = (string)($post['admin_password_confirm'] ?? '');
 
-        // 这里应该用 Validator;
+        //TODO 这里应该用 Validator;
         // Helper::ThrowOn(!$user, '请填写管理员账号');
         // Helper::ThrowOn(!$user, '请填写管理员账号');
         // Helper::ThrowOn(!$user, '请填写管理员账号');
