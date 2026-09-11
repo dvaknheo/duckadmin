@@ -30,13 +30,13 @@ class AdminAction
     }
     public function logout()
     {
-        $admin_id = $this->id(false);
+        $admin_id = Session::_()->getCurrentAdminId();
         Helper::FireGlobalEvent(GlobalAdmin::EVENT_ACTION_ADMIN_LOGOUTING, $admin_id);
         AdminBusiness::_()->logout($admin_id);
         Session::_()->unsetCurrentAdmin();
         Helper::FireGlobalEvent(GlobalAdmin::EVENT_ACTION_ADMIN_LOGOUTED, $admin_id);
         if (Helper::AppOptions('admin_loginout_auto_redirect')??true) {
-            Helpler::Show302(Helper::Admin()->urlForLogin());
+            Helper::Show302(Helper::Admin()->urlForLogin());
         }
     }
 }

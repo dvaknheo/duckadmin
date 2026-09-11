@@ -193,8 +193,8 @@ foreach($__html['script'] ?? [] as $script){
         </a>
         <div class="user-info">
             <span><i class="bi bi-person-circle"></i> <?= __h($current_user['realname'] ?? $current_user['username'] ?? '') ?></span>
-            <a href="<?= __url('login/logout') ?>" onclick="return confirm('确定退出登录？')">
-                <i class="bi bi-box-arrow-right"></i> 退出
+            <a href="<?= __url('logout') ?>" onclick="return confirm('确定退出登录？')">
+                <i class="bi bi-box-arrow-right"></i> 登出
             </a>
         </div>
     </header>
