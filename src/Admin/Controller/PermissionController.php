@@ -19,28 +19,15 @@ class PermissionController extends Base
     public function index()
     {
         $id = (int)Helper::GET('id', '0');
-
-        // 无 id: 先选择职位
-        if ($id <= 0) {
-            $data['roles'] = RoleBusiness::_()->getAll();
-            $data['title'] = '权限分配';
-            $data['urls'] = [
-                'assign' => __url('Permission/index'),
-                'home' => __url('Home/index'),
-            ];
-            Helper::Show($data, 'Permission/select');
-            return;
-        }
-
-        $role = RoleBusiness::_()->getById($id);
-        if (!$role) {
+        $role = $id > 0 ? RoleBusiness::_()->getById($id) : null;
+        if ($id > 0 && !$role) {
             Helper::Show302(__url('Permission/index'));
             return;
         }
-        $isSuper = (int)($role['is_super'] ?? 0) === 1;
+        $isSuper = $role && (int)($role['is_super'] ?? 0) === 1;
 
-        // 处理提交
-        if (Helper::SERVER('REQUEST_METHOD', '') === 'POST') {
+        // 处理提交(超管职位由 Business 层拒绝)
+        if ($role && Helper::SERVER('REQUEST_METHOD', '') === 'POST') {
             $permissionIds = Helper::POST('permission_ids', []);
             $permissionIds = is_array($permissionIds) ? $permissionIds : [];
             $result = RoleBusiness::_()->setPermissions($id, $permissionIds);
@@ -49,19 +36,21 @@ class PermissionController extends Base
             return;
         }
 
-        // 权限树(四级: 分组→目录→菜单/操作);超管默认全选且只读
-        $data['tree'] = MenuBusiness::_()->getTree('all');
+        $data['roles'] = RoleBusiness::_()->getAll();
         $data['role'] = $role;
         $data['is_super'] = $isSuper;
-        $data['role_permission_ids'] = $isSuper
-            ? array_map('intval', array_column(MenuBusiness::_()->getAll(), 'id'))
-            : RoleBusiness::_()->getRolePermissions($id);
+        if ($role) {
+            // 权限树(四级: 分组→目录→菜单/操作);超管默认全选且只读
+            $data['tree'] = MenuBusiness::_()->getTree('all');
+            $data['role_permission_ids'] = $isSuper
+                ? array_map('intval', array_column(MenuBusiness::_()->getAll(), 'id'))
+                : RoleBusiness::_()->getRolePermissions($id);
+        }
         $data['saved'] = Helper::GET('saved', '') === '1';
         $data['error'] = (string)Helper::GET('error', '');
-        $data['title'] = '权限分配 - ' . ($role['name'] ?? '');
+        $data['title'] = '权限分配' . ($role ? ' - ' . $role['name'] : '');
         $data['urls'] = [
-            'save' => __url('Permission/index'),
-            'list' => __url('Permission/index'),
+            'self' => __url('Permission/index'),
         ];
 
         Helper::Show($data, 'Permission/permission_index');
