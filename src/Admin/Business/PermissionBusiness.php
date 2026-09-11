@@ -51,7 +51,7 @@ class PermissionBusiness extends Base
      */
     public function getAssignablePermissionIds(int $adminId): array
     {
-        return PermissionModel::_()->getUserPermissionIds($adminId);
+        return PermissionService::_()->getUserPermissionIds($adminId);
     }
 
     /**

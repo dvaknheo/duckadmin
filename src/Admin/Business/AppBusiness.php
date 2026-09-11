@@ -18,7 +18,7 @@ class AppBusiness extends Base
         if (empty($url)) {
             return true;
         }
-        return PermissionModel::_()->checkUserUrl((int)$admin_id, $url);
+        return PermissionService::_()->checkUserUrl((int)$admin_id, $url);
     }
     public function log($admin_id, string $string, ?string $type = null, array $ext = [])
     {
@@ -120,6 +120,6 @@ class AppBusiness extends Base
     }
     public function loadMenus($admin_id)
     {
-        return PermissionModel::_()->getUserMenus($admin_id);
+        return PermissionService::_()->getUserMenus($admin_id);
     }
 }

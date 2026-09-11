@@ -124,6 +124,66 @@ class PermissionModel extends Base
     }
 
     /**
+     * 获取所有权限ID（供Service层使用）
+     */
+    public function getAllIds(): array
+    {
+        $sql = "SELECT id FROM admin_permissions WHERE deleted_at IS NULL";
+        $rows = $this->fetchAll($sql);
+        return array_column($rows, 'id');
+    }
+
+    /**
+     * 获取用户在角色中拥有的权限ID（供Service层使用）
+     */
+    public function getUserPermissionIdsByRoles(int $userId): array
+    {
+        $sql = "SELECT DISTINCT p.id FROM admin_permissions p
+                INNER JOIN admin_role_permissions rp ON p.id = rp.permission_id
+                INNER JOIN admin_role_users ru ON rp.role_id = ru.role_id
+                WHERE ru.user_id = ? AND p.deleted_at IS NULL";
+        $rows = $this->fetchAll($sql, [$userId]);
+        return array_column($rows, 'id');
+    }
+
+    /**
+     * 获取用户拥有的菜单项（type 0/1）（供Service层使用）
+     */
+    public function getMenuItemsByUser(int $userId): array
+    {
+        $sql = "SELECT DISTINCT p.id, p.name, p.url, p.type, p.parent_id, p.weight
+                FROM admin_permissions p
+                INNER JOIN admin_role_permissions rp ON p.id = rp.permission_id
+                INNER JOIN admin_role_users ru ON rp.role_id = ru.role_id
+                WHERE ru.user_id = ? AND p.deleted_at IS NULL AND p.type IN (0,1)
+                ORDER BY p.weight ASC, p.id ASC";
+        return $this->fetchAll($sql, [$userId]);
+    }
+
+    /**
+     * 获取所有菜单项（type 0/1）（供Service层使用）
+     */
+    public function getAllMenuItems(): array
+    {
+        $sql = "SELECT id, name, url, type, parent_id, weight FROM admin_permissions
+                WHERE deleted_at IS NULL AND type IN (0,1)
+                ORDER BY weight ASC, id ASC";
+        return $this->fetchAll($sql);
+    }
+
+    /**
+     * 检查用户是否有指定URL的权限（供Service层使用）
+     */
+    public function countUserUrlPermissions(int $userId, string $path): int
+    {
+        $sql = "SELECT COUNT(*) FROM admin_permissions p
+                INNER JOIN admin_role_permissions rp ON p.id = rp.permission_id
+                INNER JOIN admin_role_users ru ON rp.role_id = ru.role_id
+                WHERE ru.user_id = ? AND p.deleted_at IS NULL AND p.url = ?";
+        return (int)$this->fetchColumn($sql, [$userId, $path]);
+    }
+
+    /**
      * 读取控制器类 @menu_group 注解作为目录名称
      */
     protected function getMenuGroupFromAnnotation(string $controller): string
@@ -259,87 +319,4 @@ class PermissionModel extends Base
         return $added;
     }
 
-    /**
-     * 用户已拥有的权限 id 集合(超管=全部权限)
-     */
-    public function getUserPermissionIds(int $userId): array
-    {
-        if (RoleUserModel::_()->isSuperRole($userId)) {
-            $sql = "SELECT id FROM admin_permissions WHERE deleted_at IS NULL";
-            $rows = $this->fetchAll($sql);
-        } else {
-            $sql = "SELECT DISTINCT p.id FROM admin_permissions p
-                    INNER JOIN admin_role_permissions rp ON p.id = rp.permission_id
-                    INNER JOIN admin_role_users ru ON rp.role_id = ru.role_id
-                    WHERE ru.user_id = ? AND p.deleted_at IS NULL";
-            $rows = $this->fetchAll($sql, [$userId]);
-        }
-        return array_column($rows, 'id');
-    }
-
-    /**
-     * 用户是否拥有指定 url 的权限(去掉 query 精确匹配;首页/空 url 放行;超管全放行)
-     */
-    public function checkUserUrl(int $userId, string $url): bool
-    {
-        if (RoleUserModel::_()->isSuperRole($userId)) {
-            return true;
-        }
-        $path = (string)(parse_url($url, PHP_URL_PATH) ?: $url);
-        $path = ltrim($path, '/');
-        // 去掉 admin 挂载前缀
-        if (strpos($path, 'admin/') === 0) {
-            $path = substr($path, 6);
-        }
-        if ($path === '' || $path === 'index' || $path === 'Home/index') {
-            return true; // 首页/仪表盘放行
-        }
-        if ($path === 'Role/permissions') {
-            return true; // 分配权限页:访问由 RoleController 内部按职位管理范围控制
-        }
-        $sql = "SELECT COUNT(*) FROM admin_permissions p
-                INNER JOIN admin_role_permissions rp ON p.id = rp.permission_id
-                INNER JOIN admin_role_users ru ON rp.role_id = ru.role_id
-                WHERE ru.user_id = ? AND p.deleted_at IS NULL AND p.url = ?";
-        $count = $this->fetchColumn($sql, [$userId, $path]);
-        return ((int)$count) > 0;
-    }
-
-    /**
-     * 获取用户可见菜单树(type 0/1 按 parent_id 组树)
-     * 超级管理员职位直接返回全部菜单,其余按职位规则过滤
-     */
-    public function getUserMenus(int $userId): array
-    {
-        if (RoleUserModel::_()->isSuperRole($userId)) {
-            $sql = "SELECT id, name, url, type, parent_id, weight FROM admin_permissions
-                    WHERE deleted_at IS NULL AND type IN (0,1)
-                    ORDER BY weight ASC, id ASC";
-            $rows = $this->fetchAll($sql);
-        } else {
-            $sql = "SELECT DISTINCT p.id, p.name, p.url, p.type, p.parent_id, p.weight
-                    FROM admin_permissions p
-                    INNER JOIN admin_role_permissions rp ON p.id = rp.permission_id
-                    INNER JOIN admin_role_users ru ON rp.role_id = ru.role_id
-                    WHERE ru.user_id = ? AND p.deleted_at IS NULL AND p.type IN (0,1)
-                    ORDER BY p.weight ASC, p.id ASC";
-            $rows = $this->fetchAll($sql, [$userId]);
-        }
-        $map = [];
-        foreach ($rows as $row) {
-            $row['children'] = [];
-            $map[$row['id']] = $row;
-        }
-        $tree = [];
-        foreach ($map as $id => &$node) {
-            $pid = (int)$node['parent_id'];
-            if ($pid && isset($map[$pid])) {
-                $map[$pid]['children'][] = &$node;
-            } else {
-                $tree[] = &$node;
-            }
-        }
-        unset($node);
-        return $tree;
-    }
 }
