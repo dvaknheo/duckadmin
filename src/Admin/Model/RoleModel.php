@@ -77,23 +77,6 @@ class RoleModel extends Base
         return true;
     }
 
-    public function getUserRoleIds(int $userId): array
-    {
-        $sql = "SELECT role_id FROM admin_role_users WHERE user_id = ?";
-        $rows = $this->fetchAll($sql, [$userId]);
-        return array_column($rows, 'role_id');
-    }
-
-    public function setUserRoles(int $userId, array $roleIds): void
-    {
-        $sql = "DELETE FROM admin_role_users WHERE user_id = ?";
-        $this->execute($sql, [$userId]);
-        foreach ($roleIds as $roleId) {
-            $sql = "INSERT INTO admin_role_users (user_id, role_id) VALUES (?, ?)";
-            $this->execute($sql, [$userId, (int)$roleId]);
-        }
-    }
-
     /**
      * 插入根职位(超级管理员,pid=0),返回其 role_id
      */
@@ -127,18 +110,6 @@ class RoleModel extends Base
             }
         }
         return $ids;
-    }
-
-    /**
-     * 用户是否拥有超级管理员角色
-     */
-    public function isSuperRole(int $userId): bool
-    {
-        $sql = "SELECT r.id FROM admin_roles r
-                INNER JOIN admin_role_users ru ON r.id = ru.role_id
-                WHERE ru.user_id = ? AND r.deleted_at IS NULL AND r.is_super = 1";
-        $row = $this->fetch($sql, [$userId]);
-        return !empty($row);
     }
 
     /**

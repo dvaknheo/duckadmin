@@ -6,6 +6,7 @@ namespace DuckAdmin\Admin\Business;
 
 use DuckAdmin\Admin\Model\PermissionModel;
 use DuckAdmin\Admin\Model\RoleModel;
+use DuckAdmin\Admin\Model\RoleUserModel;
 
 class RoleBusiness extends Base
 {
@@ -64,7 +65,7 @@ class RoleBusiness extends Base
     
     public function getUserRoleIds(int $userId): array
     {
-        return RoleModel::_()->getUserRoleIds($userId);
+        return RoleUserModel::_()->getUserRoleIds($userId);
     }
 
     /**
@@ -76,7 +77,7 @@ class RoleBusiness extends Base
             return RoleModel::_()->getAllIds();
         }
         $ids = [];
-        foreach (RoleModel::_()->getUserRoleIds($adminId) as $rid) {
+        foreach (RoleUserModel::_()->getUserRoleIds($adminId) as $rid) {
             $ids = array_merge($ids, RoleModel::_()->getSubTreeIds((int)$rid));
         }
         return array_values(array_unique($ids));

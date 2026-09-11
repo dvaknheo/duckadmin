@@ -264,7 +264,7 @@ class PermissionModel extends Base
      */
     public function getUserPermissionIds(int $userId): array
     {
-        if (RoleModel::_()->isSuperRole($userId)) {
+        if (RoleUserModel::_()->isSuperRole($userId)) {
             $sql = "SELECT id FROM admin_permissions WHERE deleted_at IS NULL";
             $rows = $this->fetchAll($sql);
         } else {
@@ -282,7 +282,7 @@ class PermissionModel extends Base
      */
     public function checkUserUrl(int $userId, string $url): bool
     {
-        if (RoleModel::_()->isSuperRole($userId)) {
+        if (RoleUserModel::_()->isSuperRole($userId)) {
             return true;
         }
         $path = (string)(parse_url($url, PHP_URL_PATH) ?: $url);
@@ -311,7 +311,7 @@ class PermissionModel extends Base
      */
     public function getUserMenus(int $userId): array
     {
-        if (RoleModel::_()->isSuperRole($userId)) {
+        if (RoleUserModel::_()->isSuperRole($userId)) {
             $sql = "SELECT id, name, url, type, parent_id, weight FROM admin_permissions
                     WHERE deleted_at IS NULL AND type IN (0,1)
                     ORDER BY weight ASC, id ASC";

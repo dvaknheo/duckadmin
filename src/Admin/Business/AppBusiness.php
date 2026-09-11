@@ -8,6 +8,7 @@ namespace DuckAdmin\Admin\Business;
 use DuckAdmin\Admin\Model\AdminModel;
 use DuckAdmin\Admin\Model\PermissionModel;
 use DuckAdmin\Admin\Model\RoleModel;
+use DuckAdmin\Admin\Model\RoleUserModel;
 use DuckPhp\GlobalAdmin\GlobalAdmin;
 
 class AppBusiness extends Base
@@ -26,7 +27,7 @@ class AppBusiness extends Base
 
     public function isSuper($admin_id): bool
     {
-        return RoleModel::_()->isSuperRole((int)$admin_id);
+        return RoleUserModel::_()->isSuperRole((int)$admin_id);
     }
 
     public function checkInstall(array $post): array
@@ -81,7 +82,7 @@ class AppBusiness extends Base
             'status' => 1,
         ]);
         $admin_id = (int)AdminModel::_()->lastInsertId();
-        RoleModel::_()->setUserRoles($admin_id, [$super_role_id]);
+        RoleUserModel::_()->setUserRoles($admin_id, [$super_role_id]);
 
         // 超级管理员拥有全部权限
         PermissionModel::_()->grantAllPermissions($super_role_id);

@@ -5,6 +5,8 @@
  */
 namespace DuckAdmin\Admin\Business;
 
+use DuckAdmin\Admin\Model\RoleUserModel;
+
 class MemberBusiness extends Base
 {
     /**
@@ -52,7 +54,7 @@ class MemberBusiness extends Base
         
         // 分配角色
         if (!empty($roleIds)) {
-            RoleModel::_()->setUserRoles((int)$userId, $roleIds);
+            RoleUserModel::_()->setUserRoles((int)$userId, $roleIds);
         }
         
         return ['success' => true, 'message' => '创建成功'];
@@ -80,7 +82,7 @@ class MemberBusiness extends Base
         
         // 更新角色
         if (!empty($roleIds)) {
-            RoleModel::_()->setUserRoles($id, $roleIds);
+            RoleUserModel::_()->setUserRoles($id, $roleIds);
         }
         
         return ['success' => true, 'message' => '更新成功'];
