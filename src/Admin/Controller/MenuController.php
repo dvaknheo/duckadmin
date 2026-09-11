@@ -16,9 +16,12 @@ class MenuController extends Base
      */
     public function index()
     {
-        $data['tree'] = MenuBusiness::_()->getTree();
+        $show = Helper::GET('show', 'all'); // all=全部 menu=不看"操作"
+        $show = $show === 'menu' ? 'menu' : 'all';
+
+        $data['tree'] = MenuBusiness::_()->getTree($show);
+        $data['show'] = $show;
         $data['title'] = '权限和菜单管理';
-        $data['current_route'] = 'system';
 
         $data['urls'] = [
             'list' => __url('Menu/index'),
@@ -40,7 +43,6 @@ class MenuController extends Base
         $added = MenuBusiness::_()->scanRoutes();
         $data['added'] = $added;
         $data['title'] = '一键扫描结果';
-        $data['current_route'] = 'system';
         $data['urls'] = [
             'list' => __url('Menu/index'),
         ];
@@ -54,7 +56,6 @@ class MenuController extends Base
     public function create()
     {
         $data['title'] = '新增菜单';
-        $data['current_route'] = 'system';
         $data['permissions'] = MenuBusiness::_()->getAll();
         $data['urls'] = [
             'save' => __url('Menu/save'),
@@ -85,7 +86,6 @@ class MenuController extends Base
         }
         $data['error'] = $result['message'];
         $data['title'] = '新增菜单';
-        $data['current_route'] = 'system';
         $data['input'] = $input;
         $data['permissions'] = MenuBusiness::_()->getAll();
         $data['urls'] = [
@@ -111,7 +111,6 @@ class MenuController extends Base
 
         $data['perm'] = $perm;
         $data['title'] = '编辑菜单';
-        $data['current_route'] = 'system';
         $data['permissions'] = MenuBusiness::_()->getAll();
         $data['urls'] = [
             'update' => __url('Menu/update'),
@@ -144,7 +143,6 @@ class MenuController extends Base
         $data['error'] = $result['message'];
         $data['perm'] = $input + ['id' => $id];
         $data['title'] = '编辑菜单';
-        $data['current_route'] = 'system';
         $data['permissions'] = MenuBusiness::_()->getAll();
         $data['urls'] = [
             'update' => __url('Menu/update'),
@@ -161,7 +159,7 @@ class MenuController extends Base
     public function delete()
     {
         $id = (int)Helper::GET('id', '0');
-        MenuBusiness::_()->delete($id);
-        Helper::Show302(__url('Menu/index'));
+        $ok = MenuBusiness::_()->delete($id);
+        Helper::Show302(__url('Menu/index') . ($ok ? '' : '?error=has_children'));
     }
 }

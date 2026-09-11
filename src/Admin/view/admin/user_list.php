@@ -8,7 +8,6 @@
  * @var string $search
  */
 $title = '人员管理';
-$current_route = 'user';
 ?>
 
 <div class="page-header d-flex justify-content-between align-items-center">

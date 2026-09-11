@@ -9,7 +9,6 @@
  */
 $data = $is_edit ? $user : ($input ?? []);
 $title = $is_edit ? '编辑人员' : '新增人员';
-$current_route = 'admin';
 $form_url = $is_edit ? ($urls['update'] ?? '') : ($urls['save'] ?? '');
 ?>
 

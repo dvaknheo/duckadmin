@@ -27,7 +27,6 @@ class MemberController extends Base
         $data['pageSize'] = $pageSize;
         $data['search'] = $search;
         $data['title'] = '人员管理';
-        $data['current_route'] = 'user';
         
         Helper::Show($data, 'admin/user_list');
     }
@@ -41,7 +40,6 @@ class MemberController extends Base
     {
         $admin_id = (int)Session::_()->getUserId();
         $data['title'] = '新增人员';
-        $data['current_route'] = 'user';
         $data['roles'] = MemberRoleBusiness::_()->getAllManageable($admin_id);
         Helper::Show($data, 'admin/user_form');
     }
@@ -71,7 +69,6 @@ class MemberController extends Base
         $admin_id = (int)Session::_()->getUserId();
         $data['error'] = $result['message'];
         $data['title'] = '新增人员';
-        $data['current_route'] = 'user';
         $data['roles'] = MemberRoleBusiness::_()->getAllManageable($admin_id);
         $data['input'] = $input;
         Helper::Show($data, 'admin/user_form');
@@ -93,7 +90,6 @@ class MemberController extends Base
         
         $data['user'] = $user;
         $data['title'] = '编辑人员';
-        $data['current_route'] = 'user';
         $admin_id = (int)Session::_()->getUserId();
         $data['roles'] = MemberRoleBusiness::_()->getAllManageable($admin_id);
         $data['user_role_ids'] = MemberRoleBusiness::_()->getUserRoleIds($id);
@@ -127,7 +123,6 @@ class MemberController extends Base
         $data['error'] = $result['message'];
         $data['user'] = $input + ['id' => $id];
         $data['title'] = '编辑人员';
-        $data['current_route'] = 'user';
         $data['roles'] = MemberRoleBusiness::_()->getAllManageable($admin_id);
         $data['user_role_ids'] = $roleIds;
         Helper::Show($data, 'admin/user_form');

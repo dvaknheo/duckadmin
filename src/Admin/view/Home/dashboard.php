@@ -3,7 +3,6 @@
  * DuckPhp Admin System - Dashboard
  */
 $title = '仪表盘';
-$current_route = '';
 ?>
 
 <div class="page-header">

@@ -26,7 +26,6 @@ class RoleController extends Base
         $data['pageSize'] = $pageSize;
         $data['search'] = $search;
         $data['title'] = '职位管理';
-        $data['current_route'] = 'role';
 
         $data['urls'] = [
             'list' => __url('Role/index'),
@@ -46,7 +45,6 @@ class RoleController extends Base
     public function create()
     {
         $data['title'] = '新增职位';
-        $data['current_route'] = 'role';
         $data['roles'] = RoleBusiness::_()->getAll();
         $data['urls'] = [
             'save' => __url('Role/save'),
@@ -72,7 +70,6 @@ class RoleController extends Base
         } else {
             $data['error'] = $result['message'];
             $data['title'] = '新增职位';
-            $data['current_route'] = 'role';
             $data['input'] = ['name' => $name, 'description' => $description, 'pid' => $pid];
             $data['roles'] = RoleBusiness::_()->getAll();
             $data['urls'] = [
@@ -99,7 +96,6 @@ class RoleController extends Base
 
         $data['role'] = $role;
         $data['title'] = '编辑职位';
-        $data['current_route'] = 'role';
         $data['roles'] = RoleBusiness::_()->getAll();
         $data['urls'] = [
             'update' => __url('Role/update'),
@@ -127,7 +123,6 @@ class RoleController extends Base
             $data['error'] = $result['message'];
             $data['role'] = ['id' => $id, 'name' => $name, 'description' => $description, 'pid' => $pid];
             $data['title'] = '编辑职位';
-            $data['current_route'] = 'role';
             $data['roles'] = RoleBusiness::_()->getAll();
             $data['urls'] = [
                 'update' => __url('Role/update'),

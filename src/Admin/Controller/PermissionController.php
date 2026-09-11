@@ -40,7 +40,6 @@ class PermissionController extends Base
         $data['role'] = $role;
         $data['role_permission_ids'] = RoleBusiness::_()->getRolePermissions($id);
         $data['title'] = '权限分配 - ' . ($role['name'] ?? '');
-        $data['current_route'] = 'permission';
         $data['urls'] = [
             'save' => __url('Permission/index'),
             'list' => __url('Permission/index'),

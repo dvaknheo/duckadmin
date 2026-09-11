@@ -2,10 +2,10 @@
 /**
  * Menu Index - Menu/
  * @var array $tree
+ * @var string $show ('all'|'menu')
  * @var array $urls (list, create, edit, delete, scan)
  */
 $title = '权限和菜单管理';
-$current_route = 'system';
 
 if (!function_exists('renderMenuNode')) {
     /**
@@ -47,6 +47,9 @@ if (!function_exists('renderMenuNode')) {
     }
 }
 ?>
+<?php if (($_GET['error'] ?? '') === 'has_children'): ?>
+    <div class="alert alert-warning"><i class="bi bi-exclamation-triangle"></i> 该节点包含子节点，请先删除其下所有子节点。</div>
+<?php endif; ?>
 <div class="page-header d-flex justify-content-between align-items-center">
     <div>
         <h4>权限和菜单管理</h4>
@@ -58,6 +61,14 @@ if (!function_exists('renderMenuNode')) {
         </nav>
     </div>
     <div>
+        <div class="btn-group me-2" role="group" aria-label="查看方式">
+            <a href="<?= $urls['list'] ?>?show=all" class="btn btn-sm <?= ($show ?? 'all') === 'all' ? 'btn-secondary' : 'btn-outline-secondary' ?>">
+                <i class="bi bi-list-ul"></i> 全部
+            </a>
+            <a href="<?= $urls['list'] ?>?show=menu" class="btn btn-sm <?= ($show ?? 'all') === 'menu' ? 'btn-secondary' : 'btn-outline-secondary' ?>">
+                <i class="bi bi-diagram-3"></i> 不看操作
+            </a>
+        </div>
         <a href="<?= $urls['scan'] ?>" class="btn btn-outline-success">
             <i class="bi bi-search"></i> 一键扫描
         </a>

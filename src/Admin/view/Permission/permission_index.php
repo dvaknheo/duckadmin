@@ -7,7 +7,6 @@
  * @var array $urls (save, list)
  */
 $title = '权限分配';
-$current_route = 'permission';
 ?>
 <div class="page-header">
     <h4>权限分配 - <?= __h($role['name']) ?></h4>

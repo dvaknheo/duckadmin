@@ -3,7 +3,6 @@
  * 分配权限 - 选择职位
  */
 $title = '分配权限';
-$current_route = 'role';
 ?>
 <div class="page-header d-flex justify-content-between align-items-center">
     <div>

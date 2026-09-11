@@ -10,7 +10,6 @@
  */
 $data = $is_edit ? $perm : ($input ?? []);
 $title = $is_edit ? '编辑权限' : '创建权限';
-$current_route = 'system';
 $form_url = $is_edit ? ($urls['update'] ?? '') : ($urls['save'] ?? '');
 ?>
 <div class="page-header">

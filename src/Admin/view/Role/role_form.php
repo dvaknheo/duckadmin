@@ -5,7 +5,6 @@
 $isEdit = isset($role) && !empty($role);
 $data = $isEdit ? $role : ($input ?? []);
 $title = $isEdit ? '编辑职位' : '新增职位';
-$current_route = 'role';
 ?>
 <div class="page-header">
     <h4><?= __h($title) ?></h4>

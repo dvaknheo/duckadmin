@@ -5,7 +5,6 @@
  * @var array $urls (list)
  */
 $title = '一键扫描结果';
-$current_route = 'system';
 ?>
 <div class="page-header d-flex justify-content-between align-items-center">
     <div>

@@ -9,7 +9,6 @@
  * @var array $urls (list, create, edit, delete, permissions)
  */
 $title = '职位管理';
-$current_route = 'role';
 ?>
 <div class="page-header d-flex justify-content-between align-items-center">
     <div>

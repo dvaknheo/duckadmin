@@ -98,6 +98,15 @@ class PermissionModel extends Base
     }
 
     /**
+     * 是否有未删除的子节点
+     */
+    public function hasChildren(int $id): bool
+    {
+        $sql = "SELECT COUNT(*) FROM admin_permissions WHERE parent_id = ? AND deleted_at IS NULL";
+        return (int)$this->fetchColumn($sql, [$id]) > 0;
+    }
+
+    /**
      * 按名称查询目录(type=0) id,不存在返回 0
      */
     public function getDirIdByName(string $name): int

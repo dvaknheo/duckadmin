@@ -30,7 +30,6 @@ class AdminController extends Base
         $data['pageSize'] = $pageSize;
         $data['search'] = $search;
         $data['title'] = '人员管理';
-        $data['current_route'] = 'admin';
 
         $data['urls'] = [
             'list' => __url('Admin/index'),
@@ -49,7 +48,6 @@ class AdminController extends Base
     public function create()
     {
         $data['title'] = '新增人员';
-        $data['current_route'] = 'admin';
         $data['urls'] = [
             'save' => __url('Admin/save'),
             'list' => __url('Admin/index'),
@@ -79,7 +77,6 @@ class AdminController extends Base
         }
         $data['error'] = $result['message'];
         $data['title'] = '新增人员';
-        $data['current_route'] = 'admin';
         $data['input'] = $input;
         $data['urls'] = [
             'save' => __url('Admin/save'),
@@ -104,7 +101,6 @@ class AdminController extends Base
 
         $data['user'] = $user;
         $data['title'] = '编辑人员';
-        $data['current_route'] = 'admin';
         $data['urls'] = [
             'update' => __url('Admin/update'),
             'list' => __url('Admin/index'),
@@ -136,7 +132,6 @@ class AdminController extends Base
         $data['error'] = $result['message'];
         $data['user'] = $input + ['id' => $id];
         $data['title'] = '编辑人员';
-        $data['current_route'] = 'admin';
         $data['urls'] = [
             'update' => __url('Admin/update'),
             'list' => __url('Admin/index'),

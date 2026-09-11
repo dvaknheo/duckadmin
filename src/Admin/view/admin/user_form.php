@@ -10,7 +10,6 @@
 $isEdit = isset($user) && !empty($user);
 $data = $isEdit ? $user : ($input ?? []);
 $title = $isEdit ? '编辑人员' : '新增人员';
-$current_route = 'user';
 ?>
 
 <div class="page-header">

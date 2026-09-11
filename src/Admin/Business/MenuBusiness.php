@@ -29,6 +29,9 @@ class MenuBusiness extends Base
 
     public function delete(int $id): bool
     {
+        if (PermissionModel::_()->hasChildren($id)) {
+            return false; // 含子节点,禁止删除
+        }
         return PermissionModel::_()->delete($id);
     }
 
@@ -52,10 +55,16 @@ class MenuBusiness extends Base
 
     /**
      * 获取菜单树（用于后台管理展示）
+     * @param string $show 'all' 全部(含操作) / 'menu' 仅目录和菜单(不看操作)
      */
-    public function getTree(): array
+    public function getTree(string $show = 'all'): array
     {
         $all = PermissionModel::_()->getAll();
+        if ($show === 'menu') {
+            $all = array_values(array_filter($all, function ($row) {
+                return (int)$row['type'] !== 2; // 不看"操作"
+            }));
+        }
         return $this->buildTree($all);
     }
 
