@@ -1,19 +1,23 @@
 <?php
 /**
- * Permission Form (Create / Edit)
+ * Menu Form (Create / Edit) - Menu/
+ * @var array $perm (edit mode)
+ * @var array $input (create mode with validation errors)
+ * @var array $permissions
+ * @var string $error
+ * @var array $urls (save/update, list)
+ * @var bool $is_edit
  */
-$isEdit = isset($perm) && !empty($perm);
-$data = $isEdit ? $perm : ($input ?? []);
-$title = $isEdit ? '编辑权限' : '创建权限';
+$data = $is_edit ? $perm : ($input ?? []);
+$title = $is_edit ? '编辑权限' : '创建权限';
 $current_route = 'system';
+$form_url = $is_edit ? ($urls['update'] ?? '') : ($urls['save'] ?? '');
 ?>
-
 <div class="page-header">
     <h4><?= __h($title) ?></h4>
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="<?= __url('') ?>">首页</a></li>
-            <li class="breadcrumb-item"><a href="<?= __url('system/index') ?>">权限和菜单管理</a></li>
+            <li class="breadcrumb-item"><a href="<?= $urls['list'] ?>">首页</a></li>
             <li class="breadcrumb-item active"><?= __h($title) ?></li>
         </ol>
     </nav>
@@ -24,18 +28,18 @@ $current_route = 'system';
         <?php if (!empty($error)): ?>
             <div class="alert alert-danger"><?= __h($error) ?></div>
         <?php endif; ?>
-        
-        <form method="post" action="<?= __url($isEdit ? 'system/update' : 'system/save') ?>" class="row g-3">
-            <?php if ($isEdit): ?>
+
+        <form method="post" action="<?= $form_url ?>" class="row g-3">
+            <?php if ($is_edit): ?>
                 <input type="hidden" name="id" value="<?= (int)$data['id'] ?>">
             <?php endif; ?>
-            
+
             <div class="col-md-6">
                 <label class="form-label">权限名称 <span class="text-danger">*</span></label>
                 <input type="text" name="name" class="form-control" required
                        value="<?= __h($data['name'] ?? '') ?>">
             </div>
-            
+
             <div class="col-md-6">
                 <label class="form-label">URL</label>
                 <input type="text" name="url" class="form-control"
@@ -43,7 +47,7 @@ $current_route = 'system';
                        placeholder="如: user/index(目录类型留空)">
                 <small class="text-muted">菜单/操作填写,与请求地址精确匹配;目录留空</small>
             </div>
-            
+
             <div class="col-md-6">
                 <label class="form-label">类型</label>
                 <select name="type" class="form-select">
@@ -55,14 +59,14 @@ $current_route = 'system';
                     <?php endforeach; ?>
                 </select>
             </div>
-            
+
             <div class="col-md-6">
                 <label class="form-label">上级</label>
                 <select name="parent_id" class="form-select">
                     <option value="0">顶级</option>
                     <?php foreach ($permissions as $p): ?>
                         <?php if ($p['parent_id'] == 0): ?>
-                            <option value="<?= (int)$p['id'] ?>" 
+                            <option value="<?= (int)$p['id'] ?>"
                                 <?= (($data['parent_id'] ?? 0) == $p['id']) ? 'selected' : '' ?>>
                                 <?= __h($p['name']) ?>
                             </option>
@@ -70,21 +74,20 @@ $current_route = 'system';
                     <?php endforeach; ?>
                 </select>
             </div>
-            
+
             <div class="col-md-6">
                 <label class="form-label">排序</label>
-                <input type="number" name="weight" class="form-control" 
+                <input type="number" name="weight" class="form-control"
                        value="<?= (int)($data['weight'] ?? 0) ?>">
             </div>
-            
+
             <div class="col-12">
                 <hr>
                 <button type="submit" class="btn btn-primary">
-                    <i class="bi bi-check-lg"></i> <?= $isEdit ? '保存修改' : '创建权限' ?>
+                    <i class="bi bi-check-lg"></i> <?= $is_edit ? '保存修改' : '创建权限' ?>
                 </button>
-                <a href="<?= __url('system/index') ?>" class="btn btn-outline-secondary">取消</a>
+                <a href="<?= $urls['list'] ?>" class="btn btn-outline-secondary">取消</a>
             </div>
         </form>
     </div>
 </div>
-

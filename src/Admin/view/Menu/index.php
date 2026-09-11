@@ -1,26 +1,31 @@
 <?php
 /**
- * Permission List
+ * Menu Index - Menu/
+ * @var array $list
+ * @var int $total
+ * @var int $page
+ * @var int $pageSize
+ * @var string $search
+ * @var array $urls (list, create, edit, delete, scan)
  */
 $title = '权限和菜单管理';
 $current_route = 'system';
 ?>
-
 <div class="page-header d-flex justify-content-between align-items-center">
     <div>
         <h4>权限和菜单管理</h4>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="<?= __url('') ?>">首页</a></li>
+                <li class="breadcrumb-item"><a href="<?= $urls['list'] ?>">首页</a></li>
                 <li class="breadcrumb-item active">权限和菜单管理</li>
             </ol>
         </nav>
     </div>
     <div>
-        <a href="<?= __url('system/scan') ?>" class="btn btn-outline-success">
+        <a href="<?= $urls['scan'] ?>" class="btn btn-outline-success">
             <i class="bi bi-search"></i> 一键扫描
         </a>
-        <a href="<?= __url('system/create') ?>" class="btn btn-primary">
+        <a href="<?= $urls['create'] ?>" class="btn btn-primary">
             <i class="bi bi-plus-lg"></i> 新增菜单
         </a>
     </div>
@@ -28,18 +33,18 @@ $current_route = 'system';
 
 <div class="card">
     <div class="card-body">
-        <form method="get" action="<?= __url('system/index') ?>" class="row g-3 mb-4">
+        <form method="get" action="<?= $urls['list'] ?>" class="row g-3 mb-4">
             <div class="col-auto flex-grow-1">
                 <input type="text" name="search" class="form-control" placeholder="搜索权限名称或 URL..." value="<?= __h($search) ?>">
             </div>
             <div class="col-auto">
                 <button type="submit" class="btn btn-outline-secondary"><i class="bi bi-search"></i> 搜索</button>
                 <?php if ($search !== ''): ?>
-                    <a href="<?= __url('system/index') ?>" class="btn btn-outline-danger"><i class="bi bi-x-lg"></i> 清空</a>
+                    <a href="<?= $urls['list'] ?>" class="btn btn-outline-danger"><i class="bi bi-x-lg"></i> 清空</a>
                 <?php endif; ?>
             </div>
         </form>
-        
+
         <div class="table-responsive">
             <table class="table table-hover">
                 <thead>
@@ -71,10 +76,10 @@ $current_route = 'system';
                                 <td><?= (int)($item['weight'] ?? 0) ?></td>
                                 <td class="text-muted small"><?= __h($item['created_at'] ?? '-') ?></td>
                                 <td>
-                                    <a href="<?= __url('system/edit?id=' . $item['id']) ?>" class="btn btn-sm btn-outline-primary">
+                                    <a href="<?= $urls['edit'] ?>?id=<?= (int)$item['id'] ?>" class="btn btn-sm btn-outline-primary">
                                         <i class="bi bi-pencil"></i>
                                     </a>
-                                    <a href="<?= __url('system/delete?id=' . $item['id']) ?>" class="btn btn-sm btn-outline-danger"
+                                    <a href="<?= $urls['delete'] ?>?id=<?= (int)$item['id'] ?>" class="btn btn-sm btn-outline-danger"
                                        onclick="return confirm('确定删除权限「<?= __h($item['name']) ?>」？')">
                                         <i class="bi bi-trash"></i>
                                     </a>
@@ -85,7 +90,7 @@ $current_route = 'system';
                 </tbody>
             </table>
         </div>
-        
+
         <?php if ($total > $pageSize): ?>
             <nav>
                 <ul class="pagination justify-content-center">
@@ -94,7 +99,7 @@ $current_route = 'system';
                     $searchParam = $search !== '' ? '&search=' . urlencode($search) : '';
                     for ($i = 1; $i <= $totalPages; $i++): ?>
                         <li class="page-item <?= $i === $page ? 'active' : '' ?>">
-                            <a class="page-link" href="<?= __url('system/index?page=' . (int)$i . $searchParam) ?>"><?= (int)$i ?></a>
+                            <a class="page-link" href="<?= $urls['list'] ?>?page=<?= (int)$i ?><?= $searchParam ?>"><?= (int)$i ?></a>
                         </li>
                     <?php endfor; ?>
                 </ul>
@@ -102,4 +107,3 @@ $current_route = 'system';
         <?php endif; ?>
     </div>
 </div>
-

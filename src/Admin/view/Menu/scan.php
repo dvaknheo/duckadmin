@@ -1,6 +1,8 @@
 <?php
 /**
- * 一键扫描结果
+ * Menu Scan - Menu/
+ * @var array $added
+ * @var array $urls (list)
  */
 $title = '一键扫描结果';
 $current_route = 'system';
@@ -10,14 +12,13 @@ $current_route = 'system';
         <h4>一键扫描结果</h4>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="<?= __url('') ?>">首页</a></li>
-                <li class="breadcrumb-item"><a href="<?= __url('system/index') ?>">权限和菜单管理</a></li>
+                <li class="breadcrumb-item"><a href="<?= $urls['list'] ?>">首页</a></li>
                 <li class="breadcrumb-item active">一键扫描</li>
             </ol>
         </nav>
     </div>
     <div>
-        <a href="<?= __url('system/index') ?>" class="btn btn-outline-secondary">返回列表</a>
+        <a href="<?= $urls['list'] ?>" class="btn btn-outline-secondary">返回列表</a>
     </div>
 </div>
 

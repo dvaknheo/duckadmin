@@ -8,10 +8,7 @@ use DuckAdmin\Admin\Business\PermissionBusiness;
  */
 class MenuController extends Base
 {
-    /**
-     * @menu 权限和菜单管理
-     * 菜单/权限列表
-     */
+    /** @menu 权限和菜单管理 */
     public function index()
     {
         $page = max(1, (int)(Helper::GET('page', '1')));
@@ -25,36 +22,45 @@ class MenuController extends Base
         $data['title'] = '权限和菜单管理';
         $data['current_route'] = 'system';
 
-        Helper::Show($data, 'admin/system_index');
+        $data['urls'] = [
+            'list' => __url('Menu/index'),
+            'create' => __url('Menu/create'),
+            'edit' => __url('Menu/edit'),
+            'delete' => __url('Menu/delete'),
+            'scan' => __url('Menu/scan'),
+        ];
+
+        Helper::Show($data, 'Menu/index');
     }
 
-    /**
-     * @action 一键扫描
-     * 扫描路由,缺失的权限/菜单自动入库
-     */
+    /** @action 一键扫描 */
     public function scan()
     {
         $added = PermissionBusiness::_()->scanRoutes();
         $data['added'] = $added;
         $data['title'] = '一键扫描结果';
         $data['current_route'] = 'system';
-        Helper::Show($data, 'admin/system_scan');
+        $data['urls'] = [
+            'list' => __url('Menu/index'),
+        ];
+        Helper::Show($data, 'Menu/scan');
     }
 
-    /**
-     * @action 新增菜单
-     */
+    /** @action 新增菜单 */
     public function create()
     {
         $data['title'] = '新增菜单';
         $data['current_route'] = 'system';
         $data['permissions'] = PermissionBusiness::_()->getAll();
-        Helper::Show($data, 'admin/system_form');
+        $data['urls'] = [
+            'save' => __url('Menu/save'),
+            'list' => __url('Menu/index'),
+        ];
+        $data['is_edit'] = false;
+        Helper::Show($data, 'Menu/form');
     }
 
-    /**
-     * @action 保存菜单
-     */
+    /** @action 保存菜单 */
     public function save()
     {
         $input = [
@@ -67,7 +73,7 @@ class MenuController extends Base
 
         $result = PermissionBusiness::_()->create($input);
         if ($result['success']) {
-            Helper::Show302(__url('system/index'));
+            Helper::Show302(__url('Menu/index'));
             return;
         }
         $data['error'] = $result['message'];
@@ -75,18 +81,21 @@ class MenuController extends Base
         $data['current_route'] = 'system';
         $data['input'] = $input;
         $data['permissions'] = PermissionBusiness::_()->getAll();
-        Helper::Show($data, 'admin/system_form');
+        $data['urls'] = [
+            'save' => __url('Menu/save'),
+            'list' => __url('Menu/index'),
+        ];
+        $data['is_edit'] = false;
+        Helper::Show($data, 'Menu/form');
     }
 
-    /**
-     * @action 编辑菜单
-     */
+    /** @action 编辑菜单 */
     public function edit()
     {
         $id = (int)Helper::GET('id', '0');
         $perm = PermissionBusiness::_()->getById($id);
         if (!$perm) {
-            Helper::Show302(__url('system/index'));
+            Helper::Show302(__url('Menu/index'));
             return;
         }
 
@@ -94,12 +103,15 @@ class MenuController extends Base
         $data['title'] = '编辑菜单';
         $data['current_route'] = 'system';
         $data['permissions'] = PermissionBusiness::_()->getAll();
-        Helper::Show($data, 'admin/system_form');
+        $data['urls'] = [
+            'update' => __url('Menu/update'),
+            'list' => __url('Menu/index'),
+        ];
+        $data['is_edit'] = true;
+        Helper::Show($data, 'Menu/form');
     }
 
-    /**
-     * @action 更新菜单
-     */
+    /** @action 更新菜单 */
     public function update()
     {
         $id = (int)Helper::POST('id', '0');
@@ -113,7 +125,7 @@ class MenuController extends Base
 
         $result = PermissionBusiness::_()->update($id, $input);
         if ($result['success']) {
-            Helper::Show302(__url('system/index'));
+            Helper::Show302(__url('Menu/index'));
             return;
         }
         $data['error'] = $result['message'];
@@ -121,17 +133,19 @@ class MenuController extends Base
         $data['title'] = '编辑菜单';
         $data['current_route'] = 'system';
         $data['permissions'] = PermissionBusiness::_()->getAll();
-        Helper::Show($data, 'admin/system_form');
+        $data['urls'] = [
+            'update' => __url('Menu/update'),
+            'list' => __url('Menu/index'),
+        ];
+        $data['is_edit'] = true;
+        Helper::Show($data, 'Menu/form');
     }
 
-    /**
-     * @action 删除菜单
-     */
+    /** @action 删除菜单 */
     public function delete()
     {
         $id = (int)Helper::GET('id', '0');
         PermissionBusiness::_()->delete($id);
-        Helper::Show302(__url('system/index'));
+        Helper::Show302(__url('Menu/index'));
     }
 }
-
