@@ -72,8 +72,8 @@ class AppBusiness extends Base
         // 默认角色
         $super_role_id = RoleModel::_()->seedDefaultRoles();
 
-        // 插入默认权限种子(目录→菜单→操作 三级)
-        $this->seedDefaultPermissions();
+        // 扫描控制器注解自动生成权限(目录→菜单→操作 三级,与"一键扫描"同源)
+        PermissionService::_()->scanRoutes();
 
         // 创建管理员并关联超级管理员角色
         AdminModel::_()->create([
@@ -92,37 +92,6 @@ class AppBusiness extends Base
         return true;
     }
 
-    /**
-     * 插入默认权限种子(目录→菜单→操作 三级)
-     * type: 0=目录 1=菜单 2=操作
-     */
-    protected function seedDefaultPermissions(): void
-    {
-        // 目录
-        $system_dir = PermissionModel::_()->create(['name' => '系统管理', 'url' => '', 'type' => 0, 'parent_id' => 0, 'weight' => 5]);
-
-        // 人员管理
-        $user_id = PermissionModel::_()->create(['name' => '人员管理', 'url' => 'Admin/index', 'type' => 1, 'parent_id' => $system_dir, 'weight' => 10]);
-        PermissionModel::_()->create(['name' => '新增人员', 'url' => 'Admin/create', 'type' => 2, 'parent_id' => $user_id, 'weight' => 11]);
-        PermissionModel::_()->create(['name' => '编辑人员', 'url' => 'Admin/edit', 'type' => 2, 'parent_id' => $user_id, 'weight' => 12]);
-        PermissionModel::_()->create(['name' => '删除人员', 'url' => 'Admin/delete', 'type' => 2, 'parent_id' => $user_id, 'weight' => 13]);
-
-        // 职位管理
-        $role_id = PermissionModel::_()->create(['name' => '职位管理', 'url' => 'Role/index', 'type' => 1, 'parent_id' => $system_dir, 'weight' => 20]);
-        PermissionModel::_()->create(['name' => '新增职位', 'url' => 'Role/create', 'type' => 2, 'parent_id' => $role_id, 'weight' => 21]);
-        PermissionModel::_()->create(['name' => '编辑职位', 'url' => 'Role/edit', 'type' => 2, 'parent_id' => $role_id, 'weight' => 22]);
-        PermissionModel::_()->create(['name' => '删除职位', 'url' => 'Role/delete', 'type' => 2, 'parent_id' => $role_id, 'weight' => 23]);
-
-        // 权限分配（超管专属）
-        PermissionModel::_()->create(['name' => '权限分配', 'url' => 'Permission/index', 'type' => 1, 'parent_id' => $role_id, 'weight' => 25]);
-
-        // 菜单管理（超管专属）
-        $menu_id = PermissionModel::_()->create(['name' => '菜单管理', 'url' => 'Menu/index', 'type' => 1, 'parent_id' => $system_dir, 'weight' => 30]);
-        PermissionModel::_()->create(['name' => '一键扫描', 'url' => 'Menu/scan', 'type' => 2, 'parent_id' => $menu_id, 'weight' => 31]);
-        PermissionModel::_()->create(['name' => '新增菜单', 'url' => 'Menu/create', 'type' => 2, 'parent_id' => $menu_id, 'weight' => 32]);
-        PermissionModel::_()->create(['name' => '编辑菜单', 'url' => 'Menu/edit', 'type' => 2, 'parent_id' => $menu_id, 'weight' => 33]);
-        PermissionModel::_()->create(['name' => '删除菜单', 'url' => 'Menu/delete', 'type' => 2, 'parent_id' => $menu_id, 'weight' => 34]);
-    }
     public function login($post)
     {
         Helper::FireGlobalEvent(GlobalAdmin::EVENT_SERVICE_ADMIN_LOGINING, $post);
