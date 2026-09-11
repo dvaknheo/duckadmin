@@ -1,5 +1,5 @@
 <?php declare(strict_types=1);
-namespace DuckAdmin\Admin\Controller\System;
+namespace DuckAdmin\Admin\Controller;
 
 use DuckAdmin\Admin\Business\UserBusiness;
 use DuckAdmin\Admin\Business\RoleBusiness;
