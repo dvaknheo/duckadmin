@@ -5,7 +5,7 @@
  */
 namespace DuckAdmin\Admin\Business;
 
-use DuckAdmin\Admin\Model\AdminUserModel;
+use DuckAdmin\Admin\Model\AdminModel;
 use DuckAdmin\Admin\Model\PermissionModel;
 use DuckAdmin\Admin\Model\RoleModel;
 use DuckPhp\GlobalAdmin\GlobalAdmin;
@@ -73,14 +73,14 @@ class AppBusiness extends Base
         PermissionModel::_()->seedDefaultPermissions();
 
         // 创建管理员并关联超级管理员角色
-        AdminUserModel::_()->create([
+        AdminModel::_()->create([
             'username' => $username,
             'password' => $password,
             'realname' => $realname,
             'email' => (string)($input['admin_email'] ?? ''),
             'status' => 1,
         ]);
-        $admin_id = (int)AdminUserModel::_()->lastInsertId();
+        $admin_id = (int)AdminModel::_()->lastInsertId();
         RoleModel::_()->setUserRoles($admin_id, [$super_role_id]);
 
         // 超级管理员拥有全部权限
@@ -93,13 +93,13 @@ class AppBusiness extends Base
         Helper::FireGlobalEvent(GlobalAdmin::EVENT_SERVICE_ADMIN_LOGINING, $post);
         $username = $post['username'];
         $password = $post['password'];
-        $admin = AdminUserModel::_()->getByUsername($username);
+        $admin = AdminModel::_()->getByUsername($username);
         Helper::ThrowOn(!$admin, "用户名或密码错误1");
         Helper::ThrowOn($admin['status'] == 0, "该账号已被禁用");
         Helper::ThrowOn(!password_verify($password, $admin['password']), '用户名或密码错误2:');
         
         // 更新最后登录时间
-        AdminUserModel::_()->updateLoginTime((int)$admin['id']);
+        AdminModel::_()->updateLoginTime((int)$admin['id']);
         $ret = [
             'id' => (int)$admin['id'],
             'name' => $username,
