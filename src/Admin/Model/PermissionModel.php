@@ -291,7 +291,7 @@ class PermissionModel extends Base
         if (strpos($path, 'admin/') === 0) {
             $path = substr($path, 6);
         }
-        if ($path === '' || $path === 'index' || $path === 'Dashboard/index') {
+        if ($path === '' || $path === 'index' || $path === 'Home/index') {
             return true; // 首页/仪表盘放行
         }
         if ($path === 'Role/permissions') {

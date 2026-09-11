@@ -54,7 +54,7 @@ class AdminApp extends DuckPhp
 
         'admin_provider' => GlobalAdmin::class,
 
-        'admin_url_home' => 'Dashboard/index',
+        'admin_url_home' => 'Home/index',
         'admin_url_login' => 'login',
         'admin_url_logout' => 'logout',
         'admin_view_file_header' => 'admin/header',
