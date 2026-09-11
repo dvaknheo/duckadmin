@@ -11,13 +11,11 @@ use DuckAdmin\Admin\Model\RoleModel;
 class AdminBusiness extends Base
 {
     /**
-     * 获取人员列表(仅自己及下属:职位在管理范围内)
+     * 获取人员列表
      */
-    public function getList(int $page, int $pageSize, string $search = ''): array
+    public function getList(int $page, int $pageSize, array $search = []): array
     {
-        $admin_id = $this->getCurrentAdminId();
-        $roleIds = RoleBusiness::_()->getManageableRoleIds($admin_id);
-        return AdminModel::_()->getPageList($page, $pageSize, $search, $roleIds);
+        return AdminModel::_()->getPageList($page, $pageSize, $search);
     }
     
     /**

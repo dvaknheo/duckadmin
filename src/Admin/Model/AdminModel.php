@@ -21,33 +21,22 @@ class AdminModel extends Base
         return $ret === false ? null : $ret;
     }
 
-    public function getPageList(int $page, int $pageSize, string $search = '', ?array $roleIds = null): array
+    public function getPageList(int $page, int $pageSize, array $search = []): array
     {
-        $where = "u.deleted_at IS NULL";
+        $where = "deleted_at IS NULL";
         $params = [];
-        if ($search !== '') {
-            $where .= " AND (u.username LIKE ? OR u.realname LIKE ? OR u.email LIKE ?)";
-            $like = '%' . $search . '%';
-            $params = [$like, $like, $like];
+        foreach (['username', 'realname', 'email'] as $field) {
+            if (!empty($search[$field])) {
+                $where .= " AND {$field} LIKE ?";
+                $params[] = '%' . $search[$field] . '%';
+            }
         }
-        if ($roleIds !== null && !empty($roleIds)) {
-            $in = implode(',', array_map('intval', $roleIds));
-            $where .= " AND u.id IN (SELECT user_id FROM admin_role_users WHERE role_id IN ({$in}))";
-        }
-        $totalSql = "SELECT COUNT(*) as total FROM admin_users u WHERE {$where}";
+        $totalSql = "SELECT COUNT(*) as total FROM admin_users WHERE {$where}";
         $totalRow = $this->fetch($totalSql, $params);
         $total = $totalRow['total'] ?? 0;
         $offset = ($page - 1) * $pageSize;
-        $listSql = "SELECT u.id, u.username, u.realname, u.email, u.status, u.last_login_at, u.created_at, u.updated_at,
-                           GROUP_CONCAT(r.name) AS role_names
-                    FROM admin_users u
-                    LEFT JOIN admin_role_users ru ON u.id = ru.user_id
-                    LEFT JOIN admin_roles r ON ru.role_id = r.id AND r.deleted_at IS NULL
-                    WHERE {$where}
-                    GROUP BY u.id
-                    ORDER BY u.id ASC LIMIT ? OFFSET ?";
-        $listParams = array_merge($params, [$pageSize, $offset]);
-        $list = $this->fetchAll($listSql, $listParams);
+        $listSql = "SELECT * FROM admin_users WHERE {$where} ORDER BY id ASC LIMIT ? OFFSET ?";
+        $list = $this->fetchAll($listSql, array_merge($params, [$pageSize, $offset]));
         return ['total' => (int)$total, 'list' => $list];
     }
 
