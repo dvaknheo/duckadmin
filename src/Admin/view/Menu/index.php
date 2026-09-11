@@ -11,7 +11,7 @@ if (!function_exists('renderMenuNode')) {
     /**
      * 递归渲染树节点
      */
-    function renderMenuNode($item, $urls, $level) {
+    function renderMenuNode($item, $urls, $level, $show = 'all') {
         $typeLabels = [0 => '目录', 1 => '菜单', 2 => '操作'];
         $typeColors = [0 => 'secondary', 1 => 'primary', 2 => 'info'];
         $typeLabel = $typeLabels[(int)($item['type'] ?? 1)] ?? '未知';
@@ -24,6 +24,7 @@ if (!function_exists('renderMenuNode')) {
         $url = htmlspecialchars($item['url'] ?? '-');
         $weight = (int)($item['weight'] ?? 0);
         $id = (int)$item['id'];
+        $qs = 'show=' . urlencode($show);
 
         $html = "<tr>";
         $html .= "<td>{$id}</td>";
@@ -32,14 +33,14 @@ if (!function_exists('renderMenuNode')) {
         $html .= "<td><span class=\"badge bg-{$typeColor}\">{$typeLabel}</span></td>";
         $html .= "<td>{$weight}</td>";
         $html .= "<td>";
-        $html .= "<a href=\"{$urls['edit']}?id={$id}\" class=\"btn btn-sm btn-outline-primary\"><i class=\"bi bi-pencil\"></i></a> ";
-        $html .= "<a href=\"{$urls['delete']}?id={$id}\" class=\"btn btn-sm btn-outline-danger\" onclick=\"return confirm('确定删除「{$name}」？')\"><i class=\"bi bi-trash\"></i></a>";
+        $html .= "<a href=\"{$urls['edit']}?id={$id}&{$qs}\" class=\"btn btn-sm btn-outline-primary\"><i class=\"bi bi-pencil\"></i></a> ";
+        $html .= "<a href=\"{$urls['delete']}?id={$id}&{$qs}\" class=\"btn btn-sm btn-outline-danger\" onclick=\"return confirm('确定删除「{$name}」？')\"><i class=\"bi bi-trash\"></i></a>";
         $html .= "</td>";
         $html .= "</tr>";
 
         if (!empty($item['children'])) {
             foreach ($item['children'] as $child) {
-                $html .= renderMenuNode($child, $urls, $level + 1);
+                $html .= renderMenuNode($child, $urls, $level + 1, $show);
             }
         }
 
@@ -97,7 +98,7 @@ if (!function_exists('renderMenuNode')) {
                     </thead>
                     <tbody>
                         <?php foreach ($tree as $item): ?>
-                            <?= renderMenuNode($item, $urls, 0) ?>
+                            <?= renderMenuNode($item, $urls, 0, $show ?? 'all') ?>
                         <?php endforeach; ?>
                     </tbody>
                 </table>

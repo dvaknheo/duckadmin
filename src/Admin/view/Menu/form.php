@@ -7,6 +7,7 @@
  * @var string $error
  * @var array $urls (save/update, list)
  * @var bool $is_edit
+ * @var string $show ('all'|'menu')
  */
 $data = $is_edit ? $perm : ($input ?? []);
 $title = $is_edit ? '编辑权限' : '创建权限';
@@ -29,6 +30,7 @@ $form_url = $is_edit ? ($urls['update'] ?? '') : ($urls['save'] ?? '');
         <?php endif; ?>
 
         <form method="post" action="<?= $form_url ?>" class="row g-3">
+            <input type="hidden" name="show" value="<?= __h($show ?? 'all') ?>">
             <?php if ($is_edit): ?>
                 <input type="hidden" name="id" value="<?= (int)$data['id'] ?>">
             <?php endif; ?>
