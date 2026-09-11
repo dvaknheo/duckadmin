@@ -28,7 +28,7 @@ class PermissionController extends Base
 
         $role = RoleBusiness::_()->getById($id);
         if (!$role) {
-            Helper::Show302(__url('Permission/index'));
+            Helper::Show302(__url('Role/index'));
             return;
         }
 

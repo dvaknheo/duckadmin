@@ -30,9 +30,9 @@ $current_route = '';
         <div class="card text-center">
             <div class="card-body">
                 <i class="bi bi-people" style="font-size: 36px; color: #1890ff;"></i>
-                <h5 class="mt-2">用户管理</h5>
-                <p class="text-muted small">管理系统用户</p>
-                <a href="<?= __url('user/index') ?>" class="btn btn-outline-primary btn-sm">进入</a>
+                <h5 class="mt-2">人员管理</h5>
+                <p class="text-muted small">管理系统人员</p>
+                <a href="<?= __url('Admin/index') ?>" class="btn btn-outline-primary btn-sm">进入</a>
             </div>
         </div>
     </div>
@@ -40,9 +40,9 @@ $current_route = '';
         <div class="card text-center">
             <div class="card-body">
                 <i class="bi bi-shield" style="font-size: 36px; color: #52c41a;"></i>
-                <h5 class="mt-2">角色管理</h5>
-                <p class="text-muted small">管理角色及其权限</p>
-                <a href="<?= __url('role/index') ?>" class="btn btn-outline-success btn-sm">进入</a>
+                <h5 class="mt-2">职位管理</h5>
+                <p class="text-muted small">管理职位及其权限</p>
+                <a href="<?= __url('Role/index') ?>" class="btn btn-outline-success btn-sm">进入</a>
             </div>
         </div>
     </div>
@@ -50,9 +50,9 @@ $current_route = '';
         <div class="card text-center">
             <div class="card-body">
                 <i class="bi bi-lock" style="font-size: 36px; color: #faad14;"></i>
-                <h5 class="mt-2">权限管理</h5>
-                <p class="text-muted small">管理系统权限</p>
-                <a href="<?= __url('system/index') ?>" class="btn btn-outline-warning btn-sm">进入</a>
+                <h5 class="mt-2">菜单管理</h5>
+                <p class="text-muted small">管理系统菜单</p>
+                <a href="<?= __url('Menu/index') ?>" class="btn btn-outline-warning btn-sm">进入</a>
             </div>
         </div>
     </div>
