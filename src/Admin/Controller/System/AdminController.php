@@ -1,17 +1,14 @@
 <?php declare(strict_types=1);
-namespace DuckAdmin\Admin\Controller;
+namespace DuckAdmin\Admin\Controller\System;
 
 use DuckAdmin\Admin\Business\UserBusiness;
 use DuckAdmin\Admin\Business\RoleBusiness;
 
 /**
- * @menu_group 系统管理
+ * @menu_group 人员管理
  */
-class UserController extends Base
+class AdminController extends Base
 {
-    /**
-     * 用户列表
-     */
     /** @menu 人员管理 */
     public function index()
     {
@@ -29,9 +26,7 @@ class UserController extends Base
         Helper::Show($data, 'admin/user_list');
     }
     
-    /**
-     * 创建用户表单
-     */
+
     /** @action 新增人员 */
     public function create()
     {
@@ -42,9 +37,7 @@ class UserController extends Base
         Helper::Show($data, 'admin/user_form');
     }
     
-    /**
-     * 保存新用户
-     */
+
     /** @action 保存人员 */
     public function save()
     {
@@ -72,9 +65,6 @@ class UserController extends Base
         Helper::Show($data, 'admin/user_form');
     }
     
-    /**
-     * 编辑用户表单
-     */
     /** @action 编辑人员 */
     public function edit()
     {
@@ -94,9 +84,6 @@ class UserController extends Base
         Helper::Show($data, 'admin/user_form');
     }
     
-    /**
-     * 更新用户
-     */
     /** @action 更新人员 */
     public function update()
     {
@@ -127,9 +114,6 @@ class UserController extends Base
         
     }
     
-    /**
-     * 删除用户
-     */
     /** @action 删除人员 */
     public function delete()
     {

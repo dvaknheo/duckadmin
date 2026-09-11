@@ -4,14 +4,18 @@
  */
 namespace DuckAdmin\Admin\Controller;
 
-class DashboardController extends Base
+class HomeController extends Base
 {
     /**
-     * 仪表盘首页
+     * 个人主页
      */
     public function index()
     {
         $data = [];
         Helper::Show($data, 'admin/dashboard');
+    }
+    public function profile()
+    {
+        //个人信息页眉
     }
 }

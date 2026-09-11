@@ -5,14 +5,12 @@ use DuckAdmin\Admin\Business\UserBusiness;
 use DuckAdmin\Admin\Business\RoleBusiness;
 
 /**
- * @menu_group 系统管理
+ * @menu_group 下属人员管理
  */
 class UserController extends Base
 {
-    /**
-     * 用户列表
-     */
-    /** @menu 人员管理 */
+
+    /** @menu 下属列表 */
     public function index()
     {
         $page = max(1, (int)(Helper::GET('page', '1')));
@@ -29,9 +27,7 @@ class UserController extends Base
         Helper::Show($data, 'admin/user_list');
     }
     
-    /**
-     * 创建用户表单
-     */
+
     /** @action 新增人员 */
     public function create()
     {

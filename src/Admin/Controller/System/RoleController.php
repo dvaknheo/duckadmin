@@ -9,13 +9,11 @@ use DuckAdmin\Admin\Business\RoleBusiness;
 use DuckAdmin\Admin\Business\PermissionBusiness;
 
 /**
- * @menu_name 权限分配
+ * @menu_name 职位管理
  */
 class RoleController extends Base
 {
-    /**
-     * @action 角色列表
-     */
+
     /** @menu 职位管理 */
     public function index()
     {
@@ -33,9 +31,7 @@ class RoleController extends Base
         Helper::Show($data, 'admin/role_list');
     }
     
-    /**
-     * 创建角色表单
-     */
+
     /** @action 新增职位 */
     public function create()
     {
@@ -46,9 +42,7 @@ class RoleController extends Base
         Helper::Show($data, 'admin/role_form');
     }
     
-    /**
-     * 保存新角色
-     */
+
     /** @action 保存职位 */
     public function save()
     {
@@ -69,10 +63,6 @@ class RoleController extends Base
             Helper::Show($data, 'admin/role_form');
         }
     }
-    
-    /**
-     * 编辑角色表单
-     */
     /** @action 编辑职位 */
     public function edit()
     {
@@ -116,9 +106,6 @@ class RoleController extends Base
         }
     }
     
-    /**
-     * 删除角色
-     */
     /** @action 删除职位 */
     public function delete()
     {
@@ -127,9 +114,6 @@ class RoleController extends Base
         Helper::Show302(__url('role/index'));
     }
     
-    /**
-     * 权限分配页面
-     */
     /** @action 分配权限 */
     public function permissions()
     {

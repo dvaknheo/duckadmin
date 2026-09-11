@@ -1,12 +1,12 @@
 <?php declare(strict_types=1);
-namespace DuckAdmin\Admin\Controller;
+namespace DuckAdmin\Admin\Controller\System;
 
 use DuckAdmin\Admin\Business\PermissionBusiness;
 
 /**
- * @menu_group 系统管理
+ * @menu_group 菜单和权限管理
  */
-class SystemController extends Base
+class MenuController extends Base
 {
     /**
      * @menu 权限和菜单管理
