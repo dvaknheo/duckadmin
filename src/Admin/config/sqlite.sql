@@ -8,7 +8,7 @@
 PRAGMA foreign_keys = ON;
 
 -- 管理员表
-CREATE TABLE admin_users (
+CREATE TABLE admin_admins (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username VARCHAR(100) NOT NULL UNIQUE,   -- 登录账号
     password VARCHAR(255) NOT NULL,          -- 密码哈希
@@ -39,7 +39,7 @@ CREATE TABLE admin_role_users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
     role_id INTEGER NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES admin_users(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES admin_admins(id) ON DELETE CASCADE,
     FOREIGN KEY (role_id) REFERENCES admin_roles(id) ON DELETE CASCADE
 );
 

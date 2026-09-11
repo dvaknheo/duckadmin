@@ -5,6 +5,7 @@
  */
 namespace DuckAdmin\Admin\Business;
 
+use DuckAdmin\Admin\Model\AdminModel;
 use DuckAdmin\Admin\Model\RoleUserModel;
 
 class MemberBusiness extends Base
@@ -16,7 +17,7 @@ class MemberBusiness extends Base
     {
         $admin_id = $this->getCurrentAdminId();
         $roleIds = RoleBusiness::_()->getManageableRoleIds($admin_id);
-        return AdminUserModel::_()->getPageList($page, $pageSize, $search, $roleIds);
+        return AdminModel::_()->getPageList($page, $pageSize, $search, $roleIds);
     }
     
     /**
@@ -36,7 +37,7 @@ class MemberBusiness extends Base
         }
         
         // 检查用户名唯一性
-        $existing = AdminUserModel::_()->getByUsername($input['username']);
+        $existing = AdminModel::_()->getByUsername($input['username']);
         if ($existing) {
             return ['success' => false, 'message' => '用户名已存在'];
         }
@@ -49,8 +50,8 @@ class MemberBusiness extends Base
             }
         }
         
-        AdminUserModel::_()->create($input);
-        $userId = AdminUserModel::_()->lastInsertId();
+        AdminModel::_()->create($input);
+        $userId = AdminModel::_()->lastInsertId();
         
         // 分配角色
         if (!empty($roleIds)) {
@@ -78,7 +79,7 @@ class MemberBusiness extends Base
             }
         }
         
-        AdminUserModel::_()->edit($id, $input);
+        AdminModel::_()->edit($id, $input);
         
         // 更新角色
         if (!empty($roleIds)) {
@@ -93,7 +94,7 @@ class MemberBusiness extends Base
      */
     public function delete(int $id): bool
     {
-        return AdminUserModel::_()->delete($id);
+        return AdminModel::_()->delete($id);
     }
     
     /**
@@ -101,6 +102,6 @@ class MemberBusiness extends Base
      */
     public function getById(int $id): ?array
     {
-        return AdminUserModel::_()->getById($id);
+        return AdminModel::_()->getById($id);
     }
 }

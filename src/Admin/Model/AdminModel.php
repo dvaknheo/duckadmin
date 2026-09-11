@@ -9,14 +9,14 @@ class AdminModel extends Base
 {
     public function getById(int $id): ?array
     {
-        $sql = "SELECT * FROM admin_users WHERE id = ? AND deleted_at IS NULL";
+        $sql = "SELECT * FROM admin_admins WHERE id = ? AND deleted_at IS NULL";
         $ret = $this->fetch($sql, [$id]);
         return $ret === false ? null : $ret;
     }
 
     public function getByUsername(string $username): ?array
     {
-        $sql = "SELECT * FROM admin_users WHERE username = ? AND deleted_at IS NULL";
+        $sql = "SELECT * FROM admin_admins WHERE username = ? AND deleted_at IS NULL";
         $ret = $this->fetch($sql, [$username]);
         return $ret === false ? null : $ret;
     }
@@ -31,11 +31,11 @@ class AdminModel extends Base
                 $params[] = '%' . $search[$field] . '%';
             }
         }
-        $totalSql = "SELECT COUNT(*) as total FROM admin_users WHERE {$where}";
+        $totalSql = "SELECT COUNT(*) as total FROM admin_admins WHERE {$where}";
         $totalRow = $this->fetch($totalSql, $params);
         $total = $totalRow['total'] ?? 0;
         $offset = ($page - 1) * $pageSize;
-        $listSql = "SELECT * FROM admin_users WHERE {$where} ORDER BY id ASC LIMIT ? OFFSET ?";
+        $listSql = "SELECT * FROM admin_admins WHERE {$where} ORDER BY id ASC LIMIT ? OFFSET ?";
         $list = $this->fetchAll($listSql, array_merge($params, [$pageSize, $offset]));
         return ['total' => (int)$total, 'list' => $list];
     }
@@ -45,7 +45,7 @@ class AdminModel extends Base
         $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
         $data['created_at'] = date('Y-m-d H:i:s');
         $data['updated_at'] = date('Y-m-d H:i:s');
-        $sql = "INSERT INTO admin_users (username, password, realname, email, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO admin_admins (username, password, realname, email, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)";
         $this->execute($sql, [
             $data['username'], $data['password'], $data['realname'],
             $data['email'], $data['status'] ?? 1,
@@ -73,14 +73,14 @@ class AdminModel extends Base
             return false;
         }
         $params[] = $id;
-        $sql = "UPDATE admin_users SET " . implode(', ', $fields) . " WHERE id = ?";
+        $sql = "UPDATE admin_admins SET " . implode(', ', $fields) . " WHERE id = ?";
         $this->execute($sql, $params);
         return true;
     }
 
     public function delete(int $id): bool
     {
-        $sql = "UPDATE admin_users SET deleted_at = ?, updated_at = ? WHERE id = ?";
+        $sql = "UPDATE admin_admins SET deleted_at = ?, updated_at = ? WHERE id = ?";
         $now = date('Y-m-d H:i:s');
         $this->execute($sql, [$now, $now, $id]);
         return true;
@@ -88,7 +88,7 @@ class AdminModel extends Base
 
     public function updateLoginTime(int $id): void
     {
-        $sql = "UPDATE admin_users SET last_login_at = ? WHERE id = ?";
+        $sql = "UPDATE admin_admins SET last_login_at = ? WHERE id = ?";
         $this->execute($sql, [date('Y-m-d H:i:s'), $id]);
     }
 }
