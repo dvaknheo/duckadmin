@@ -5,12 +5,17 @@ use DuckAdmin\Admin\Business\MemberBusiness;
 use DuckAdmin\Admin\Business\MemberRoleBusiness;
 
 /**
- * @menu_group 下属人员管理
+ * @menu_group 成员管理 10
+ * @menu_directory 下属人员 Member/index
+ * @menu_weight 10
  */
 class MemberController extends Base
 {
 
-    /** @menu 下属列表 */
+    /**
+     * @menu_item 下属人员
+     * @menu_weight 10
+     */
     public function index()
     {
         $page = max(1, (int)(Helper::GET('page', '1')));
@@ -28,7 +33,10 @@ class MemberController extends Base
     }
     
 
-    /** @action 新增人员 */
+    /**
+     * @menu_action 新增人员
+     * @menu_weight 20
+     */
     public function create()
     {
         $admin_id = (int)Session::_()->getUserId();
@@ -40,8 +48,9 @@ class MemberController extends Base
     
     /**
      * 保存新用户
+     * @menu_action 保存人员
+     * @menu_weight 21
      */
-    /** @action 保存人员 */
     public function save()
     {
         $input = [
@@ -56,7 +65,7 @@ class MemberController extends Base
         
         $result = MemberBusiness::_()->create($input, $roleIds);
         if ($result['success']) {
-            Helper::Show302(__url('user/index'));
+            Helper::Show302(__url('Member/index'));
             return;
         }
         $admin_id = (int)Session::_()->getUserId();
@@ -70,14 +79,15 @@ class MemberController extends Base
     
     /**
      * 编辑用户表单
+     * @menu_action 编辑人员
+     * @menu_weight 22
      */
-    /** @action 编辑人员 */
     public function edit()
     {
         $id = (int)Helper::GET('id', '0');
         $user = MemberBusiness::_()->getById($id);
         if (!$user) {
-            Helper::Show302(__url('user/index'));
+            Helper::Show302(__url('Member/index'));
             return;
         }
         
@@ -92,8 +102,9 @@ class MemberController extends Base
     
     /**
      * 更新用户
+     * @menu_action 更新人员
+     * @menu_weight 23
      */
-    /** @action 更新人员 */
     public function update()
     {
         $id = (int)Helper::POST('id', '0');
@@ -109,7 +120,7 @@ class MemberController extends Base
         
         $result = MemberBusiness::_()->update($id, $input, $roleIds);
         if ($result['success']) {
-            Helper::Show302(__url('user/index'));
+            Helper::Show302(__url('Member/index'));
             return;
         }
         $admin_id = (int)Session::_()->getUserId();
@@ -125,13 +136,14 @@ class MemberController extends Base
     
     /**
      * 删除用户
+     * @menu_action 删除人员
+     * @menu_weight 24
      */
-    /** @action 删除人员 */
     public function delete()
     {
         $id = (int)Helper::GET('id', '0');
         MemberBusiness::_()->delete($id);
-        Helper::Show302(__url('user/index'));
+        Helper::Show302(__url('Member/index'));
     }
 }
 

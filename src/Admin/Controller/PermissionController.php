@@ -7,11 +7,15 @@ use DuckAdmin\Admin\Business\MenuBusiness;
 /**
  * DuckPhp Admin System - Permission Controller
  * @menu_group 系统管理
- * @menu_name 权限管理
+ * @menu_directory 权限分配 Permission/index
+ * @menu_weight 30
  */
 class PermissionController extends Base
 {
-    /** @menu 权限管理 */
+    /**
+     * @menu_item 权限分配
+     * @menu_weight 10
+     */
     public function index()
     {
         $id = (int)Helper::GET('id', '0');

@@ -200,49 +200,75 @@ foreach($__html['script'] ?? [] as $script){
     </header>
 
     <aside class="sidebar" id="sidebar">
+        <?php
+        // —— 高亮计算: 菜单 url 为无域名的完整 path;先精确匹配当前 path,
+        //    失败则按目录的 # 别名(同控制器段)兜底 ——
+        $currentPath = (string)(parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?: '');
+        $__itemUrls = [];
+        $__dirAliases = [];
+        $__collect = function ($nodes) use (&$__collect, &$__itemUrls, &$__dirAliases) {
+            foreach ($nodes as $n) {
+                $url = (string)($n['url'] ?? '');
+                if (!empty($n['children'])) {
+                    if ($url !== '' && substr($url, -1) === '#') {
+                        $__dirAliases[] = $url;
+                    }
+                    $__collect($n['children']);
+                } elseif ((int)($n['type'] ?? 1) === 1 && $url !== '') {
+                    $__itemUrls[] = $url;
+                }
+            }
+        };
+        $__collect($menus ?? []);
+        $activeUrl = in_array($currentPath, $__itemUrls, true) ? $currentPath : '';
+        if ($activeUrl === '') {
+            $curSeg = substr($currentPath, 0, (int)strrpos($currentPath, '/'));
+            foreach ($__dirAliases as $alias) {
+                $target = substr($alias, 0, -1); // 去掉 # 后缀
+                if (substr($target, 0, (int)strrpos($target, '/')) === $curSeg) {
+                    $activeUrl = $target;
+                    break;
+                }
+            }
+        }
+
+        if (!function_exists('sidebarContainsActive')) {
+            function sidebarContainsActive($nodes, $activeUrl) {
+                if ($activeUrl === '') return false;
+                foreach ($nodes as $n) {
+                    if (($n['url'] ?? '') === $activeUrl) return true;
+                    if (!empty($n['children']) && sidebarContainsActive($n['children'], $activeUrl)) return true;
+                }
+                return false;
+            }
+        }
+        if (!function_exists('renderSidebarMenu')) {
+            function renderSidebarMenu($nodes, $activeUrl) {
+                foreach ($nodes as $node) {
+                    $name = __h($node['name']);
+                    $url = (string)($node['url'] ?? '');
+                    $type = (int)($node['type'] ?? 1);
+                    if (!empty($node['children'])) {
+                        $open = sidebarContainsActive($node['children'], $activeUrl);
+                        echo '<li class="nav-item">'
+                            . '<a class="nav-link" href="javascript:;" onclick="toggleSubMenu(this)">' . $name
+                            . '<i class="bi bi-chevron-right arrow' . ($open ? ' open' : '') . '"></i></a>'
+                            . '<ul class="sub-menu nav flex-column' . ($open ? ' open' : '') . '">';
+                        renderSidebarMenu($node['children'], $activeUrl);
+                        echo '</ul></li>';
+                    } elseif ($type === 1 && $url !== '') {
+                        $active = $url === $activeUrl ? ' active' : '';
+                        echo '<li class="nav-item"><a class="nav-link' . $active . '" href="' . __h($url) . '">' . $name . '</a></li>';
+                    } else {
+                        // 无子级的目录/占位节点: 不可点击
+                        echo '<li class="nav-item"><span class="nav-link">' . $name . '</span></li>';
+                    }
+                }
+            }
+        }
+        ?>
         <ul class="nav flex-column">
-            <?php foreach ($menus as $menu): ?>
-                <?php if (!empty($menu['children'])): ?>
-                    <li class="nav-item">
-                        <a class="nav-link" href="javascript:;" onclick="toggleSubMenu(this)">
-                            <?= __h($menu['name']) ?>
-                            <i class="bi bi-chevron-right arrow"></i>
-                        </a>
-                        <ul class="sub-menu nav flex-column">
-                            <?php foreach ($menu['children'] as $child): ?>
-                                <li class="nav-item">
-                                    <?php if (!empty($child['children'])): ?>
-                                        <a class="nav-link" href="javascript:;" onclick="toggleSubMenu(this)">
-                                            <?= __h($child['name']) ?>
-                                            <i class="bi bi-chevron-right arrow"></i>
-                                        </a>
-                                        <ul class="sub-menu nav flex-column">
-                                            <?php foreach ($child['children'] as $grand): ?>
-                                                <li class="nav-item">
-                                                    <a class="nav-link" href="<?= __url($grand['url'] ?? '#') ?>">
-                                                        <?= __h($grand['name']) ?>
-                                                    </a>
-                                                </li>
-                                            <?php endforeach; ?>
-                                        </ul>
-                                    <?php else: ?>
-                                        <a class="nav-link" href="<?= __url($child['url'] ?? '#') ?>">
-                                            <?= __h($child['name']) ?>
-                                        </a>
-                                    <?php endif; ?>
-                                </li>
-                            <?php endforeach; ?>
-                        </ul>
-                    </li>
-                <?php else: ?>
-                    <li class="nav-item">
-                        <a class="nav-link <?= ($current_route ?? '') === ($menu['url'] ?? '') ? 'active' : '' ?>" 
-                           href="<?= __url($menu['url'] ?? '#') ?>">
-                            <?= __h($menu['name']) ?>
-                        </a>
-                    </li>
-                <?php endif; ?>
-            <?php endforeach; ?>
+            <?php renderSidebarMenu($menus ?? [], $activeUrl); ?>
         </ul>
     </aside>
 

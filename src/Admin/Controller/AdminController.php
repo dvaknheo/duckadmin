@@ -4,11 +4,16 @@ namespace DuckAdmin\Admin\Controller;
 use DuckAdmin\Admin\Business\AdminBusiness;
 
 /**
- * @menu_group 人员管理
+ * @menu_group 系统管理 20
+ * @menu_directory 人员管理 Admin/index
+ * @menu_weight 10
  */
 class AdminController extends Base
 {
-    /** @menu 人员管理 */
+    /**
+     * @menu_item 人员管理
+     * @menu_weight 10
+     */
     public function index()
     {
         $page = max(1, (int)(Helper::GET('page', '1')));
@@ -37,7 +42,10 @@ class AdminController extends Base
         Helper::Show($data, 'AdminNew/user_list');
     }
 
-    /** @action 新增人员 */
+    /**
+     * @menu_action 新增人员
+     * @menu_weight 20
+     */
     public function create()
     {
         $data['title'] = '新增人员';
@@ -50,7 +58,10 @@ class AdminController extends Base
         Helper::Show($data, 'AdminNew/user_form');
     }
 
-    /** @action 保存人员 */
+    /**
+     * @menu_action 保存人员
+     * @menu_weight 21
+     */
     public function save()
     {
         $input = [
@@ -78,7 +89,10 @@ class AdminController extends Base
         Helper::Show($data, 'AdminNew/user_form');
     }
 
-    /** @action 编辑人员 */
+    /**
+     * @menu_action 编辑人员
+     * @menu_weight 22
+     */
     public function edit()
     {
         $id = (int)Helper::GET('id', '0');
@@ -99,7 +113,10 @@ class AdminController extends Base
         Helper::Show($data, 'AdminNew/user_form');
     }
 
-    /** @action 更新人员 */
+    /**
+     * @menu_action 更新人员
+     * @menu_weight 23
+     */
     public function update()
     {
         $id = (int)Helper::POST('id', '0');
@@ -128,7 +145,10 @@ class AdminController extends Base
         Helper::Show($data, 'AdminNew/user_form');
     }
 
-    /** @action 删除人员 */
+    /**
+     * @menu_action 删除人员
+     * @menu_weight 24
+     */
     public function delete()
     {
         $id = (int)Helper::GET('id', '0');

@@ -4,11 +4,16 @@ namespace DuckAdmin\Admin\Controller;
 use DuckAdmin\Admin\Business\MenuBusiness;
 
 /**
- * @menu_group 菜单和权限管理
+ * @menu_group 系统管理
+ * @menu_directory 菜单管理 Menu/index
+ * @menu_weight 40
  */
 class MenuController extends Base
 {
-    /** @menu 权限和菜单管理 */
+    /**
+     * @menu_item 菜单管理
+     * @menu_weight 10
+     */
     public function index()
     {
         $data['tree'] = MenuBusiness::_()->getTree();
@@ -26,7 +31,10 @@ class MenuController extends Base
         Helper::Show($data, 'Menu/index');
     }
 
-    /** @action 一键扫描 */
+    /**
+     * @menu_action 一键扫描
+     * @menu_weight 20
+     */
     public function scan()
     {
         $added = MenuBusiness::_()->scanRoutes();
@@ -39,7 +47,10 @@ class MenuController extends Base
         Helper::Show($data, 'Menu/scan');
     }
 
-    /** @action 新增菜单 */
+    /**
+     * @menu_action 新增菜单
+     * @menu_weight 21
+     */
     public function create()
     {
         $data['title'] = '新增菜单';
@@ -53,7 +64,10 @@ class MenuController extends Base
         Helper::Show($data, 'Menu/form');
     }
 
-    /** @action 保存菜单 */
+    /**
+     * @menu_action 保存菜单
+     * @menu_weight 22
+     */
     public function save()
     {
         $input = [
@@ -82,7 +96,10 @@ class MenuController extends Base
         Helper::Show($data, 'Menu/form');
     }
 
-    /** @action 编辑菜单 */
+    /**
+     * @menu_action 编辑菜单
+     * @menu_weight 23
+     */
     public function edit()
     {
         $id = (int)Helper::GET('id', '0');
@@ -104,7 +121,10 @@ class MenuController extends Base
         Helper::Show($data, 'Menu/form');
     }
 
-    /** @action 更新菜单 */
+    /**
+     * @menu_action 更新菜单
+     * @menu_weight 24
+     */
     public function update()
     {
         $id = (int)Helper::POST('id', '0');
@@ -134,7 +154,10 @@ class MenuController extends Base
         Helper::Show($data, 'Menu/form');
     }
 
-    /** @action 删除菜单 */
+    /**
+     * @menu_action 删除菜单
+     * @menu_weight 25
+     */
     public function delete()
     {
         $id = (int)Helper::GET('id', '0');

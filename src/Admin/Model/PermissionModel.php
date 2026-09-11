@@ -102,9 +102,18 @@ class PermissionModel extends Base
      */
     public function getDirIdByName(string $name): int
     {
+        return $this->findDirectoryId($name, 0);
+    }
+
+    /**
+     * 按名称+父级查询目录(type=0) id,不存在返回 0
+     * 分组(顶级) parentId=0;目录 parentId=所属分组 id
+     */
+    public function findDirectoryId(string $name, int $parentId): int
+    {
         $row = $this->fetch(
-            "SELECT id FROM admin_permissions WHERE type = 0 AND name = ? AND deleted_at IS NULL",
-            [$name]
+            "SELECT id FROM admin_permissions WHERE type = 0 AND name = ? AND parent_id = ? AND deleted_at IS NULL",
+            [$name, $parentId]
         );
         return $row ? (int)$row['id'] : 0;
     }

@@ -6,11 +6,15 @@ use DuckAdmin\Admin\Business\RoleBusiness;
 /**
  * DuckPhp Admin System - Role Controller
  * @menu_group 系统管理
- * @menu_name 职位管理
+ * @menu_directory 职位管理 Role/index
+ * @menu_weight 20
  */
 class RoleController extends Base
 {
-    /** @menu 职位管理 */
+    /**
+     * @menu_item 职位管理
+     * @menu_weight 10
+     */
     public function index()
     {
         $page = max(1, (int)(Helper::GET('page', '1')));
@@ -35,7 +39,10 @@ class RoleController extends Base
         Helper::Show($data, 'Role/role_list');
     }
 
-    /** @action 新增职位 */
+    /**
+     * @menu_action 新增职位
+     * @menu_weight 20
+     */
     public function create()
     {
         $data['title'] = '新增职位';
@@ -49,7 +56,10 @@ class RoleController extends Base
         Helper::Show($data, 'Role/role_form');
     }
 
-    /** @action 保存职位 */
+    /**
+     * @menu_action 保存职位
+     * @menu_weight 21
+     */
     public function save()
     {
         $name = Helper::POST('name', '');
@@ -74,7 +84,10 @@ class RoleController extends Base
         }
     }
 
-    /** @action 编辑职位 */
+    /**
+     * @menu_action 编辑职位
+     * @menu_weight 22
+     */
     public function edit()
     {
         $id = (int)Helper::GET('id', '0');
@@ -96,7 +109,10 @@ class RoleController extends Base
         Helper::Show($data, 'Role/role_form');
     }
 
-    /** @action 更新职位 */
+    /**
+     * @menu_action 更新职位
+     * @menu_weight 23
+     */
     public function update()
     {
         $id = (int)Helper::POST('id', '0');
@@ -122,7 +138,10 @@ class RoleController extends Base
         }
     }
 
-    /** @action 删除职位 */
+    /**
+     * @menu_action 删除职位
+     * @menu_weight 24
+     */
     public function delete()
     {
         $id = (int)Helper::GET('id', '0');
