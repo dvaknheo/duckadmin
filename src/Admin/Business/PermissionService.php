@@ -74,4 +74,137 @@ class PermissionService extends Base
         unset($node);
         return $tree;
     }
+
+    /**
+     * 一键扫描:RouteLister 扫描 admin 路由
+     * - 控制器类 @menu_group → 目录(type0,url 空)
+     * - 方法 @menu → 该目录下菜单(type1);方法 @action → 该目录下权限(type2);二者二选一
+     * 已有 url 跳过(source=1 标记自动扫描)
+     * @return array<string> 新增的 url 列表
+     */
+    public function scanRoutes(): array
+    {
+        $routes = \DuckPhp\Component\RouteLister::_()->listAll(true, true, true);
+        $groups = [];
+        foreach ($routes as $route) {
+            $controller = (string)($route['controller'] ?? '');
+            $method = (string)($route['method'] ?? '');
+            $url = (string)($route['url'] ?? '');
+            if ($controller === '' || $method === '' || $url === '') {
+                continue;
+            }
+            $path = ltrim($url, '/');
+            if (strpos($path, 'admin/') === 0) {
+                $path = substr($path, 6);
+            }
+            if ($path === '') {
+                continue;
+            }
+            $groups[$controller][$method] = $path;
+        }
+
+        $model = PermissionModel::_();
+        $existing = [];
+        foreach ($model->getAll() as $p) {
+            $existing[$p['url']] = (int)$p['id'];
+        }
+        $added = [];
+        $weight = 100;
+
+        foreach ($groups as $controller => $methods) {
+            $groupName = $this->getMenuGroupFromAnnotation($controller);
+            if ($groupName === '') {
+                continue; // 无 @menu_group 的控制器不扫描
+            }
+            // 目录(按 name 查,url 为空)
+            $dirId = $model->getDirIdByName($groupName);
+            if (!$dirId) {
+                $dirId = $model->create([
+                    'name' => $groupName,
+                    'url' => '',
+                    'type' => 0,
+                    'parent_id' => 0,
+                    'weight' => $weight,
+                    'source' => 1,
+                ]);
+                $weight += 10;
+            }
+            // 方法:@menu 菜单 / @action 操作(二选一)
+            foreach ($methods as $method => $path) {
+                if (isset($existing[$path])) {
+                    continue;
+                }
+                $menuName = $this->getMethodAnnotation($controller, $method, 'menu');
+                if ($menuName !== '') {
+                    $model->create([
+                        'name' => $menuName,
+                        'url' => $path,
+                        'type' => 1,
+                        'parent_id' => (int)$dirId,
+                        'weight' => $weight,
+                        'source' => 1,
+                    ]);
+                    $existing[$path] = true;
+                    $added[] = $path;
+                    $weight++;
+                    continue;
+                }
+                $actionName = $this->getMethodAnnotation($controller, $method, 'action');
+                if ($actionName !== '') {
+                    $model->create([
+                        'name' => $actionName,
+                        'url' => $path,
+                        'type' => 2,
+                        'parent_id' => (int)$dirId,
+                        'weight' => $weight,
+                        'source' => 1,
+                    ]);
+                    $existing[$path] = true;
+                    $added[] = $path;
+                    $weight++;
+                }
+            }
+        }
+        return $added;
+    }
+
+    /**
+     * 读取控制器类 @menu_group 注解作为目录名称
+     */
+    protected function getMenuGroupFromAnnotation(string $controller): string
+    {
+        if ($controller === '' || !class_exists($controller)) {
+            return '';
+        }
+        try {
+            $ref = new \ReflectionClass($controller);
+            $doc = (string)$ref->getDocComment();
+            if (preg_match('/@menu_group\s+([^*]+)/', $doc, $m)) {
+                return trim($m[1]);
+            }
+        } catch (\Throwable $e) {
+            // ignore
+        }
+        return '';
+    }
+
+    /**
+     * 读取控制器方法注解(@menu 或 @action)
+     */
+    protected function getMethodAnnotation(string $controller, string $method, string $tag): string
+    {
+        if ($controller === '' || !class_exists($controller)) {
+            return '';
+        }
+        try {
+            $ref = new \ReflectionMethod($controller, $method);
+            $doc = (string)$ref->getDocComment();
+            if (preg_match('/@' . $tag . '\s+([^*]+)/', $doc, $m)) {
+                return trim($m[1]);
+            }
+        } catch (\Throwable $e) {
+            // ignore
+        }
+        return '';
+    }
 }

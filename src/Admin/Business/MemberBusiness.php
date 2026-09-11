@@ -16,7 +16,7 @@ class MemberBusiness extends Base
     public function getList(int $page, int $pageSize, string $search = ''): array
     {
         $admin_id = $this->getCurrentAdminId();
-        $roleIds = RoleBusiness::_()->getManageableRoleIds($admin_id);
+        $roleIds = MemberMemberRoleBusiness::_()->getManageableRoleIds($admin_id);
         return AdminModel::_()->getPageList($page, $pageSize, $search, $roleIds);
     }
     
@@ -45,7 +45,7 @@ class MemberBusiness extends Base
         // 职位范围校验:目标职位必须是当前管理员可管理的子职位
         $admin_id = $this->getCurrentAdminId();
         foreach ($roleIds as $rid) {
-            if (!RoleBusiness::_()->canManageRole($admin_id, (int)$rid)) {
+            if (!MemberRoleBusiness::_()->canManageRole($admin_id, (int)$rid)) {
                 return ['success' => false, 'message' => '目标职位不在你的管理范围内'];
             }
         }
@@ -74,7 +74,7 @@ class MemberBusiness extends Base
         // 职位范围校验:目标职位必须是当前管理员可管理的子职位
         $admin_id = $this->getCurrentAdminId();
         foreach ($roleIds as $rid) {
-            if (!RoleBusiness::_()->canManageRole($admin_id, (int)$rid)) {
+            if (!MemberRoleBusiness::_()->canManageRole($admin_id, (int)$rid)) {
                 return ['success' => false, 'message' => '目标职位不在你的管理范围内'];
             }
         }

@@ -47,7 +47,7 @@ class MenuBusiness extends Base
      */
     public function scanRoutes(): array
     {
-        return PermissionModel::_()->scanRoutes();
+        return PermissionService::_()->scanRoutes();
     }
 
     /**

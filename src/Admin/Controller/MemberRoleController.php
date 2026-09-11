@@ -11,7 +11,7 @@ use DuckAdmin\Admin\Business\PermissionBusiness;
 /**
  * @menu_name 权限分配
  */
-class MemberPermissionController extends Base
+class MemberRoleController extends Base
 {
     public function index()
     {

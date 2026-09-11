@@ -5,6 +5,8 @@
  */
 namespace DuckAdmin\Admin\Business;
 
+use DuckAdmin\Admin\Model\PermissionModel;
+use DuckAdmin\Admin\Model\RoleModel;
 use DuckAdmin\Admin\Model\RoleUserModel;
 
 class MemberRoleBusiness extends Base
