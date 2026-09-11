@@ -11,7 +11,7 @@ use DuckPhp\GlobalAdmin\GlobalAdmin;
 
 use DuckAdmin\Admin\Business\AppBusiness;
 
-class AdminAction
+class AuthAction
 {
     use SingletonTrait;
     public function __construct()

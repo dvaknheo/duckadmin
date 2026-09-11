@@ -30,7 +30,7 @@ class MainController
                 $password = Helper::POST('password', '');
                 Helper::ThrowOn((empty($username) || empty($password)), '请输入用户名和密码');
 
-                AdminAction::_()->login(Helper::POST());
+                AuthAction::_()->login(Helper::POST());
                 return;
             }catch(\Exception $ex) {
                 $data['error'] = $ex->getMessage();
@@ -40,6 +40,6 @@ class MainController
     }
     public function logout()
     {
-        AdminAction::_()->logout();
+        AuthAction::_()->logout();
     }
 }
