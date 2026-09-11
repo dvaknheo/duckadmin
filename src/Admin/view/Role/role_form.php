@@ -11,7 +11,7 @@ $title = $isEdit ? '编辑职位' : '新增职位';
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="<?= __url('') ?>">首页</a></li>
-            <li class="breadcrumb-item"><a href="<?= __url('role/index') ?>">职位管理</a></li>
+            <li class="breadcrumb-item"><a href="<?= __url('Role/index') ?>">职位管理</a></li>
             <li class="breadcrumb-item active"><?= __h($title) ?></li>
         </ol>
     </nav>
@@ -23,7 +23,7 @@ $title = $isEdit ? '编辑职位' : '新增职位';
             <div class="alert alert-danger"><?= __h($error) ?></div>
         <?php endif; ?>
         
-        <form method="post" action="<?= __url($isEdit ? 'role/update' : 'role/save') ?>" class="row g-3">
+        <form method="post" action="<?= __url($isEdit ? 'Role/update' : 'Role/save') ?>" class="row g-3">
             <?php if ($isEdit): ?>
                 <input type="hidden" name="id" value="<?= (int)$data['id'] ?>">
             <?php endif; ?>
@@ -59,7 +59,7 @@ $title = $isEdit ? '编辑职位' : '新增职位';
                 <button type="submit" class="btn btn-primary">
                     <i class="bi bi-check-lg"></i> <?= $isEdit ? '保存修改' : '新增职位' ?>
                 </button>
-                <a href="<?= __url('role/index') ?>" class="btn btn-outline-secondary">取消</a>
+                <a href="<?= __url('Role/index') ?>" class="btn btn-outline-secondary">取消</a>
             </div>
         </form>
     </div>

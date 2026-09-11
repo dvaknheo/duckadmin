@@ -10,7 +10,7 @@ $title = '分配权限';
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="<?= __url('') ?>">首页</a></li>
-                <li class="breadcrumb-item"><a href="<?= __url('role/index') ?>">职位管理</a></li>
+                <li class="breadcrumb-item"><a href="<?= __url('Role/index') ?>">职位管理</a></li>
                 <li class="breadcrumb-item active">分配权限</li>
             </ol>
         </nav>
@@ -39,7 +39,7 @@ $title = '分配权限';
                             <td><strong><?= __h($item['name']) ?></strong></td>
                             <td class="text-muted"><?= __h($item['description'] ?? '') ?></td>
                             <td>
-                                <a href="<?= __url('role/permissions?id=' . $item['id']) ?>" class="btn btn-sm btn-outline-info">
+                                <a href="<?= __url('Permission/index?id=' . $item['id']) ?>" class="btn btn-sm btn-outline-info">
                                     <i class="bi bi-shield"></i> 分配权限
                                 </a>
                             </td>

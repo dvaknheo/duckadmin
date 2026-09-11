@@ -1,96 +1,118 @@
 <?php
 /**
- * Permission Index - Permission/
+ * Permission Index - 权限分配(四级树形勾选)
+ * @var array $tree 权限树(分组→目录→菜单/操作)
  * @var array $role
- * @var array $permissions
+ * @var bool $is_super
  * @var array $role_permission_ids
+ * @var bool $saved
+ * @var string $error
  * @var array $urls (save, list)
  */
 $title = '权限分配';
+
+if (!function_exists('renderPermNode')) {
+    /**
+     * 递归渲染权限树节点(checkbox)
+     */
+    function renderPermNode($node, $checkedIds, $disabled) {
+        $id = (int)$node['id'];
+        $typeLabels = [0 => '目录', 1 => '菜单', 2 => '操作'];
+        $typeColors = [0 => 'secondary', 1 => 'primary', 2 => 'info'];
+        $type = (int)($node['type'] ?? 1);
+        $checked = in_array($id, $checkedIds, true) ? ' checked' : '';
+        $dis = $disabled ? ' disabled' : '';
+
+        echo '<li class="perm-li mb-1">';
+        echo '<div class="form-check">';
+        echo '<input class="form-check-input perm-cb" type="checkbox" name="permission_ids[]" value="' . $id . '"'
+            . ' id="perm_' . $id . '"' . $checked . $dis . ' onchange="cascadePerm(this)">';
+        echo '<label class="form-check-label" for="perm_' . $id . '">'
+            . __h($node['name'])
+            . ' <span class="badge bg-' . ($typeColors[$type] ?? 'secondary') . '">' . ($typeLabels[$type] ?? '?') . '</span>';
+        if (!empty($node['url'])) {
+            echo ' <small class="text-muted"><code>' . __h($node['url']) . '</code></small>';
+        }
+        echo '</label></div>';
+        if (!empty($node['children'])) {
+            echo '<ul class="list-unstyled ms-4">';
+            foreach ($node['children'] as $child) {
+                renderPermNode($child, $checkedIds, $disabled);
+            }
+            echo '</ul>';
+        }
+        echo '</li>';
+    }
+}
 ?>
 <div class="page-header">
-    <h4>权限分配 - <?= __h($role['name']) ?></h4>
+    <h4>权限分配 - <?= __h($role['name']) ?>
+        <?php if ($is_super): ?>
+            <span class="badge bg-danger">超管</span>
+        <?php endif; ?>
+    </h4>
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="<?= $urls['list'] ?>">首页</a></li>
-            <li class="breadcrumb-item active">权限分配</li>
+            <li class="breadcrumb-item"><a href="<?= $urls['list'] ?>">权限分配</a></li>
+            <li class="breadcrumb-item active"><?= __h($role['name']) ?></li>
         </ol>
     </nav>
 </div>
 
+<?php if ($saved): ?>
+    <div class="alert alert-success"><i class="bi bi-check-circle"></i> 保存成功</div>
+<?php endif; ?>
+<?php if ($error !== ''): ?>
+    <div class="alert alert-danger"><i class="bi bi-exclamation-triangle"></i> <?= __h($error) ?></div>
+<?php endif; ?>
+
+<?php if ($is_super): ?>
+    <div class="alert alert-info"><i class="bi bi-info-circle"></i> 超级管理员职位拥有所有权限，无需分配（以下权限为只读展示）。</div>
+<?php endif; ?>
+
 <div class="card">
     <div class="card-body">
         <form method="post" action="<?= $urls['save'] ?>?id=<?= (int)$role['id'] ?>">
-            <div class="row">
-                <?php if (empty($permissions)): ?>
-                    <p class="text-muted">暂无可用权限</p>
-                <?php else: ?>
-                    <?php
-                    $topPermissions = array_filter($permissions, function($p) { return $p['parent_id'] == 0; });
-                    $childPermissions = array_filter($permissions, function($p) { return $p['parent_id'] > 0; });
-                    ?>
-
-                    <?php foreach ($topPermissions as $top): ?>
-                        <div class="col-md-4 mb-3">
-                            <div class="card">
-                                <div class="card-header" style="padding: 10px 16px;">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox"
-                                               value="<?= (int)$top['id'] ?>"
-                                               id="perm_<?= (int)$top['id'] ?>"
-                                               name="permission_ids[]"
-                                               onchange="toggleChildren(this, <?= (int)$top['id'] ?>)"
-                                               <?= in_array($top['id'], $role_permission_ids ?? []) ? 'checked' : '' ?>>
-                                        <label class="form-check-label fw-bold" for="perm_<?= (int)$top['id'] ?>">
-                                            <?= __h($top['name']) ?>
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="card-body" style="padding: 10px 16px;">
-                                    <?php
-                                    $children = array_filter($childPermissions, function($c) use ($top) {
-                                        return $c['parent_id'] == $top['id'];
-                                    });
-                                    ?>
-
-                                    <?php if (empty($children)): ?>
-                                        <small class="text-muted"><?= __h($top['url'] ?? '') ?></small>
-                                    <?php else: ?>
-                                        <?php foreach ($children as $child): ?>
-                                            <div class="form-check">
-                                                <input class="form-check-input child-perm child-of-<?= (int)$top['id'] ?>"
-                                                       type="checkbox"
-                                                       value="<?= (int)$child['id'] ?>"
-                                                       id="perm_<?= (int)$child['id'] ?>"
-                                                       name="permission_ids[]"
-                                                       <?= in_array($child['id'], $role_permission_ids ?? []) ? 'checked' : '' ?>>
-                                                <label class="form-check-label" for="perm_<?= (int)$child['id'] ?>">
-                                                    <?= __h($child['name']) ?>
-                                                </label>
-                                            </div>
-                                        <?php endforeach; ?>
-                                    <?php endif; ?>
-                                </div>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
+            <?php if (empty($tree)): ?>
+                <p class="text-muted">暂无可用权限</p>
+            <?php else: ?>
+                <?php if (!$is_super): ?>
+                    <div class="mb-3">
+                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="checkAllPerms(true)">全选</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="checkAllPerms(false)">全不选</button>
+                    </div>
                 <?php endif; ?>
-            </div>
+                <ul class="list-unstyled">
+                    <?php foreach ($tree as $node): ?>
+                        <?php renderPermNode($node, array_map('intval', $role_permission_ids ?? []), $is_super); ?>
+                    <?php endforeach; ?>
+                </ul>
+            <?php endif; ?>
 
-            <hr>
-            <button type="submit" class="btn btn-primary">
-                <i class="bi bi-check-lg"></i> 保存权限
-            </button>
-            <a href="<?= $urls['list'] ?>" class="btn btn-outline-secondary">取消</a>
+            <?php if (!$is_super): ?>
+                <hr>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-lg"></i> 保存权限
+                </button>
+                <a href="<?= $urls['list'] ?>" class="btn btn-outline-secondary">返回</a>
+            <?php else: ?>
+                <hr>
+                <a href="<?= $urls['list'] ?>" class="btn btn-outline-secondary">返回</a>
+            <?php endif; ?>
         </form>
     </div>
 </div>
 
 <script>
-function toggleChildren(parentCheckbox, parentId) {
-    var children = document.querySelectorAll('.child-of-' + parentId);
-    children.forEach(function(child) {
-        child.checked = parentCheckbox.checked;
+// 勾选父节点 => 级联所有子孙
+function cascadePerm(cb) {
+    var li = cb.closest('.perm-li');
+    if (!li) return;
+    li.querySelectorAll('ul .perm-cb').forEach(function(child) {
+        child.checked = cb.checked;
     });
+}
+function checkAllPerms(v) {
+    document.querySelectorAll('.perm-cb').forEach(function(cb) { cb.checked = v; });
 }
 </script>

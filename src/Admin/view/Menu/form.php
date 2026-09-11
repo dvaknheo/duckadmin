@@ -3,7 +3,7 @@
  * Menu Form (Create / Edit) - Menu/
  * @var array $perm (edit mode)
  * @var array $input (create mode with validation errors)
- * @var array $permissions
+ * @var array $perm_tree 权限树(供上级选择,仅目录可选)
  * @var string $error
  * @var array $urls (save/update, list)
  * @var bool $is_edit
@@ -12,6 +12,23 @@
 $data = $is_edit ? $perm : ($input ?? []);
 $title = $is_edit ? '编辑权限' : '创建权限';
 $form_url = $is_edit ? ($urls['update'] ?? '') : ($urls['save'] ?? '');
+
+if (!function_exists('renderParentOptions')) {
+    /**
+     * 递归渲染上级选项(仅 type=0 目录可选;排除被编辑节点自身及其子树防循环)
+     */
+    function renderParentOptions($nodes, $depth, $selectedId, $excludeId = 0) {
+        foreach ($nodes as $n) {
+            if ((int)$n['type'] !== 0) continue;
+            if ((int)$n['id'] === $excludeId) continue; // 跳过自身(子树一并跳过)
+            $sel = ((int)$selectedId === (int)$n['id']) ? ' selected' : '';
+            echo '<option value="' . (int)$n['id'] . '"' . $sel . '>'
+                . str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;', $depth) . ($depth > 0 ? '├─ ' : '')
+                . htmlspecialchars($n['name']) . '</option>';
+            renderParentOptions($n['children'] ?? [], $depth + 1, $selectedId, $excludeId);
+        }
+    }
+}
 ?>
 <div class="page-header">
     <h4><?= __h($title) ?></h4>
@@ -65,14 +82,7 @@ $form_url = $is_edit ? ($urls['update'] ?? '') : ($urls['save'] ?? '');
                 <label class="form-label">上级</label>
                 <select name="parent_id" class="form-select">
                     <option value="0">顶级</option>
-                    <?php foreach ($permissions as $p): ?>
-                        <?php if ($p['parent_id'] == 0): ?>
-                            <option value="<?= (int)$p['id'] ?>"
-                                <?= (($data['parent_id'] ?? 0) == $p['id']) ? 'selected' : '' ?>>
-                                <?= __h($p['name']) ?>
-                            </option>
-                        <?php endif; ?>
-                    <?php endforeach; ?>
+                    <?php renderParentOptions($perm_tree ?? [], 0, $data['parent_id'] ?? 0, $is_edit ? (int)$data['id'] : 0); ?>
                 </select>
             </div>
 

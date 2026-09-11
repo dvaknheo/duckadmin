@@ -21,7 +21,7 @@ $title = '人员管理';
         </nav>
     </div>
     <div>
-        <a href="<?= __url('user/create') ?>" class="btn btn-primary">
+        <a href="<?= __url('Member/create') ?>" class="btn btn-primary">
             <i class="bi bi-plus-lg"></i> 新增人员
         </a>
     </div>
@@ -29,14 +29,14 @@ $title = '人员管理';
 
 <div class="card">
     <div class="card-body">
-        <form method="get" action="<?= __url('user/index') ?>" class="row g-3 mb-4">
+        <form method="get" action="<?= __url('Member/index') ?>" class="row g-3 mb-4">
             <div class="col-auto flex-grow-1">
                 <input type="text" name="search" class="form-control" placeholder="搜索人员名、姓名、邮箱..." value="<?= __h($search) ?>">
             </div>
             <div class="col-auto">
                 <button type="submit" class="btn btn-outline-secondary"><i class="bi bi-search"></i> 搜索</button>
                 <?php if ($search !== ''): ?>
-                    <a href="<?= __url('user/index') ?>" class="btn btn-outline-danger"><i class="bi bi-x-lg"></i> 清空</a>
+                    <a href="<?= __url('Member/index') ?>" class="btn btn-outline-danger"><i class="bi bi-x-lg"></i> 清空</a>
                 <?php endif; ?>
             </div>
         </form>
@@ -77,10 +77,10 @@ $title = '人员管理';
                                 <td class="text-muted small"><?= __h($item['last_login_at'] ?? '-') ?></td>
                                 <td class="text-muted small"><?= __h($item['created_at'] ?? '-') ?></td>
                                 <td>
-                                    <a href="<?= __url('user/edit?id=' . $item['id']) ?>" class="btn btn-sm btn-outline-primary">
+                                    <a href="<?= __url('Member/edit?id=' . $item['id']) ?>" class="btn btn-sm btn-outline-primary">
                                         <i class="bi bi-pencil"></i>
                                     </a>
-                                    <a href="<?= __url('user/delete?id=' . $item['id']) ?>" class="btn btn-sm btn-outline-danger" 
+                                    <a href="<?= __url('Member/delete?id=' . $item['id']) ?>" class="btn btn-sm btn-outline-danger" 
                                        onclick="return confirm('确定删除人员「<?= __h($item['username']) ?>」？')">
                                         <i class="bi bi-trash"></i>
                                     </a>
@@ -100,7 +100,7 @@ $title = '人员管理';
                     $searchParam = $search !== '' ? '&search=' . urlencode($search) : '';
                     for ($i = 1; $i <= $totalPages; $i++): ?>
                         <li class="page-item <?= $i === $page ? 'active' : '' ?>">
-                            <a class="page-link" href="<?= __url('user/index?page=' . (int)$i . $searchParam) ?>"><?= (int)$i ?></a>
+                            <a class="page-link" href="<?= __url('Member/index?page=' . (int)$i . $searchParam) ?>"><?= (int)$i ?></a>
                         </li>
                     <?php endfor; ?>
                 </ul>

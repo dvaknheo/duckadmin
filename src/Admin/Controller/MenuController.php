@@ -77,7 +77,7 @@ class MenuController extends Base
 
         $data['show'] = $show;
         $data['title'] = '新增菜单';
-        $data['permissions'] = MenuBusiness::_()->getAll();
+        $data['perm_tree'] = MenuBusiness::_()->getTree('all');
         $data['urls'] = [
             'save' => __url('Menu/save'),
             'list' => $this->listUrl($show),
@@ -110,7 +110,7 @@ class MenuController extends Base
         $data['show'] = $show;
         $data['title'] = '新增菜单';
         $data['input'] = $input;
-        $data['permissions'] = MenuBusiness::_()->getAll();
+        $data['perm_tree'] = MenuBusiness::_()->getTree('all');
         $data['urls'] = [
             'save' => __url('Menu/save'),
             'list' => $this->listUrl($show),
@@ -136,7 +136,7 @@ class MenuController extends Base
         $data['perm'] = $perm;
         $data['show'] = $show;
         $data['title'] = '编辑菜单';
-        $data['permissions'] = MenuBusiness::_()->getAll();
+        $data['perm_tree'] = MenuBusiness::_()->getTree('all');
         $data['urls'] = [
             'update' => __url('Menu/update'),
             'list' => $this->listUrl($show),
@@ -170,7 +170,7 @@ class MenuController extends Base
         $data['show'] = $show;
         $data['perm'] = $input + ['id' => $id];
         $data['title'] = '编辑菜单';
-        $data['permissions'] = MenuBusiness::_()->getAll();
+        $data['perm_tree'] = MenuBusiness::_()->getTree('all');
         $data['urls'] = [
             'update' => __url('Menu/update'),
             'list' => $this->listUrl($show),

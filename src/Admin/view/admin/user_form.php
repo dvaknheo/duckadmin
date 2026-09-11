@@ -17,7 +17,7 @@ $title = $isEdit ? '编辑人员' : '新增人员';
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="<?= __url('') ?>">首页</a></li>
-            <li class="breadcrumb-item"><a href="<?= __url('user/index') ?>">用户管理</a></li>
+            <li class="breadcrumb-item"><a href="<?= __url('Member/index') ?>">用户管理</a></li>
             <li class="breadcrumb-item active"><?= __h($title) ?></li>
         </ol>
     </nav>
@@ -88,7 +88,7 @@ $title = $isEdit ? '编辑人员' : '新增人员';
                 <button type="submit" class="btn btn-primary">
                     <i class="bi bi-check-lg"></i> <?= $isEdit ? '保存修改' : '新增人员' ?>
                 </button>
-                <a href="<?= __url('user/index') ?>" class="btn btn-outline-secondary">取消</a>
+                <a href="<?= __url('Member/index') ?>" class="btn btn-outline-secondary">取消</a>
             </div>
         </form>
     </div>
