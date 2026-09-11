@@ -6,7 +6,7 @@
 namespace DuckAdmin\Admin\Controller;
 
 use DuckAdmin\Admin\Business\RoleBusiness;
-use DuckAdmin\Admin\Business\PermissionBusiness;
+use DuckAdmin\Admin\Business\MenuBusiness;
 
 /**
  * @menu_name 权限管理
@@ -33,7 +33,7 @@ class PermissionController extends Base
         }
 
         // 获取可分配的权限树（超管：全部权限）
-        $permissions = PermissionBusiness::_()->getAll();
+        $permissions = MenuBusiness::_()->getAll();
         $data['permissions'] = $permissions;
         $data['role'] = $role;
         $data['role_permission_ids'] = RoleBusiness::_()->getRolePermissions($id);

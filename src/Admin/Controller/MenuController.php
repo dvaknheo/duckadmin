@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 namespace DuckAdmin\Admin\Controller;
 
-use DuckAdmin\Admin\Business\PermissionBusiness;
+use DuckAdmin\Admin\Business\MenuBusiness;
 
 /**
  * @menu_group 菜单和权限管理
@@ -15,7 +15,7 @@ class MenuController extends Base
         $search = Helper::GET('search', '');
         $pageSize = 15;
 
-        $data = PermissionBusiness::_()->getList($page, $pageSize, $search);
+        $data = MenuBusiness::_()->getList($page, $pageSize, $search);
         $data['page'] = $page;
         $data['pageSize'] = $pageSize;
         $data['search'] = $search;
@@ -36,7 +36,7 @@ class MenuController extends Base
     /** @action 一键扫描 */
     public function scan()
     {
-        $added = PermissionBusiness::_()->scanRoutes();
+        $added = MenuBusiness::_()->scanRoutes();
         $data['added'] = $added;
         $data['title'] = '一键扫描结果';
         $data['current_route'] = 'system';
@@ -51,7 +51,7 @@ class MenuController extends Base
     {
         $data['title'] = '新增菜单';
         $data['current_route'] = 'system';
-        $data['permissions'] = PermissionBusiness::_()->getAll();
+        $data['permissions'] = MenuBusiness::_()->getAll();
         $data['urls'] = [
             'save' => __url('Menu/save'),
             'list' => __url('Menu/index'),
@@ -71,7 +71,7 @@ class MenuController extends Base
             'weight' => (int)Helper::POST('weight', '0'),
         ];
 
-        $result = PermissionBusiness::_()->create($input);
+        $result = MenuBusiness::_()->create($input);
         if ($result['success']) {
             Helper::Show302(__url('Menu/index'));
             return;
@@ -80,7 +80,7 @@ class MenuController extends Base
         $data['title'] = '新增菜单';
         $data['current_route'] = 'system';
         $data['input'] = $input;
-        $data['permissions'] = PermissionBusiness::_()->getAll();
+        $data['permissions'] = MenuBusiness::_()->getAll();
         $data['urls'] = [
             'save' => __url('Menu/save'),
             'list' => __url('Menu/index'),
@@ -93,7 +93,7 @@ class MenuController extends Base
     public function edit()
     {
         $id = (int)Helper::GET('id', '0');
-        $perm = PermissionBusiness::_()->getById($id);
+        $perm = MenuBusiness::_()->getById($id);
         if (!$perm) {
             Helper::Show302(__url('Menu/index'));
             return;
@@ -102,7 +102,7 @@ class MenuController extends Base
         $data['perm'] = $perm;
         $data['title'] = '编辑菜单';
         $data['current_route'] = 'system';
-        $data['permissions'] = PermissionBusiness::_()->getAll();
+        $data['permissions'] = MenuBusiness::_()->getAll();
         $data['urls'] = [
             'update' => __url('Menu/update'),
             'list' => __url('Menu/index'),
@@ -123,7 +123,7 @@ class MenuController extends Base
             'weight' => (int)Helper::POST('weight', '0'),
         ];
 
-        $result = PermissionBusiness::_()->update($id, $input);
+        $result = MenuBusiness::_()->update($id, $input);
         if ($result['success']) {
             Helper::Show302(__url('Menu/index'));
             return;
@@ -132,7 +132,7 @@ class MenuController extends Base
         $data['perm'] = $input + ['id' => $id];
         $data['title'] = '编辑菜单';
         $data['current_route'] = 'system';
-        $data['permissions'] = PermissionBusiness::_()->getAll();
+        $data['permissions'] = MenuBusiness::_()->getAll();
         $data['urls'] = [
             'update' => __url('Menu/update'),
             'list' => __url('Menu/index'),
@@ -145,7 +145,7 @@ class MenuController extends Base
     public function delete()
     {
         $id = (int)Helper::GET('id', '0');
-        PermissionBusiness::_()->delete($id);
+        MenuBusiness::_()->delete($id);
         Helper::Show302(__url('Menu/index'));
     }
 }

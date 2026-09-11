@@ -9,7 +9,7 @@ use DuckAdmin\Admin\Business\RoleBusiness;
 use DuckAdmin\Admin\Business\PermissionBusiness;
 
 /**
- * @menu_name 权限分配
+ * @menu_name 内部设置
  */
 class SettingController extends Base
 {
