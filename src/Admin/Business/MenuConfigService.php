@@ -56,44 +56,7 @@ class MenuConfigService extends Base
      */
     public function importToDb(array $menuTree): array
     {
-        $model = PermissionModel::_();
-        $existing = [];
-        foreach ($model->getAll() as $p) {
-            $existing[$p['url']] = (int)$p['id'];
-        }
-
-        $added = [];
-
-        $import = function (array $nodes, int $parentId) use (&$import, $model, &$existing, &$added) {
-            foreach ($nodes as $node) {
-                $url = (string)($node['url'] ?? '');
-                $type = (int)($node['type'] ?? 1);
-
-                if (isset($existing[$url])) {
-                    $id = $existing[$url];
-                } else {
-                    $id = $model->create([
-                        'name' => (string)$node['name'],
-                        'url' => $url,
-                        'type' => $type,
-                        'parent_id' => $parentId,
-                        'weight' => 0,
-                        'source' => 1,
-                    ]);
-                    $existing[$url] = $id;
-                    if ($type !== 0) {
-                        $added[] = $url;
-                    }
-                }
-
-                if (!empty($node['children'])) {
-                    $import($node['children'], $id);
-                }
-            }
-        };
-
-        $import($menuTree, 0);
-        return $added;
+        return PermissionModel::_()->importMenu($menuTree);
     }
 
     // ================================================================

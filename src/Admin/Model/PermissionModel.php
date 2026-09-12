@@ -128,6 +128,54 @@ class PermissionModel extends Base
     }
 
     /**
+     * 导入菜单树到 admin_permissions 表（幂等，按 url 判重）
+     * 传入的 $menuTree 应已补全绝对 url（通过 AdminTreeBuilder::resolveUrls）
+     *
+     * @param array $menuTree 树形精简菜单结构（url 已补全）
+     * @return array<string> 新增的菜单/操作 url 列表（目录静默创建不计入）
+     */
+    public function importMenu(array $menuTree): array
+    {
+        $existing = [];
+        foreach ($this->getAll() as $p) {
+            $existing[$p['url']] = (int)$p['id'];
+        }
+
+        $added = [];
+
+        $import = function (array $nodes, int $parentId) use (&$import, &$existing, &$added) {
+            foreach ($nodes as $node) {
+                $url = (string)($node['url'] ?? '');
+                $type = (int)($node['type'] ?? 1);
+
+                if (isset($existing[$url])) {
+                    $id = $existing[$url];
+                } else {
+                    $id = $this->create([
+                        'name' => (string)$node['name'],
+                        'url' => $url,
+                        'type' => $type,
+                        'parent_id' => $parentId,
+                        'weight' => 0,
+                        'source' => 1,
+                    ]);
+                    $existing[$url] = $id;
+                    if ($type !== 0) {
+                        $added[] = $url;
+                    }
+                }
+
+                if (!empty($node['children'])) {
+                    $import($node['children'], $id);
+                }
+            }
+        };
+
+        $import($menuTree, 0);
+        return $added;
+    }
+
+    /**
      * 获取所有权限ID（供Service层使用）
      */
     public function getAllIds(): array
