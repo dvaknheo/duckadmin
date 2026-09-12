@@ -27,22 +27,10 @@ class AdminTreeBuilder
      * - @menu_weight 越大排序越靠前
      * - 返回结构无 id、无 weight、url 为相对地址
      *
-     * 返回结构：
-     *   [
-     *     'name' => '系统管理', 'icon' => null, 'url' => '', 'type' => 0,
-     *     'children' => [
-     *       [
-     *         'name' => '人员管理', 'icon' => null, 'url' => 'Admin/index', 'type' => 1,
-     *         'children' => [
-     *           ['name' => '新增人员', 'url' => 'Admin/create', 'type' => 2, 'children' => []],
-     *         ],
-     *       ],
-     *     ],
-     *   ]
-     *
+     * @param string $prefix 挂载前缀，如 /admin/
      * @return array 树形精简菜单结构
      */
-    public function build(): array
+    public function build(string $prefix): array
     {
         $routes = \DuckPhp\Component\RouteLister::_()->listAll(true, true, true);
         $groups = [];
@@ -139,7 +127,7 @@ class AdminTreeBuilder
                 }
                 $parentRef['children'][] = [
                     'name' => $anno[0],
-                    'url' => $this->toRelativePath($path, $methods),
+                    'url' => $this->toRelativePath($path, $prefix),
                     'type' => $item !== null ? 1 : 2,
                     '_weight' => $this->parseWeight($mDoc), // 临时字段，排序后移除
                     'children' => [],
@@ -155,52 +143,11 @@ class AdminTreeBuilder
     }
 
     /**
-     * 解析当前应用的 url 挂载前缀（如 /admin/）
-     * 从所有路由的最长公共前缀推断
-     */
-    protected function resolvePrefix(): string
-    {
-        $routes = \DuckPhp\Component\RouteLister::_()->listAll(true, true, true);
-        $paths = [];
-        foreach ($routes as $route) {
-            $url = (string)($route['url'] ?? '');
-            if ($url !== '') {
-                $paths[] = '/' . ltrim($url, '/');
-            }
-        }
-        if (empty($paths)) {
-            return '/';
-        }
-        // 找所有路由的公共前缀
-        $prefix = $paths[0];
-        foreach ($paths as $path) {
-            $len = min(strlen($prefix), strlen($path));
-            $i = 0;
-            while ($i < $len && $prefix[$i] === $path[$i]) {
-                $i++;
-            }
-            $prefix = substr($prefix, 0, $i);
-        }
-        // 确保以 / 结尾
-        if (substr($prefix, -1) !== '/') {
-            $pos = strrpos($prefix, '/');
-            if ($pos !== false) {
-                $prefix = substr($prefix, 0, $pos + 1);
-            } else {
-                $prefix = '/';
-            }
-        }
-        return $prefix;
-    }
-
-    /**
      * 把绝对 path 转为相对地址（去掉挂载前缀）
      * 如 /admin/Admin/index → Admin/index
      */
-    protected function toRelativePath(string $fullPath, array $methods): string
+    protected function toRelativePath(string $fullPath, string $prefix): string
     {
-        // 用 resolvePrefix 获取挂载前缀（如 /admin/）
-        $prefix = $this->resolvePrefix();
         if (strpos($fullPath, $prefix) === 0) {
             return substr($fullPath, strlen($prefix));
         }
