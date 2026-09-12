@@ -94,10 +94,18 @@ class AdminTreeBuilder
                 [$dirName, $dirUrl] = $dir;
                 $dirKey = $groupName . "\0" . $dirName;
                 if (!isset($dirMap[$dirKey])) {
+                    // 目录 url：去掉 basename 后加 #，如 Admin/index → Admin/#
+                    $dirUrl = rtrim($dirUrl, '/');
+                    $pos = strrpos($dirUrl, '/');
+                    if ($pos !== false) {
+                        $dirUrl = substr($dirUrl, 0, $pos + 1) . '#';
+                    } elseif ($dirUrl !== '') {
+                        $dirUrl .= '#';
+                    }
                     $tree[$groupIdx]['children'][] = [
                         'name' => $dirName,
                         'icon' => null,
-                        'url' => $dirUrl, // 相对地址，导入时补全
+                        'url' => $dirUrl,
                         'type' => 0,
                         'children' => [],
                     ];
@@ -140,6 +148,35 @@ class AdminTreeBuilder
         $this->sortTree($tree);
 
         return $tree;
+    }
+
+    /**
+     * 补全树中的相对 url 为绝对 url（加挂载前缀）
+     * @param array $tree 树形结构
+     * @param string $prefix 挂载前缀，如 /admin/
+     * @return array 补全后的树
+     */
+    public function resolveUrls(array $tree, string $prefix): array
+    {
+        $this->resolveUrlsRecursive($tree, $prefix);
+        return $tree;
+    }
+
+    /**
+     * 递归补全 url
+     */
+    protected function resolveUrlsRecursive(array &$nodes, string $prefix): void
+    {
+        foreach ($nodes as &$node) {
+            $url = (string)($node['url'] ?? '');
+            if ($url !== '' && $url[0] !== '/') {
+                $node['url'] = $prefix . ltrim($url, '/');
+            }
+            if (!empty($node['children'])) {
+                $this->resolveUrlsRecursive($node['children'], $prefix);
+            }
+        }
+        unset($node);
     }
 
     /**
@@ -227,6 +264,29 @@ class AdminTreeBuilder
             }
         }
         unset($node);
+    }
+
+    /**
+     * 精简树：去掉 type 字段和空 children，保留 name/icon/url/children
+     * 公开方法，供外部调用
+     */
+    public function simplifyTree(array $nodes): array
+    {
+        $result = [];
+        foreach ($nodes as $node) {
+            $item = [
+                'name' => $node['name'],
+                'icon' => $node['icon'] ?? null,
+                'url' => $node['url'] ?? '',
+            ];
+            if (!empty($node['children'])) {
+                $item['children'] = $this->simplifyTree($node['children']);
+            } else {
+                $item['children'] = [];
+            }
+            $result[] = $item;
+        }
+        return $result;
     }
 
     /**

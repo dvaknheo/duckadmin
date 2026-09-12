@@ -33,26 +33,25 @@ class MenuConfigService extends Base
 
     /**
      * 安装时调用：优先读取 config/scanned_menu.php，为空则扫描路由，然后导入数据库
+     * @param string $prefix 挂载前缀，如 /admin/
      * @return array<string> 新增的菜单/操作 url 列表
      */
-    public function installMenus(): array
+    public function installMenus(string $prefix): array
     {
         $menuTree = $this->loadScannedMenu();
         if (empty($menuTree)) {
             $menuTree = $this->scanRoutes();
         }
+        // 先补全绝对 url
+        $menuTree = (new AdminTreeBuilder())->resolveUrls($menuTree, $prefix);
         return $this->importToDb($menuTree);
     }
 
     /**
      * 把树形精简结构导入到 admin_permissions 表（幂等，按 url 判重）
+     * 传入的 $menuTree 应已补全绝对 url（通过 resolveUrls）
      *
-     * 自动补全：
-     * - 相对 url → 绝对 url（补挂载前缀）
-     * - 目录 url 追加 # 后缀（高亮别名）
-     * - parent_id、weight（按层级和顺序自动计算）
-     *
-     * @param array $menuTree 树形精简菜单结构（scanRoutes() 的返回格式）
+     * @param array $menuTree 树形精简菜单结构（url 已补全）
      * @return array<string> 新增的菜单/操作 url 列表（目录静默创建不计入）
      */
     public function importToDb(array $menuTree): array
@@ -64,30 +63,11 @@ class MenuConfigService extends Base
         }
 
         $added = [];
-        $seq = 0; // 全局递增序号，用于计算 weight
 
-        $import = function (array $nodes, int $parentId, int $baseWeight) use (&$import, $model, &$existing, &$added, &$seq) {
+        $import = function (array $nodes, int $parentId) use (&$import, $model, &$existing, &$added) {
             foreach ($nodes as $node) {
-                $seq++;
-                // 优先使用节点自带的 weight，否则按顺序递增
-                $weight = isset($node['weight']) ? $baseWeight + (int)$node['weight'] : $baseWeight + $seq;
-
-                // 补全 url
                 $url = (string)($node['url'] ?? '');
-                if ($url !== '' && $url[0] !== '/') {
-                    $url = $this->resolvePrefix() . ltrim($url, '/');
-                }
                 $type = (int)($node['type'] ?? 1);
-                if ($type === 0 && $url !== '') {
-                    // 目录 url：去掉 basename 后加 #，如 /admin/Admin/index → /admin/Admin/#
-                    $url = rtrim($url, '/');
-                    $pos = strrpos($url, '/');
-                    if ($pos !== false) {
-                        $url = substr($url, 0, $pos + 1) . '#';
-                    } else {
-                        $url .= '#';
-                    }
-                }
 
                 if (isset($existing[$url])) {
                     $id = $existing[$url];
@@ -97,7 +77,7 @@ class MenuConfigService extends Base
                         'url' => $url,
                         'type' => $type,
                         'parent_id' => $parentId,
-                        'weight' => $weight,
+                        'weight' => 0,
                         'source' => 1,
                     ]);
                     $existing[$url] = $id;
@@ -107,12 +87,12 @@ class MenuConfigService extends Base
                 }
 
                 if (!empty($node['children'])) {
-                    $import($node['children'], $id, $weight * 100);
+                    $import($node['children'], $id);
                 }
             }
         };
 
-        $import($menuTree, 0, 0);
+        $import($menuTree, 0);
         return $added;
     }
 
@@ -220,50 +200,10 @@ class MenuConfigService extends Base
     }
 
     /**
-     * 解析当前应用的 url 挂载前缀（如 /admin/）
-     * 委托给 AdminTreeBuilder
-     */
-    protected function resolvePrefix(): string
-    {
-        $builder = new AdminTreeBuilder();
-        $reflection = new \ReflectionClass($builder);
-        $method = $reflection->getMethod('resolvePrefix');
-        $method->setAccessible(true);
-        return $method->invoke($builder);
-    }
-
-    /**
-     * 把绝对 path 转为相对地址（去掉挂载前缀）
-     * 委托给 AdminTreeBuilder
-     */
-    protected function toRelativePath(string $fullPath, array $methods): string
-    {
-        $builder = new AdminTreeBuilder();
-        $reflection = new \ReflectionClass($builder);
-        $method = $reflection->getMethod('toRelativePath');
-        $method->setAccessible(true);
-        return $method->invoke($builder, $fullPath, $methods);
-    }
-
-    /**
-     * 精简树：去掉 type 字段和空 children，保留 name/icon/url/children
+     * 精简树：委托给 AdminTreeBuilder::simplifyTree()
      */
     protected function simplifyTree(array $nodes): array
     {
-        $result = [];
-        foreach ($nodes as $node) {
-            $item = [
-                'name' => $node['name'],
-                'icon' => $node['icon'] ?? null,
-                'url' => $node['url'] ?? '',
-            ];
-            if (!empty($node['children'])) {
-                $item['children'] = $this->simplifyTree($node['children']);
-            } else {
-                $item['children'] = [];
-            }
-            $result[] = $item;
-        }
-        return $result;
+        return (new AdminTreeBuilder())->simplifyTree($nodes);
     }
 }

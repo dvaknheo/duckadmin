@@ -73,7 +73,7 @@ class AppBusiness extends Base
         $super_role_id = RoleModel::_()->seedDefaultRoles();
 
         // 从 config/scanned_menu.php 导入菜单（为空则扫描路由），导入数据库
-        MenuConfigService::_()->installMenus();
+        MenuConfigService::_()->installMenus(__url(''));
 
         // 创建管理员并关联超级管理员角色
         AdminModel::_()->create([
