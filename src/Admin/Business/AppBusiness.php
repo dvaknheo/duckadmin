@@ -72,8 +72,8 @@ class AppBusiness extends Base
         // 默认角色
         $super_role_id = RoleModel::_()->seedDefaultRoles();
 
-        // 扫描控制器注解自动生成权限(目录→菜单→操作 三级,与"一键扫描"同源)
-        PermissionService::_()->scanRoutes();
+        // 从 config/scanned_menu.php 导入菜单（为空则扫描路由），导入数据库
+        MenuConfigService::_()->installMenus();
 
         // 创建管理员并关联超级管理员角色
         AdminModel::_()->create([
@@ -124,6 +124,6 @@ class AppBusiness extends Base
     }
     public function loadMenus($admin_id)
     {
-        return PermissionService::_()->getUserMenus($admin_id);
+        return MenuConfigService::_()->buildUserMenuTree((int)$admin_id);
     }
 }

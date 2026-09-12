@@ -323,24 +323,41 @@ class MenuConfigService extends Base
 
     /**
      * 解析当前应用的 url 挂载前缀（如 /admin/）
-     * 从 RouteLister 扫描到的第一条路由推断
+     * 从所有路由的最长公共前缀推断
      */
     protected function resolvePrefix(): string
     {
         $routes = \DuckPhp\Component\RouteLister::_()->listAll(true, true, true);
+        $paths = [];
         foreach ($routes as $route) {
             $url = (string)($route['url'] ?? '');
-            if ($url === '') {
-                continue;
-            }
-            $path = '/' . ltrim($url, '/');
-            // 去掉末尾的控制器/方法段，保留前缀
-            $pos = strrpos($path, '/');
-            if ($pos !== false && $pos > 0) {
-                return substr($path, 0, $pos + 1);
+            if ($url !== '') {
+                $paths[] = '/' . ltrim($url, '/');
             }
         }
-        return '/';
+        if (empty($paths)) {
+            return '/';
+        }
+        // 找所有路由的公共前缀
+        $prefix = $paths[0];
+        foreach ($paths as $path) {
+            $len = min(strlen($prefix), strlen($path));
+            $i = 0;
+            while ($i < $len && $prefix[$i] === $path[$i]) {
+                $i++;
+            }
+            $prefix = substr($prefix, 0, $i);
+        }
+        // 确保以 / 结尾
+        if (substr($prefix, -1) !== '/') {
+            $pos = strrpos($prefix, '/');
+            if ($pos !== false) {
+                $prefix = substr($prefix, 0, $pos + 1);
+            } else {
+                $prefix = '/';
+            }
+        }
+        return $prefix;
     }
 
     /**
@@ -349,12 +366,10 @@ class MenuConfigService extends Base
      */
     protected function toRelativePath(string $fullPath, array $methods): string
     {
-        foreach ($methods as $path) {
-            if (strpos($fullPath, $path) === 0) {
-                // 找到公共前缀
-                $prefix = substr($fullPath, 0, strlen($fullPath) - strlen($path));
-                return substr($fullPath, strlen($prefix));
-            }
+        // 用 resolvePrefix 获取挂载前缀（如 /admin/）
+        $prefix = $this->resolvePrefix();
+        if (strpos($fullPath, $prefix) === 0) {
+            return substr($fullPath, strlen($prefix));
         }
         // 回退：去掉第一个路径段
         $parts = explode('/', ltrim($fullPath, '/'));

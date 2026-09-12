@@ -2,6 +2,7 @@
 namespace DuckAdmin\Admin\Controller;
 
 use DuckAdmin\Admin\Business\MenuBusiness;
+use DuckAdmin\Admin\Business\MenuConfigService;
 
 /**
  * @menu_group 系统管理
@@ -58,8 +59,14 @@ class MenuController extends Base
     {
         $show = $this->showMode();
 
-        $added = MenuBusiness::_()->scanRoutes();
+        // 一步操作：扫描生成树形结构，同时导入数据库
+        $menuTree = MenuConfigService::_()->scanRoutes();
+        $added = MenuConfigService::_()->importToDb($menuTree);
+        // 保存扫描结果到 config/scanned_menu.php 供对比
+        MenuConfigService::_()->saveScannedMenu($menuTree);
+
         $data['added'] = $added;
+        $data['menuTree'] = $menuTree;
         $data['title'] = '一键扫描结果';
         $data['urls'] = [
             'list' => $this->listUrl($show),
