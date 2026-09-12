@@ -115,24 +115,31 @@ class MenuConfigService extends Base
             // 方法注解 → 菜单/操作节点
             foreach ($methods as $method => $path) {
                 $mDoc = $this->getMethodDoc($controller, $method);
-                if ($mDoc === '') {
-                    continue;
-                }
                 $item = $this->parseAnnotatedLine($mDoc, 'menu_item');
                 $action = $item === null ? $this->parseAnnotatedLine($mDoc, 'menu_action') : null;
                 $anno = $item ?? $action;
                 if ($anno === null) {
-                    continue;
+                    // 公开方法无注解时，默认视作 action，名字为方法名
+                    $ref = new \ReflectionMethod($controller, $method);
+                    if (!$ref->isPublic() || strpos($method, '_') === 0) {
+                        continue;
+                    }
+                    $anno = [$method, ''];
+                    $action = $anno;
                 }
                 $parentRef['children'][] = [
                     'name' => $anno[0],
                     'url' => $this->toRelativePath($path, $methods),
                     'type' => $item !== null ? 1 : 2,
+                    '_weight' => $this->parseWeight($mDoc), // 临时字段，排序后移除
                     'children' => [],
                 ];
             }
             unset($parentRef);
         }
+
+        // 排序：weight 越大越靠前
+        $this->sortTree($tree);
 
         return $tree;
     }
@@ -179,7 +186,8 @@ class MenuConfigService extends Base
         $import = function (array $nodes, int $parentId, int $baseWeight) use (&$import, $model, &$existing, &$added, &$seq) {
             foreach ($nodes as $node) {
                 $seq++;
-                $weight = $baseWeight + $seq;
+                // 优先使用节点自带的 weight，否则按顺序递增
+                $weight = isset($node['weight']) ? $baseWeight + (int)$node['weight'] : $baseWeight + $seq;
 
                 // 补全 url
                 $url = (string)($node['url'] ?? '');
@@ -404,6 +412,37 @@ class MenuConfigService extends Base
             $result[] = $item;
         }
         return $result;
+    }
+
+    /**
+     * 递归排序树：按 _weight 临时字段，weight 越大越靠前
+     * 排序后从节点中移除 _weight 字段
+     */
+    protected function sortTree(array &$nodes): void
+    {
+        // 先收集每个节点的 _weight，然后移除
+        $weights = [];
+        foreach ($nodes as $idx => &$node) {
+            $weights[$idx] = (int)($node['_weight'] ?? 0);
+            unset($node['_weight']);
+        }
+        unset($node);
+        
+        // 按 weight 降序排序
+        uksort($nodes, function ($a, $b) use ($weights) {
+            return $weights[$b] <=> $weights[$a];
+        });
+        
+        // 重新索引为连续数组
+        $nodes = array_values($nodes);
+        
+        // 递归排序 children
+        foreach ($nodes as &$node) {
+            if (!empty($node['children'])) {
+                $this->sortTree($node['children']);
+            }
+        }
+        unset($node);
     }
 
     /**
