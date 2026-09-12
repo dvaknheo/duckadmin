@@ -19,7 +19,28 @@ class AppBusiness extends Base
         if (empty($url)) {
             return true;
         }
-        return PermissionService::_()->checkUserUrl((int)$admin_id, $url);
+        return $this->checkUserUrl((int)$admin_id, $url);
+    }
+
+    /**
+     * 用户是否拥有指定 url 的权限(超管全放行)
+     * url 与库中存储一致:无域名的完整 path(含挂载前缀,如 /admin/Role/index)
+     */
+    protected function checkUserUrl(int $userId, string $url): bool
+    {
+        if (RoleUserModel::_()->isSuperRole($userId)) {
+            return true;
+        }
+        $path = (string)(parse_url($url, PHP_URL_PATH) ?: $url);
+        $path = '/' . ltrim($path, '/');
+        if ($path === '/' || $path === '/index' || preg_match('#(^|/)Home/index$#', $path)) {
+            return true; // 首页/仪表盘放行
+        }
+        if (preg_match('#(^|/)Role/permissions$#', $path)) {
+            return true; // 分配权限页:访问由 RoleController 内部按职位管理范围控制
+        }
+        $count = PermissionModel::_()->countUserUrlPermissions($userId, $path);
+        return $count > 0;
     }
     public function log($admin_id, string $string, ?string $type = null, array $ext = [])
     {
@@ -136,6 +157,17 @@ class AppBusiness extends Base
     }
     public function loadMenus($admin_id)
     {
-        return MenuConfigService::_()->buildUserMenuTree((int)$admin_id);
+        $admin_id = (int)$admin_id;
+        if (RoleUserModel::_()->isSuperRole($admin_id)) {
+            $rows = PermissionModel::_()->getAllMenuItems();
+        } else {
+            $rows = PermissionModel::_()->getMenuItemsByUser($admin_id);
+        }
+
+        // 组树
+        $tree = PermissionModel::_()->buildMenuTree($rows);
+
+        // 精简：去掉 type 字段和空 children
+        return (new AdminTreeBuilder())->simplifyTree($tree);
     }
 }

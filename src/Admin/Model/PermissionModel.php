@@ -235,4 +235,29 @@ class PermissionModel extends Base
         return (int)$this->fetchColumn($sql, [$userId, $path]);
     }
 
+    /**
+     * 构建用户菜单树（从扁平数组组树）
+     * @param array $rows 菜单项列表（含 id, name, url, type, parent_id, weight）
+     * @return array 树形结构
+     */
+    public function buildMenuTree(array $rows): array
+    {
+        $map = [];
+        foreach ($rows as $row) {
+            $row['children'] = [];
+            $map[$row['id']] = $row;
+        }
+        $tree = [];
+        foreach ($map as $id => &$node) {
+            $pid = (int)$node['parent_id'];
+            if ($pid && isset($map[$pid])) {
+                $map[$pid]['children'][] = &$node;
+            } else {
+                $tree[] = &$node;
+            }
+        }
+        unset($node);
+        return $tree;
+    }
+
 }
