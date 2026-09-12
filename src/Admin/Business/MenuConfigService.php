@@ -187,8 +187,15 @@ class MenuConfigService extends Base
                     $url = $this->resolvePrefix() . ltrim($url, '/');
                 }
                 $type = (int)($node['type'] ?? 1);
-                if ($type === 0 && $url !== '' && substr($url, -1) !== '#') {
-                    $url .= '#';
+                if ($type === 0 && $url !== '') {
+                    // 目录 url：去掉 basename 后加 #，如 /admin/Admin/index → /admin/Admin/#
+                    $url = rtrim($url, '/');
+                    $pos = strrpos($url, '/');
+                    if ($pos !== false) {
+                        $url = substr($url, 0, $pos + 1) . '#';
+                    } else {
+                        $url .= '#';
+                    }
                 }
 
                 if (isset($existing[$url])) {
