@@ -25,7 +25,8 @@ class AdminController extends Base
             'email' => Helper::GET('email', ''),
         ];
 
-        $data = AdminBusiness::_()->getList($page, $pageSize, $search);
+        $currentUserId = (int)Session::_()->getCurrentAdminId();
+        $data = AdminBusiness::_()->getList($currentUserId, $page, $pageSize, $search);
         $data['page'] = $page;
         $data['pageSize'] = $pageSize;
         $data['search'] = $search;

@@ -21,22 +21,48 @@ class AdminModel extends Base
         return $ret === false ? null : $ret;
     }
 
-    public function getPageList(int $page, int $pageSize, array $search = []): array
+    /**
+     * 获取分页列表，可按角色组过滤（只显示指定角色组及其子孙组的用户）
+     * 使用递归 CTE，兼容 sqlite 和 pgsql
+     * @param array|null $roleIds 角色组 id 列表，null 表示不限制
+     */
+    public function getPageList(int $page, int $pageSize, array $search = [], ?array $roleIds = null): array
     {
-        $where = "deleted_at IS NULL";
+        $where = "a.deleted_at IS NULL";
         $params = [];
         foreach (['username', 'realname', 'email'] as $field) {
             if (!empty($search[$field])) {
-                $where .= " AND {$field} LIKE ?";
+                $where .= " AND a.{$field} LIKE ?";
                 $params[] = '%' . $search[$field] . '%';
             }
         }
-        $totalSql = "SELECT COUNT(*) as total FROM admin_admins WHERE {$where}";
+
+        // 角色组过滤（递归 CTE 查询子孙组）
+        $roleCte = '';
+        if ($roleIds !== null) {
+            if (empty($roleIds)) {
+                return ['total' => 0, 'list' => []];
+            }
+            $roleList = implode(',', array_map('intval', $roleIds));
+            $roleCte = "WITH RECURSIVE role_tree AS (
+                SELECT id FROM admin_roles WHERE id IN ({$roleList}) AND deleted_at IS NULL
+                UNION
+                SELECT r.id FROM admin_roles r INNER JOIN role_tree rt ON r.pid = rt.id WHERE r.deleted_at IS NULL
+            )
+            ";
+            $where .= " AND a.id IN (SELECT user_id FROM admin_role_users WHERE role_id IN (SELECT id FROM role_tree))";
+        }
+
+        // 统计总数
+        $totalSql = "{$roleCte}SELECT COUNT(*) as total FROM admin_admins a WHERE {$where}";
         $totalRow = $this->fetch($totalSql, $params);
         $total = $totalRow['total'] ?? 0;
+
+        // 查询列表
         $offset = ($page - 1) * $pageSize;
-        $listSql = "SELECT * FROM admin_admins WHERE {$where} ORDER BY id ASC LIMIT ? OFFSET ?";
+        $listSql = "{$roleCte}SELECT a.* FROM admin_admins a WHERE {$where} ORDER BY a.id ASC LIMIT ? OFFSET ?";
         $list = $this->fetchAll($listSql, array_merge($params, [$pageSize, $offset]));
+
         return ['total' => (int)$total, 'list' => $list];
     }
 
