@@ -44,6 +44,7 @@ class AdminApp extends DuckPhp
             'Admin Password Confirm' => '确认密码',
         ],
 
+        'use_admin_view' => true,
 
         // 异常处理
         'exception_for_project'  => ProjectException::class,
