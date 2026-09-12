@@ -109,12 +109,13 @@ class MenuController extends Base
             'weight' => (int)Helper::POST('weight', '0'),
         ];
 
-        $result = MenuBusiness::_()->create($input);
-        if ($result['success']) {
+        try {
+            MenuBusiness::_()->create($input);
             Helper::Show302($this->listUrl($show));
             return;
+        } catch (\Exception $ex) {
+            $data['error'] = $ex->getMessage();
         }
-        $data['error'] = $result['message'];
         $data['show'] = $show;
         $data['title'] = '新增菜单';
         $data['input'] = $input;
@@ -169,12 +170,13 @@ class MenuController extends Base
             'weight' => (int)Helper::POST('weight', '0'),
         ];
 
-        $result = MenuBusiness::_()->update($id, $input);
-        if ($result['success']) {
+        try {
+            MenuBusiness::_()->update($id, $input);
             Helper::Show302($this->listUrl($show));
             return;
+        } catch (\Exception $ex) {
+            $data['error'] = $ex->getMessage();
         }
-        $data['error'] = $result['message'];
         $data['show'] = $show;
         $data['perm'] = $input + ['id' => $id];
         $data['title'] = '编辑菜单';
@@ -195,8 +197,12 @@ class MenuController extends Base
     {
         $show = $this->showMode();
         $id = (int)Helper::GET('id', '0');
-        $ok = MenuBusiness::_()->delete($id);
-        Helper::Show302($this->listUrl($show, $ok ? '' : '&error=has_children'));
+        try {
+            MenuBusiness::_()->delete($id);
+            Helper::Show302($this->listUrl($show));
+        } catch (\Exception $ex) {
+            Helper::Show302($this->listUrl($show, '&error=delete_failed'));
+        }
     }
 
     /**

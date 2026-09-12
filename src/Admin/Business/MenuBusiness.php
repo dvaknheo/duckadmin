@@ -9,29 +9,21 @@ use DuckAdmin\Admin\Model\PermissionModel;
 
 class MenuBusiness extends Base
 {
-    public function create(array $input): array
+    public function create(array $input): int
     {
-        if (empty($input['name'])) {
-            return ['success' => false, 'message' => '权限名称不能为空'];
-        }
-        PermissionModel::_()->create($input);
-        return ['success' => true, 'message' => '创建成功'];
+        Helper::ThrowOn(empty($input['name']), '权限名称不能为空');
+        return PermissionModel::_()->create($input);
     }
 
-    public function update(int $id, array $input): array
+    public function update(int $id, array $input): bool
     {
-        if (empty($input['name'])) {
-            return ['success' => false, 'message' => '权限名称不能为空'];
-        }
-        PermissionModel::_()->edit($id, $input);
-        return ['success' => true, 'message' => '更新成功'];
+        Helper::ThrowOn(empty($input['name']), '权限名称不能为空');
+        return PermissionModel::_()->edit($id, $input);
     }
 
     public function delete(int $id): bool
     {
-        if (PermissionModel::_()->hasChildren($id)) {
-            return false; // 含子节点,禁止删除
-        }
+        Helper::ThrowOn(PermissionModel::_()->hasChildren($id), '该菜单含有子节点，禁止删除');
         return PermissionModel::_()->delete($id);
     }
 

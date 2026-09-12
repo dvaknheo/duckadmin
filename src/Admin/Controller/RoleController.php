@@ -64,11 +64,11 @@ class RoleController extends Base
         $description = Helper::POST('description', '');
         $pid = (int)Helper::POST('pid', '0');
 
-        $result = RoleBusiness::_()->create($name, $description, $pid);
-        if ($result['success']) {
+        try {
+            RoleBusiness::_()->create($name, $description, $pid);
             Helper::Show302(__url('Role/index'));
-        } else {
-            $data['error'] = $result['message'];
+        } catch (\Exception $ex) {
+            $data['error'] = $ex->getMessage();
             $data['title'] = '新增职位';
             $data['input'] = ['name' => $name, 'description' => $description, 'pid' => $pid];
             $data['roles'] = RoleBusiness::_()->getAll();
@@ -116,11 +116,11 @@ class RoleController extends Base
         $description = Helper::POST('description', '');
         $pid = (int)Helper::POST('pid', '0');
 
-        $result = RoleBusiness::_()->update($id, $name, $description, $pid);
-        if ($result['success']) {
+        try {
+            RoleBusiness::_()->update($id, $name, $description, $pid);
             Helper::Show302(__url('Role/index'));
-        } else {
-            $data['error'] = $result['message'];
+        } catch (\Exception $ex) {
+            $data['error'] = $ex->getMessage();
             $data['role'] = ['id' => $id, 'name' => $name, 'description' => $description, 'pid' => $pid];
             $data['title'] = '编辑职位';
             $data['roles'] = RoleBusiness::_()->getAll();

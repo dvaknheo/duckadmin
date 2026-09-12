@@ -46,40 +46,28 @@ class AdminBusiness extends Base
     /**
      * 创建用户
      */
-    public function create(array $input): array
+    public function create(array $input): int
     {
-        if (empty($input['username'])) {
-            return ['success' => false, 'message' => '用户名不能为空'];
-        }
-        if (empty($input['password'])) {
-            return ['success' => false, 'message' => '密码不能为空'];
-        }
-        if (strlen($input['password']) < 6) {
-            return ['success' => false, 'message' => '密码长度至少6位'];
-        }
+        Helper::ThrowOn(empty($input['username']), '用户名不能为空');
+        Helper::ThrowOn(empty($input['password']), '密码不能为空');
+        Helper::ThrowOn(strlen($input['password']) < 6, '密码长度至少6位');
 
         $existing = AdminModel::_()->getByUsername($input['username']);
-        if ($existing) {
-            return ['success' => false, 'message' => '用户名已存在'];
-        }
+        Helper::ThrowOn($existing, '用户名已存在');
 
         AdminModel::_()->create($input);
 
-        return ['success' => true, 'message' => '创建成功'];
+        return (int)AdminModel::_()->lastInsertId();
     }
 
     /**
      * 更新用户
      */
-    public function update(int $id, array $input): array
+    public function update(int $id, array $input): bool
     {
-        if (empty($input['username'])) {
-            return ['success' => false, 'message' => '用户名不能为空'];
-        }
+        Helper::ThrowOn(empty($input['username']), '用户名不能为空');
 
-        AdminModel::_()->edit($id, $input);
-
-        return ['success' => true, 'message' => '更新成功'];
+        return AdminModel::_()->edit($id, $input);
     }
 
     /**

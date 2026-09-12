@@ -71,12 +71,13 @@ class AdminController extends Base
             'status' => (int)Helper::POST('status', '1'),
         ];
 
-        $result = AdminBusiness::_()->create($input);
-        if ($result['success']) {
+        try {
+            AdminBusiness::_()->create($input);
             Helper::Show302(__url('Admin/index'));
             return;
+        } catch (\Exception $ex) {
+            $data['error'] = $ex->getMessage();
         }
-        $data['error'] = $result['message'];
         $data['title'] = '新增人员';
         $data['input'] = $input;
         $data['urls'] = [
@@ -125,12 +126,13 @@ class AdminController extends Base
             'status' => (int)Helper::POST('status', '1'),
         ];
 
-        $result = AdminBusiness::_()->update($id, $input);
-        if ($result['success']) {
+        try {
+            AdminBusiness::_()->update($id, $input);
             Helper::Show302(__url('Admin/index'));
             return;
+        } catch (\Exception $ex) {
+            $data['error'] = $ex->getMessage();
         }
-        $data['error'] = $result['message'];
         $data['user'] = $input + ['id' => $id];
         $data['title'] = '编辑人员';
         $data['urls'] = [

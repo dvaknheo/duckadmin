@@ -30,9 +30,12 @@ class PermissionController extends Base
         if ($role && Helper::SERVER('REQUEST_METHOD', '') === 'POST') {
             $permissionIds = Helper::POST('permission_ids', []);
             $permissionIds = is_array($permissionIds) ? $permissionIds : [];
-            $result = RoleBusiness::_()->setPermissions($id, $permissionIds);
-            $qs = $result['success'] ? 'saved=1' : 'error=' . urlencode($result['message']);
-            Helper::Show302(__url('Permission/index') . '?id=' . $id . '&' . $qs);
+            try {
+                RoleBusiness::_()->setPermissions($id, $permissionIds);
+                Helper::Show302(__url('Permission/index') . '?id=' . $id . '&saved=1');
+            } catch (\Exception $ex) {
+                Helper::Show302(__url('Permission/index') . '?id=' . $id . '&error=' . urlencode($ex->getMessage()));
+            }
             return;
         }
 
