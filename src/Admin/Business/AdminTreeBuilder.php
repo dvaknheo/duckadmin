@@ -71,28 +71,32 @@ class AdminTreeBuilder
             }
             $group = $this->parseAnnotatedLine($doc, 'menu_group');
             if ($group === null) {
-                continue; // 无 @menu_group 的控制器不扫描
+                // 无 @menu_group 时挂到第一个顶级目录
+                if (empty($tree)) {
+                    continue; // 还没有任何顶级目录，跳过
+                }
+                $groupIdx = 0;
+            } else {
+                [$groupName] = $group;
+                // 分组节点
+                if (!isset($groupMap[$groupName])) {
+                    $tree[] = [
+                        'name' => $groupName,
+                        'icon' => null,
+                        'url' => '',
+                        'type' => 0,
+                        'children' => [],
+                    ];
+                    $groupMap[$groupName] = count($tree) - 1;
+                }
+                $groupIdx = $groupMap[$groupName];
             }
-            [$groupName] = $group;
             $dir = $this->parseAnnotatedLine($doc, 'menu_directory');
-
-            // 分组节点
-            if (!isset($groupMap[$groupName])) {
-                $tree[] = [
-                    'name' => $groupName,
-                    'icon' => null,
-                    'url' => '',
-                    'type' => 0,
-                    'children' => [],
-                ];
-                $groupMap[$groupName] = count($tree) - 1;
-            }
-            $groupIdx = $groupMap[$groupName];
 
             // 目录节点
             if ($dir !== null) {
                 [$dirName, $dirUrl] = $dir;
-                $dirKey = $groupName . "\0" . $dirName;
+                $dirKey = $groupIdx . "\0" . $dirName;
                 if (!isset($dirMap[$dirKey])) {
                     // 目录 url：去掉 basename 后加 #，如 Admin/index → Admin/#
                     $dirUrl = rtrim($dirUrl, '/');
@@ -148,35 +152,6 @@ class AdminTreeBuilder
         $this->sortTree($tree);
 
         return $tree;
-    }
-
-    /**
-     * 补全树中的相对 url 为绝对 url（加挂载前缀）
-     * @param array $tree 树形结构
-     * @param string $prefix 挂载前缀，如 /admin/
-     * @return array 补全后的树
-     */
-    public function resolveUrls(array $tree, string $prefix): array
-    {
-        $this->resolveUrlsRecursive($tree, $prefix);
-        return $tree;
-    }
-
-    /**
-     * 递归补全 url
-     */
-    protected function resolveUrlsRecursive(array &$nodes, string $prefix): void
-    {
-        foreach ($nodes as &$node) {
-            $url = (string)($node['url'] ?? '');
-            if ($url !== '' && $url[0] !== '/') {
-                $node['url'] = $prefix . ltrim($url, '/');
-            }
-            if (!empty($node['children'])) {
-                $this->resolveUrlsRecursive($node['children'], $prefix);
-            }
-        }
-        unset($node);
     }
 
     /**
@@ -264,29 +239,6 @@ class AdminTreeBuilder
             }
         }
         unset($node);
-    }
-
-    /**
-     * 精简树：去掉 type 字段和空 children，保留 name/icon/url/children
-     * 公开方法，供外部调用
-     */
-    public function simplifyTree(array $nodes): array
-    {
-        $result = [];
-        foreach ($nodes as $node) {
-            $item = [
-                'name' => $node['name'],
-                'icon' => $node['icon'] ?? null,
-                'url' => $node['url'] ?? '',
-            ];
-            if (!empty($node['children'])) {
-                $item['children'] = $this->simplifyTree($node['children']);
-            } else {
-                $item['children'] = [];
-            }
-            $result[] = $item;
-        }
-        return $result;
     }
 
     /**
