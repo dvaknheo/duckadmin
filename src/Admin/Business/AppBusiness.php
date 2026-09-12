@@ -9,6 +9,7 @@ use DuckAdmin\Admin\Model\AdminModel;
 use DuckAdmin\Admin\Model\PermissionModel;
 use DuckAdmin\Admin\Model\RoleModel;
 use DuckAdmin\Admin\Model\RoleUserModel;
+use DuckPhp\Component\Validator;
 use DuckPhp\Core\App;
 use DuckPhp\GlobalAdmin\GlobalAdmin;
 
@@ -54,28 +55,19 @@ class AppBusiness extends Base
 
     public function checkInstall(array $post): array
     {
-        $admin_name = (string)($post['admin_name'] ?? '');
-        $password = (string)($post['admin_password'] ?? '');
-        $password_confirm = (string)($post['admin_password_confirm'] ?? '');
+        Validator::_()->init([
+            'admin_name' => 'required',
+            'admin_password' => 'required|minLen:6',
+            'admin_password_confirm' => 'required',
+        ])->setMessage([
+            'admin_name.required' => '请填写管理员账号',
+            'admin_password.required' => '请填写管理员密码',
+            'admin_password.minLen' => '管理员密码至少 6 位',
+            'admin_password_confirm.required' => '请填写确认密码',
+        ])->check($post);
 
-        //TODO 这里应该用 Validator;
-        // Helper::ThrowOn(!$user, '请填写管理员账号');
-        // Helper::ThrowOn(!$user, '请填写管理员账号');
-        // Helper::ThrowOn(!$user, '请填写管理员账号');
-        // Helper::ThrowOn(!$user, '请填写管理员账号');
+        Helper::ThrowOn($post['admin_password'] !== $post['admin_password_confirm'], '两次输入的密码不一致');
 
-        if ($admin_name === '') {
-            throw new \Exception('请填写管理员账号');
-        }
-        if ($password === '') {
-            throw new \Exception('请填写管理员密码');
-        }
-        if (strlen($password) < 6) {
-            throw new \Exception('管理员密码至少 6 位');
-        }
-        if ($password !== $password_confirm) {
-            throw new \Exception('两次输入的密码不一致');
-        }
         return [];
     }
     /**
