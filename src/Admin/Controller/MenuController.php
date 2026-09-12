@@ -60,11 +60,11 @@ class MenuController extends Base
         $show = $this->showMode();
 
         // 一步操作：扫描生成树形结构，补全 url，导入数据库
-        $menuTree = MenuConfigService::_()->scanRoutes();
+        $menuTree = (new \DuckAdmin\Admin\Business\AdminTreeBuilder())->build();
         $menuTree = (new \DuckAdmin\Admin\Business\AdminTreeBuilder())->resolveUrls($menuTree, __url(''));
         $added = MenuConfigService::_()->importToDb($menuTree);
         // 保存扫描结果到 config/scanned_menu.php 供对比
-        MenuConfigService::_()->saveScannedMenu($menuTree);
+        $this->saveScannedMenu($menuTree);
 
         $data['added'] = $added;
         $data['menuTree'] = $menuTree;
@@ -197,5 +197,18 @@ class MenuController extends Base
         $id = (int)Helper::GET('id', '0');
         $ok = MenuBusiness::_()->delete($id);
         Helper::Show302($this->listUrl($show, $ok ? '' : '&error=has_children'));
+    }
+
+    /**
+     * 把树形精简结构写入 config/scanned_menu.php（供对比用）
+     */
+    protected function saveScannedMenu(array $menuTree): bool
+    {
+        $file = __DIR__ . '/../config/scanned_menu.php';
+        $export = var_export($menuTree, true);
+        $content = "<?php\n// 扫描生成的菜单结构（树形，无 id/weight，url 为相对地址）\n"
+            . "// 由 AdminTreeBuilder::build() 生成，供对比和手动调整\n"
+            . "return {$export};\n";
+        return file_put_contents($file, $content) !== false;
     }
 }

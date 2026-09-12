@@ -50,7 +50,7 @@ class MenuBusiness extends Base
      */
     public function scanRoutes(): array
     {
-        return MenuConfigService::_()->scanRoutes();
+        return (new AdminTreeBuilder())->build();
     }
 
     /**

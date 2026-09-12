@@ -9,6 +9,7 @@ use DuckAdmin\Admin\Model\AdminModel;
 use DuckAdmin\Admin\Model\PermissionModel;
 use DuckAdmin\Admin\Model\RoleModel;
 use DuckAdmin\Admin\Model\RoleUserModel;
+use DuckPhp\Core\App;
 use DuckPhp\GlobalAdmin\GlobalAdmin;
 
 class AppBusiness extends Base
@@ -73,7 +74,7 @@ class AppBusiness extends Base
         $super_role_id = RoleModel::_()->seedDefaultRoles();
 
         // 从 config/scanned_menu.php 导入菜单（为空则扫描路由），导入数据库
-        MenuConfigService::_()->installMenus(__url(''));
+        $this->installMenus();
 
         // 创建管理员并关联超级管理员角色
         AdminModel::_()->create([
@@ -91,6 +92,17 @@ class AppBusiness extends Base
 
         return true;
     }
+    public function installMenus(): array
+    {
+        $prefix = App::_()->options['controller_url_prefix'];
+
+        $filename = App::_()->getConfigFile(App::_()->options['admin_menu_config_file']?? 'AdminMenu.php');
+        $menuTree = include $filename;        
+        
+        $menuTree = (new AdminTreeBuilder())->resolveUrls($menuTree, $prefix);
+        return PermissionModel::_()->importMenu($menuTree);
+    }
+
 
     public function login($post)
     {
