@@ -41,10 +41,12 @@ class AdminTreeBuilder
      * 类层级注解：
      * - @menu_directory 名称 [url]   顶级分组，支持 \ 切分生成多级目录
      *                           url 可选：无则取首个方法的 dirname + '/#'，如 Admin/index → Admin/#
+     * - @menu_icon 图标名称        目录图标
      * - @menu_weight N           本层权重，越大越靠前
      *
      * 方法层级注解：
      * - @menu_directory 名称 可选 顶级分组， 支持 \ 切分生成多级目录 ，插入相应的目录
+     * - @menu_icon 图标名称     给菜单/操作节点设置图标
      * - @menu 名称               菜单（type=1），url 取路由完整 path
      * - @menu_action 名称        action（type=2）
      * - @menu_permission #url 名称   权限项（type=3），#url 会被加上方法 url 前缀
@@ -88,8 +90,9 @@ class AdminTreeBuilder
                 continue;
             }
 
-            // class 层级的目录注解和权重
+            // class 层级的目录注解、图标、权重
             $dirAnno = $this->parseAnnotatedLine($classDoc, 'menu_directory');
+            $dirIcon = $this->parseAnnotatedLine($classDoc, 'menu_icon');
             $dirWeight = $this->parseWeight($classDoc);
 
             // 处理这个 controller 下的所有方法，收集子节点
@@ -113,6 +116,7 @@ class AdminTreeBuilder
                 $items[] = [
                     'name' => $dirAnno ? $dirAnno[0] : '',
                     'url' => $dirUrl,
+                    'icon' => $dirIcon ? $dirIcon[0] : null,
                     'type' => 0,
                     'weight' => $dirWeight,
                     'children' => $childItems,
@@ -195,6 +199,11 @@ class AdminTreeBuilder
         $mDoc = $this->getMethodDoc($controller, $method);
         $weight = $this->parseWeight($mDoc);
 
+        // 方法的 @menu_directory 注解（如果有，记录下来用于 splitSubLevels）
+        $methodDir = $this->parseAnnotatedLine($mDoc, 'menu_directory');
+        // 方法的 @menu_icon 注解
+        $methodIcon = $this->parseAnnotatedLine($mDoc, 'menu_icon');
+
         // @menu 优先，其次 @menu_action，默认 action
         $menuAnno = $this->parseAnnotatedLine($mDoc, 'menu');
         if ($menuAnno !== null) {
@@ -213,6 +222,8 @@ class AdminTreeBuilder
             'url' => $url,
             'type' => $type,
             'weight' => $weight,
+            'directory' => $methodDir ? $methodDir[0] : '',
+            'icon' => $methodIcon ? $methodIcon[0] : null,
         ];
 
         // @menu_permission #url Name（可能有多个，放最后）
@@ -230,6 +241,8 @@ class AdminTreeBuilder
                 'url' => $permUrl,
                 'type' => 3,
                 'weight' => $weight,
+                'directory' => $methodDir ? $methodDir[0] : '',
+                'icon' => null,
             ];
         }
 
@@ -259,8 +272,7 @@ class AdminTreeBuilder
     }
 
     /**
-     * 切分子层级（处理 \ 分割的多级目录）
-     * 如 "系统管理\用户管理" → 系统管理 → 用户管理 → (children)
+     * 切分子层级（处理 \ 分割的多级目录，以及子节点的 directory 信息）
      *
      * @param array $tree 原始树
      * @return array 处理后的树
@@ -270,13 +282,51 @@ class AdminTreeBuilder
         $result = [];
 
         foreach ($tree as $node) {
+            // 分离出带 directory 的子节点
+            $normalChildren = [];
+            $dirChildren = [];
+            foreach ($node['children'] ?? [] as $child) {
+                $dir = $child['directory'] ?? '';
+                unset($child['directory'], $child['icon']); // 清理临时字段
+                if ($dir !== '') {
+                    $dirChildren[$dir][] = $child;
+                } else {
+                    unset($child['icon']);
+                    $normalChildren[] = $child;
+                }
+            }
+
+            // 处理节点 name 的 \ 分割
             $parts = explode('\\', $node['name']);
+            $node['children'] = $normalChildren;
+
             if (count($parts) === 1) {
                 // 没有 \ 分割，直接保留
                 $result[] = $node;
             } else {
                 // 多级目录，递归创建
                 $result = $this->mergeSubLevel($result, $parts, 0, $node);
+            }
+
+            // 处理带 directory 的子节点
+            foreach ($dirChildren as $dirName => $childrenWithIcon) {
+                // 提取子节点
+                $children = array_column($childrenWithIcon, 'child');
+
+                $dirParts = explode('\\', $dirName);
+                $dirNode = [
+                    'name' => $dirParts[count($dirParts) - 1],
+                    'url' => '',
+                    'type' => 0,
+                    'children' => $children,
+                ];
+                if (count($dirParts) === 1) {
+                    // 单一目录名，直接添加为兄弟节点
+                    $result[] = $dirNode;
+                } else {
+                    // 多级目录，用 mergeSubLevel 处理
+                    $result = $this->mergeSubLevel($result, $dirParts, 0, $dirNode);
+                }
             }
         }
 
@@ -301,20 +351,9 @@ class AdminTreeBuilder
         $found = false;
         foreach ($nodes as &$node) {
             if ($node['name'] === $name && $node['type'] === 0) {
-                // 找到匹配的目录节点
                 if ($isLast) {
-                    // 最后一个部分，将 child 作为子节点添加
-                    $node['children'] = array_merge($node['children'], $child['children']);
-                    if (!empty($child['children'])) {
-                        foreach ($child['children'] as $c) {
-                            $node['children'][] = $c;
-                        }
-                    } else {
-                        // 如果没有 children，说明当前就是叶子节点
-                        $node['children'][] = $child;
-                    }
+                    $node['children'] = array_merge($node['children'], $child['children'] ?? []);
                 } else {
-                    // 继续向下递归
                     $node['children'] = $this->mergeSubLevel($node['children'], $parts, $idx + 1, $child);
                 }
                 $found = true;
@@ -324,24 +363,13 @@ class AdminTreeBuilder
         unset($node);
 
         if (!$found) {
-            // 需要创建新的目录节点
             $newNode = [
                 'name' => $name,
                 'url' => $isLast ? ($child['url'] ?? null) : null,
                 'type' => 0,
-                'children' => [],
+                'children' => $isLast ? ($child['children'] ?? []) : [],
             ];
-            if ($isLast) {
-                // 最后一个部分，添加原始子节点
-                $childNodes = $child['children'] ?? [];
-                if (!empty($childNodes)) {
-                    $newNode['children'] = $childNodes;
-                } else {
-                    // 没有 children，将当前节点作为子节点
-                    $newNode['children'][] = $child;
-                }
-            } else {
-                // 继续向下递归创建
+            if (!$isLast) {
                 $newNode['children'] = $this->mergeSubLevel([], $parts, $idx + 1, $child);
             }
             $nodes[] = $newNode;
