@@ -53,7 +53,7 @@ class AdminTreeBuilder
      * - @menu_weight N           本层权重
      * - 公开方法无任何注解       视为 action（type=2），名称为方法名
      *
-     * 后处理：切分子层级、排序、simplifyTree 精简结构
+     * 后处理：切分子层级、排序
      *
      * @param string $prefix 挂载前缀，如 /admin/
      * @return array[] 树形精简菜单结构
@@ -130,8 +130,7 @@ class AdminTreeBuilder
         // 4. 排序（同级排序，weight 只在同级有效）
         $this->sortTree($tree);
 
-        // 5. 精简结构
-        return $this->simplifyTree($tree);
+        return $tree;
     }
 
     /**
@@ -274,108 +273,87 @@ class AdminTreeBuilder
     /**
      * 切分子层级（处理 \ 分割的多级目录，以及子节点的 directory 信息）
      *
-     * @param array $tree 原始树
+     * @param array $nodes 原始树节点
      * @return array 处理后的树
      */
-    protected function splitSubLevels(array $tree): array
+    protected function splitSubLevels(array $nodes): array
     {
-        $result = [];
+        $tree = [];
 
-        foreach ($tree as $node) {
-            // 分离出带 directory 的子节点
+        foreach ($nodes as $node) {
+            // 清理子节点的临时字段，并分离出带 directory 的子节点
             $normalChildren = [];
             $dirChildren = [];
             foreach ($node['children'] ?? [] as $child) {
                 $dir = $child['directory'] ?? '';
-                unset($child['directory'], $child['icon']); // 清理临时字段
+                unset($child['directory'], $child['icon']);
                 if ($dir !== '') {
                     $dirChildren[$dir][] = $child;
                 } else {
-                    unset($child['icon']);
                     $normalChildren[] = $child;
                 }
             }
+            $node['children'] = $normalChildren;
 
             // 处理节点 name 的 \ 分割
             $parts = explode('\\', $node['name']);
-            $node['children'] = $normalChildren;
-
-            if (count($parts) === 1) {
-                // 没有 \ 分割，直接保留
-                $result[] = $node;
-            } else {
-                // 多级目录，递归创建
-                $result = $this->mergeSubLevel($result, $parts, 0, $node);
-            }
+            $this->mergeNode($tree, $parts, $node);
 
             // 处理带 directory 的子节点
-            foreach ($dirChildren as $dirName => $childrenWithIcon) {
-                // 提取子节点
-                $children = array_column($childrenWithIcon, 'child');
-
+            foreach ($dirChildren as $dirName => $children) {
                 $dirParts = explode('\\', $dirName);
                 $dirNode = [
                     'name' => $dirParts[count($dirParts) - 1],
-                    'url' => '',
+                    'url' => null,
                     'type' => 0,
                     'children' => $children,
                 ];
-                if (count($dirParts) === 1) {
-                    // 单一目录名，直接添加为兄弟节点
-                    $result[] = $dirNode;
-                } else {
-                    // 多级目录，用 mergeSubLevel 处理
-                    $result = $this->mergeSubLevel($result, $dirParts, 0, $dirNode);
-                }
+                $this->mergeNode($tree, $dirParts, $dirNode);
             }
         }
 
-        return $result;
+        return $tree;
     }
 
     /**
-     * 合并子层级节点
+     * 将节点合并到树中（按路径创建目录）
      *
-     * @param array $nodes 当前层级的节点数组
-     * @param array $parts 名称分割后的数组
-     * @param int $idx 当前处理的 parts 索引
-     * @param array $child 原始节点（要挂载在最深层级）
-     * @return array 合并后的节点数组
+     * @param array &$tree 目标树（引用）
+     * @param array $parts 路径分割数组
+     * @param array $node 要合并的节点
      */
-    protected function mergeSubLevel(array $nodes, array $parts, int $idx, array $child): array
+    protected function mergeNode(array &$tree, array $parts, array $node): void
     {
-        $name = $parts[$idx];
-        $isLast = ($idx === count($parts) - 1);
+        $name = array_shift($parts);
+        $isLast = empty($parts);
 
-        // 查找或创建当前层级的节点
-        $found = false;
-        foreach ($nodes as &$node) {
-            if ($node['name'] === $name && $node['type'] === 0) {
+        // 查找同名目录节点
+        foreach ($tree as &$item) {
+            if ($item['name'] === $name && $item['type'] === 0) {
                 if ($isLast) {
-                    $node['children'] = array_merge($node['children'], $child['children'] ?? []);
+                    $item['children'] = array_merge($item['children'], $node['children'] ?? []);
                 } else {
-                    $node['children'] = $this->mergeSubLevel($node['children'], $parts, $idx + 1, $child);
+                    $this->mergeNode($item['children'], $parts, $node);
                 }
-                $found = true;
-                break;
+                return;
             }
         }
-        unset($node);
+        unset($item);
 
-        if (!$found) {
-            $newNode = [
+        // 未找到，创建新节点
+        if ($isLast) {
+            $tree[] = $node;
+        } else {
+            $tree[] = [
                 'name' => $name,
-                'url' => $isLast ? ($child['url'] ?? null) : null,
+                'url' => null,
                 'type' => 0,
-                'children' => $isLast ? ($child['children'] ?? []) : [],
+                'children' => [],
             ];
-            if (!$isLast) {
-                $newNode['children'] = $this->mergeSubLevel([], $parts, $idx + 1, $child);
-            }
-            $nodes[] = $newNode;
+            end($tree);
+            $idx = key($tree);
+            $this->mergeNode($tree[$idx]['children'], $parts, $node);
         }
-
-        return $nodes;
     }
 
     /**
@@ -394,7 +372,7 @@ class AdminTreeBuilder
     }
 
     /**
-     * 递归排序树：同级按 weight 排序，weight 越大越靠前
+     * 递归排序树：同级按 weight 排序，weight 越大越靠前，输出时清理 weight 字段
      *
      * @param array &$nodes 树节点数组（引用传递）
      */
@@ -402,7 +380,7 @@ class AdminTreeBuilder
     {
         // 按 weight 降序排序（同级排序）
         uasort($nodes, function ($a, $b) {
-            return ((int)($b['weight'] ?? 0)) <=> ((int)($a['weight'] ?? 0));
+            return ($b['weight'] ?? 0) <=> ($a['weight'] ?? 0);
         });
 
         // 重新索引为连续数组
@@ -410,6 +388,7 @@ class AdminTreeBuilder
 
         // 递归排序 children
         foreach ($nodes as &$node) {
+            unset($node['weight']);
             if (!empty($node['children'])) {
                 $this->sortTree($node['children']);
             }
