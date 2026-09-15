@@ -160,26 +160,28 @@ class AdminTreeBuilder
     /**
      * 递归排序树：按 _weight 临时字段，weight 越大越靠前
      * 排序后从节点中移除 _weight 字段
+     *
+     * @param array &$nodes 树节点数组（引用传递）
      */
     protected function sortTree(array &$nodes): void
     {
-        // 先收集每个节点的 _weight，然后移除
+        // 收集当前层每个节点的 weight 并移除 _weight 字段
         $weights = [];
         foreach ($nodes as $idx => &$node) {
             $weights[$idx] = (int)($node['_weight'] ?? 0);
             unset($node['_weight']);
         }
         unset($node);
-        
+
         // 按 weight 降序排序
         uksort($nodes, function ($a, $b) use ($weights) {
             return $weights[$b] <=> $weights[$a];
         });
-        
+
         // 重新索引为连续数组
         $nodes = array_values($nodes);
-        
-        // 递归排序 children
+
+        // 递归排序 children（使用 walkTree 遍历清理）
         foreach ($nodes as &$node) {
             if (!empty($node['children'])) {
                 $this->sortTree($node['children']);
@@ -190,31 +192,19 @@ class AdminTreeBuilder
 
     /**
      * 补全树中的相对 url 为绝对 url（加挂载前缀）
-     * @param array $tree 树形结构
+     * @param array &$tree 树形结构（引用传递，直接修改原树）
      * @param string $prefix 挂载前缀，如 /admin/
      * @return array 补全后的树
      */
-    public function resolveUrls(array $tree, string $prefix): array
+    public function resolveUrls(array &$tree, string $prefix): array
     {
-        $this->resolveUrlsRecursive($tree, $prefix);
-        return $tree;
-    }
-
-    /**
-     * 递归补全 url
-     */
-    protected function resolveUrlsRecursive(array &$nodes, string $prefix): void
-    {
-        foreach ($nodes as &$node) {
+        $this->walkTree($tree, function (array &$node, int $depth) use ($prefix) {
             $url = (string)($node['url'] ?? '');
             if ($url !== '' && $url[0] !== '/') {
                 $node['url'] = $prefix . ltrim($url, '/');
             }
-            if (!empty($node['children'])) {
-                $this->resolveUrlsRecursive($node['children'], $prefix);
-            }
-        }
-        unset($node);
+        });
+        return $tree;
     }
 
     /**
@@ -296,5 +286,38 @@ class AdminTreeBuilder
             return (int)$m[1];
         }
         return 0;
+    }
+
+    /**
+     * 从根节点到子孙节点遍历整个树，对每个节点执行回调函数
+     *
+     * @param array &$nodes 树形结构（引用传递，直接修改原树）
+     * @param callable $callback 回调函数，签名为 function(array &$node, int $depth): void
+     *                         - $node: 当前节点引用，可直接修改
+     *                         - $depth: 当前深度，根节点为 0
+     * @return array 返回修改后的树（与 $nodes 相同引用）
+     */
+    public function walkTree(array &$nodes, callable $callback): array
+    {
+        $this->walkTreeRecursive($nodes, $callback, 0);
+        return $nodes;
+    }
+
+    /**
+     * 递归遍历树的内部实现
+     *
+     * @param array &$nodes 节点数组（引用传递）
+     * @param callable $callback 回调函数
+     * @param int $depth 当前深度，根节点为 0
+     */
+    protected function walkTreeRecursive(array &$nodes, callable $callback, int $depth): void
+    {
+        foreach ($nodes as &$node) {
+            $callback($node, $depth);
+            if (!empty($node['children'])) {
+                $this->walkTreeRecursive($node['children'], $callback, $depth + 1);
+            }
+        }
+        unset($node);
     }
 }
