@@ -5,25 +5,71 @@
 namespace DuckAdmin\Admin\Business;
 
 use DuckPhp\Component\RouteLister;
-
+use DuckPhp\Core\App;
+use DuckPhp\Core\Route;
 // 我们要分为build 自己的，和 scanall 全局两种。
 // build 用于生成
 class AdminTreeBuilder
 {
-    public function loadAdminMenu()
-    {
-        
-        $prefix = App::_()->options['controller_url_prefix'];
-        $filename = App::_()->getConfigFile(App::_()->options['admin_menu_config_file']?? 'AdminMenu.php');
-        $menuTree = include $filename;        
-        $menuTree = (new AdminTreeBuilder())->resolveUrls($menuTree, $prefix);
+    // 我们拆分成 load 和 scan 模式.
 
+    public function loadAdminPermissionMenu()
+    {
+        $prefix = App::_()->options['controller_url_prefix'];
+        $menu_file = App::_()->options['admin_menu_config_file'] ?? null;
+        if ($menu_file) {
+            $filename = App::_()->getConfigFile($menu_file);
+            if('.json' === substr($filename,0,-strlen('.json'))){
+                $menuTree = json_decode(file_get_contents($filename));
+            }else{
+                $menuTree = include $filename;
+            }
+            $menuTree = $this->resolveUrls($menuTree, $prefix);
+            return $menuTree;
+        }
+        return $this->build();
+    }
+    public function loadAllAdminPermissionMenu()
+    {
+        $last_phase = App::Phase();
+        App::Phase(App::Root()->getThisPhaseName());
+
+        $tree = $this->loadAdminPermissionMenu();
+        $last_phase = App::Phase();
+        $parent_app = App::_();
+        foreach ($parent_app->options['app'] as $class => $app_options) {
+            if ($parent_app->toThisChild($class) === null) {
+                continue;
+            }
+            $item = $this->loadAdminPermissionMenu();
+            if($last_phase === App::Phase()){
+                foreach($item as &$node){
+                    $node['weight'] = 1000;
+                }
+                unset($node);
+            }
+            $tree = array_merge($tree, $item);
+            App::Phase($last_phase);
+        }
+        App::Phase($last_phase);
+        
+        // 当前的排在最前面
+        uasort($tree, function ($a, $b) {
+            return ($b['weight'] ?? 0) <=> ($a['weight'] ?? 0);
+        });
+
+        foreach($tree as &$node){
+            unset($node['weight']);
+        }
+        unset($node);
+
+        return $tree;
     }
     protected function getRoutes()
     {
         $routes = RouteLister::_()->listAll(false, true, true);
         // 转换为相对地址
-        $prefix = $this->getUrlPrefix();
+        $prefix = App::_()->options['controller_url_prefix'] ?? '';
         foreach ($routes as &$route) {
             $url = (string)($route['url'] ?? '');
             if ($prefix && strpos($url, $prefix) === 0) {
@@ -33,12 +79,12 @@ class AdminTreeBuilder
         unset($route);
         return $routes;
     }
-
-    protected function getUrlPrefix(): string
+    protected function getControllerNamespacePrefix(): string
     {
-        return (string)(\DuckPhp\Core\App::_()->options['controller_url_prefix'] ?? '');
+        return Route::_()->getControllerNamespacePrefix();
     }
 
+    ////////////////////////////////////////////////////////
     /**
      * 构建菜单树：RouteLister 扫描路由，按注解生成 分组→目录→菜单/操作 树形结构
      *
@@ -63,13 +109,13 @@ class AdminTreeBuilder
      *
      * 后处理：切分子层级、排序
      *
-     * @param string $prefix 挂载前缀，如 /admin/
      * @return array[] 树形精简菜单结构
      */
-    public function build(string $prefix): array
+    public function build(): array
     {
         $routes = $this->getRoutes(); // url 已经是相对地址
-
+        //$namespace_prefix = Route::_()->getControllerNamespacePrefix(); 这里要传递进来。
+        
         // 1. 按 controller 分组
         $controllers = [];
         foreach ($routes as $route) {

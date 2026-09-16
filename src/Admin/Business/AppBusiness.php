@@ -71,6 +71,8 @@ class AppBusiness extends Base
      */
     public function install(array $input): bool
     {
+        Helper::FireGlobalEvent('installing', __CLASS__, $input);
+
         $username = (string)($input['admin_name'] ?? '');
         $password = (string)($input['admin_password'] ?? '');
         $realname = (string)($input['admin_realname'] ?? '');
@@ -80,8 +82,9 @@ class AppBusiness extends Base
 
         $super_role_id = RoleModel::_()->seedDefaultRoles();
 
-        // 从 config/scanned_menu.php 导入菜单（为空则扫描路由），导入数据库
-        $this->installMenus();
+        //  导入数据库
+        $menuTree = (new AdminTreeBuilder)->loadAllAdminPermissionMenu();
+        PermissionModel::_()->importMenu($menuTree);
 
         // 创建管理员并关联超级管理员角色
         AdminModel::_()->create([
@@ -93,26 +96,11 @@ class AppBusiness extends Base
         ]);
         $admin_id = (int)AdminModel::_()->lastInsertId();
 
-        // 默认角色
+        RoleUserModel::_()->setUserRoles($admin_id, [$super_role_id]); // RoleUserModel 要取消
 
-        RoleUserModel::_()->setUserRoles($admin_id, [$super_role_id]);
-
-        // 超级管理员拥有全部权限 
-        PermissionModel::_()->grantAllPermissions($super_role_id);
-
+        Helper::FireGlobalEvent('installed', __CLASS__, $input);
         return true;
     }
-    public function installMenus(): array
-    {
-        // 这几项合并
-        $prefix = App::_()->options['controller_url_prefix'];
-        $filename = App::_()->getConfigFile(App::_()->options['admin_menu_config_file']?? 'AdminMenu.php');
-        $menuTree = include $filename;        
-        $menuTree = (new AdminTreeBuilder())->resolveUrls($menuTree, $prefix);
-
-        return PermissionModel::_()->importMenu($menuTree);
-    }
-
 
     public function login($post)
     {

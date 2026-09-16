@@ -88,15 +88,6 @@ class PermissionModel extends Base
             $this->execute($sql, [$roleId, (int)$permId]);
         }
     }
-
-    public function grantAllPermissions(int $roleId): void
-    {
-        $sql = "SELECT id FROM admin_permissions WHERE deleted_at IS NULL";
-        $rows = $this->fetchAll($sql);
-        $ids = array_column($rows, 'id');
-        $this->setRolePermissions($roleId, $ids);
-    }
-
     /**
      * 是否有未删除的子节点
      */

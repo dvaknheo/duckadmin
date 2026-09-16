@@ -14,14 +14,10 @@ class RoleUserModel extends Base
         return array_column($rows, 'role_id');
     }
 
-    public function setUserRoles(int $userId, array $roleIds): void
+    public function setUserRoles(int $userId, array $roleId): void
     {
-        $sql = "DELETE FROM admin_role_users WHERE user_id = ?";
-        $this->execute($sql, [$userId]);
-        foreach ($roleIds as $roleId) {
-            $sql = "INSERT INTO admin_role_users (user_id, role_id) VALUES (?, ?)";
-            $this->execute($sql, [$userId, (int)$roleId]);
-        }
+        $sql = "INSERT INTO admin_role_users (user_id, role_id) VALUES (?, ?)";
+        $this->execute($sql, [$userId, (int)$roleId]);
     }
 
     public function isSuperRole(int $userId): bool
