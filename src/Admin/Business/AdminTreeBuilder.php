@@ -6,13 +6,12 @@ namespace DuckAdmin\Admin\Business;
 
 use DuckPhp\Component\RouteLister;
 use DuckPhp\Core\App;
+use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\Route;
 // 我们要分为build 自己的，和 scanall 全局两种。
 // build 用于生成
-class AdminTreeBuilder
+class AdminTreeBuilder extends ComponentBase
 {
-    // 我们拆分成 load 和 scan 模式.
-
     public function loadAdminPermissionMenu(bool $force_build = false)
     {
         $prefix = App::_()->options['controller_url_prefix'] ?? '';
@@ -477,39 +476,6 @@ class AdminTreeBuilder
         });
         return $tree;
     }
-    
-    /**
-     * 只要 type=0 和 type=1 的。如果 type=0 没有子树，则删除。
-     * @param array $tree
-     * @return array
-     */
-    public function permissionMenuTreeToSideMenuTree(array $tree): array
-    {
-        return [];
-    }
-
-    /**
-     * 把带 id, pid 的节点记录集转成权限菜单树
-     * 
-     * @param array $nodes
-     * @return array
-     */
-    public function recordsetToTree(array $nodes): array
-    {
-        //TODO 完成
-        return [];
-    }
-    /**
-     * 把权限菜单树结构转成把带 id, pid 的节点记录集。id, pid 都是生成的
-     * 
-     * @param mixed $tree
-     * @return array
-     */
-    public function treeToRecordset(array $tree): array
-    {
-        //TODO 完成
-        return [];
-    }
     /**
      * 精简树：去掉 type 字段和空 children，保留 name/icon/url/children
      * 公开方法，供外部调用
@@ -622,5 +588,123 @@ class AdminTreeBuilder
             }
         }
         unset($node);
+    }
+
+    /**
+     * 把权限菜单树转换为侧边栏菜单树
+     *
+     * @param array $nodes 权限菜单树
+     * @return array 侧边栏菜单树
+     */
+    public function permissionMenuTreeToSideMenuTree(array $nodes): array
+    {
+        $result = [];
+        foreach ($nodes as $node) {
+            $type = $node['type'] ?? 0;
+            $isDirectory = ($type === 0);
+
+            // 递归过滤 children
+            $children = $node['children'] ?? [];
+            if (!empty($children)) {
+                $children = $this->permissionMenuTreeToSideMenuTree($children);
+            }
+
+            // type > 1 → 跳过
+            if ($type > 1) {
+                continue;
+            }
+            // type=0 且空 children → 跳过
+            if ($isDirectory && empty($children)) {
+                continue;
+            }
+
+            // 构建节点
+            $item = [
+                'name' => $node['name'] ?? '',
+                'url' => $node['url'] ?? '',
+                'icon' => $node['icon'] ?? null,
+                'type' => $type,
+            ];
+            if (!empty($children)) {
+                $item['children'] = $children;
+            }
+            $result[] = $item;
+        }
+        return $result;
+    }
+
+    /**
+     * 把记录集（扁平数据）转换为树形结构
+     *
+     * @param array $recordset 记录集，每条记录包含 id 和 pid（或 parent_id）
+     * @param string $idField id 字段名，默认 'id'
+     * @param string $pidField 父 id 字段名，默认 'pid'
+     * @param int $rootPid 根节点的父 id 值，默认 0
+     * @return array 树形结构
+     */
+    public function recordsetToTree(array $recordset, string $idField = 'id', string $pidField = 'pid', int $rootPid = 0): array
+    {
+        // 构建 id => record 的映射
+        $map = [];
+        foreach ($recordset as $record) {
+            $id = $record[$idField] ?? null;
+            if ($id !== null) {
+                $map[$id] = $record;
+                $map[$id]['children'] = [];
+            }
+        }
+
+        // 构建树
+        $tree = [];
+        foreach ($map as $id => &$node) {
+            $pid = $node[$pidField] ?? $rootPid;
+            if ($pid == $rootPid || !isset($map[$pid])) {
+                $tree[] = &$node;
+            } else {
+                $map[$pid]['children'][] = &$node;
+            }
+        }
+        unset($node);
+
+        return $tree;
+    }
+
+    /**
+     * 把树形结构转换为记录集（扁平数据）
+     *
+     * @param array $tree 树形结构
+     * @param string $idField id 字段名，默认 'id'
+     * @param string $pidField 父 id 字段名，默认 'pid'
+     * @param int $rootPid 根节点的父 id 值，默认 0
+     * @return array 记录集
+     */
+    public function treeToRecordset(array $tree, string $idField = 'id', string $pidField = 'pid', int $rootPid = 0): array
+    {
+        $recordset = [];
+        $this->treeToRecordsetRecursive($tree, $recordset, $idField, $pidField, $rootPid);
+        return $recordset;
+    }
+
+    /**
+     * treeToRecordset 的递归实现
+     *
+     * @param array $nodes 节点数组
+     * @param array &$recordset 记录集（引用）
+     * @param string $idField id 字段名
+     * @param string $pidField 父 id 字段名
+     * @param int $pid 父 id
+     */
+    protected function treeToRecordsetRecursive(array $nodes, array &$recordset, string $idField, string $pidField, int $pid): void
+    {
+        foreach ($nodes as $node) {
+            $id = $node[$idField] ?? null;
+            $record = $node;
+            unset($record['children']);
+            $record[$pidField] = $pid;
+            $recordset[] = $record;
+            if (!empty($node['children'])) {
+                $this->treeToRecordsetRecursive($node['children'], $recordset, $idField, $pidField, $id ?? 0);
+            }
+        }
     }
 }
