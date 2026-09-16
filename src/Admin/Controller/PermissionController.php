@@ -13,7 +13,22 @@ use DuckAdmin\Admin\Business\MenuBusiness;
 class PermissionController extends Base
 {
     /**
-     * @menu_item 权限分配
+     * @menu 我的权限
+     * @return void
+     */
+    public function permissions()
+    {
+        // 查看我的权限
+    }
+    /**
+     * @menu 预览菜单
+     */
+    public function menu()
+    {
+        // 预览菜单
+    }
+    /**
+     * @menu 权限分配
      * @menu_weight 10
      */
     public function index()

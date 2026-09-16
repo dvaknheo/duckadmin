@@ -3,16 +3,14 @@ namespace DuckAdmin\Admin\Controller;
 
 use DuckAdmin\Admin\Business\AdminBusiness;
 
-/**
- * @menu_group 系统管理 20
- * @menu_directory 人员管理 Admin/index
+/** 
+ * @menu_directory 下属人员管理
  * @menu_weight 10
  */
 class AdminController extends Base
 {
     /**
-     * @menu_item 人员管理
-     * @menu_weight 10
+     * @menu 查看下属
      */
     public function index()
     {
@@ -43,8 +41,7 @@ class AdminController extends Base
     }
 
     /**
-     * @menu_action 新增人员
-     * @menu_weight 20
+     * @menu_action 添加下属
      */
     public function create()
     {
@@ -58,8 +55,7 @@ class AdminController extends Base
     }
 
     /**
-     * @menu_action 保存人员
-     * @menu_weight 21
+     * @menu_action 保存下属
      */
     public function save()
     {
@@ -89,8 +85,7 @@ class AdminController extends Base
     }
 
     /**
-     * @menu_action 编辑人员
-     * @menu_weight 22
+     * @menu_action 编辑下属
      */
     public function edit()
     {
@@ -112,8 +107,7 @@ class AdminController extends Base
     }
 
     /**
-     * @menu_action 更新人员
-     * @menu_weight 23
+     * @menu_action 更新下属
      */
     public function update()
     {
@@ -144,8 +138,7 @@ class AdminController extends Base
     }
 
     /**
-     * @menu_action 删除人员
-     * @menu_weight 24
+     * @menu_action 删除下属
      */
     public function delete()
     {

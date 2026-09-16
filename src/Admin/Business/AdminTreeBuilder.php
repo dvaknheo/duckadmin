@@ -1,19 +1,27 @@
 <?php declare(strict_types=1);
 /**
  * DuckPhp Admin System - Admin Tree Builder
- * 扫描路由注解，构建后台管理菜单树（精简结构）
- *
- * 与 MenuConfigService 的分工：
- * - AdminTreeBuilder：只负责扫描路由生成树形结构
- * - MenuConfigService：负责导入数据库、构建用户菜单、读写配置文件
  */
 namespace DuckAdmin\Admin\Business;
 
+use DuckPhp\Component\RouteLister;
+
+// 我们要分为build 自己的，和 scanall 全局两种。
+// build 用于生成
 class AdminTreeBuilder
 {
+    public function loadAdminMenu()
+    {
+        
+        $prefix = App::_()->options['controller_url_prefix'];
+        $filename = App::_()->getConfigFile(App::_()->options['admin_menu_config_file']?? 'AdminMenu.php');
+        $menuTree = include $filename;        
+        $menuTree = (new AdminTreeBuilder())->resolveUrls($menuTree, $prefix);
+
+    }
     protected function getRoutes()
     {
-        $routes = \DuckPhp\Component\RouteLister::_()->listAll(false, true, true);
+        $routes = RouteLister::_()->listAll(false, true, true);
         // 转换为相对地址
         $prefix = $this->getUrlPrefix();
         foreach ($routes as &$route) {
@@ -171,7 +179,7 @@ class AdminTreeBuilder
         foreach ($meta as $item) {
             $name = (string)($item['name'] ?? '');
             $type = (int)($item['type'] ?? 1);
-            $url = (string)($item['url'] ?? '');
+            $url = ($item['url'] ?? null);
             $weight = (int)($item['weight'] ?? 0);
 
             $items[] = [

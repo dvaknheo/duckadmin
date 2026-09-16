@@ -33,18 +33,13 @@ class AppBusiness extends Base
             return true;
         }
         $path = (string)(parse_url($url, PHP_URL_PATH) ?: $url);
-        $path = '/' . ltrim($path, '/');
-        if ($path === '/' || $path === '/index' || preg_match('#(^|/)Home/index$#', $path)) {
-            return true; // 首页/仪表盘放行
-        }
-        if (preg_match('#(^|/)Role/permissions$#', $path)) {
-            return true; // 分配权限页:访问由 RoleController 内部按职位管理范围控制
-        }
+        //TODO 带 ＃的特殊权限
         $count = PermissionModel::_()->countUserUrlPermissions($userId, $path);
         return $count > 0;
     }
     public function log($admin_id, string $string, ?string $type = null, array $ext = [])
     {
+        // 日志系统待完成
         return;
     }
 
@@ -83,7 +78,6 @@ class AppBusiness extends Base
             $realname = $username;
         }
 
-        // 默认角色
         $super_role_id = RoleModel::_()->seedDefaultRoles();
 
         // 从 config/scanned_menu.php 导入菜单（为空则扫描路由），导入数据库
@@ -98,21 +92,24 @@ class AppBusiness extends Base
             'status' => 1,
         ]);
         $admin_id = (int)AdminModel::_()->lastInsertId();
+
+        // 默认角色
+
         RoleUserModel::_()->setUserRoles($admin_id, [$super_role_id]);
 
-        // 超级管理员拥有全部权限
+        // 超级管理员拥有全部权限 
         PermissionModel::_()->grantAllPermissions($super_role_id);
 
         return true;
     }
     public function installMenus(): array
     {
+        // 这几项合并
         $prefix = App::_()->options['controller_url_prefix'];
-
         $filename = App::_()->getConfigFile(App::_()->options['admin_menu_config_file']?? 'AdminMenu.php');
         $menuTree = include $filename;        
-        
         $menuTree = (new AdminTreeBuilder())->resolveUrls($menuTree, $prefix);
+
         return PermissionModel::_()->importMenu($menuTree);
     }
 
@@ -120,6 +117,8 @@ class AppBusiness extends Base
     public function login($post)
     {
         Helper::FireGlobalEvent(GlobalAdmin::EVENT_SERVICE_ADMIN_LOGINING, $post);
+
+        // TODO 这段验证改用 validator
         $username = $post['username'];
         $password = $post['password'];
         Helper::ThrowOn((empty($username) || empty($password)), '请输入用户名和密码');
@@ -147,7 +146,7 @@ class AppBusiness extends Base
         Helper::FireGlobalEvent(GlobalAdmin::EVENT_SERVICE_ADMIN_LOGOUTED, $admin_id);
         return;
     }
-    public function loadMenus($admin_id)
+    public function menu($admin_id)
     {
         $admin_id = (int)$admin_id;
         if (RoleUserModel::_()->isSuperRole($admin_id)) {

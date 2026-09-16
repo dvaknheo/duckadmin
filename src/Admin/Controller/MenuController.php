@@ -5,8 +5,7 @@ use DuckAdmin\Admin\Business\MenuBusiness;
 use DuckAdmin\Admin\Model\PermissionModel;
 
 /**
- * @menu_group 系统管理
- * @menu_directory 菜单管理 Menu/index
+ * @menu_directory 系统管理
  * @menu_weight 40
  */
 class MenuController extends Base
@@ -29,7 +28,7 @@ class MenuController extends Base
     }
 
     /**
-     * @menu_item 菜单管理
+     * @menu 菜单管理
      * @menu_weight 10
      */
     public function index()
@@ -77,7 +76,6 @@ class MenuController extends Base
 
     /**
      * @menu_action 新增菜单
-     * @menu_weight 21
      */
     public function create()
     {
@@ -96,7 +94,6 @@ class MenuController extends Base
 
     /**
      * @menu_action 保存菜单
-     * @menu_weight 22
      */
     public function save()
     {
@@ -130,7 +127,6 @@ class MenuController extends Base
 
     /**
      * @menu_action 编辑菜单
-     * @menu_weight 23
      */
     public function edit()
     {
@@ -156,7 +152,6 @@ class MenuController extends Base
 
     /**
      * @menu_action 更新菜单
-     * @menu_weight 24
      */
     public function update()
     {

@@ -5,14 +5,13 @@ use DuckAdmin\Admin\Business\RoleBusiness;
 
 /**
  * DuckPhp Admin System - Role Controller
- * @menu_group 系统管理
  * @menu_directory 职位管理 Role/index
  * @menu_weight 20
  */
 class RoleController extends Base
 {
     /**
-     * @menu_item 职位管理
+     * @menu 查看下属职位
      * @menu_weight 10
      */
     public function index()

@@ -70,9 +70,14 @@ class AppAction
     {
         $input['app_name'] = 'Admin System';
         $input['current_user'] = Session::_()->getCurrentAdmin();
-        $input['menus'] = AppBusiness::_()->loadMenus(Session::_()->getCurrentAdminId());
+        $input['menus'] = $this->menu();
         
         return $input;
+    }
+    public function menu()
+    {
+        $admin_id = Session::_()->getCurrentAdminId();
+        return AppBusiness::_()->loadMenu($admin_id);
     }
 
 }
