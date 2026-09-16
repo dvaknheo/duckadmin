@@ -477,7 +477,39 @@ class AdminTreeBuilder
         });
         return $tree;
     }
+    
+    /**
+     * 只要 type=0 和 type=1 的。如果 type=0 没有子树，则删除。
+     * @param array $tree
+     * @return array
+     */
+    public function permissionMenuTreeToSideMenuTree(array $tree): array
+    {
+        return [];
+    }
 
+    /**
+     * 把带 id, pid 的节点记录集转成权限菜单树
+     * 
+     * @param array $nodes
+     * @return array
+     */
+    public function recordsetToTree(array $nodes): array
+    {
+        //TODO 完成
+        return [];
+    }
+    /**
+     * 把权限菜单树结构转成把带 id, pid 的节点记录集。id, pid 都是生成的
+     * 
+     * @param mixed $tree
+     * @return array
+     */
+    public function treeToRecordset(array $tree): array
+    {
+        //TODO 完成
+        return [];
+    }
     /**
      * 精简树：去掉 type 字段和空 children，保留 name/icon/url/children
      * 公开方法，供外部调用

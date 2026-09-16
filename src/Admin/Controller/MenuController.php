@@ -29,7 +29,6 @@ class MenuController extends Base
 
     /**
      * @menu 菜单管理
-     * @menu_weight 10
      */
     public function index()
     {
@@ -52,7 +51,6 @@ class MenuController extends Base
 
     /**
      * @menu_action 一键扫描
-     * @menu_weight 20
      */
     public function scan()
     {

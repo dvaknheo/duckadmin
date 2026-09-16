@@ -10,6 +10,7 @@ use DuckPhp\Ext\RouteHookWebInstaller;
 use DuckPhp\GlobalAdmin\GlobalAdmin;
 
 use DuckAdmin\Admin\Controller\AppAction;
+use DuckAdmin\Admin\Controller\CommandAction;
 
 class AdminApp extends DuckPhp
 {
@@ -25,6 +26,9 @@ class AdminApp extends DuckPhp
         'error_404' => '_sys/error_404',
         'error_500' => '_sys/error_500',
 
+        'cmd' => [
+            CommandAction::class => true,
+        ],
         'ext' => [
             RouteHookWebInstaller::class => true,
         ],
@@ -66,18 +70,13 @@ class AdminApp extends DuckPhp
 
         'admin_callback_for_add_ext_view_data' => [AppAction::class,'addExtViewData'],
     ];
-  
-    protected function onPrepare(): void
+    public function __construct()
     {
-        parent::onPrepare();
-        if($this->isRoot() && \class_exists(\DuckCoverage\DuckCoverage::class)){
-            \DuckCoverage\DuckCoverage::Prepare([]);
-        }
+        parent::__construct();
     }
     //@override
     protected function onInited(): void
     {
         parent::onInited();
     }
-
 }
