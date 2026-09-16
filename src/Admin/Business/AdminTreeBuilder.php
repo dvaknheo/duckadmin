@@ -13,9 +13,17 @@ class AdminTreeBuilder
 {
     // 我们拆分成 load 和 scan 模式.
 
-    public function loadAdminPermissionMenu()
+    public function loadAdminPermissionMenu(bool $force_build = false)
     {
-        $prefix = App::_()->options['controller_url_prefix'];
+        $prefix = App::_()->options['controller_url_prefix'] ?? '';
+        $prefix = '/'.$prefix;
+
+        if($force_build){
+            $menuTree = $this->build();
+            $menuTree = $this->resolveUrls($menuTree, $prefix);
+            return $menuTree;
+        }
+
         $menu_file = App::_()->options['admin_menu_config_file'] ?? null;
         if ($menu_file) {
             $filename = App::_()->getConfigFile($menu_file);
@@ -25,45 +33,50 @@ class AdminTreeBuilder
                 $menuTree = include $filename;
             }
             $menuTree = $this->resolveUrls($menuTree, $prefix);
-            return $menuTree;
+        } else{
+            $menuTree = $this->build();
+            $menuTree = $this->resolveUrls($menuTree, $prefix);
         }
-        return $this->build();
+
+        return $menuTree;
     }
-    public function loadAllAdminPermissionMenu()
+    public function loadAllAdminPermissionMenu(bool $force_build =false)
     {
-        $last_phase = App::Phase();
-        App::Phase(App::Root()->getThisPhaseName());
+        $current_phase = App::Phase();
+        $tree = $this->loadAdminPermissionMenu($force_build);
 
-        $tree = $this->loadAdminPermissionMenu();
-        $last_phase = App::Phase();
-        $parent_app = App::_();
-        foreach ($parent_app->options['app'] as $class => $app_options) {
-            if ($parent_app->toThisChild($class) === null) {
-                continue;
-            }
-            $item = $this->loadAdminPermissionMenu();
-            if($last_phase === App::Phase()){
-                foreach($item as &$node){
-                    $node['weight'] = 1000;
-                }
-                unset($node);
-            }
-            $tree = array_merge($tree, $item);
-            App::Phase($last_phase);
-        }
-        App::Phase($last_phase);
-        
-        // 当前的排在最前面
-        uasort($tree, function ($a, $b) {
-            return ($b['weight'] ?? 0) <=> ($a['weight'] ?? 0);
-        });
-
-        foreach($tree as &$node){
-            unset($node['weight']);
-        }
-        unset($node);
+        App::Root(true);
+        $this->mergeAppsMenus($tree, $current_phase, $force_build);
+        App::Phase($current_phase);
 
         return $tree;
+    }
+    /**
+     * 递归合并子 app 的菜单（从 root 开始）
+     *
+     * @param array &$tree 合并到的树
+     * @param string $ignore_phase 忽略的 phase（当前 phase）
+     */
+    protected function mergeAppsMenus(array &$tree, string $ignore_phase, bool $force_build): void
+    {
+        $app = App::_();
+        $current_phase = App::Phase();
+        $child_apps = $app->options['app'] ?? [];
+
+        $item = $this->loadAdminPermissionMenu($force_build);
+        $tree = array_merge($tree, $item);
+        foreach ($child_apps as $class => $app_options) {
+            $child_app = $app->toThisChild($class);
+            if ($child_app === null) {
+                continue;
+            }
+            $child_phase = App::Phase();
+            if ($child_phase === $ignore_phase) {
+                continue;
+            }
+            $this->mergeAppsMenus($tree, $ignore_phase, $force_build);
+            App::Phase($current_phase);
+        }
     }
     protected function getRoutes()
     {
@@ -458,11 +471,9 @@ class AdminTreeBuilder
      */
     public function resolveUrls(array &$tree, string $prefix): array
     {
-        $this->walkTree($tree, function (array &$node, int $depth) use ($prefix) {
+        $this->walkTree($tree, function (&$node, int $depth) use ($prefix) {
             $url = (string)($node['url'] ?? '');
-            if ($url !== '' && $url[0] !== '/') {
-                $node['url'] = $prefix . ltrim($url, '/');
-            }
+                $node['url'] = $prefix . $url;
         });
         return $tree;
     }
