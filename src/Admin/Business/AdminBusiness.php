@@ -50,10 +50,9 @@ class AdminBusiness extends Base
         Helper::ThrowOn(strlen($input['password']) < 6, '密码长度至少6位');
 
         $existing = AdminModel::_()->getByUsername($input['username']);
-        Helper::ThrowOn($existing, '用户名已存在');
+        Helper::ThrowOn(!empty($existing), '用户名已存在');
 
-        AdminModel::_()->create($input);
-        $adminId = (int)AdminModel::_()->lastInsertId();
+        $adminId = AdminModel::_()->create($input);
 
         // 设置用户职位（1对1）
         if ($roleId !== null) {

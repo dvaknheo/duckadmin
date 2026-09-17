@@ -66,7 +66,7 @@ class AdminModel extends Base
         return ['total' => (int)$total, 'list' => $list];
     }
 
-    public function create(array $data): bool
+    public function create(array $data): int
     {
         $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
         $data['created_at'] = date('Y-m-d H:i:s');
@@ -77,7 +77,7 @@ class AdminModel extends Base
             $data['email'], $data['status'] ?? 1,
             $data['created_at'], $data['updated_at']
         ]);
-        return true;
+        return (int)$this->lastInsertId();
     }
 
     public function edit(int $id, array $data): bool

@@ -52,6 +52,7 @@ $title = '人员管理';
                         <th style="width:60px">ID</th>
                         <th>登录账号</th>
                         <th>姓名</th>
+                        <th>职位</th>
                         <th>邮箱</th>
                         <th>状态</th>
                         <th>最后登录</th>
@@ -61,13 +62,14 @@ $title = '人员管理';
                 </thead>
                 <tbody>
                     <?php if (empty($list)): ?>
-                        <tr><td colspan="8" class="text-center text-muted py-4">暂无数据</td></tr>
+                        <tr><td colspan="9" class="text-center text-muted py-4">暂无数据</td></tr>
                     <?php else: ?>
                         <?php foreach ($list as $item): ?>
                             <tr>
                                 <td><?= (int)$item['id'] ?></td>
                                 <td><strong><?= __h($item['username']) ?></strong></td>
                                 <td><?= __h($item['realname'] ?? '') ?></td>
+                                <td><?= __h($user_roles[$item['id']] ?? '-') ?></td>
                                 <td><?= __h($item['email'] ?? '') ?></td>
                                 <td>
                                     <?php if ($item['status'] == 1): ?>

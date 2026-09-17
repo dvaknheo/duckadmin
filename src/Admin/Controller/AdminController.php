@@ -3,9 +3,10 @@ namespace DuckAdmin\Admin\Controller;
 
 use DuckAdmin\Admin\Business\AdminBusiness;
 use DuckAdmin\Admin\Business\RoleBusiness;
+use DuckAdmin\Admin\Model\RoleModel;
 use DuckAdmin\Admin\Model\RoleUserModel;
 
-/** 
+/**
  * @menu_directory 下属人员
  * @menu_weight 97
  */
@@ -32,6 +33,9 @@ class AdminController extends Base
         $data['search'] = $search;
         $data['title'] = '人员管理';
 
+        // 获取用户职位映射
+        $data['user_roles'] = $this->getUserRolesMap($data['list']);
+
         $data['urls'] = [
             'list' => __url('Admin/index'),
             'create' => __url('Admin/create'),
@@ -40,6 +44,26 @@ class AdminController extends Base
         ];
 
         Helper::Show($data, 'AdminNew/user_list');
+    }
+
+    /**
+     * 获取用户职位映射 [user_id => role_name]
+     */
+    protected function getUserRolesMap(array $users): array
+    {
+        if (empty($users)) {
+            return [];
+        }
+        $userIds = array_column($users, 'id');
+        $roles = RoleModel::_()->getAll();
+        $roleMap = array_column($roles, 'name', 'id');
+
+        $map = [];
+        foreach ($userIds as $userId) {
+            $roleId = RoleUserModel::_()->getUserRoleId($userId);
+            $map[$userId] = $roleId ? ($roleMap[$roleId] ?? '') : '';
+        }
+        return $map;
     }
 
     /**
