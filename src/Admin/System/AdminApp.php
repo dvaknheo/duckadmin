@@ -27,7 +27,7 @@ class AdminApp extends DuckPhp
         'error_500' => '_sys/error_500',
 
         'cmd' => [
-            CommandAction::class => true,
+            AppAction::class => true,
         ],
         'ext' => [
             RouteHookWebInstaller::class => true,

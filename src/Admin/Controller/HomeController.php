@@ -18,4 +18,18 @@ class HomeController extends Base
     {
         //个人信息页眉
     }
+    /**
+     * @menu 我的权限
+     */
+    public function permissions()
+    {
+        // 查看我的权限
+    }
+    /**
+     * @menu 预览菜单
+     */
+    public function menu()
+    {
+        // 预览菜单
+    }
 }

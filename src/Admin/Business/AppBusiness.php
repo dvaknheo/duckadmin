@@ -138,15 +138,14 @@ class AppBusiness extends Base
     {
         $admin_id = (int)$admin_id;
         if (RoleUserModel::_()->isSuperRole($admin_id)) {
-            $rows = PermissionModel::_()->getAllMenuItems();
+            $data = PermissionModel::_()->getAllMenuItems();
         } else {
-            $rows = PermissionModel::_()->getMenuItemsByUser($admin_id);
+            $data = PermissionModel::_()->getMenuItemsByUser($admin_id);
         }
 
         // 组树
-        $tree = PermissionModel::_()->buildMenuTree($rows);
-
-        // 精简：去掉 type 字段和空 children
-        return (new AdminTreeBuilder())->simplifyTree($tree);
+        $tree = AdminTreeBuilder::_()->recordsetToTree($data, 'id', 'parent_id', 0);
+        $tree =  AdminTreeBuilder::_()->permissionMenuTreeToSideMenuTree($tree);
+        return $tree;
     }
 }

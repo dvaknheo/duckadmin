@@ -77,7 +77,14 @@ class AppAction
     public function menu()
     {
         $admin_id = Session::_()->getCurrentAdminId();
-        return AppBusiness::_()->loadMenu($admin_id);
+        return AppBusiness::_()->menu($admin_id);
     }
-
+    /**
+     * test something
+     */
+    public function command_test()
+    {
+        $tree = TestBusiness::_()->testInstall();
+        echo json_encode($tree,JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    }
 }
