@@ -4,8 +4,8 @@ namespace DuckAdmin\Admin\Controller;
 use DuckAdmin\Admin\Business\AdminBusiness;
 
 /** 
- * @menu_directory 下属人员管理
- * @menu_weight 10
+ * @menu_directory 下属人员
+ * @menu_weight 97
  */
 class AdminController extends Base
 {

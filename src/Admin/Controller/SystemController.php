@@ -6,10 +6,18 @@ use DuckAdmin\Admin\Model\PermissionModel;
 
 /**
  * @menu_directory 系统管理
- * @menu_weight 1001
+ * @menu_weight 100
  */
 class SystemController extends Base
 {
+    /**
+     * @menu 系统信息
+     * @return void
+     */
+    public function info()
+    {
+        //
+    }
     /**
      * 读取查看方式(GET/POST 均可): all=全部 menu=不看"操作"
      */
@@ -28,7 +36,7 @@ class SystemController extends Base
     }
 
     /**
-     * @menu 菜单管理
+     * @menu 权限菜单
      */
     public function menu()
     {
@@ -196,7 +204,23 @@ class SystemController extends Base
             Helper::Show302($this->listUrl($show, '&error=delete_failed'));
         }
     }
+    /**
+     * @menu 系统设置
+     * @return void
+     */
+    public function setting()
+    {
+        //
+    }
 
+    /**
+     * 系统日志
+     * @return void
+     */
+    public function log()
+    {
+        //
+    }
     /**
      * 把树形精简结构写入 config/scanned_menu.php（供对比用）
      */

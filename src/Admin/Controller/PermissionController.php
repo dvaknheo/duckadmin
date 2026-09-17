@@ -5,10 +5,8 @@ use DuckAdmin\Admin\Business\RoleBusiness;
 use DuckAdmin\Admin\Business\MenuBusiness;
 
 /**
- * DuckPhp Admin System - Permission Controller
- * @menu_group 系统管理
- * @menu_directory 权限分配 Permission/index
- * @menu_weight 30
+ * @menu_directory 下属权限
+ * @menu_weight 96
  */
 class PermissionController extends Base
 {

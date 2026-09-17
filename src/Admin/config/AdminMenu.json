@@ -6,7 +6,12 @@
         "type": 0,
         "children": [
             {
-                "name": "菜单管理",
+                "name": "系统信息",
+                "url": "System\/info",
+                "type": 1
+            },
+            {
+                "name": "权限菜单",
                 "url": "System\/menu",
                 "type": 1
             },
@@ -39,24 +44,49 @@
                 "name": "删除菜单",
                 "url": "System\/menu_delete",
                 "type": 2
+            },
+            {
+                "name": "系统设置",
+                "url": "System\/setting",
+                "type": 1
+            },
+            {
+                "name": "log",
+                "url": "System\/log",
+                "type": 2
             }
         ]
     },
     {
-        "name": "权限分配",
-        "url": "Permission\/#",
+        "name": "我的主页",
+        "url": "Home\/#",
         "icon": null,
         "type": 0,
         "children": [
             {
-                "name": "权限分配",
-                "url": "Permission\/index",
+                "name": "仪表盘",
+                "url": "Home\/index",
+                "type": 1
+            },
+            {
+                "name": "个人信息",
+                "url": "Home\/profile",
+                "type": 1
+            },
+            {
+                "name": "查看权限",
+                "url": "Home\/permissions",
+                "type": 1
+            },
+            {
+                "name": "查看菜单",
+                "url": "Home\/menu",
                 "type": 1
             }
         ]
     },
     {
-        "name": "职位管理",
+        "name": "下属职位",
         "url": "Role\/#",
         "icon": null,
         "type": 0,
@@ -87,14 +117,14 @@
                 "type": 2
             },
             {
-                "name": "查看下属职位",
+                "name": "查看职位",
                 "url": "Role\/index",
                 "type": 1
             }
         ]
     },
     {
-        "name": "下属人员管理",
+        "name": "下属人员",
         "url": "Admin\/#",
         "icon": null,
         "type": 0,
@@ -128,6 +158,19 @@
                 "name": "删除下属",
                 "url": "Admin\/delete",
                 "type": 2
+            }
+        ]
+    },
+    {
+        "name": "下属权限",
+        "url": "Permission\/#",
+        "icon": null,
+        "type": 0,
+        "children": [
+            {
+                "name": "权限分配",
+                "url": "Permission\/index",
+                "type": 1
             }
         ]
     }
