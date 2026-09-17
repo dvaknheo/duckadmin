@@ -21,7 +21,7 @@ class TestBusiness extends Base
     }
     public function cache_menu()
     {
-        return AdminTreeBuilder::_()->build();
+        return AdminTreeBuilder::_()->buildAndSaveToConfigJsonFile();
     }
     public function test()
     {

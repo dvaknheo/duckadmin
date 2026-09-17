@@ -49,7 +49,7 @@ class AdminApp extends DuckPhp
         ],
 
         'use_admin_view' => true,
-        'my_admin_menu_config_file' => 'AdminMenu.json',
+        'permission_menu_tree_for_admin' => 'AdminMenu.json',
         // 异常处理
         'exception_for_project'  => ProjectException::class,
         'exception_for_business'  => BusinessException::class,

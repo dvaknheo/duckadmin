@@ -12,35 +12,48 @@ use DuckPhp\Core\Route;
 // build 用于生成
 class AdminTreeBuilder extends ComponentBase
 {
+    public function buildAndSaveToConfigJsonFile()
+    {
+        $routes = $this->getRoutes(true);
+        $tree = $this->build($routes);
+        
+        $menu_file = App::_()->options['permission_menu_tree_for_admin'] ?? null;
+        if (!$menu_file) {
+            return;
+        }
+        $filename = App::_()->getConfigFile($menu_file);
+        $data = json_encode($tree, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        file_put_contents($filename, $data);
+    }
     public function loadAdminPermissionMenu(bool $force_build = false)
     {
         $prefix = App::_()->options['controller_url_prefix'] ?? '';
-        $prefix = '/'.$prefix;
+        $prefix = '/' . $prefix;
 
-        if($force_build){
-            $menuTree = $this->build();
-            $menuTree = $this->resolveUrls($menuTree, $prefix);
+        if ($force_build) {
+            $routes = $this->getRoutes(false);
+            $menuTree = $this->build($routes);
             return $menuTree;
         }
 
-        $menu_file = App::_()->options['my_admin_menu_config_file'] ?? null;
+        $menu_file = App::_()->options['permission_menu_tree_for_admin'] ?? null;
         if ($menu_file) {
             $filename = App::_()->getConfigFile($menu_file);
-            if('.json' === substr($filename,-strlen('.json'))){
-                $menuTree = json_decode(file_get_contents($filename),true);
-            }else{
+            if ('.json' === substr($filename, -strlen('.json'))) {
+                $menuTree = json_decode(file_get_contents($filename), true);
+            } else {
                 $menuTree = @include $filename;
-                $menuTree = is_array($menuTree)?$menuTree:[];
+                $menuTree = is_array($menuTree) ? $menuTree : [];
             }
             $menuTree = $this->resolveUrls($menuTree, $prefix);
-        } else{
-            $menuTree = $this->build();
-            $menuTree = $this->resolveUrls($menuTree, $prefix);
+        } else {
+            $routes = $this->getRoutes(false);
+            $menuTree = $this->build($routes);
         }
 
         return $menuTree;
     }
-    public function loadAllAdminPermissionMenu(bool $force_build =false)
+    public function loadAllAdminPermissionMenu(bool $force_build = false)
     {
         $current_phase = App::Phase();
         $tree = $this->loadAdminPermissionMenu($force_build);
@@ -78,34 +91,19 @@ class AdminTreeBuilder extends ComponentBase
             App::Phase($current_phase);
         }
     }
-    protected function getRoutes()
+    protected function getRoutes(bool $trim_url = false)
     {
         $routes = RouteLister::_()->listAll(false, true, true);
+        if (!$trim_url) {
+            return $routes;
+        }
         // 转换为相对地址
         $prefix = App::_()->options['controller_url_prefix'] ?? '';
         foreach ($routes as &$route) {
-            $url = (string)($route['url'] ?? '');
-            if ($prefix && strpos($url, $prefix) === 0) {
-                $route['url'] = substr($url, strlen($prefix));
-            }
+            $route['url'] = substr($route['url'], strlen($prefix));
         }
         unset($route);
         return $routes;
-    }
-    protected function getControllerNamespacePrefix(): string
-    {
-        return Route::_()->getControllerNamespacePrefix();
-    }
-    public function buildAndSaveToConfigJsonFile()
-    {
-        $tree = $this->build();
-        $menu_file = App::_()->options['my_admin_menu_config_file'] ?? null;
-        if (!$menu_file) {
-            return;
-        }
-        $filename = App::_()->getConfigFile($menu_file);
-        $data = json_encode($tree,JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-        file_put_contents($filename, $data);
     }
     ////////////////////////////////////////////////////////
     /**
@@ -125,29 +123,23 @@ class AdminTreeBuilder extends ComponentBase
      * - @menu_directory 名称 可选 顶级分组， 支持 \ 切分生成多级目录 ，插入相应的目录
      * - @menu_icon 图标名称     给菜单/操作节点设置图标
      * - @menu 名称               菜单（type=1），url 取路由完整 path
-     * - @menu_action 名称        action（type=2）
+     * - @menu_action 名称        动作（type=2）
      * - @menu_permission #url 名称   权限项（type=3），#url 会被加上方法 url 前缀
      * - @menu_weight N           本层权重
-     * - 公开方法无任何注解       视为 action（type=2），名称为方法名
+     * - 公开方法无任何注解       视为 动作（type=2），名称为方法名
      *
      * 后处理：切分子层级、排序
      *
      * @return array[] 树形精简菜单结构
      */
-    public function build(): array
+    public function build(array $routes): array
     {
-        $routes = $this->getRoutes(); // url 已经是相对地址
-        //$namespace_prefix = Route::_()->getControllerNamespacePrefix(); 这里要传递进来。
-        
         // 1. 按 controller 分组
         $controllers = [];
         foreach ($routes as $route) {
-            $controller = (string)($route['controller'] ?? '');
-            $method = (string)($route['method'] ?? '');
-            $url = (string)($route['url'] ?? '');
-            if ($controller === '' || $method === '') {
-                continue;
-            }
+            $controller = (string) ($route['controller'] ?? '');
+            $method = (string) ($route['method'] ?? '');
+            $url = (string) ($route['url'] ?? '');
             $controllers[$controller][$method] = $url;
         }
 
@@ -163,10 +155,6 @@ class AdminTreeBuilder extends ComponentBase
 
             // 注解模式
             $classDoc = $this->getClassDoc($controller);
-            if ($classDoc === '') {
-                continue;
-            }
-
             // class 层级的目录注解、图标、权重
             $dirAnno = $this->parseAnnotatedLine($classDoc, 'menu_directory');
             $dirIcon = $this->parseAnnotatedLine($classDoc, 'menu_icon');
@@ -245,10 +233,10 @@ class AdminTreeBuilder extends ComponentBase
     {
         $items = [];
         foreach ($meta as $item) {
-            $name = (string)($item['name'] ?? '');
-            $type = (int)($item['type'] ?? 1);
+            $name = (string) ($item['name'] ?? '');
+            $type = (int) ($item['type'] ?? 1);
             $url = ($item['url'] ?? null);
-            $weight = (int)($item['weight'] ?? 0);
+            $weight = (int) ($item['weight'] ?? 0);
 
             $items[] = [
                 'name' => $name,
@@ -339,8 +327,8 @@ class AdminTreeBuilder extends ComponentBase
         }
         foreach ($matches[1] as $match) {
             $parts = preg_split('/\s+/', trim($match));
-            $first = (string)array_shift($parts);
-            $second = (string)($parts[0] ?? '');
+            $first = (string) array_shift($parts);
+            $second = (string) ($parts[0] ?? '');
             $results[] = [$first, $second];
         }
         return $results;
@@ -431,22 +419,6 @@ class AdminTreeBuilder extends ComponentBase
             $this->mergeNode($tree[$idx]['children'], $parts, $node);
         }
     }
-
-    /**
-     * 把绝对 path 转为相对地址（去掉挂载前缀）
-     * 如 /admin/Admin/index → Admin/index
-     */
-    protected function toRelativePath(string $fullPath, string $prefix): string
-    {
-        if (strpos($fullPath, $prefix) === 0) {
-            return substr($fullPath, strlen($prefix));
-        }
-        // 回退：去掉第一个路径段
-        $parts = explode('/', ltrim($fullPath, '/'));
-        array_shift($parts);
-        return implode('/', $parts);
-    }
-
     /**
      * 递归排序树：同级按 weight 排序，weight 越大越靠前，输出时清理 weight 字段
      *
@@ -481,32 +453,10 @@ class AdminTreeBuilder extends ComponentBase
     public function resolveUrls(array &$tree, string $prefix): array
     {
         $this->walkTree($tree, function (&$node, int $depth) use ($prefix) {
-            $url = (string)($node['url'] ?? '');
-                $node['url'] = $prefix . $url;
+            $url = (string) ($node['url'] ?? '');
+            $node['url'] = $prefix . $url;
         });
         return $tree;
-    }
-    /**
-     * 精简树：去掉 type 字段和空 children，保留 name/icon/url/children
-     * 公开方法，供外部调用
-     */
-    public function simplifyTree(array $nodes): array
-    {
-        $result = [];
-        foreach ($nodes as $node) {
-            $item = [
-                'name' => $node['name'],
-                'icon' => $node['icon'] ?? null,
-                'url' => $node['url'] ?? '',
-            ];
-            if (!empty($node['children'])) {
-                $item['children'] = $this->simplifyTree($node['children']);
-            } else {
-                $item['children'] = [];
-            }
-            $result[] = $item;
-        }
-        return $result;
     }
 
     /**
@@ -518,7 +468,7 @@ class AdminTreeBuilder extends ComponentBase
             return '';
         }
         try {
-            return (string)(new \ReflectionClass($class))->getDocComment();
+            return (string) (new \ReflectionClass($class))->getDocComment();
         } catch (\Throwable $e) {
             return '';
         }
@@ -533,7 +483,7 @@ class AdminTreeBuilder extends ComponentBase
             return '';
         }
         try {
-            return (string)(new \ReflectionMethod($class, $method))->getDocComment();
+            return (string) (new \ReflectionMethod($class, $method))->getDocComment();
         } catch (\Throwable $e) {
             return '';
         }
@@ -549,11 +499,11 @@ class AdminTreeBuilder extends ComponentBase
             return null;
         }
         $parts = preg_split('/\s+/', trim($m[1]));
-        $name = (string)array_shift($parts);
+        $name = (string) array_shift($parts);
         if ($name === '') {
             return null;
         }
-        return [$name, (string)($parts[0] ?? '')];
+        return [$name, (string) ($parts[0] ?? '')];
     }
 
     /**
@@ -562,7 +512,7 @@ class AdminTreeBuilder extends ComponentBase
     protected function parseWeight(string $doc): int
     {
         if (preg_match('/@menu_weight\s+(-?\d+)/', $doc, $m)) {
-            return (int)$m[1];
+            return (int) $m[1];
         }
         return 0;
     }
