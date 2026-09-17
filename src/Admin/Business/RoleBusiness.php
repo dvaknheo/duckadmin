@@ -7,6 +7,7 @@ namespace DuckAdmin\Admin\Business;
 
 use DuckAdmin\Admin\Model\PermissionModel;
 use DuckAdmin\Admin\Model\RoleModel;
+use DuckAdmin\Admin\Model\RolePermissionModel;
 
 class RoleBusiness extends Base
 {
@@ -35,7 +36,7 @@ class RoleBusiness extends Base
 
     public function getRolePermissions(int $roleId): array
     {
-        return PermissionModel::_()->getRolePermissionIds($roleId);
+        return RolePermissionModel::_()->getRolePermissionIds($roleId);
     }
 
     public function getAll(): array
@@ -56,6 +57,6 @@ class RoleBusiness extends Base
         $role = RoleModel::_()->getById($roleId);
         Helper::ThrowOn(!$role, '职位不存在');
         Helper::ThrowOn((int)($role['is_super'] ?? 0) === 1, '超级管理员职位权限不可修改');
-        PermissionModel::_()->setRolePermissions($roleId, $permissionIds);
+        RolePermissionModel::_()->setRolePermissions($roleId, $permissionIds);
     }
 }

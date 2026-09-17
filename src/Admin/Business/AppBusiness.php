@@ -8,6 +8,7 @@ namespace DuckAdmin\Admin\Business;
 use DuckAdmin\Admin\Model\AdminModel;
 use DuckAdmin\Admin\Model\PermissionModel;
 use DuckAdmin\Admin\Model\RoleModel;
+use DuckAdmin\Admin\Model\RolePermissionModel;
 use DuckAdmin\Admin\Model\RoleUserModel;
 use DuckPhp\Component\Validator;
 use DuckPhp\Core\App;
@@ -34,8 +35,13 @@ class AppBusiness extends Base
         }
         $path = (string)(parse_url($url, PHP_URL_PATH) ?: $url);
         $roleId = RoleUserModel::_()->getUserRoleId($userId);
+        // 按URL找权限
+        $perm = PermissionModel::_()->fetch("SELECT id FROM admin_permissions WHERE url = ? AND deleted_at IS NULL", [$path]);
+        if (!$perm) {
+            return false;
+        }
         //TODO 带 ＃的特殊权限
-        return PermissionModel::_()->hasRoleUrlPermission($roleId, $path);
+        return RolePermissionModel::_()->hasPermission($roleId, $perm['id']);
     }
 
     /**

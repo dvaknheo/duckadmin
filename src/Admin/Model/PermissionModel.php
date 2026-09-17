@@ -72,22 +72,6 @@ class PermissionModel extends Base
         return true;
     }
 
-    public function getRolePermissionIds(int $roleId): array
-    {
-        $sql = "SELECT permission_id FROM admin_role_permissions WHERE role_id = ?";
-        $rows = $this->fetchAll($sql, [$roleId]);
-        return array_column($rows, 'permission_id');
-    }
-
-    public function setRolePermissions(int $roleId, array $permissionIds): void
-    {
-        $sql = "DELETE FROM admin_role_permissions WHERE role_id = ?";
-        $this->execute($sql, [$roleId]);
-        foreach ($permissionIds as $permId) {
-            $sql = "INSERT INTO admin_role_permissions (role_id, permission_id) VALUES (?, ?)";
-            $this->execute($sql, [$roleId, (int)$permId]);
-        }
-    }
     /**
      * 是否有未删除的子节点
      */
@@ -177,19 +161,6 @@ class PermissionModel extends Base
     }
 
     /**
-     * 获取用户在角色中拥有的权限ID（供Service层使用）
-     */
-    public function getUserPermissionIdsByRoles(int $userId): array
-    {
-        $sql = "SELECT DISTINCT p.id FROM admin_permissions p
-                INNER JOIN admin_role_permissions rp ON p.id = rp.permission_id
-                INNER JOIN admin_role_users ru ON rp.role_id = ru.role_id
-                WHERE ru.user_id = ? AND p.deleted_at IS NULL";
-        $rows = $this->fetchAll($sql, [$userId]);
-        return array_column($rows, 'id');
-    }
-
-    /**
      * 获取角色拥有的菜单项（type 0/1）
      */
     public function getMenuItemsByRole(int $roleId): array
@@ -216,26 +187,6 @@ class PermissionModel extends Base
         return $this->fetchAll($sql);
     }
 
-    /**
-     * 检查角色是否有指定URL的权限
-     */
-    public function hasRoleUrlPermission(int $roleId, string $path): bool
-    {
-        if (!$roleId) {
-            return false;
-        }
-        // 按URL找权限
-        $perm = $this->fetch("SELECT id FROM admin_permissions WHERE url = ? AND deleted_at IS NULL", [$path]);
-        if (!$perm) {
-            return false;
-        }
-        // role ↔ permission 关联检查
-        $exists = $this->fetch(
-            "SELECT 1 FROM admin_role_permissions WHERE role_id = ? AND permission_id = ? LIMIT 1",
-            [$roleId, $perm['id']]
-        );
-        return !empty($exists);
-    }
     public function clean(): void
     {
         $sql = "DELETE FROM admin_permissions";

@@ -7,6 +7,7 @@ namespace DuckAdmin\Admin\Business;
 use DuckAdmin\Admin\Model\AdminModel;
 use DuckAdmin\Admin\Model\PermissionModel;
 use DuckAdmin\Admin\Model\RoleModel;
+use DuckAdmin\Admin\Model\RolePermissionModel;
 use DuckAdmin\Admin\Model\RoleUserModel;
 
 class HomeBusiness extends Base
@@ -58,7 +59,7 @@ class HomeBusiness extends Base
             $permissionIds = array_column($allPermissions, 'id');
         } else {
             // 非超管：获取用户角色分配的权限
-            $permissionIds = PermissionModel::_()->getRolePermissionIds($roleId ?? 0);
+            $permissionIds = RolePermissionModel::_()->getRolePermissionIds($roleId ?? 0);
         }
 
         // 获取权限树
