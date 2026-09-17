@@ -1,0 +1,134 @@
+[
+    {
+        "name": "系统管理",
+        "url": "System\/#",
+        "icon": null,
+        "type": 0,
+        "children": [
+            {
+                "name": "菜单管理",
+                "url": "System\/menu",
+                "type": 1
+            },
+            {
+                "name": "一键扫描",
+                "url": "System\/menu_scan",
+                "type": 2
+            },
+            {
+                "name": "新增菜单",
+                "url": "System\/menu_create",
+                "type": 2
+            },
+            {
+                "name": "保存菜单",
+                "url": "System\/menu_save",
+                "type": 2
+            },
+            {
+                "name": "编辑菜单",
+                "url": "System\/menu_edit",
+                "type": 2
+            },
+            {
+                "name": "更新菜单",
+                "url": "System\/menu_update",
+                "type": 2
+            },
+            {
+                "name": "删除菜单",
+                "url": "System\/menu_delete",
+                "type": 2
+            }
+        ]
+    },
+    {
+        "name": "权限分配",
+        "url": "Permission\/#",
+        "icon": null,
+        "type": 0,
+        "children": [
+            {
+                "name": "权限分配",
+                "url": "Permission\/index",
+                "type": 1
+            }
+        ]
+    },
+    {
+        "name": "职位管理",
+        "url": "Role\/#",
+        "icon": null,
+        "type": 0,
+        "children": [
+            {
+                "name": "删除职位",
+                "url": "Role\/delete",
+                "type": 2
+            },
+            {
+                "name": "更新职位",
+                "url": "Role\/update",
+                "type": 2
+            },
+            {
+                "name": "编辑职位",
+                "url": "Role\/edit",
+                "type": 2
+            },
+            {
+                "name": "保存职位",
+                "url": "Role\/save",
+                "type": 2
+            },
+            {
+                "name": "新增职位",
+                "url": "Role\/create",
+                "type": 2
+            },
+            {
+                "name": "查看下属职位",
+                "url": "Role\/index",
+                "type": 1
+            }
+        ]
+    },
+    {
+        "name": "下属人员管理",
+        "url": "Admin\/#",
+        "icon": null,
+        "type": 0,
+        "children": [
+            {
+                "name": "查看下属",
+                "url": "Admin\/index",
+                "type": 1
+            },
+            {
+                "name": "添加下属",
+                "url": "Admin\/create",
+                "type": 2
+            },
+            {
+                "name": "保存下属",
+                "url": "Admin\/save",
+                "type": 2
+            },
+            {
+                "name": "编辑下属",
+                "url": "Admin\/edit",
+                "type": 2
+            },
+            {
+                "name": "更新下属",
+                "url": "Admin\/update",
+                "type": 2
+            },
+            {
+                "name": "删除下属",
+                "url": "Admin\/delete",
+                "type": 2
+            }
+        ]
+    }
+]

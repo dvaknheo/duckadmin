@@ -227,7 +227,7 @@ class PermissionModel extends Base
     }
     public function clean(): void
     {
-        $sql = "DELETE FROM admin_role_permissions WHERE TRUE";
+        $sql = "DELETE FROM admin_permissions";
         $this->execute($sql);
     }
 }

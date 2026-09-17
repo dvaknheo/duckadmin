@@ -6,9 +6,9 @@ use DuckAdmin\Admin\Model\PermissionModel;
 
 /**
  * @menu_directory 系统管理
- * @menu_weight 40
+ * @menu_weight 1001
  */
-class MenuController extends Base
+class SystemController extends Base
 {
     /**
      * 读取查看方式(GET/POST 均可): all=全部 menu=不看"操作"
@@ -24,13 +24,13 @@ class MenuController extends Base
      */
     protected function listUrl(string $show, string $extra = ''): string
     {
-        return __url('Menu/index') . '?show=' . $show . $extra;
+        return __url('System/menu') . '?show=' . $show . $extra;
     }
 
     /**
      * @menu 菜单管理
      */
-    public function index()
+    public function menu()
     {
         $show = $this->showMode();
 
@@ -39,11 +39,11 @@ class MenuController extends Base
         $data['title'] = '权限和菜单管理';
 
         $data['urls'] = [
-            'list' => __url('Menu/index'),
-            'create' => __url('Menu/create') . '?show=' . $show,
-            'edit' => __url('Menu/edit'),
-            'delete' => __url('Menu/delete'),
-            'scan' => __url('Menu/scan') . '?show=' . $show,
+            'list' => __url('System/menu'),
+            'create' => __url('System/menu_create') . '?show=' . $show,
+            'edit' => __url('System/menu_edit'),
+            'delete' => __url('System/menu_delete'),
+            'scan' => __url('System/menu_scan') . '?show=' . $show,
         ];
 
         Helper::Show($data, 'Menu/index');
@@ -52,7 +52,7 @@ class MenuController extends Base
     /**
      * @menu_action 一键扫描
      */
-    public function scan()
+    public function menu_scan()
     {
         $show = $this->showMode();
 
@@ -75,7 +75,7 @@ class MenuController extends Base
     /**
      * @menu_action 新增菜单
      */
-    public function create()
+    public function menu_create()
     {
         $show = $this->showMode();
 
@@ -83,7 +83,7 @@ class MenuController extends Base
         $data['title'] = '新增菜单';
         $data['perm_tree'] = MenuBusiness::_()->getTree('all');
         $data['urls'] = [
-            'save' => __url('Menu/save'),
+            'save' => __url('System/menu_save'),
             'list' => $this->listUrl($show),
         ];
         $data['is_edit'] = false;
@@ -93,7 +93,7 @@ class MenuController extends Base
     /**
      * @menu_action 保存菜单
      */
-    public function save()
+    public function menu_save()
     {
         $show = $this->showMode();
         $input = [
@@ -116,7 +116,7 @@ class MenuController extends Base
         $data['input'] = $input;
         $data['perm_tree'] = MenuBusiness::_()->getTree('all');
         $data['urls'] = [
-            'save' => __url('Menu/save'),
+            'save' => __url('System/menu_save'),
             'list' => $this->listUrl($show),
         ];
         $data['is_edit'] = false;
@@ -126,7 +126,7 @@ class MenuController extends Base
     /**
      * @menu_action 编辑菜单
      */
-    public function edit()
+    public function menu_edit()
     {
         $show = $this->showMode();
         $id = (int)Helper::GET('id', '0');
@@ -141,7 +141,7 @@ class MenuController extends Base
         $data['title'] = '编辑菜单';
         $data['perm_tree'] = MenuBusiness::_()->getTree('all');
         $data['urls'] = [
-            'update' => __url('Menu/update'),
+            'update' => __url('System/menu_update'),
             'list' => $this->listUrl($show),
         ];
         $data['is_edit'] = true;
@@ -151,7 +151,7 @@ class MenuController extends Base
     /**
      * @menu_action 更新菜单
      */
-    public function update()
+    public function menu_update()
     {
         $show = $this->showMode();
         $id = (int)Helper::POST('id', '0');
@@ -175,7 +175,7 @@ class MenuController extends Base
         $data['title'] = '编辑菜单';
         $data['perm_tree'] = MenuBusiness::_()->getTree('all');
         $data['urls'] = [
-            'update' => __url('Menu/update'),
+            'update' => __url('System/menu_update'),
             'list' => $this->listUrl($show),
         ];
         $data['is_edit'] = true;
@@ -185,7 +185,7 @@ class MenuController extends Base
     /**
      * @menu_action 删除菜单
      */
-    public function delete()
+    public function menu_delete()
     {
         $show = $this->showMode();
         $id = (int)Helper::GET('id', '0');
