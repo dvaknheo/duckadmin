@@ -184,7 +184,6 @@ class MenuController extends Base
 
     /**
      * @menu_action 删除菜单
-     * @menu_weight 25
      */
     public function delete()
     {

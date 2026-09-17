@@ -23,7 +23,7 @@ class AdminTreeBuilder extends ComponentBase
             return $menuTree;
         }
 
-        $menu_file = App::_()->options['admin_menu_config_file'] ?? null;
+        $menu_file = App::_()->options['my_admin_menu_config_file'] ?? null;
         if ($menu_file) {
             $filename = App::_()->getConfigFile($menu_file);
             if('.json' === substr($filename,0,-strlen('.json'))){
@@ -95,7 +95,17 @@ class AdminTreeBuilder extends ComponentBase
     {
         return Route::_()->getControllerNamespacePrefix();
     }
-
+    public function buildAndSaveToConfigJsonFile()
+    {
+        $tree = $this->build();
+        $menu_file = App::_()->options['my_admin_menu_config_file'] ?? null;
+        if (!$menu_file) {
+            return;
+        }
+        $filename = App::_()->getConfigFile($menu_file);
+        $data = json_encode($tree,JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        file_put_contents($filename, $data);
+    }
     ////////////////////////////////////////////////////////
     /**
      * 构建菜单树：RouteLister 扫描路由，按注解生成 分组→目录→菜单/操作 树形结构
@@ -180,7 +190,7 @@ class AdminTreeBuilder extends ComponentBase
             // 生成目录节点，子节点挂靠其下
             if (!empty($childItems)) {
                 $items[] = [
-                    'name' => $dirAnno ? $dirAnno[0] : '',
+                    'name' => $dirAnno ? $dirAnno[0] : 'NoName',
                     'url' => $dirUrl,
                     'icon' => $dirIcon ? $dirIcon[0] : null,
                     'type' => 0,

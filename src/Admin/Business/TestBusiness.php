@@ -12,6 +12,6 @@ class TestBusiness extends Base
 {
     public function test()
     {
-        return [];
+        return AdminTreeBuilder::_()->build();
     }
 }
