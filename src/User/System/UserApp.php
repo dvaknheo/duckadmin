@@ -28,6 +28,8 @@ class UserApp extends DuckPhp
         'web_installer_database_drivers' => ['sqlite' => true],
         'web_installer_view' => 'install',
 
+        'use_admin_view' => true,
+        'use_user_view' => true,
         //'table_prefix' => '',   // 表前缀
         'session_prefix' => 'duckuser_',  // Session 前缀
         

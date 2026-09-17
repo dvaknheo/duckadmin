@@ -33,7 +33,7 @@ class AdminController extends AdminControllerBase
         $data['users'] =$users;
         $data['pager'] = Helper::PageHtml((int)$total);
         $data['is_all'] =$all?true:false;
-        Helper::Admin()->show($data,'Admin/index');
+        Helper::Show($data,'Admin/index');
     }
 
     /**
