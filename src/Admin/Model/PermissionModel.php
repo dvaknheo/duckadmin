@@ -225,5 +225,9 @@ class PermissionModel extends Base
                 WHERE ru.user_id = ? AND p.deleted_at IS NULL AND p.url = ?";
         return (int)$this->fetchColumn($sql, [$userId, $path]);
     }
-
+    public function clean(): void
+    {
+        $sql = "DELETE FROM admin_role_permissions WHERE TRUE";
+        $this->execute($sql);
+    }
 }

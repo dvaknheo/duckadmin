@@ -10,7 +10,7 @@ use DuckPhp\Ext\RouteHookWebInstaller;
 use DuckPhp\GlobalAdmin\GlobalAdmin;
 
 use DuckAdmin\Admin\Controller\AppAction;
-use DuckAdmin\Admin\Controller\CommandAction;
+use DuckAdmin\Admin\Controller\TestCommandAction;
 
 class AdminApp extends DuckPhp
 {
@@ -27,7 +27,7 @@ class AdminApp extends DuckPhp
         'error_500' => '_sys/error_500',
 
         'cmd' => [
-            AppAction::class => true,
+            TestCommandAction::class => true,
         ],
         'ext' => [
             RouteHookWebInstaller::class => true,

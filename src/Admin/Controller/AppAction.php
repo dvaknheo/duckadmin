@@ -79,19 +79,4 @@ class AppAction
         $admin_id = Session::_()->getCurrentAdminId();
         return AppBusiness::_()->menu($admin_id);
     }
-    public function command_rebuild_menu()
-    {
-        \DuckAdmin\Admin\Business\AdminTreeBuilder::_()->buildAndSaveToConfigJsonFile();
-        echo "done: "; 
-        echo DATE(DATE_ATOM);
-        echo PHP_EOL;
-    }
-    /**
-     * test something
-     */
-    public function command_test()
-    {
-        $tree = \DuckAdmin\Admin\Business\TestBusiness::_()->test();
-        echo json_encode($tree,JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-    }
 }

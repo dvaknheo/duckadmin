@@ -26,10 +26,11 @@ class AdminTreeBuilder extends ComponentBase
         $menu_file = App::_()->options['my_admin_menu_config_file'] ?? null;
         if ($menu_file) {
             $filename = App::_()->getConfigFile($menu_file);
-            if('.json' === substr($filename,0,-strlen('.json'))){
-                $menuTree = json_decode(file_get_contents($filename));
+            if('.json' === substr($filename,-strlen('.json'))){
+                $menuTree = json_decode(file_get_contents($filename),true);
             }else{
-                $menuTree = include $filename;
+                $menuTree = @include $filename;
+                $menuTree = is_array($menuTree)?$menuTree:[];
             }
             $menuTree = $this->resolveUrls($menuTree, $prefix);
         } else{
@@ -205,7 +206,6 @@ class AdminTreeBuilder extends ComponentBase
 
         // 4. 排序（同级排序，weight 只在同级有效）
         $this->sortTree($tree);
-
         return $tree;
     }
 
