@@ -59,6 +59,18 @@ $form_url = $is_edit ? ($urls['update'] ?? '') : ($urls['save'] ?? '');
             </div>
 
             <div class="mb-3">
+                <label class="form-label">职位</label>
+                <select name="role_id" class="form-select">
+                    <option value="0">未分配</option>
+                    <?php foreach ($roles ?? [] as $r): ?>
+                        <option value="<?= (int)$r['id'] ?>" <?= ((int)($data['role_id'] ?? 0) === (int)$r['id']) ? 'selected' : '' ?>>
+                            <?= __h($r['name']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
+            <div class="mb-3">
                 <label class="form-label">状态</label>
                 <select name="status" class="form-select">
                     <option value="1" <?= (($data['status'] ?? 1) == 1) ? 'selected' : '' ?>>启用</option>

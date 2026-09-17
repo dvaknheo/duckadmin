@@ -120,5 +120,14 @@ class RoleModel extends Base
         $rows = $this->fetchAll("SELECT id FROM admin_roles WHERE deleted_at IS NULL");
         return array_column($rows, 'id');
     }
+
+    /**
+     * 检查职位是否为超级管理员
+     */
+    public function isSuper(int $roleId): bool
+    {
+        $sql = "SELECT 1 FROM admin_roles WHERE id = ? AND is_super = 1 LIMIT 1";
+        return (bool)$this->fetchColumn($sql, [$roleId]);
+    }
 }
 

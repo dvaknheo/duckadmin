@@ -2,6 +2,8 @@
 namespace DuckAdmin\Admin\Controller;
 
 use DuckAdmin\Admin\Business\AdminBusiness;
+use DuckAdmin\Admin\Business\RoleBusiness;
+use DuckAdmin\Admin\Model\RoleUserModel;
 
 /** 
  * @menu_directory 下属人员
@@ -46,6 +48,7 @@ class AdminController extends Base
     public function create()
     {
         $data['title'] = '新增人员';
+        $data['roles'] = RoleBusiness::_()->getAll(); // 可分配的职位列表
         $data['urls'] = [
             'save' => __url('Admin/save'),
             'list' => __url('Admin/index'),
@@ -66,9 +69,10 @@ class AdminController extends Base
             'email' => Helper::POST('email', ''),
             'status' => (int)Helper::POST('status', '1'),
         ];
+        $roleId = (int)Helper::POST('role_id', '0') ?: null;
 
         try {
-            AdminBusiness::_()->create($input);
+            AdminBusiness::_()->create($input, $roleId);
             Helper::Show302(__url('Admin/index'));
             return;
         } catch (\Exception $ex) {
@@ -76,6 +80,7 @@ class AdminController extends Base
         }
         $data['title'] = '新增人员';
         $data['input'] = $input;
+        $data['roles'] = RoleBusiness::_()->getAll();
         $data['urls'] = [
             'save' => __url('Admin/save'),
             'list' => __url('Admin/index'),
@@ -97,7 +102,9 @@ class AdminController extends Base
         }
 
         $data['user'] = $user;
+        $data['user']['role_id'] = RoleUserModel::_()->getUserRoleId($id); // 用户当前职位
         $data['title'] = '编辑人员';
+        $data['roles'] = RoleBusiness::_()->getAll(); // 可分配的职位列表
         $data['urls'] = [
             'update' => __url('Admin/update'),
             'list' => __url('Admin/index'),
@@ -119,16 +126,18 @@ class AdminController extends Base
             'email' => Helper::POST('email', ''),
             'status' => (int)Helper::POST('status', '1'),
         ];
+        $roleId = (int)Helper::POST('role_id', '0') ?: null;
 
         try {
-            AdminBusiness::_()->update($id, $input);
+            AdminBusiness::_()->update($id, $input, $roleId);
             Helper::Show302(__url('Admin/index'));
             return;
         } catch (\Exception $ex) {
             $data['error'] = $ex->getMessage();
         }
-        $data['user'] = $input + ['id' => $id];
+        $data['user'] = $input + ['id' => $id, 'role_id' => $roleId];
         $data['title'] = '编辑人员';
+        $data['roles'] = RoleBusiness::_()->getAll();
         $data['urls'] = [
             'update' => __url('Admin/update'),
             'list' => __url('Admin/index'),

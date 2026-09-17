@@ -27,26 +27,23 @@ class AdminBusiness extends Base
      */
     protected function getVisibleRoleIds(int $userId): ?array
     {
-        if (RoleUserModel::_()->isSuperRole($userId)) {
+        $roleId = RoleUserModel::_()->getUserRoleId($userId);
+        if ($roleId !== null && RoleModel::_()->isSuper($roleId)) {
             return null; // 超管不限制
         }
-        $roleIds = RoleUserModel::_()->getUserRoleIds($userId);
-        if (empty($roleIds)) {
+        if ($roleId === null) {
             return []; // 无角色，看不到任何人
         }
         // 获取所有子孙组
-        $allIds = [];
-        foreach ($roleIds as $roleId) {
-            $subIds = RoleModel::_()->getSubTreeIds((int)$roleId);
-            $allIds = array_merge($allIds, $subIds);
-        }
-        return array_unique($allIds);
+        return RoleModel::_()->getSubTreeIds($roleId);
     }
 
     /**
      * 创建用户
+     * @param array $input 用户数据
+     * @param int|null $roleId 职位ID（1对1）
      */
-    public function create(array $input): int
+    public function create(array $input, ?int $roleId = null): int
     {
         Helper::ThrowOn(empty($input['username']), '用户名不能为空');
         Helper::ThrowOn(empty($input['password']), '密码不能为空');
@@ -56,18 +53,34 @@ class AdminBusiness extends Base
         Helper::ThrowOn($existing, '用户名已存在');
 
         AdminModel::_()->create($input);
+        $adminId = (int)AdminModel::_()->lastInsertId();
 
-        return (int)AdminModel::_()->lastInsertId();
+        // 设置用户职位（1对1）
+        if ($roleId !== null) {
+            RoleUserModel::_()->setUserRole($adminId, $roleId);
+        }
+
+        return $adminId;
     }
 
     /**
      * 更新用户
+     * @param int $id 用户ID
+     * @param array $input 用户数据
+     * @param int|null $roleId 职位ID（1对1，null表示不修改）
      */
-    public function update(int $id, array $input): bool
+    public function update(int $id, array $input, ?int $roleId = null): bool
     {
         Helper::ThrowOn(empty($input['username']), '用户名不能为空');
 
-        return AdminModel::_()->edit($id, $input);
+        AdminModel::_()->edit($id, $input);
+
+        // 设置用户职位（1对1）
+        if ($roleId !== null) {
+            RoleUserModel::_()->setUserRole($id, $roleId);
+        }
+
+        return true;
     }
 
     /**

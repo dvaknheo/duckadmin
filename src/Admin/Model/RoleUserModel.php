@@ -7,25 +7,25 @@ namespace DuckAdmin\Admin\Model;
 
 class RoleUserModel extends Base
 {
-    public function getUserRoleIds(int $userId): array
+    /**
+     * 获取用户的职位ID（1对1）
+     */
+    public function getUserRoleId(int $userId): ?int
     {
         $sql = "SELECT role_id FROM admin_role_users WHERE user_id = ?";
-        $rows = $this->fetchAll($sql, [$userId]);
-        return array_column($rows, 'role_id');
+        return (int)$this->fetchColumn($sql, [$userId]) ?: null;
     }
 
-    public function setUserRoles(int $userId, array $roleId): void
+    /**
+     * 设置用户职位（1对1）
+     */
+    public function setUserRole(int $userId, ?int $roleId): void
     {
-        $sql = "INSERT INTO admin_role_users (user_id, role_id) VALUES (?, ?)";
-        $this->execute($sql, [$userId, (int)$roleId]);
-    }
-
-    public function isSuperRole(int $userId): bool
-    {
-        $sql = "SELECT r.id FROM admin_roles r
-                INNER JOIN admin_role_users ru ON r.id = ru.role_id
-                WHERE ru.user_id = ? AND r.deleted_at IS NULL AND r.is_super = 1";
-        $row = $this->fetch($sql, [$userId]);
-        return !empty($row);
+        $sql = "DELETE FROM admin_role_users WHERE user_id = ?";
+        $this->execute($sql, [$userId]);
+        if ($roleId !== null) {
+            $sql = "INSERT INTO admin_role_users (user_id, role_id) VALUES (?, ?)";
+            $this->execute($sql, [$userId, $roleId]);
+        }
     }
 }

@@ -29,7 +29,7 @@ class AppBusiness extends Base
      */
     protected function checkUserUrl(int $userId, string $url): bool
     {
-        if (RoleUserModel::_()->isSuperRole($userId)) {
+        if ($this->isUserSuper($userId)) {
             return true;
         }
         $path = (string)(parse_url($url, PHP_URL_PATH) ?: $url);
@@ -37,6 +37,16 @@ class AppBusiness extends Base
         $count = PermissionModel::_()->countUserUrlPermissions($userId, $path);
         return $count > 0;
     }
+
+    /**
+     * 检查用户是否为超级角色
+     */
+    protected function isUserSuper(int $userId): bool
+    {
+        $roleId = RoleUserModel::_()->getUserRoleId($userId);
+        return $roleId !== null && RoleModel::_()->isSuper($roleId);
+    }
+
     public function log($admin_id, string $string, ?string $type = null, array $ext = [])
     {
         // 日志系统待完成
@@ -45,7 +55,7 @@ class AppBusiness extends Base
 
     public function isSuper($admin_id): bool
     {
-        return RoleUserModel::_()->isSuperRole((int)$admin_id);
+        return $this->isUserSuper((int)$admin_id);
     }
 
     public function checkInstall(array $post): array
@@ -96,7 +106,7 @@ class AppBusiness extends Base
         ]);
         $admin_id = (int)AdminModel::_()->lastInsertId();
 
-        RoleUserModel::_()->setUserRoles($admin_id, [$super_role_id]); // RoleUserModel 要取消
+        RoleUserModel::_()->setUserRole($admin_id, $super_role_id);
 
         Helper::FireGlobalEvent('installed', __CLASS__, $input);
         return true;
@@ -137,7 +147,7 @@ class AppBusiness extends Base
     public function menu($admin_id)
     {
         $admin_id = (int)$admin_id;
-        if (RoleUserModel::_()->isSuperRole($admin_id)) {
+        if ($this->isUserSuper($admin_id)) {
             $data = PermissionModel::_()->getAllMenuItems();
         } else {
             $data = PermissionModel::_()->getMenuItemsByUser($admin_id);
