@@ -42,7 +42,7 @@ class MenuBusiness extends Base
      */
     public function scanRoutes(): array
     {
-        return (new AdminTreeBuilder())->build(__url(''));
+        return (new AdminTreeBuilder())->loadAllAdminPermissionMenu(true);
     }
 
     /**

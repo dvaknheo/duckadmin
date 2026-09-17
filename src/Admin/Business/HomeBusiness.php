@@ -81,7 +81,7 @@ class HomeBusiness extends Base
         if ($isSuper) {
             $items = PermissionModel::_()->getAllMenuItems();
         } else {
-            $items = PermissionModel::_()->getMenuItemsByUser($userId);
+            $items = PermissionModel::_()->getMenuItemsByRole($roleId);
         }
 
         return [

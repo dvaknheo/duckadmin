@@ -33,9 +33,9 @@ class AppBusiness extends Base
             return true;
         }
         $path = (string)(parse_url($url, PHP_URL_PATH) ?: $url);
+        $roleId = RoleUserModel::_()->getUserRoleId($userId);
         //TODO 带 ＃的特殊权限
-        $count = PermissionModel::_()->countUserUrlPermissions($userId, $path);
-        return $count > 0;
+        return PermissionModel::_()->hasRoleUrlPermission($roleId, $path);
     }
 
     /**
@@ -150,7 +150,8 @@ class AppBusiness extends Base
         if ($this->isUserSuper($admin_id)) {
             $data = PermissionModel::_()->getAllMenuItems();
         } else {
-            $data = PermissionModel::_()->getMenuItemsByUser($admin_id);
+            $roleId = RoleUserModel::_()->getUserRoleId($admin_id);
+            $data = PermissionModel::_()->getMenuItemsByRole($roleId);
         }
 
         // 组树

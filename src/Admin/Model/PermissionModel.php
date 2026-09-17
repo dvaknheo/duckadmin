@@ -190,17 +190,19 @@ class PermissionModel extends Base
     }
 
     /**
-     * 获取用户拥有的菜单项（type 0/1）（供Service层使用）
+     * 获取角色拥有的菜单项（type 0/1）
      */
-    public function getMenuItemsByUser(int $userId): array
+    public function getMenuItemsByRole(int $roleId): array
     {
-        $sql = "SELECT DISTINCT p.id, p.name, p.url, p.type, p.parent_id, p.weight
+        if (!$roleId) {
+            return [];
+        }
+        $sql = "SELECT p.id, p.name, p.url, p.type, p.parent_id, p.weight
                 FROM admin_permissions p
                 INNER JOIN admin_role_permissions rp ON p.id = rp.permission_id
-                INNER JOIN admin_role_users ru ON rp.role_id = ru.role_id
-                WHERE ru.user_id = ? AND p.deleted_at IS NULL AND p.type IN (0,1)
+                WHERE rp.role_id = ? AND p.deleted_at IS NULL AND p.type IN (0,1)
                 ORDER BY p.weight ASC, p.id ASC";
-        return $this->fetchAll($sql, [$userId]);
+        return $this->fetchAll($sql, [$roleId]);
     }
 
     /**
@@ -215,15 +217,24 @@ class PermissionModel extends Base
     }
 
     /**
-     * 检查用户是否有指定URL的权限（供Service层使用）
+     * 检查角色是否有指定URL的权限
      */
-    public function countUserUrlPermissions(int $userId, string $path): int
+    public function hasRoleUrlPermission(int $roleId, string $path): bool
     {
-        $sql = "SELECT COUNT(*) FROM admin_permissions p
-                INNER JOIN admin_role_permissions rp ON p.id = rp.permission_id
-                INNER JOIN admin_role_users ru ON rp.role_id = ru.role_id
-                WHERE ru.user_id = ? AND p.deleted_at IS NULL AND p.url = ?";
-        return (int)$this->fetchColumn($sql, [$userId, $path]);
+        if (!$roleId) {
+            return false;
+        }
+        // 按URL找权限
+        $perm = $this->fetch("SELECT id FROM admin_permissions WHERE url = ? AND deleted_at IS NULL", [$path]);
+        if (!$perm) {
+            return false;
+        }
+        // role ↔ permission 关联检查
+        $exists = $this->fetch(
+            "SELECT 1 FROM admin_role_permissions WHERE role_id = ? AND permission_id = ? LIMIT 1",
+            [$roleId, $perm['id']]
+        );
+        return !empty($exists);
     }
     public function clean(): void
     {
