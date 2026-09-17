@@ -84,7 +84,7 @@ class AppAction
      */
     public function command_test()
     {
-        $tree = TestBusiness::_()->testInstall();
+        $tree = TestBusiness::_()->test();
         echo json_encode($tree,JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     }
 }
