@@ -46,19 +46,19 @@ if (!function_exists('renderParentOptions')) {
             <div class="alert alert-danger"><?= __h($error) ?></div>
         <?php endif; ?>
 
-        <form method="post" action="<?= $form_url ?>" class="row g-3">
+        <form method="post" action="<?= $form_url ?>">
             <input type="hidden" name="show" value="<?= __h($show ?? 'all') ?>">
             <?php if ($is_edit): ?>
                 <input type="hidden" name="id" value="<?= (int)$data['id'] ?>">
             <?php endif; ?>
 
-            <div class="col-md-6">
+            <div class="mb-3">
                 <label class="form-label">权限名称 <span class="text-danger">*</span></label>
                 <input type="text" name="name" class="form-control" required
                        value="<?= __h($data['name'] ?? '') ?>">
             </div>
 
-            <div class="col-md-6">
+            <div class="mb-3">
                 <label class="form-label">URL</label>
                 <input type="text" name="url" class="form-control"
                        value="<?= __h($data['url'] ?? '') ?>"
@@ -66,7 +66,7 @@ if (!function_exists('renderParentOptions')) {
                 <small class="text-muted">菜单/操作填写,与请求地址精确匹配;目录留空</small>
             </div>
 
-            <div class="col-md-6">
+            <div class="mb-3">
                 <label class="form-label">类型</label>
                 <select name="type" class="form-select">
                     <?php $types = [0 => '目录', 1 => '菜单', 2 => '操作']; ?>
@@ -78,7 +78,7 @@ if (!function_exists('renderParentOptions')) {
                 </select>
             </div>
 
-            <div class="col-md-6">
+            <div class="mb-3">
                 <label class="form-label">上级</label>
                 <select name="parent_id" class="form-select">
                     <option value="0">顶级</option>
@@ -86,7 +86,7 @@ if (!function_exists('renderParentOptions')) {
                 </select>
             </div>
 
-            <div class="col-md-6">
+            <div class="mb-3">
                 <label class="form-label">排序</label>
                 <input type="number" name="weight" class="form-control"
                        value="<?= (int)($data['weight'] ?? 0) ?>">

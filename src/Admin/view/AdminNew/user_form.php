@@ -29,36 +29,36 @@ $form_url = $is_edit ? ($urls['update'] ?? '') : ($urls['save'] ?? '');
             <div class="alert alert-danger"><?= __h($error) ?></div>
         <?php endif; ?>
 
-        <form method="post" action="<?= $form_url ?>" class="row g-3">
+        <form method="post" action="<?= $form_url ?>">
             <?php if ($is_edit): ?>
                 <input type="hidden" name="id" value="<?= (int)$data['id'] ?>">
             <?php endif; ?>
 
-            <div class="col-md-6">
+            <div class="mb-3">
                 <label class="form-label">用户名 <span class="text-danger">*</span></label>
                 <input type="text" name="username" class="form-control" required
                        value="<?= __h($data['username'] ?? '') ?>"
                        <?= $is_edit ? 'readonly' : '' ?>>
             </div>
 
-            <div class="col-md-6">
+            <div class="mb-3">
                 <label class="form-label">密码 <?= $is_edit ? '<small class="text-muted">(留空不修改)</small>' : '<span class="text-danger">*</span>' ?></label>
                 <input type="password" name="password" class="form-control"
                        <?= $is_edit ? '' : 'required' ?>
                        minlength="6" placeholder="<?= $is_edit ? '留空则不修改密码' : '至少6位密码' ?>">
             </div>
 
-            <div class="col-md-6">
+            <div class="mb-3">
                 <label class="form-label">姓名</label>
                 <input type="text" name="realname" class="form-control" value="<?= __h($data['realname'] ?? '') ?>">
             </div>
 
-            <div class="col-md-6">
+            <div class="mb-3">
                 <label class="form-label">邮箱</label>
                 <input type="email" name="email" class="form-control" value="<?= __h($data['email'] ?? '') ?>">
             </div>
 
-            <div class="col-md-6">
+            <div class="mb-3">
                 <label class="form-label">状态</label>
                 <select name="status" class="form-select">
                     <option value="1" <?= (($data['status'] ?? 1) == 1) ? 'selected' : '' ?>>启用</option>

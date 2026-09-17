@@ -23,18 +23,18 @@ $title = $isEdit ? '编辑职位' : '新增职位';
             <div class="alert alert-danger"><?= __h($error) ?></div>
         <?php endif; ?>
         
-        <form method="post" action="<?= __url($isEdit ? 'Role/update' : 'Role/save') ?>" class="row g-3">
+        <form method="post" action="<?= __url($isEdit ? 'Role/update' : 'Role/save') ?>">
             <?php if ($isEdit): ?>
                 <input type="hidden" name="id" value="<?= (int)$data['id'] ?>">
             <?php endif; ?>
             
-            <div class="col-md-6">
+            <div class="mb-3">
                 <label class="form-label">职位名称 <span class="text-danger">*</span></label>
                 <input type="text" name="name" class="form-control" required
                        value="<?= __h($data['name'] ?? '') ?>">
             </div>
             
-            <div class="col-md-6">
+            <div class="mb-3">
                 <label class="form-label">上级职位</label>
                 <select name="pid" class="form-select">
                     <option value="0">根职位(顶级)</option>
@@ -49,7 +49,7 @@ $title = $isEdit ? '编辑职位' : '新增职位';
                 <small class="text-muted">只能在你的管理范围内选择上级职位</small>
             </div>
             
-            <div class="col-md-6">
+            <div class="mb-3">
                 <label class="form-label">描述</label>
                 <textarea name="description" class="form-control" rows="3"><?= __h($data['description'] ?? '') ?></textarea>
             </div>
