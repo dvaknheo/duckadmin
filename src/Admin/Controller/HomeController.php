@@ -24,20 +24,23 @@ class HomeController extends Base
      */
     public function profile()
     {
-        //个人信息页眉
+        $data = [];
+        Helper::Show($data, 'Home/profile');
     }
     /**
      * @menu 查看权限
      */
     public function permissions()
     {
-        // 查看我的权限
+        $data = [];
+        Helper::Show($data, 'Home/permissions');
     }
     /**
      * @menu 查看菜单
      */
     public function menu()
     {
-        // 预览菜单
+        $data = [];
+        Helper::Show($data, 'Home/menu');
     }
 }

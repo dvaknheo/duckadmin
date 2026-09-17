@@ -16,7 +16,8 @@ class SystemController extends Base
      */
     public function info()
     {
-        //
+        $data = [];
+        Helper::Show($data, 'System/info');
     }
     /**
      * 读取查看方式(GET/POST 均可): all=全部 menu=不看"操作"
@@ -65,11 +66,10 @@ class SystemController extends Base
         $show = $this->showMode();
 
         // 一步操作：扫描生成树形结构，补全 url，导入数据库
-        $menuTree = (new \DuckAdmin\Admin\Business\AdminTreeBuilder())->build(__url(''));
+        $menuTree = (new \DuckAdmin\Admin\Business\AdminTreeBuilder())->build();
         $menuTree = (new \DuckAdmin\Admin\Business\AdminTreeBuilder())->resolveUrls($menuTree, __url(''));
+
         $added = PermissionModel::_()->importMenu($menuTree);
-        // 保存扫描结果到 config/scanned_menu.php 供对比
-        $this->saveScannedMenu($menuTree);
 
         $data['added'] = $added;
         $data['menuTree'] = $menuTree;
@@ -210,27 +210,17 @@ class SystemController extends Base
      */
     public function setting()
     {
-        //
+        $data = [];
+        Helper::Show($data, 'System/setting');
     }
 
     /**
-     * 系统日志
+     * @menu 系统日志
      * @return void
      */
     public function log()
     {
-        //
-    }
-    /**
-     * 把树形精简结构写入 config/scanned_menu.php（供对比用）
-     */
-    protected function saveScannedMenu(array $menuTree): bool
-    {
-        $file = __DIR__ . '/../config/scanned_menu.php';
-        $export = var_export($menuTree, true);
-        $content = "<?php\n// 扫描生成的菜单结构（树形，无 id/weight，url 为相对地址）\n"
-            . "// 由 AdminTreeBuilder::build() 生成，供对比和手动调整\n"
-            . "return {$export};\n";
-        return file_put_contents($file, $content) !== false;
+        $data = [];
+        Helper::Show($data, 'System/log');
     }
 }
