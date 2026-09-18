@@ -162,7 +162,7 @@ class AppBusiness extends Base
 
         // 组树
         $tree = AdminTreeBuilder::_()->recordsetToTree($data, 'id', 'parent_id', 0);
-        $tree =  AdminTreeBuilder::_()->permissionMenuTreeToSideMenuTree($tree);
+        $tree = AdminTreeBuilder::_()->permissionMenuTreeToSideMenuTree($tree);
         return $tree;
     }
     public function updateMenuConfigJson()

@@ -104,7 +104,7 @@ class PermissionModel extends Base
 
     /**
      * 导入菜单树到 admin_permissions 表（幂等，按 url 判重）
-     * 传入的 $menuTree 应已补全绝对 url（通过 AdminTreeBuilder::resolveUrls）
+     * 传入的 $menuTree 应已补全绝对 url
      *
      * @param array $menuTree 树形精简菜单结构（url 已补全）
      * @return array<string> 新增的菜单/操作 url 列表（目录静默创建不计入）

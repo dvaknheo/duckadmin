@@ -2,8 +2,6 @@
 namespace DuckAdmin\Admin\Controller;
 
 use DuckAdmin\Admin\Business\MenuBusiness;
-use DuckAdmin\Admin\Model\PermissionModel;
-
 /**
  * @menu_directory 系统管理
  * @menu_weight 100
@@ -66,10 +64,7 @@ class SystemController extends Base
         $show = $this->showMode();
 
         // 一步操作：扫描生成树形结构，补全 url，导入数据库
-        $menuTree = (new \DuckAdmin\Admin\Business\AdminTreeBuilder())->build();
-        $menuTree = (new \DuckAdmin\Admin\Business\AdminTreeBuilder())->resolveUrls($menuTree, __url(''));
-
-        $added = PermissionModel::_()->importMenu($menuTree);
+        [$menuTree, $added] = MenuBusiness::_()->scanRoutes2();
 
         $data['added'] = $added;
         $data['menuTree'] = $menuTree;

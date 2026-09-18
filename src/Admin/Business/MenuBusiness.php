@@ -42,9 +42,14 @@ class MenuBusiness extends Base
      */
     public function scanRoutes(): array
     {
-        return (new AdminTreeBuilder())->loadAllAdminPermissionMenu(true);
+        return AdminTreeBuilder::_()->loadAllAdminPermissionMenu(true);
     }
-
+    public function scanRoutes2(): array
+    {
+        $menuTree = AdminTreeBuilder::_()->loadAllAdminPermissionMenu();
+        $added = PermissionModel::_()->importMenu($menuTree);
+        return [$menuTree, $added];
+    }
     /**
      * 获取菜单树（用于后台管理展示）
      * @param string $show 'all' 全部(含操作) / 'menu' 仅目录和菜单(不看操作)
@@ -54,7 +59,7 @@ class MenuBusiness extends Base
         $all = PermissionModel::_()->getAll();
         if ($show === 'menu') {
             $all = array_values(array_filter($all, function ($row) {
-                return (int)$row['type'] !== 2; // 不看"操作"
+                return (int) $row['type'] > 1;
             }));
         }
         return $this->buildTree($all);
@@ -72,7 +77,7 @@ class MenuBusiness extends Base
             $map[$item['id']] = $item;
         }
         foreach ($map as $id => &$node) {
-            $pid = (int)($node['parent_id'] ?? 0);
+            $pid = (int) ($node['parent_id'] ?? 0);
             if ($pid && isset($map[$pid])) {
                 $map[$pid]['children'][] = &$node;
             } else {

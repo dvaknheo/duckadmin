@@ -5,7 +5,6 @@
  */
 namespace DuckAdmin\Admin\Controller;
 
-use DuckAdmin\Admin\Business\AdminTreeBuilder;
 use DuckAdmin\Admin\Business\AppBusiness;
 use DuckAdmin\Admin\Business\TestBusiness;
 use DuckAdmin\Admin\Model\PermissionModel;
