@@ -42,11 +42,11 @@ class MenuBusiness extends Base
      */
     public function scanRoutes(): array
     {
-        return AdminTreeBuilder::_()->loadAllAdminPermissionMenu(true);
+        return AdminTreeBuilder::_()->loadAll(true);
     }
     public function scanRoutes2(): array
     {
-        $menuTree = AdminTreeBuilder::_()->loadAllAdminPermissionMenu();
+        $menuTree = AdminTreeBuilder::_()->loadAll();
         $added = PermissionModel::_()->importMenu($menuTree);
         return [$menuTree, $added];
     }

@@ -14,7 +14,7 @@ class TestBusiness extends Base
     {
         AdminTreeBuilder::_()->buildAndSaveToConfigJsonFile();
         PermissionModel::_()->clean();
-        $menuTree = (new AdminTreeBuilder)->loadAllAdminPermissionMenu();
+        $menuTree = (new AdminTreeBuilder)->loadAll();
 
         PermissionModel::_()->importMenu($menuTree);
         return $menuTree;
