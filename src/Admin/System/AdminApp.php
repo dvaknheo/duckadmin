@@ -30,45 +30,41 @@ class AdminApp extends DuckPhp
             TestCommandAction::class => true,
         ],
         'ext' => [
-            RouteHookWebInstaller::class => true,
+            RouteHookWebInstaller::class => [
+                'web_installer_use_database' => true,
+                'web_installer_use_redis' => false,
+                'web_installer_database_drivers' => ['sqlite' => true],
+                'web_installer_view' => 'install',
+                'web_installer_view_block_custom' => 'install_custom',
+
+                'web_installer_check_custom_callback' => [AppAction::class, 'Callback_CheckInstall'],
+                'web_installer_do_custom_callback' => [AppAction::class, 'Callback_DoInstall'],
+
+                'web_installer_default_sentences' => [
+                    'Admin Name' => '管理员账号',
+                    'Admin Password' => '管理员密码',
+                    'Admin Password Confirm' => '确认密码',
+                ],
+            ],
+            GlobalAdmin::class => [
+                'admin_url_home' => 'Home/index',
+                'admin_url_login' => 'login',
+                'admin_url_logout' => 'logout',
+                'admin_view_file_header' => '_sys/header',
+                'admin_view_file_footer' => '_sys/footer',
+                'admin_callback_for_local_service' => [AppAction::class,'localService'],
+                'admin_callback_for_login_service' => [AppAction::class,'localService'],
+                'admin_callback_for_session' => [AppAction::class,'session'],
+                'admin_callback_for_add_ext_view_data' => [AppAction::class,'addExtViewData'],
+            ],
         ],
-
-        'web_installer_use_database' => true,
-        'web_installer_use_redis' => false,
-        'web_installer_database_drivers' => ['sqlite' => true],
-        'web_installer_view' => 'install',
-        'web_installer_view_block_custom' => 'install_custom',
-
-        'web_installer_check_custom_callback' => [AppAction::class, 'Callback_CheckInstall'],
-        'web_installer_do_custom_callback' => [AppAction::class, 'Callback_DoInstall'],
-
-        'web_installer_default_sentences' => [
-            'Admin Name' => '管理员账号',
-            'Admin Password' => '管理员密码',
-            'Admin Password Confirm' => '确认密码',
-        ],
-
-        'use_admin_view' => true,
-        'permission_menu_tree_for_admin' => 'AdminMenu.json',
-        // 异常处理
-        'exception_for_project'  => ProjectException::class,
-        'exception_for_business'  => BusinessException::class,
-        'exception_for_controller'  => ControllerException::class,
-        'exception_reporter' => ExceptionReporter::class,
-        
-
         'admin_provider' => GlobalAdmin::class,
-
-        'admin_url_home' => 'Home/index',
-        'admin_url_login' => 'login',
-        'admin_url_logout' => 'logout',
-        'admin_view_file_header' => '_sys/header',
-        'admin_view_file_footer' => '_sys/footer',
-        'admin_callback_for_local_service' => [AppAction::class,'localService'],
-        'admin_callback_for_login_service' => [AppAction::class,'localService'],
-        'admin_callback_for_session' => [AppAction::class,'session'],
-
-        'admin_callback_for_add_ext_view_data' => [AppAction::class,'addExtViewData'],
+        
+        'use_admin_view' => true,
+        'use_admin_view_header_footer'=> true,
+        'admin_permission_menu_json' => 'AdminMenu.json',
+        
+        
     ];
     public function __construct()
     {

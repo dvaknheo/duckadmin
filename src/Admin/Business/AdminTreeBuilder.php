@@ -7,9 +7,7 @@ namespace DuckAdmin\Admin\Business;
 use DuckPhp\Component\RouteLister;
 use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
-use DuckPhp\Core\Route;
-// 我们要分为build 自己的，和 scanall 全局两种。
-// build 用于生成
+
 class AdminTreeBuilder extends ComponentBase
 {
     public function buildAndSaveToConfigJsonFile()
@@ -27,15 +25,12 @@ class AdminTreeBuilder extends ComponentBase
     }
     public function loadAdminPermissionMenu(bool $force_build = false)
     {
-        $prefix = App::_()->options['controller_url_prefix'] ?? '';
-        $prefix = '/' . $prefix;
 
         if ($force_build) {
             $routes = $this->getRoutes(false);
             $menuTree = $this->build($routes);
             return $menuTree;
         }
-
         $menu_file = App::_()->options['permission_menu_tree_for_admin'] ?? null;
         if ($menu_file) {
             $filename = App::_()->getConfigFile($menu_file);
@@ -45,6 +40,8 @@ class AdminTreeBuilder extends ComponentBase
                 $menuTree = @include $filename;
                 $menuTree = is_array($menuTree) ? $menuTree : [];
             }
+            $prefix = App::_()->options['controller_url_prefix'] ?? '';
+            $prefix = '/' . $prefix;
             $menuTree = $this->resolveUrls($menuTree, $prefix);
         } else {
             $routes = $this->getRoutes(false);
