@@ -11,9 +11,8 @@ use DuckAdmin\Admin\Model\RoleModel;
 use DuckAdmin\Admin\Model\RolePermissionModel;
 use DuckAdmin\Admin\Model\RoleUserModel;
 use DuckPhp\Component\Validator;
-use DuckPhp\Core\App;
+use DuckPhp\Ext\PermissionMenu;
 use DuckPhp\GlobalAdmin\GlobalAdmin;
-
 class AppBusiness extends Base
 {
     public function canAccess($admin_id, $class = null, $method = null, ?string $url = null): bool
@@ -99,7 +98,7 @@ class AppBusiness extends Base
         $super_role_id = RoleModel::_()->seedDefaultRoles();
 
         //  导入数据库
-        $menuTree = (new AdminTreeBuilder)->loadAllAdminPermissionMenu();
+        $menuTree = PermissionMenu::_()->loadAll();
         PermissionModel::_()->importMenu($menuTree);
 
         // 创建管理员并关联超级管理员角色
@@ -161,8 +160,8 @@ class AppBusiness extends Base
         }
 
         // 组树
-        $tree = AdminTreeBuilder::_()->recordsetToTree($data, 'id', 'parent_id', 0);
-        $tree = AdminTreeBuilder::_()->permissionMenuTreeToSideMenuTree($tree);
+        $tree = PermissionMenu::_()->recordsetToTree($data, 'id', 'parent_id', 0);
+        $tree = PermissionMenu::_()->permissionMenuTreeToSideMenuTree($tree);
         return $tree;
     }
     public function updateMenuConfigJson()

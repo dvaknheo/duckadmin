@@ -63,7 +63,9 @@ class AdminApp extends DuckPhp
         'use_admin_view' => true,
         'use_admin_view_header_footer'=> true,
         'admin_permission_menu_json' => 'AdminMenu.json',
-        
+
+        // duckcoverage
+        'duckcoverage_test_lister' => [TestLister::class, 'GetTestList'],
         
     ];
     public function __construct()

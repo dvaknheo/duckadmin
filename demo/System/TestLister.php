@@ -20,7 +20,7 @@ class TestLister
         $list = <<<EOT
 #PHASE_BEGIN
 COMMENT DuckAdminTests;
-COMMENT #INCLUDE_CHILD DuckAdmin\Admin\System\AdminApp
+#INCLUDE_CHILD DuckAdmin\Admin\System\AdminApp
 COMMENT #INCLUDE_CHILD DuckAdmin\DemoUsers\System\DemoUsersApp
 COMMENT #INCLUDE_CHILD DuckAdmin\SingleAdmin\System\SingleAdminApp
 #INCLUDE_CHILD DuckAdmin\User\System\UserApp

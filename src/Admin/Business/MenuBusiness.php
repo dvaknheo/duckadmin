@@ -6,6 +6,7 @@
 namespace DuckAdmin\Admin\Business;
 
 use DuckAdmin\Admin\Model\PermissionModel;
+use DuckPhp\Ext\PermissionMenu;
 
 class MenuBusiness extends Base
 {
@@ -42,11 +43,11 @@ class MenuBusiness extends Base
      */
     public function scanRoutes(): array
     {
-        return AdminTreeBuilder::_()->loadAll(true);
+        return PermissionMenu::_()->loadAll(true);
     }
     public function scanRoutes2(): array
     {
-        $menuTree = AdminTreeBuilder::_()->loadAll();
+        $menuTree = PermissionMenu::_()->loadAll();
         $added = PermissionModel::_()->importMenu($menuTree);
         return [$menuTree, $added];
     }

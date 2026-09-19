@@ -1,13 +1,12 @@
 <?php declare(strict_types=1);
-namespace CgbAIFormater\System;
+namespace DuckAdmin\Admin\System;
 
 use DuckPhp\Foundation\Helper;
 use DuckPhp\Foundation\SingletonTrait;
-use DuckAdmin\Admin\System\AdminApp;
 
 /**
- * AdminApp（myadmin）子应用 DuckCoverage 测试列表（--replay 用）
- * 流程：删除测试库 → GET 安装页 → POST 安装（runtime/admin-duckcoverage.db，创建默认管理员）→ 管理员登录 → 管理页
+ * AdminApp 子应用 DuckCoverage 测试列表
+ * 流程：删除测试库 → 安装 → 登录 → 各模块测试
  */
 class TestLister
 {
@@ -28,16 +27,19 @@ class TestLister
         @unlink(Helper::PathOfRuntime() . self::TEST_DB);
     }
 
-    public function getTestList()
+    public static function GetTestList()
     {
-
+        return static::_()->_GetTestList();
+    }
+    public function _GetTestList()
+    {
         $list = <<<EOT
 #PHASE_BEGIN
 CALL {static}::BeforeTest
 WEB install
 WEB install driver=sqlite&database[file]=runtime/{test_db}&admin_name={admin}&admin_password={password}&admin_password_confirm={password}
-WEB Login/login
-WEB Login/login username={admin}&password={password}
+WEB login
+WEB login username={admin}&password={password}
 #PHASE_END
 
 EOT;
@@ -45,9 +47,9 @@ EOT;
             'test_db' => self::TEST_DB,
             'admin' => self::ADMIN_NAME,
             'password' => self::ADMIN_PASSWORD,
+            'static' => static::class,
         ];
         $list = str_replace(array_map(fn($k) => '{' . $k . '}', array_keys($args)), array_values($args), $list);
-
         return $list;
     }
 }

@@ -58,14 +58,14 @@ class DemoApp extends DuckPhp
                 'controller_url_prefix' => 'single/',
                 'single_admin_password' => '123456',
 
-                //'duckcoverage_test_lister' => null,
+                'duckcoverage_test_lister' => null,
                 'admin_provider' => null,   // 关闭:admin_provider 各 admin 系统不能同时使用
             ],
 //*/
 //*
             \DuckAdmin\User\System\UserApp::class => [
                 'controller_url_prefix' => 'fulluser/',             // 访问路径
-                //'duckcoverage_test_lister' => null,
+                'duckcoverage_test_lister' => null,
                 'is_debug'=>true,
                 'controller_resource_prefix' => 'res/',    // 资源文件前缀
                 //'user_provider' => null,   // 关闭:user_provider 各用户系统不能同时使用
@@ -81,7 +81,7 @@ class DemoApp extends DuckPhp
     {
         parent::onPrepare();
         if(class_exists(\DuckCoverage\DuckCoverage::class)){
-            $this->options['duckcoverage_path_src'] = realpath(__DIR__ . '/../../') . '/src/User/';
+            $this->options['duckcoverage_path_src'] = realpath(__DIR__ . '/../../') . '/src/Admin/';
             \DuckCoverage\DuckCoverage::Prepare([]);
         }
     }

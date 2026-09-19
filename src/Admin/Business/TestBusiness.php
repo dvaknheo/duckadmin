@@ -6,22 +6,22 @@
 namespace DuckAdmin\Admin\Business;
 
 use DuckAdmin\Admin\Model\PermissionModel;
-use DuckPhp\Component\DbManager;
+use DuckPhp\Ext\PermissionMenu;
 
 class TestBusiness extends Base
 {
     public function rebuild_menu()
     {
-        AdminTreeBuilder::_()->buildAndSaveToConfigJsonFile();
+        PermissionMenu::_()->buildAndSaveToConfigJsonFile();
         PermissionModel::_()->clean();
-        $menuTree = (new AdminTreeBuilder)->loadAll();
+        $menuTree = PermissionMenu::_()->loadAll();
 
         PermissionModel::_()->importMenu($menuTree);
         return $menuTree;
     }
     public function cache_menu()
     {
-        return AdminTreeBuilder::_()->buildAndSaveToConfigJsonFile();
+        return PermissionMenu::_()->buildAndSaveToConfigJsonFile();
     }
     public function test()
     {
