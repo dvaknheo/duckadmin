@@ -6,7 +6,6 @@ use DuckPhp\Foundation\SingletonTrait;
 
 /**
  * AdminApp 子应用 DuckCoverage 测试列表
- * 流程：删除测试库 → 安装 → 登录 → 各模块测试
  */
 class TestLister
 {
@@ -23,7 +22,6 @@ class TestLister
 
     public function _BeforeTest()
     {
-        // 删除测试库文件，从干净状态开始
         @unlink(Helper::PathOfRuntime() . self::TEST_DB);
     }
 
@@ -31,25 +29,49 @@ class TestLister
     {
         return static::_()->_GetTestList();
     }
+
     public function _GetTestList()
     {
-        $list = <<<EOT
-#PHASE_BEGIN
-CALL {static}::BeforeTest
-WEB install
-WEB install driver=sqlite&database[file]=runtime/{test_db}&admin_name={admin}&admin_password={password}&admin_password_confirm={password}
-WEB login
-WEB login username={admin}&password={password}
-#PHASE_END
+        $dbFile = 'runtime/' . self::TEST_DB;
+        $list = [];
+        $list[] = '#PHASE_BEGIN';
+        $list[] = 'CALL {static}::BeforeTest';
+        $list[] = 'WEB install';
+        $list[] = "WEB install driver=sqlite&database[file]={$dbFile}&admin_name=" . self::ADMIN_NAME . "&admin_password=" . self::ADMIN_PASSWORD . "&admin_password_confirm=" . self::ADMIN_PASSWORD;
+        $list[] = 'WEB login';
+        $list[] = "WEB login username=" . self::ADMIN_NAME . "&password=" . self::ADMIN_PASSWORD;
+        $list[] = '#PHASE_END';
 
-EOT;
+        // Home 模块
+        $list[] = 'WEB Home/index';
+        $list[] = 'WEB Home/profile';
+        $list[] = 'WEB Home/permissions';
+        $list[] = 'WEB Home/menu';
+
+        // Admin 模块
+        $list[] = 'WEB Admin/index';
+        $list[] = 'WEB Admin/create';
+        $list[] = 'WEB Admin/edit id=1';
+
+        // Role 模块
+        $list[] = 'WEB Role/index';
+        $list[] = 'WEB Role/create';
+        $list[] = 'WEB Role/edit id=1';
+
+        // Permission 模块
+        $list[] = 'WEB Permission/index';
+        $list[] = 'WEB Permission/index id=1';
+
+        // System 模块
+        $list[] = 'WEB System/menu';
+
+        $str = implode("\n", $list);
+
         $args = [
-            'test_db' => self::TEST_DB,
-            'admin' => self::ADMIN_NAME,
-            'password' => self::ADMIN_PASSWORD,
             'static' => static::class,
         ];
-        $list = str_replace(array_map(fn($k) => '{' . $k . '}', array_keys($args)), array_values($args), $list);
-        return $list;
+        $str = str_replace(array_map(fn($k) => '{' . $k . '}', array_keys($args)), array_values($args), $str);
+
+        return $str;
     }
 }
