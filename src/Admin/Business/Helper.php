@@ -5,7 +5,7 @@
 namespace DuckAdmin\Admin\Business;
 
 use DuckPhp\Component\ExtOptionsLoader;
-use DuckPhp\Foundation\Business\Helper as BusinessHelper;
+use DuckPhp\Foundation\Business\BusinessHelper;
 
 class Helper extends BusinessHelper 
 {
