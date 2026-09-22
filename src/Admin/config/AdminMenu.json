@@ -8,52 +8,62 @@
             {
                 "name": "系统信息",
                 "url": "System\/info",
-                "type": 1
+                "type": 1,
+                "icon": null
             },
             {
                 "name": "权限菜单",
                 "url": "System\/menu",
-                "type": 1
+                "type": 1,
+                "icon": null
             },
             {
                 "name": "一键扫描",
                 "url": "System\/menu_scan",
-                "type": 2
+                "type": 2,
+                "icon": null
             },
             {
                 "name": "新增菜单",
                 "url": "System\/menu_create",
-                "type": 2
+                "type": 2,
+                "icon": null
             },
             {
                 "name": "保存菜单",
                 "url": "System\/menu_save",
-                "type": 2
+                "type": 2,
+                "icon": null
             },
             {
                 "name": "编辑菜单",
                 "url": "System\/menu_edit",
-                "type": 2
+                "type": 2,
+                "icon": null
             },
             {
                 "name": "更新菜单",
                 "url": "System\/menu_update",
-                "type": 2
+                "type": 2,
+                "icon": null
             },
             {
                 "name": "删除菜单",
                 "url": "System\/menu_delete",
-                "type": 2
+                "type": 2,
+                "icon": null
             },
             {
                 "name": "系统设置",
                 "url": "System\/setting",
-                "type": 1
+                "type": 1,
+                "icon": null
             },
             {
                 "name": "系统日志",
                 "url": "System\/log",
-                "type": 1
+                "type": 1,
+                "icon": null
             }
         ]
     },
@@ -66,22 +76,26 @@
             {
                 "name": "仪表盘",
                 "url": "Home\/index",
-                "type": 1
+                "type": 1,
+                "icon": null
             },
             {
                 "name": "个人信息",
                 "url": "Home\/profile",
-                "type": 1
+                "type": 1,
+                "icon": null
             },
             {
                 "name": "查看权限",
                 "url": "Home\/permissions",
-                "type": 1
+                "type": 1,
+                "icon": null
             },
             {
                 "name": "查看菜单",
                 "url": "Home\/menu",
-                "type": 1
+                "type": 1,
+                "icon": null
             }
         ]
     },
@@ -94,32 +108,38 @@
             {
                 "name": "删除职位",
                 "url": "Role\/delete",
-                "type": 2
+                "type": 2,
+                "icon": null
             },
             {
                 "name": "更新职位",
                 "url": "Role\/update",
-                "type": 2
+                "type": 2,
+                "icon": null
             },
             {
                 "name": "编辑职位",
                 "url": "Role\/edit",
-                "type": 2
+                "type": 2,
+                "icon": null
             },
             {
                 "name": "保存职位",
                 "url": "Role\/save",
-                "type": 2
+                "type": 2,
+                "icon": null
             },
             {
                 "name": "新增职位",
                 "url": "Role\/create",
-                "type": 2
+                "type": 2,
+                "icon": null
             },
             {
                 "name": "查看职位",
                 "url": "Role\/index",
-                "type": 1
+                "type": 1,
+                "icon": null
             }
         ]
     },
@@ -132,32 +152,38 @@
             {
                 "name": "查看下属",
                 "url": "Admin\/index",
-                "type": 1
+                "type": 1,
+                "icon": null
             },
             {
                 "name": "添加下属",
                 "url": "Admin\/create",
-                "type": 2
+                "type": 2,
+                "icon": null
             },
             {
                 "name": "保存下属",
                 "url": "Admin\/save",
-                "type": 2
+                "type": 2,
+                "icon": null
             },
             {
                 "name": "编辑下属",
                 "url": "Admin\/edit",
-                "type": 2
+                "type": 2,
+                "icon": null
             },
             {
                 "name": "更新下属",
                 "url": "Admin\/update",
-                "type": 2
+                "type": 2,
+                "icon": null
             },
             {
                 "name": "删除下属",
                 "url": "Admin\/delete",
-                "type": 2
+                "type": 2,
+                "icon": null
             }
         ]
     },
@@ -170,7 +196,8 @@
             {
                 "name": "权限分配",
                 "url": "Permission\/index",
-                "type": 1
+                "type": 1,
+                "icon": null
             }
         ]
     }

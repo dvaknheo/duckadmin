@@ -59,7 +59,7 @@ class AdminApp extends DuckPhp
         ],
         'admin_provider_enable' => true,
         
-        'admin_permission_menu_json' => 'AdminMenu.json',
+        'permission_menu_tree_for_admin' => 'AdminMenu.json',
 
         // duckcoverage
         'duckcoverage_test_lister' => [TestLister::class, 'GetTestList'],

@@ -9,7 +9,7 @@ use DuckPhp\Foundation\Controller\AdminControllerBase;
 
 class Base extends AdminControllerBase
 {
-    public function initController()
+    protected function initController()
     {
         parent::initController();
         Helper::assignViewData('__logined_enable_view', true);
