@@ -4,7 +4,7 @@
  */
 namespace DuckAdmin\Admin\Controller;
 
-use DuckPhp\Foundation\SessionTrait;
+use DuckPhp\Foundation\Controller\SessionTrait;
 use DuckPhp\GlobalAdmin\AdminSessionInterface;
 use DuckPhp\GlobalAdmin\AdminSessionTrait;
 

@@ -15,4 +15,5 @@ DuckPhp\Core\AutoLoader::RunQuickly([
 $options=[
     // ...
 ];
+ini_set('display_errors',1);
 \DuckAdminDemo\System\DemoApp::RunQuickly($options);

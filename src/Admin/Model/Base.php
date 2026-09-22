@@ -5,14 +5,10 @@
 namespace DuckAdmin\Admin\Model;
 
 use DuckPhp\Component\DbManager;
-use DuckPhp\Foundation\ModelTrait;
-use DuckPhp\Helper\ModelHelperTrait;
+use DuckPhp\Foundation\Model\Base as ModelBase;
 
-class Base
-{
-    use ModelTrait;
-    use ModelHelperTrait;
-    
+class Base extends ModelBase
+{   
     /**
      * 获取最后插入的 ID
      */

@@ -22,7 +22,6 @@ class AdminApp extends DuckPhp
         
         'data_file_enable' => true,
         'installed' => false,
-        // 错误页面
         'error_404' => '_sys/error_404',
         'error_500' => '_sys/error_500',
 
@@ -58,15 +57,12 @@ class AdminApp extends DuckPhp
                 'admin_callback_for_add_ext_view_data' => [AppAction::class,'addExtViewData'],
             ],
         ],
-        'admin_provider' => GlobalAdmin::class,
+        'admin_provider_enable' => true,
         
-        'use_admin_view' => true,
-        'use_admin_view_header_footer'=> true,
         'admin_permission_menu_json' => 'AdminMenu.json',
 
         // duckcoverage
         'duckcoverage_test_lister' => [TestLister::class, 'GetTestList'],
-        
     ];
     public function __construct()
     {
