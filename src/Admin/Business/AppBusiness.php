@@ -10,8 +10,6 @@ use DuckAdmin\Admin\Model\PermissionModel;
 use DuckAdmin\Admin\Model\RoleModel;
 use DuckAdmin\Admin\Model\RolePermissionModel;
 use DuckAdmin\Admin\Model\RoleUserModel;
-use DuckPhp\Component\Validator;
-use DuckPhp\Ext\PermissionMenu;
 use DuckPhp\GlobalAdmin\GlobalAdmin;
 class AppBusiness extends Base
 {
@@ -65,7 +63,7 @@ class AppBusiness extends Base
 
     public function checkInstall(array $post): array
     {
-        Validator::_()->init([
+        Helper::Validator::_()->init([
             'admin_name' => 'required',
             'admin_password' => 'required|minLen:6',
             'admin_password_confirm' => 'required',
@@ -98,7 +96,7 @@ class AppBusiness extends Base
         $super_role_id = RoleModel::_()->seedDefaultRoles();
 
         //  导入数据库
-        $menuTree = PermissionMenu::_()->loadAll();
+        $menuTree = Helper::_()->permissionMenu()->loadAll();
         PermissionModel::_()->importMenu($menuTree);
 
         // 创建管理员并关联超级管理员角色
@@ -119,9 +117,9 @@ class AppBusiness extends Base
 
     public function login($post)
     {
+        //TODO 事件名称整理一下
         Helper::FireGlobalEvent(GlobalAdmin::EVENT_SERVICE_ADMIN_LOGINING, $post);
 
-        // TODO 这段验证改用 validator
         $username = $post['username'];
         $password = $post['password'];
         Helper::ThrowOn((empty($username) || empty($password)), '请输入用户名和密码');
@@ -160,8 +158,8 @@ class AppBusiness extends Base
         }
 
         // 组树
-        $tree = PermissionMenu::_()->recordsetToTree($data, 'id', 'parent_id', 0);
-        $tree = PermissionMenu::_()->permissionMenuTreeToSideMenuTree($tree);
+        $tree = Helper::_()->permissionMenu()->recordsetToTree($data, 'id', 'parent_id', 0);
+        $tree = Helper::_()->permissionMenu()->permissionMenuTreeToSideMenuTree($tree);
         return $tree;
     }
     public function updateMenuConfigJson()

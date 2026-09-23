@@ -4,11 +4,17 @@
  */
 namespace DuckAdmin\Admin\Business;
 
-use DuckPhp\Component\ExtOptionsLoader;
 use DuckPhp\Foundation\Business\BusinessHelper;
+use DuckPhp\Ext\PermissionMenu;
 
 class Helper extends BusinessHelper 
 {
-    //
-
+    /**
+     * Summary of permissionMenu
+     * @return PermissionMenu
+     */
+    public function permissionMenu()
+    {
+        return PermissionMenu::_();
+    }
 }
