@@ -46,31 +46,33 @@ class AdminApp extends DuckPhp
                 ],
             ],
             GlobalAdmin::class => [
-                'admin_url_home' => 'Home/index',
-                'admin_url_login' => 'login',
-                'admin_url_logout' => 'logout',
-                'admin_view_file_header' => '_sys/header',
-                'admin_view_file_footer' => '_sys/footer',
-                'admin_callback_for_local_service' => [AppAction::class,'localService'],
-                'admin_callback_for_login_service' => [AppAction::class,'localService'],
-                'admin_callback_for_session' => [AppAction::class,'session'],
-                'admin_callback_for_add_ext_view_data' => [AppAction::class,'addExtViewData'],
+                'globaladmin_url_home' => 'Home/index',
+                'globaladmin_url_login' => 'login',
+                'globaladmin_url_logout' => 'logout',
+                'globaladmin_view_file_header' => '_sys/header',
+                'globaladmin_view_file_footer' => '_sys/footer',
+                'globaladmin_local_service' => [AppAction::class,'localService'],
+                'globaladmin_login_service' => [AppAction::class,'localService'],
+                'globaladmin_login_session' => [AppAction::class,'session'],
+                'globaladmin_ext_view_data_callback' => [AppAction::class,'addExtViewData'],
             ],
         ],
         'admin_provider_enable' => true,
-        
+
         'permission_menu_tree_for_admin' => 'AdminMenu.json',
 
         // duckcoverage
         'duckcoverage_test_lister' => [TestLister::class, 'GetTestList'],
+        'short_duckcoverage' => true,
+        'with_install_coverage' => true,
     ];
-    public function __construct()
-    {
-        parent::__construct();
-    }
     //@override
     protected function onInited(): void
     {
         parent::onInited();
+        if($this->options['short_duckcoverage']){
+            $this->options['duckcoverage_test_lister'] =[TestLister::class, 'ShortTestList'];
+        }
     }
 }
+

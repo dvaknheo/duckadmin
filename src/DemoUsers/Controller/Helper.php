@@ -4,9 +4,9 @@
  */
 namespace DuckAdmin\DemoUsers\Controller;
 
-use DuckPhp\Helper\ControllerHelperTrait;
+use DuckPhp\Foundation\Controller\ControllerHelper;
 
-class Helper
+class Helper extends ControllerHelper
 {
-    use ControllerHelperTrait;
+    //
 }

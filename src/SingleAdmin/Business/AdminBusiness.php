@@ -4,17 +4,15 @@
  */
 namespace DuckAdmin\SingleAdmin\Business;
 
-use DuckPhp\Foundation\Business\Helper;
+use DuckPhp\Foundation\Business\BusinessHelper as Helper;
 use DuckPhp\Foundation\SingletonTrait;
 use DuckPhp\GlobalAdmin\AdminServiceInterface;
-use DuckPhp\GlobalAdmin\GlobalAdmin;
-
 
 class AdminBusiness implements AdminServiceInterface
 {
     use SingletonTrait;
 
-    public function canAccess($admin_id, string $class, string $method, ?string $url = null): bool
+    public function canAccess($admin_id,  ?string $url = null, ?string $class, ?string $method,): bool
     {
         return true;
     }
@@ -39,7 +37,7 @@ class AdminBusiness implements AdminServiceInterface
     ///////////////
     public function login(array $post): array
     {
-        Helper::FireGlobalEvent(GlobalAdmin::EVENT_SERVICE_ADMIN_LOGINING);
+        Helper::FireGlobalEvent(Helper::EVENT_SERVICE_ADMIN_LOGINING);
 
         $password = (string)($post['password']??'');
         $old_password = Helper::AppOptions('single_admin_password', '');
@@ -50,12 +48,12 @@ class AdminBusiness implements AdminServiceInterface
             'id'=>1,
             'name'=>'Admin',
         ];
-        Helper::FireGlobalEvent(GlobalAdmin::EVENT_SERVICE_ADMIN_LOGINED);
+        Helper::FireGlobalEvent(Helper::EVENT_SERVICE_ADMIN_LOGINED);
         return $admin;
     }
     public function logout($id)
     {
-        Helper::FireGlobalEvent(GlobalAdmin::EVENT_SERVICE_ADMIN_LOGOUTING);
-        Helper::FireGlobalEvent(GlobalAdmin::EVENT_SERVICE_ADMIN_LOGOUTED);
+        Helper::FireGlobalEvent(Helper::EVENT_SERVICE_ADMIN_LOGOUTING);
+        Helper::FireGlobalEvent(Helper::EVENT_SERVICE_ADMIN_LOGOUTED);
     }
 }

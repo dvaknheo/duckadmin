@@ -19,24 +19,25 @@ class DemoUsersApp extends DuckPhp
         'namespace' => "DuckAdmin\\DemoUsers",
         'name' => 'DemoUsers',
         'installed' => true,
-        'duckcoverage_test_lister' => [TestLister::class ,'GetTestOrderList'],
+        'ext' =>[
+            GlobalUser::class => [
+                'globaluser_local_service' => [AppAction::class, 'service'],
+                'globaluser_login_service' => [AppAction::class, 'service'],
+                'globaluser_login_session' => [AppAction::class, 'session'],
 
-        'user_provider' => GlobalUser::class,
+                'globaluser_view_file_header' => '_sys/inc-head',
+                'globaluser_view_file_footer' => '_sys/inc-foot',
 
-        'user_callback_for_local_service' => [AppAction::class, 'service'],
-        'user_callback_for_login_service' => [AppAction::class, 'service'],
-        'user_callback_for_session' => [AppAction::class, 'session'],
-
-        'user_view_file_header' => '_sys/inc-head',
-        'user_view_file_footer' => '_sys/inc-foot',
-
-        'user_url_register' => 'index',
-        'user_url_login' => 'index',
-        'user_url_logout' => 'logout',
-        'user_url_home' => 'Home/index',
-
+                'globaluser_url_register' => 'index',
+                'globaluser_url_login' => 'index',
+                'globaluser_url_logout' => 'logout',
+                'globaluser_url_home' => 'Home/index',
+            ],
+        ],
+        'user_provider_enable' => true,
         'demo_users' => [
         ],
 
+        'duckcoverage_test_lister' => [TestLister::class ,'GetTestOrderList'],
     ];
 }

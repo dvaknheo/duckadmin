@@ -5,24 +5,23 @@
  */
 namespace DuckAdmin\SingleAdmin\Controller;
 
-use DuckPhp\Foundation\Controller\Helper;
-use DuckAdmin\SingleAdmin\Business\AdminBusiness;
+use DuckPhp\Foundation\Controller\ControllerHelper as Helper;
+use DuckPhp\GlobalAdmin\GlobalAdmin;
 
 class MainController
 {
     public function index()
     {
-
         $data = [];
-        // 已登录直接去主页
         if (Helper::AdminId(false)) {
-            Helper::Show302(Helper::Admin()->urlForHome());
+            $url = Helper::Admin()->urlForHome();
+            Helper::Show302($url);
             return;
         }
-        // POST 处理登录
+        
         if (Helper::IsPost()) {
             try{
-                Helper::Admin()->login(Helper::POST());
+                GlobalAdmin::_()->login(Helper::POST());
                 return;
             }catch(\Exception $ex){
                 $data['error'] = $ex->getMessage();
@@ -33,6 +32,6 @@ class MainController
 
     public function logout()
     {
-        Helper::Admin()->logout();
+        GlobalAdmin::_()->logout();
     }
 }

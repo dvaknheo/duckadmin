@@ -4,7 +4,7 @@
  */
 namespace DuckAdmin\DemoUsers\Controller;
 
-use DuckPhp\Foundation\SessionTrait;
+use DuckPhp\Foundation\Controller\SessionTrait;
 use DuckPhp\GlobalUser\UserSessionInterface;
 use DuckPhp\GlobalUser\UserSessionTrait;
 
@@ -12,14 +12,4 @@ class Session implements UserSessionInterface
 {
     use SessionTrait;
     use UserSessionTrait;
-    public function getCurrentUserId()
-    {
-        $user = $this->get('user', []);
-        return $user['id'] ?? 0;
-    }
-    public function getCurrentUserName(): string
-    {
-        $user = $this->get('user', []);
-        return $user['name'] ?? '';
-    }
 }

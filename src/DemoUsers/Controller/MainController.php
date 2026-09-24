@@ -5,6 +5,8 @@
  */
 namespace DuckAdmin\DemoUsers\Controller;
 
+use DuckPhp\GlobalUser\GlobalUser;
+
 class MainController
 {
     public function index()
@@ -17,7 +19,7 @@ class MainController
         // POST 处理登录
         if (Helper::IsPost()) {
             try{
-                Helper::User()->login(Helper::POST());
+                GlobalUser::_()->login(Helper::POST());
                 return;
             }catch(\Exception $ex){
                 $data['error'] = $ex->getMessage();
@@ -27,6 +29,6 @@ class MainController
     }
     public function logout()
     {
-        Helper::User()->logout();
+        GlobalUser::_()->logout();
     }
 }

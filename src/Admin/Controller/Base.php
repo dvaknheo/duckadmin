@@ -12,7 +12,5 @@ class Base extends AdminControllerBase
     protected function initController()
     {
         parent::initController();
-        Helper::assignViewData('__logined_enable_view', true);
-        Helper::assignViewData('__logined_enable_header_footer', true);
     }
 }

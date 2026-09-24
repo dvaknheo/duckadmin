@@ -19,22 +19,24 @@ class SingleAdminApp extends DuckPhp
         'name' => 'SingleAdmin',
         'installed' =>true,
 
+        'ext' => [
+             GlobalAdmin::class =>[
+                'globaladmin_local_service' => [AdminAction::class, 'localService'],
+                'globaladmin_login_service' => [AdminAction::class, 'localService'],
+                'globaladmin_login_session' => [AdminAction::class, 'session'],
 
-        'admin_provider' => GlobalAdmin::class,
+                'globaladmin_url_home' => 'Home/index',
+                'globaladmin_url_login' => 'index',
+                'globaladmin_url_logout' => 'logout',
 
-        'admin_callback_for_local_service' => [AdminAction::class, 'localService'],
-        'admin_callback_for_login_service' => [AdminAction::class, 'localService'],
-        'admin_callback_for_session' => [AdminAction::class, 'session'],
+                'globaladmin_view_file_header' => '_sys/inc-head',
+                'globaladmin_view_file_footer' => '_sys/inc-foot',
 
-        'admin_url_home' => 'Home/index',
-        'admin_url_login' => 'index',
-        'admin_url_logout' => 'logout',
+            ],
+        ],
 
-        'admin_view_file_header' => '_sys/inc-head',
-        'admin_view_file_footer' => '_sys/inc-foot',
-
+        'admin_provider_enable' => true,
         'duckcoverage_test_lister' => [TestLister::class ,'GetTestOrderList'],
-
         'single_admin_password' => '',
     ];
     //@override
@@ -42,8 +44,4 @@ class SingleAdminApp extends DuckPhp
     {
         parent::onInited();
     }
-    public function _OnDefaultException($ex): void  //@codeCoverageIgnore
-    {
-        var_dump($ex);exit; //@codeCoverageIgnore
-    } //@codeCoverageIgnore
 }

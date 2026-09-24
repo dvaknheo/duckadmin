@@ -6,7 +6,7 @@
 namespace DuckAdmin\DemoUsers\Business;
 
 use DuckPhp\Foundation\SingletonTrait;
-use DuckPhp\Foundation\Business\Helper;
+use DuckPhp\Foundation\Business\BusinessHelper as Helper;
 use DuckPhp\GlobalUser\GlobalUser;
 use DuckPhp\GlobalUser\UserServiceInterface;
 
@@ -14,7 +14,7 @@ class UserBusiness implements UserServiceInterface
 {
     use SingletonTrait;
 
-    public function canAccess($user_id, string $class, string $method, ?string $url = null): bool
+    public function canAccess($user_id, ?string $url = null, ?string $class = null, ?string $method = null ): bool
     {
         return true;
     }
@@ -40,7 +40,7 @@ class UserBusiness implements UserServiceInterface
     /////////////
     public function login(array $post): ?array
     {
-        Helper::FireGlobalEvent(GlobalUser::EVENT_SERVICE_USER_LOGINING, $post);
+        Helper::FireGlobalEvent(Helper::EVENT_SERVICE_USER_LOGINING, $post);
         
         $username = (string)($post['username']??'');
         $password = (string)($post['password']??'');
@@ -58,18 +58,18 @@ class UserBusiness implements UserServiceInterface
             'id'=>$id+1,
             'name'=>$username,
         ];
-        Helper::FireGlobalEvent(GlobalUser::EVENT_SERVICE_USER_LOGINED, $user);
+        Helper::FireGlobalEvent(Helper::EVENT_SERVICE_USER_LOGINED, $user);
         return $user;
     }
     public function logout($id)
     {
-        Helper::FireGlobalEvent(GlobalUser::EVENT_SERVICE_USER_LOGOUTING, $id);
+        Helper::FireGlobalEvent(Helper::EVENT_SERVICE_USER_LOGOUTING, $id);
         //only fire event
-        Helper::FireGlobalEvent(GlobalUser::EVENT_SERVICE_USER_LOGOUTED, $id);
+        Helper::FireGlobalEvent(Helper::EVENT_SERVICE_USER_LOGOUTED, $id);
     }
     public function register(array $post)
     {
-        //override do nothing, not fire event
+        Helper::ThrowOn(true, "注册已被关闭");
     }
 
 }

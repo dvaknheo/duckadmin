@@ -5,7 +5,7 @@
  */
 namespace DuckAdminDemo\Controller;
 
-use DuckPhp\Foundation\Controller\Helper;
+use DuckPhp\Foundation\Controller\ControllerHelper as Helper;
 class MainController
 {
     public function index()
