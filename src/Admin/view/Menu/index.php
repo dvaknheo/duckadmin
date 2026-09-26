@@ -12,8 +12,8 @@ if (!function_exists('renderMenuNode')) {
      * 递归渲染树节点
      */
     function renderMenuNode($item, $urls, $level, $show = 'all') {
-        $typeLabels = [0 => '目录', 1 => '菜单', 2 => '操作'];
-        $typeColors = [0 => 'secondary', 1 => 'primary', 2 => 'info'];
+        $typeLabels = [0 => '目录', 1 => '菜单', 2 => '动作', 3 => '特殊'];
+        $typeColors = [0 => 'secondary', 1 => 'primary', 2 => 'info', 3 => 'warning'];
         $typeLabel = $typeLabels[(int)($item['type'] ?? 1)] ?? '未知';
         $typeColor = $typeColors[(int)($item['type'] ?? 1)] ?? 'secondary';
 

@@ -12,8 +12,8 @@ if (!function_exists('renderScanTree')) {
         $html = '';
         $indent = str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;', $level);
         foreach ($nodes as $n) {
-            $typeLabels = [0 => '目录', 1 => '菜单', 2 => '操作'];
-            $typeColors = [0 => 'secondary', 1 => 'primary', 2 => 'info'];
+            $typeLabels = [0 => '目录', 1 => '菜单', 2 => '动作', 3 => '特殊'];
+            $typeColors = [0 => 'secondary', 1 => 'primary', 2 => 'info', 3 => 'warning'];
             $type = (int)($n['type'] ?? 1);
             $typeLabel = $typeLabels[$type] ?? '未知';
             $typeColor = $typeColors[$type] ?? 'secondary';

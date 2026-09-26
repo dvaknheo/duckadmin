@@ -18,8 +18,8 @@ if (!function_exists('renderPermNode')) {
      */
     function renderPermNode($node, $checkedIds, $disabled) {
         $id = (int)$node['id'];
-        $typeLabels = [0 => '目录', 1 => '菜单', 2 => '操作'];
-        $typeColors = [0 => 'secondary', 1 => 'primary', 2 => 'info'];
+        $typeLabels = [0 => '目录', 1 => '菜单', 2 => '动作', 3 => '特殊'];
+        $typeColors = [0 => 'secondary', 1 => 'primary', 2 => 'info', 3 => 'warning'];
         $type = (int)($node['type'] ?? 1);
         $checked = in_array($id, $checkedIds, true) ? ' checked' : '';
         $dis = $disabled ? ' disabled' : '';

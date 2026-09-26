@@ -13,15 +13,14 @@ if (!function_exists('renderPermNode')) {
      */
     function renderPermNode($node, $checkedIds) {
         $id = (int)$node['id'];
-        $typeLabels = [0 => '目录', 1 => '菜单', 2 => '操作'];
+        $typeLabels = [0 => '目录', 1 => '菜单', 2 => '动作', 3 => '特殊'];
+        $typeColors = [0 => 'secondary', 1 => 'primary', 2 => 'info', 3 => 'warning'];
         $type = (int)($node['type'] ?? 1);
         $checked = in_array($id, $checkedIds, true);
 
         if (!$checked) {
             return;
         }
-
-        $typeColors = [0 => 'secondary', 1 => 'primary', 2 => 'warning'];
         $typeLabel = $typeLabels[$type] ?? '?';
         $typeColor = $typeColors[$type] ?? 'secondary';
         $showUrl = !empty($node['url']) ? ' <code class="perm-url">' . __h($node['url']) . '</code>' : '';

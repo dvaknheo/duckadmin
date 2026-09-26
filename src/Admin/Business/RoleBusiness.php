@@ -44,6 +44,77 @@ class RoleBusiness extends Base
         return RoleModel::_()->getAll();
     }
 
+    /**
+     * 获取职位选项列表（带层级前缀，用于下拉框）
+     */
+    public function getRoleOptions(): array
+    {
+        $all = RoleModel::_()->getAll();
+        $tree = $this->buildTree($all);
+        $options = [];
+        $this->flattenRoleOptions($tree, $options, 0);
+        return $options;
+    }
+
+    /**
+     * 扁平化职位树为选项列表（带缩进前缀）
+     */
+    protected function flattenRoleOptions(array $nodes, array &$options, int $level): void
+    {
+        foreach ($nodes as $node) {
+            $indent = $level > 0 ? str_repeat("\u00a0\u00a0\u00a0", $level - 1) . ($level > 1 ? "\u00a0 " : '') : '';
+            $prefix = $level > 0 ? ($level > 1 ? '├─ ' : '├─ ') : '';
+            $options[] = [
+                'id' => $node['id'],
+                'name' => $indent . ($level > 0 ? $prefix : '') . $node['name'],
+                'depth' => $level,
+            ];
+            if (!empty($node['children'])) {
+                $this->flattenRoleOptions($node['children'], $options, $level + 1);
+            }
+        }
+    }
+
+    /**
+     * 获取职位树形结构
+     */
+    public function getTree(string $search = ''): array
+    {
+        $all = RoleModel::_()->getAll();
+
+        // 过滤搜索
+        if ($search !== '') {
+            $all = array_values(array_filter($all, function ($row) use ($search) {
+                return stripos($row['name'], $search) !== false;
+            }));
+        }
+
+        return $this->buildTree($all);
+    }
+
+    /**
+     * 构建树形结构
+     */
+    protected function buildTree(array $items): array
+    {
+        $map = [];
+        $tree = [];
+        foreach ($items as $item) {
+            $item['children'] = [];
+            $map[$item['id']] = $item;
+        }
+        foreach ($map as $id => &$node) {
+            $pid = (int)($node['pid'] ?? 0);
+            if ($pid && isset($map[$pid])) {
+                $map[$pid]['children'][] = &$node;
+            } else {
+                $tree[] = &$node;
+            }
+        }
+        unset($node);
+        return $tree;
+    }
+
     public function getById(int $id): ?array
     {
         return RoleModel::_()->getById($id);

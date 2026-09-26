@@ -72,7 +72,7 @@ class AdminController extends Base
     public function create()
     {
         $data['title'] = '新增人员';
-        $data['roles'] = RoleBusiness::_()->getAll(); // 可分配的职位列表
+        $data['roles'] = RoleBusiness::_()->getRoleOptions(); // 可分配的职位列表
         $data['urls'] = [
             'save' => __url('Admin/save'),
             'list' => __url('Admin/index'),
@@ -104,7 +104,7 @@ class AdminController extends Base
         }
         $data['title'] = '新增人员';
         $data['input'] = $input;
-        $data['roles'] = RoleBusiness::_()->getAll();
+        $data['roles'] = RoleBusiness::_()->getRoleOptions();
         $data['urls'] = [
             'save' => __url('Admin/save'),
             'list' => __url('Admin/index'),
@@ -128,7 +128,7 @@ class AdminController extends Base
         $data['user'] = $user;
         $data['user']['role_id'] = RoleUserModel::_()->getUserRoleId($id); // 用户当前职位
         $data['title'] = '编辑人员';
-        $data['roles'] = RoleBusiness::_()->getAll(); // 可分配的职位列表
+        $data['roles'] = RoleBusiness::_()->getRoleOptions(); // 可分配的职位列表
         $data['urls'] = [
             'update' => __url('Admin/update'),
             'list' => __url('Admin/index'),
@@ -161,7 +161,7 @@ class AdminController extends Base
         }
         $data['user'] = $input + ['id' => $id, 'role_id' => $roleId];
         $data['title'] = '编辑人员';
-        $data['roles'] = RoleBusiness::_()->getAll();
+        $data['roles'] = RoleBusiness::_()->getRoleOptions();
         $data['urls'] = [
             'update' => __url('Admin/update'),
             'list' => __url('Admin/index'),

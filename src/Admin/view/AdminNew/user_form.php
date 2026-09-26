@@ -6,11 +6,31 @@
  * @var string $error
  * @var array $urls  (save/update, list)
  * @var bool $is_edit
+ * @var array $roles 树形职位选项
  */
 $data = $is_edit ? $user : ($input ?? []);
 $title = $is_edit ? '编辑人员' : '新增人员';
 $form_url = $is_edit ? ($urls['update'] ?? '') : ($urls['save'] ?? '');
+
+$selectedRoleId = (int)($data['role_id'] ?? 0);
+$selectedRoleName = '未分配';
+foreach ($roles as $r) {
+    if ((int)$r['id'] === $selectedRoleId) {
+        $selectedRoleName = $r['name'];
+        break;
+    }
+}
 ?>
+<style>
+.role-tree-dropdown { min-width: 100%; }
+.role-tree-dropdown .dropdown-item { padding: 0.25rem 0.75rem; white-space: nowrap; }
+.role-tree-dropdown .role-item { display: block; width: 100%; text-align: left; border: none; background: none; cursor: pointer; padding: 0.25rem 0.75rem; }
+.role-tree-dropdown .role-item:hover { background-color: #f8f9fa; }
+.role-tree-dropdown .role-item.selected { background-color: #e7f1ff; color: #0d6efd; font-weight: 500; }
+.role-tree-dropdown ul { list-style: none; padding-left: 0; margin: 0; }
+.role-tree-dropdown li { padding: 0; }
+.role-tree-dropdown .depth-0 { font-weight: 600; padding-left: 0.5rem; }
+</style>
 
 <div class="page-header">
     <h4><?= __h($title) ?></h4>
@@ -60,14 +80,26 @@ $form_url = $is_edit ? ($urls['update'] ?? '') : ($urls['save'] ?? '');
 
             <div class="mb-3">
                 <label class="form-label">职位</label>
-                <select name="role_id" class="form-select">
-                    <option value="0">未分配</option>
-                    <?php foreach ($roles ?? [] as $r): ?>
-                        <option value="<?= (int)$r['id'] ?>" <?= ((int)($data['role_id'] ?? 0) === (int)$r['id']) ? 'selected' : '' ?>>
-                            <?= __h($r['name']) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
+                <div class="dropdown">
+                    <input type="hidden" name="role_id" id="role_id" value="<?= $selectedRoleId ?>">
+                    <button class="btn btn-outline-secondary dropdown-toggle w-100 text-start" type="button" id="roleDropdown" data-bs-toggle="dropdown" data-bs-auto-close="outside">
+                        <span id="roleLabel"><?= __h($selectedRoleName) ?></span>
+                    </button>
+                    <ul class="dropdown-menu role-tree-dropdown w-100" style="max-height: 300px; overflow-y: auto;">
+                        <li>
+                            <button type="button" class="role-item <?= $selectedRoleId === 0 ? 'selected' : '' ?>" data-value="0" data-name="未分配">
+                                未分配
+                            </button>
+                        </li>
+                        <?php foreach ($roles as $r): ?>
+                        <li>
+                            <button type="button" class="role-item <?= ($r['depth'] ?? 0) == 0 ? 'depth-0' : '' ?> <?= $selectedRoleId === (int)$r['id'] ? 'selected' : '' ?>" data-value="<?= (int)$r['id'] ?>" data-name="<?= __h($r['name']) ?>">
+                                <?= str_repeat("\u00a0\u00a0\u00a0", $r['depth'] ?? 0) ?><?= ($r['depth'] ?? 0) > 0 ? '├─ ' : '' ?><?= __h($r['name']) ?>
+                            </button>
+                        </li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
             </div>
 
             <div class="mb-3">
@@ -88,3 +120,16 @@ $form_url = $is_edit ? ($urls['update'] ?? '') : ($urls['save'] ?? '');
         </form>
     </div>
 </div>
+
+<script>
+document.querySelectorAll('.role-item').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        var value = this.getAttribute('data-value');
+        var name = this.getAttribute('data-name');
+        document.getElementById('role_id').value = value;
+        document.getElementById('roleLabel').textContent = name;
+        document.querySelectorAll('.role-item').forEach(function(b) { b.classList.remove('selected'); });
+        this.classList.add('selected');
+    });
+});
+</script>
