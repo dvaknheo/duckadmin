@@ -5,14 +5,11 @@
  */
 namespace DuckAdmin\User\Business;
 
-use DuckPhp\Foundation\Business\Helper;
-use DuckPhp\Foundation\SingletonTrait;
+use DuckPhp\Foundation\Business\Base;
 use DuckAdmin\User\Model\UserAdminModel;
 
-class UserAdminBusiness
+class UserAdminBusiness extends Base
 {
-    use SingletonTrait;
-
     public function getUserList($conditions=[],$page = 1, $page_size = 10)
     {
         //我们这里要加个显示被禁用的用户等

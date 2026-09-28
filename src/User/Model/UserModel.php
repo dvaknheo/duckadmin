@@ -5,13 +5,10 @@
  */
 namespace DuckAdmin\User\Model;
 
-use DuckPhp\Foundation\ModelTrait;
-use DuckPhp\Foundation\Model\Helper;
+use DuckPhp\Foundation\Model\Base;
 
-class UserModel
+class UserModel extends Base
 {
-    use ModelTrait;
-    
     public function __construct()
     {
         $this->table_name = "Users";

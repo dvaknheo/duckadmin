@@ -5,18 +5,15 @@
  */
 namespace DuckAdmin\User\Business;
 
-use DuckPhp\Foundation\Business\Helper;
-use DuckPhp\Foundation\SingletonTrait;
+use DuckPhp\Foundation\Business\Base;
 use DuckAdmin\User\Model\UserModel;
 
 /**
  * 我们偷懒，把 BusinessHelper 集成进这里,基类我们也不要了，毕竟只有一个
  * 绑定异常，
  */
-class UserBusiness
+class UserBusiness extends Base
 {
-    use SingletonTrait;
-
     public function log(int $user_id, string $string, ?string $type = null)
     {
         return;

@@ -6,10 +6,9 @@
 
 namespace DuckAdmin\User\Controller;
 
-use DuckPhp\Helper\ControllerHelperTrait;
-class Helper
+use DuckPhp\Foundation\Controller\ControllerHelper;
+class Helper extends ControllerHelper
 {
-    use ControllerHelperTrait;
     public function goHome()
     {
         Helper::Show302(UserAction::_()->urlForHome());

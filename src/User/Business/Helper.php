@@ -6,9 +6,9 @@
  */
 namespace DuckAdmin\User\Business;
 
-use DuckPhp\Helper\BusinessHelperTrait;
+use DuckPhp\Foundation\Business\BusinessHelper;
 
-class Helper
+class Helper extends BusinessHelper
 {
-    use BusinessHelperTrait;
+    //
 }
