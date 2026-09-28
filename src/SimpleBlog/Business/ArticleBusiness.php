@@ -3,10 +3,10 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace SimpleBlog\Business;
+namespace DuckAdmin\SimpleBlog\Business;
 
-use SimpleBlog\Model\ArticleModel;
-use SimpleBlog\Model\CommentModel;
+use DuckAdmin\SimpleBlog\Model\ArticleModel;
+use DuckAdmin\SimpleBlog\Model\CommentModel;
 
 class ArticleBusiness extends Base
 {

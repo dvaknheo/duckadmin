@@ -3,31 +3,23 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace SimpleBlog\Business;
+namespace DuckAdmin\SimpleBlog\Business;
 
-use SimpleBlog\Model\ActionLogModel;
-use SimpleBlog\Model\CommentModel;
-use SimpleBlog\Model\UserModel;
+use DuckAdmin\SimpleBlog\Model\CommentModel;
 
 class UserBusiness extends Base
 {
     public function addComment($user_id, $article_id, $content)
     {
-        $names = Helper::UserService()->batchGetUsernames([$user_id]);
-        $username=$names[$user_id]??'--';
-        
         CommentModel::_()->addData($user_id, $article_id, $content);
-        //ActionLogModel::_()->log("{$user_id}-{$username} 评论成功");
+        Helper::User()->log("{$article_id} 评论成功");
     }
     public function deleteCommentByUser($user_id, $comment_id)
     {
-        $names = Helper::UserService()->batchGetUsernames([$user_id]);
-        $username=$names[$user_id]??'--';
-        
         $comment = CommentModel::_()->get($comment_id);
-        Helper::BusinessThrowOn(!$comment, "没找到评论",-1);
-        Helper::BusinessThrowOn($comment['user_id'] != $user_id, "不是你的评论", -1);
-        CommentModel::_()->delete($id);
-        //ActionLogModel::_()->log("{$user_id}-{$username} 删除评论成功");
+        Helper::ThrowOn(!$comment, "没找到评论",-1);
+        Helper::ThrowOn($comment['user_id'] != $user_id, "不是你的评论", -1);
+        CommentModel::_()->delete($comment_id);
+        Helper::User()->log("删除评论成功");
     }
 }

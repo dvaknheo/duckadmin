@@ -3,7 +3,7 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace SimpleBlog\Controller;
+namespace DuckAdmin\SimpleBlog\Controller;
 
 use DuckPhp\Foundation\Controller\UserControllerBase;
 

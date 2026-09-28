@@ -3,7 +3,7 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace SimpleBlog\Model;
+namespace DuckAdmin\SimpleBlog\Model;
 
 
 class CommentModel extends Base

@@ -3,33 +3,29 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace SimpleBlog\System;
+namespace DuckAdmin\SimpleBlog\System;
 
 use DuckPhp\DuckPhp;
-use SimpleBlog\Controller\ExceptionReporter;
-
 class SimpleBlogApp extends DuckPhp
 {
     public $options = [
         'path' => __DIR__ . '/../',
         'namespace' => 'SimpleBlog',
-        
-        'exception_reporter' =>  ExceptionReporter::class,
-        'exception_for_project'  => ProjectException::class,
-        'exception_for_business'  => ProjectException::class,
-        'exception_for_controller'  => ProjectException::class,
+        'name'  => 'DuckUser',
+        'data_file_enable' => true,
+
+        'ext' => [
+            RouteHookWebInstaller::class => [
+                'web_installer_use_redis' => false,
+                'web_installer_use_database' => true,
+                'web_installer_database_drivers' => ['sqlite' => true],
+                //'web_installer_view' => 'install',
+            ],
+        ],
         
         'rewrite_map' => [
             '~article/(\d+)/?(\d+)?' => 'article?id=$1&page=$2',
         ],
         
-        'need_install'=>true,
-        'database_driver'=>'sqlite',
-        
-        'cli_command_with_fast_installer' => true,
-        'install_input_desc' => <<<EOT
-welcome to use SimpleBlog
-EOT
-        ,
     ];
 }

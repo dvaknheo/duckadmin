@@ -4,14 +4,10 @@
  * From this time, you never be alone~
  */
 
-namespace SimpleBlog\System;
+namespace DuckAdmin\SimpleBlog\System;
 
-use DuckPhp\Foundation\SimpleExceptionTrait;
+use Exception;
 
-/**
- * 这是工程的错误基类。 可以使用 ThrowOn
- */
-class ProjectException extends \Exception
+class ProjectException extends Exception
 {
-    use SimpleExceptionTrait;
 }

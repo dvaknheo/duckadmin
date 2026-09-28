@@ -3,10 +3,10 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace SimpleBlog\Controller;
+namespace DuckAdmin\SimpleBlog\Controller;
 
-use SimpleBlog\Business\ArticleBusiness;
-use SimpleBlog\Business\UserBusiness;
+use DuckAdmin\SimpleBlog\Business\ArticleBusiness;
+use DuckAdmin\SimpleBlog\Business\UserBusiness;
 
 class MainController
 {

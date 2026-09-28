@@ -4,7 +4,7 @@
  * From this time, you never be alone~
  */
 
-namespace SimpleBlog\Business;
+namespace DuckAdmin\SimpleBlog\Business;
 
 use DuckPhp\Foundation\Business\BusinessHelper;
 

@@ -4,34 +4,18 @@
  * From this time, you never be alone~
  */
 
-namespace SimpleBlog\Controller;
+namespace DuckAdmin\SimpleBlog\Controller;
 
+use DuckAdmin\SimpleBlog\Business\ArticleBusiness;
+use DuckAdmin\SimpleBlog\Business\AdminBusiness;
 use DuckPhp\Foundation\Controller\AdminControllerBase;
 
-use SimpleBlog\Business\ArticleBusiness;
-use SimpleBlog\Business\AdminBusiness;
 class adminController extends AdminControllerBase
 {
-    protected function mergeViewData()
-    {
-        $data = [
-            'url_articles' => 'admin/articles',
-            'url_comments' => 'admin/comments',
-            'url_logs' => 'admin/logs',
-        ];
-        
-        array_walk($data, function (&$v) {
-            $v = __url($v);
-        });
-        $data['url_logout'] = Helper::Admin()->urlForLogout();
-        Helper::setViewHeadFoot('admin/inc_head', 'admin/inc_foot');
-        Helper::assignViewData($data);
-    }
     public function index()
     {
         Helper::Show([], 'admin/main');
     }
-
     public function articles()
     {
         $url_add = __url('admin/article_add');
@@ -40,8 +24,6 @@ class adminController extends AdminControllerBase
             'url_edit' => 'admin/article_edit?id={id}',
             'url_delete' => 'admin/article_delete?id={id}',
         ]);
-        
-        //$data = $this->addExtViewData($data);
         Helper::Show(get_defined_vars(), 'admin/article_list');
     }
     public function article_add()
