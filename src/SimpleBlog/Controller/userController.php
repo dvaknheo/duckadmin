@@ -5,26 +5,14 @@
  */
 namespace SimpleBlog\Controller;
 
-use DuckPhp\Foundation\SingletonTrait;
+use DuckPhp\Foundation\Controller\UserControllerBase;
 
-use SimpleBlog\Business\ArticleBusiness;
-use SimpleBlog\Business\UserBusiness;
 
-class userController
+class userController extends UserControllerBase
 {
-    use SingletonTrait;
-
-    public function __construct()
-    {
-        $this->initController();
-    }
-    protected function initController()
-    {
-        Helper::User()->checkAccess();
-    }
     public function index()
     {
         $data =[];
-        Helper::User()->Show($data);
+        Helper::Show($data); //TODO 显示我的评论，可以在此删除评论
     }
 }

@@ -6,11 +6,9 @@
 
 namespace SimpleBlog\Business;
 
-use DuckPhp\Core\App;
-use DuckPhp\Component\GlobalUser;
-use DuckPhp\Helper\BusinessHelperTrait;
+use DuckPhp\Foundation\Business\BusinessHelper;
 
-class Helper
+class Helper extends BusinessHelper
 {
-    use BusinessHelperTrait;
+    //
 }

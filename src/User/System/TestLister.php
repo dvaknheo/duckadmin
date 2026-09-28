@@ -13,7 +13,10 @@ class TestLister
     {
         return static::_()->_GetShortTestOrderList();
     }
-
+    public static function _GetShortTestOrderList(): string
+    {
+        return '';
+    }
     public static function _GetTestList(): string
     {
         $list_referenct = <<<EOT
@@ -24,15 +27,6 @@ UserBusiness UserBusiness@canAccess user_id=&class=&method=&url=
 CALL DuckAdmin\DemoUsers\Business\UserBusiness@log user_id=&string=&type=&ext=
 CALL DuckAdmin\DemoUsers\Business\UserBusiness@batchGetUsernames ids=
 CALL DuckAdmin\DemoUsers\Business\UserBusiness@login post=
-[m1 2026-09-10_02_31_40.211]MAN-WEB /fulluser/
-[m1 2026-09-10_02_31_41.292]MAN-WEB /fulluser/install
-[m1 2026-09-10_02_32_02.648]MAN-WEB /fulluser/install driver=sqlite&database%5Bfile%5D={db}&database%5Bhost%5D=127.0.0.1&database%5Bport%5D=&database%5Bdbname%5D=&database%5Busername%5D=&database%5Bpassword%5D=&action=install
-[m1 2026-09-10_02_32_05.952]MAN-WEB /fulluser/
-[m1 2026-09-10_02_32_09.635]MAN-WEB /fulluser/register
-[m1 2026-09-10_02_32_17.227]MAN-WEB /fulluser/register _token=Nos6FHBP3NNTC39H4JAXuOUY6fGFepgPYgiO7S7l&name=t1&password=123456&password_confirm=123456
-[m1 2026-09-10_02_32_18.575]MAN-WEB /fulluser/Home/index
-[m1 2026-09-10_02_32_56.475]MAN-WEB /fulluser/Home/index
-
 
 EOT;
 

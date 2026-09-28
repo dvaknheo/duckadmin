@@ -32,8 +32,7 @@ class MainController
 
         if (Helper::IsPOST()) {
             try {
-            Helper::ThrowOn(empty(Helper::AppOptions('user_provider')), "本用户系统已经关闭");
-            Helper::User()->register(Helper::Post());
+                GlobalUser::_()->register(Helper::Post());
             return;
             } catch (\Exception $ex) {
                 $data['error'] = $ex->getMessage();
@@ -49,8 +48,7 @@ class MainController
         $data = [];
         if (Helper::IsPOST()) {
             try {
-                Helper::ThrowOn(empty(Helper::AppOptions('user_provider')), "本用户系统已经关闭");
-                Helper::User()->login(Helper::POST());
+                GlobalUser::_()->login(Helper::POST());
                 return;
             } catch (\Exception $ex) {
                 $data['error'] = $ex->getMessage();
@@ -65,10 +63,6 @@ class MainController
     }
     public function logout()
     {
-        if (empty(Helper::AppOptions('user_provider'))) {
-            Helper::Show302(Helper::User()->urlForHome());
-            return;
-        }
-        Helper::User()->logout();
+        GlobalUser::_()->logout();
     }
 }

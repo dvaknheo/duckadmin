@@ -6,13 +6,10 @@
 
 namespace SimpleBlog\Controller;
 
-use DuckPhp\Core\App;
-use DuckPhp\Helper\ControllerHelperTrait;
+use DuckPhp\Controller\ControllerHelper;
 
-class Helper
+class Helper extends ControllerHelper
 {
-    use ControllerHelperTrait;
-
     public function recordsetUrl($data, $cols_map = [])
     {
         //need more quickly;

@@ -16,16 +16,8 @@ class MainController
     }
     protected function initController()
     {
+        Helper::checkInstall();
         return;
-    }
-    protected function addExtViewData($data)
-    {
-        $data['url_reg'] = Helper::User()->urlForRegist();
-        $data['url_login'] = Helper::User()->urlForLogin();
-        $data['url_logout'] = Helper::User()->urlForLogout();
-        $data['url_admin'] = __url('Admin/index');
-        
-        return $data;
     }
     public function index()
     {
@@ -70,8 +62,7 @@ class MainController
         if(!Helper::POST()){
             return;
         }
-$uid = Helper::UserId();
-        UserBusiness::_()->deleteCommentByUser($uid, Helper::POST('id'));
+        UserBusiness::_()->deleteCommentByUser(Helper::UserId(), Helper::POST('id'));
         Helper::Show302('');
     }
 

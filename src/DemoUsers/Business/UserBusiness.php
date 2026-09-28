@@ -7,7 +7,6 @@ namespace DuckAdmin\DemoUsers\Business;
 
 use DuckPhp\Foundation\SingletonTrait;
 use DuckPhp\Foundation\Business\BusinessHelper as Helper;
-use DuckPhp\GlobalUser\GlobalUser;
 use DuckPhp\GlobalUser\UserServiceInterface;
 
 class UserBusiness implements UserServiceInterface

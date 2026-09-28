@@ -5,14 +5,11 @@
  */
 namespace SimpleBlog\Model;
 
-use DuckPhp\Foundation\SimpleModelTrait;
-use DuckPhp\Helper\ModelHelperTrait;
+use DuckPhp\Foundation\Model\ModelTrait;
 
 class Base
 {
-    use SimpleModelTrait;
-    use ModelHelperTrait;
-    
+    use ModelTrait;
     //public $table_name = null;
 
     public function get($id)

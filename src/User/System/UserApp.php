@@ -18,35 +18,35 @@ class UserApp extends DuckPhp
         'path' => __DIR__ . '/../',
         'namespace' => "DuckAdmin\\User",
         'name'  => 'DuckUser',
-
         'data_file_enable' => true,
+
         'ext' => [
-            RouteHookWebInstaller::class => true,
+            RouteHookWebInstaller::class => [
+                'web_installer_use_redis' => false,
+                'web_installer_use_database' => true,
+                'web_installer_database_drivers' => ['sqlite' => true],
+                'web_installer_view' => 'install',
+
+            ],
+            GlobalUser::class => [
+                'globaluser_local_service' =>  [UserAction::class,'service'],
+                'globaluser_login_service' =>  [UserAction::class,'service'],
+                'globaluser_login_session' => [UserAction::class,'session'],
+
+                'globaluser_url_home' => 'Home/index',
+                'globaluser_url_register' => 'register',
+                'globaluser_url_login' => 'login',
+                'globaluser_url_logout' => 'logout',
+                'globaluser_view_file_header' => '_sys/inc-head',
+                'globaluser_view_file_footer' => '_sys/inc-foot',
+            ]
         ],
-        'web_installer_use_redis' => false,
-        'web_installer_use_database' => true,
-        'web_installer_database_drivers' => ['sqlite' => true],
-        'web_installer_view' => 'install',
 
-        'use_admin_view' => true,
-        'use_user_view' => true,
-        //'table_prefix' => '',   // 表前缀
-        'session_prefix' => 'duckuser_',  // Session 前缀
-        
-        /////////////////
-        'user_provider' => GlobalUser::class,
-        'user_callback_for_local_service' =>  [UserAction::class,'service'],
-        'user_callback_for_login_service' =>  [UserAction::class,'service'],
-        'user_callback_for_session' => [UserAction::class,'session'],
-
-        'user_url_home' => 'Home/index',
-        'user_url_register' => 'register',
-        'user_url_login' => 'login',
-        'user_url_logout' => 'logout',
-        'user_view_file_header' => '_sys/inc-head',
-        'user_view_file_footer' => '_sys/inc-foot',
-        ///////////////////
-
+        ///////
+        //'table_prefix' => '',
+        //'session_prefix' => 'duckuser_',
+        'user_provider_enable' => true,
+        'url_user_home' => 'Home/index',
         'duckcoverage_test_lister'=> [TestLister::class ,'GetTestList'],
     ];
 }

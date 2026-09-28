@@ -6,25 +6,12 @@
 
 namespace SimpleBlog\Controller;
 
-use DuckPhp\GlobalAdmin\AdminControllerInterface;
-use DuckPhp\Foundation\SingletonTrait;
+use DuckPhp\Foundation\Controller\AdminControllerBase;
 
 use SimpleBlog\Business\ArticleBusiness;
 use SimpleBlog\Business\AdminBusiness;
-class adminController implements AdminControllerInterface
+class adminController extends AdminControllerBase
 {
-    use SingletonTrait;
-
-    public function __construct()
-    {
-        $this->initController();
-    }
-    protected function initController()
-    {
-        Helper::Admin()->checkAccess();
-        $this->mergeViewData();
-    }
-    
     protected function mergeViewData()
     {
         $data = [
@@ -42,7 +29,7 @@ class adminController implements AdminControllerInterface
     }
     public function index()
     {
-        Helper::Admin()->Show([], 'admin/main');
+        Helper::Show([], 'admin/main');
     }
 
     public function articles()
@@ -55,7 +42,7 @@ class adminController implements AdminControllerInterface
         ]);
         
         //$data = $this->addExtViewData($data);
-        Helper::Admin()->Show(get_defined_vars(), 'admin/article_list');
+        Helper::Show(get_defined_vars(), 'admin/article_list');
     }
     public function article_add()
     {
@@ -70,7 +57,7 @@ class adminController implements AdminControllerInterface
     {
         if(!Helper::POST()){
             $article = AdminBusiness::_()->getArticle(Helper::GET('id',0));
-            Helper::ControllerThrowOn(!$article, "找不到文章");
+            Helper::ThrowOn(!$article, "找不到文章");
             $article['title'] = __h($article['title']);
             $article['content'] = __h($article['content']);
             Helper::Show(get_defined_vars(), 'admin/article_update');
@@ -95,7 +82,7 @@ class adminController implements AdminControllerInterface
             'url_edit' => 'admin/article_edit?id={id}',
             'url_delete' => 'admin/delete_comments?id={id}',
         ]);
-        Helper::Admin()->Show(get_defined_vars());
+        Helper::Show(get_defined_vars());
     }
     public function delete_comments()
     {

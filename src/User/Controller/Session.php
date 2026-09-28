@@ -5,7 +5,7 @@
  */
 namespace DuckAdmin\User\Controller;
 
-use DuckPhp\Foundation\SessionTrait;
+use DuckPhp\Foundation\Controller\SessionTrait;
 use DuckPhp\GlobalUser\UserSessionTrait;
 
 /**

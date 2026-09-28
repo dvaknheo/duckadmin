@@ -17,19 +17,13 @@
 	"version": "1.3.7",
     "autoload": {
         "psr-4": {
-            "DuckAdmin\\Admin\\": "src/Admin/",
-            "DuckAdmin\\User\\": "src/User/",
-            "DuckAdmin\\SingleAdmin\\": "src/SingleAdmin/",
-            "DuckAdmin\\DemoUsers\\": "src/DemoUsers/",
-            "DuckAdmin\\SimpleBlog\\": "src/SimpleBlog",
-
-            "DuckAdmin\\": "src/DuckAdmin"
+            "DuckAdmin\\": "src/"
         }
     },
     "require": {
         "php": ">=7.4.0",
-        "dvaknheo/duckphp": "*",
-        "dvaknheo/duckcoverage": "*"
+        "dvaknheo/duckphp": "^1.4.1",
+        "dvaknheo/duckcoverage": "^1.0.1"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.6",
