@@ -3,7 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-namespace DuckAdminDemo\Controller;
+namespace DuckAdmin\System;
 
 use DuckPhp\Foundation\Controller\ControllerHelper as Helper;
 class MainController

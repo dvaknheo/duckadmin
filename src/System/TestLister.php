@@ -3,8 +3,9 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-namespace DuckAdminDemo\System;
+namespace DuckAdmin\System;
 
+use DuckPhp\Core\App;
 use DuckPhp\Foundation\SingletonTrait;
 
 class TestLister
@@ -17,10 +18,10 @@ class TestLister
     }
     public function _GetTestList()
     {
-        $flag = DemoApp::_()->options['customer_duckcoverage_only_this_child'] ?? null;
+        $flag = App::_()->options['customer_duckcoverage_only_this_child'] ?? null;
         $list = [];
         $list[] ="#PHASE_BEGIN";
-        foreach (DemoApp::_()->options['app'] as $app => $options) {
+        foreach (App::_()->options['app'] as $app => $options) {
             if (isset($flag)) {
                 if ($app === $flag) {
                     $list[] ="#INCLUDE_CHILD $app";

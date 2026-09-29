@@ -3,17 +3,17 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-namespace DuckAdminDemo\System;
+namespace DuckAdmin\System;
 
 use DuckPhp\DuckPhp;
-use DuckAdminDemo\System\TestLister;
 
-class DemoApp extends DuckPhp
+class DuckAdminApp extends DuckPhp
 {
     public $options = [
         'is_debug' => true,
-        'path' => __DIR__.'/../',
-        'namespace' => 'DuckAdminDemo',
+        'path' => __DIR__.'/../../',
+        'namespace' => 'DuckAdmin',
+        'namespace_controller' => 'System',
         'installed' => true,
         'data_file_enable' => true,
 
