@@ -6,7 +6,7 @@
 namespace DuckAdmin\Admin\Business;
 
 use DuckAdmin\Admin\Model\PermissionModel;
-
+//@codeCoverageIgnoreStart
 class TestBusiness extends Base
 {
     public function rebuild_menu()
@@ -26,5 +26,4 @@ class TestBusiness extends Base
     {
         return 'test';
     }
-
-}
+} //@codeCoverageIgnoreEnd

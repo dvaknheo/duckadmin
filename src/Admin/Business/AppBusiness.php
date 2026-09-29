@@ -162,8 +162,4 @@ class AppBusiness extends Base
         $tree = Helper::_()->permissionMenu()->permissionMenuTreeToSideMenuTree($tree);
         return $tree;
     }
-    public function updateMenuConfigJson()
-    {
-        //
-    }
 }

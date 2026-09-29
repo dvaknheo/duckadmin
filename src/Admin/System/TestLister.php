@@ -59,7 +59,6 @@ class TestLister
 
         // ========== 初始化阶段（必须）==========
         $list[] = '#PHASE_BEGIN';
-        $list[] = 'CALL {static}::BeforeTest';
         $list[] = 'WEB install';
         $list[] = "WEB install driver=sqlite&database[file]={$dbFile}&admin_name=" . self::ADMIN_NAME . "&admin_password=" . self::ADMIN_PASSWORD . "&admin_password_confirm=" . self::ADMIN_PASSWORD;
         $list[] = 'WEB login';

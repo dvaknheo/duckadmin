@@ -4,13 +4,9 @@
  */
 namespace DuckAdmin\Admin\Business;
 
-use DuckPhp\Foundation\Business\Base as BusinessBase;
-use DuckAdmin\Admin\Controller\Session;
+use DuckPhp\Foundation\SingletonTrait;
 
-class Base extends BusinessBase
+class Base
 {
-    public function getCurrentAdminId()
-    {
-        return (int)Session::_()->getCurrentAdminId();
-    }
+    use SingletonTrait;
 }
