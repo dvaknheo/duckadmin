@@ -8,12 +8,10 @@ require_once __DIR__.'/../../vendor/autoload.php';
 DuckPhp\Core\AutoLoader::RunQuickly([
     'psr-4'=>[
         "DuckAdminDemo\\" => __DIR__."/../",
-        "DuckAdmin\\SingleAdmin\\" => __DIR__."/../../src/SingleAdmin/",
-        "DuckAdmin\\DemoUsers\\" => __DIR__."/../../src/DemoUsers/",
     ],
 ]);
 $options=[
     // ...
 ];
-ini_set('display_errors',1);
+ini_set('display_errors', '1');
 \DuckAdminDemo\System\DemoApp::RunQuickly($options);

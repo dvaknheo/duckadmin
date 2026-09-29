@@ -22,8 +22,8 @@ class DemoApp extends DuckPhp
             \DuckAdmin\Admin\System\AdminApp::class => [
                 'controller_url_prefix' => 'admin/',
 
-                'customer_duckcoverage_short' =>  false,
-                'customer_duckcoverage_clean' =>  false,
+                //'customer_duckcoverage_short' =>  false,
+                //'customer_duckcoverage_clean' =>  false,
             ],
 //*/
 //*
@@ -84,7 +84,7 @@ class DemoApp extends DuckPhp
 
 
         if(class_exists(\DuckCoverage\DuckCoverage::class)){
-            $this->options['duckcoverage_path_src'] = realpath(__DIR__ . '/../../') . '/src/Admin/';
+            $this->options['duckcoverage_path_src'] = realpath(__DIR__ . '/../../') . '/src/';
             \DuckCoverage\DuckCoverage::Prepare([]);
         }
     }

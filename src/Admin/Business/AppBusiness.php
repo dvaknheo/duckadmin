@@ -63,7 +63,7 @@ class AppBusiness extends Base
 
     public function checkInstall(array $post): array
     {
-        Helper::Validator::_()->init([
+        Helper::Validator()->init([
             'admin_name' => 'required',
             'admin_password' => 'required|minLen:6',
             'admin_password_confirm' => 'required',

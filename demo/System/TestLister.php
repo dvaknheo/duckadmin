@@ -17,17 +17,13 @@ class TestLister
     }
     public function _GetTestList()
     {
-        $list = <<<EOT
-#PHASE_BEGIN
-COMMENT DuckAdminTests;
-#INCLUDE_CHILD DuckAdmin\Admin\System\AdminApp
-COMMENT #INCLUDE_CHILD DuckAdmin\DemoUsers\System\DemoUsersApp
-COMMENT #INCLUDE_CHILD DuckAdmin\SingleAdmin\System\SingleAdminApp
-#INCLUDE_CHILD DuckAdmin\User\System\UserApp
-#PHASE_END
-
-EOT;
-        return $list;
+        $list = [];
+        $list[] ="#PHASE_BEGIN";
+        foreach (DemoApp::_()->options['app'] as $app => $options) {
+            $list[] ="#INCLUDE_CHILD $app";
+        }
+        $list[] ="#PHASE_END";
+        return implode("\n",$list);
     }
    
 
