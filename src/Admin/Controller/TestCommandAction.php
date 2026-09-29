@@ -1,15 +1,10 @@
 <?php declare(strict_types=1);
-/**
- * DuckPhp Admin System - App Action
- * Web 安装器(RouteHookWebInstaller)的自定义回调，Controller 层
- */
+
 namespace DuckAdmin\Admin\Controller;
 
-use DuckAdmin\Admin\Business\AppBusiness;
 use DuckAdmin\Admin\Business\TestBusiness;
-use DuckAdmin\Admin\Model\PermissionModel;
 use DuckPhp\Foundation\SingletonTrait;
-
+//@codeCoverageIgnoreStart
 class TestCommandAction
 {
     use SingletonTrait;
@@ -33,4 +28,4 @@ class TestCommandAction
         echo json_encode($ret,JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
         echo "\n".DATE(DATE_ATOM)."\n";
     }
-}
+} //@codeCoverageIgnoreEnd

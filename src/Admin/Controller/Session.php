@@ -12,12 +12,4 @@ class Session implements AdminSessionInterface
 {
     use SessionTrait;
     use AdminSessionTrait;
-    
-    /**
-     * 获取当前用户姓名
-     */
-    public function getRealname(): ?string
-    {
-        return $this->get('realname');
-    }
 }
