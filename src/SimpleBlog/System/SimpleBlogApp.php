@@ -6,12 +6,13 @@
 namespace DuckAdmin\SimpleBlog\System;
 
 use DuckPhp\DuckPhp;
+use DuckPhp\Ext\RouteHookWebInstaller;
 class SimpleBlogApp extends DuckPhp
 {
     public $options = [
         'path' => __DIR__ . '/../',
         'namespace' => 'SimpleBlog',
-        'name'  => 'DuckUser',
+        'name'  => 'SimpleBlog',
         'data_file_enable' => true,
 
         'ext' => [

@@ -33,12 +33,10 @@ class TestLister
     {
         $list = [];
         $list[] = '#PHASE_BEGIN';
-       
-        
+        // 更多测试代码
         $list[] = '#PHASE_END';
 
         $str = implode("\n", $list);
-
         $args = [
             'static' => static::class,
         ];

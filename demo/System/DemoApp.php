@@ -5,7 +5,6 @@
  */
 namespace DuckAdminDemo\System;
 
-use DuckPhp\Core\App;
 use DuckPhp\DuckPhp;
 use DuckAdminDemo\System\TestLister;
 
@@ -18,68 +17,72 @@ class DemoApp extends DuckPhp
         'installed' => true,
         'data_file_enable' => true,
 
-        'duckcoverage_test_lister'=> [TestLister::class ,'GetTestList'],
-        'duckcoverage_web_base_url' => 'http://admin.duckphp-local.com/',
-        'duckcoverage_report_direct ' => false,
         'app' => [
 //*
             \DuckAdmin\Admin\System\AdminApp::class => [
                 'controller_url_prefix' => 'admin/',
-                'controller_resource_prefix' => 'res/',
-                'admin_provider_enable'=>true,
-                //'admin_provider' => null,   // 关闭:admin_provider 各 admin 系统不能同时使用
-                //'duckcoverage_test_lister' => null, //[TestLister::class ,'GetTestList'],
+
+                'customer_duckcoverage_short' =>  false,
+                'customer_duckcoverage_clean' =>  false,
             ],
 //*/
 //*
             \DuckAdmin\DemoUsers\System\DemoUsersApp::class => [
                 'controller_url_prefix' => 'users/',
-                'is_debug'=>true,
-                'duckcoverage_test_lister' => null,
-                'user_provider' => null,
+
                 'demo_users'=>[
                     't1'=>'123456',
                     't2'=>'123456',
                 ],
             ],
 //*/
-/*
-            \DuckAdmin\System\DuckAdminApp => [
-
-            ],
-//*/
-/*
-            \DuckAdmin\SimpleBlog\System\SimpleBlogApp::class => [
-                'controller_url_prefix' => 'blog/',
-            ],
-//*/
 //*
 
             \DuckAdmin\SingleAdmin\System\SingleAdminApp::class => [
                 'controller_url_prefix' => 'single/',
+
                 'single_admin_password' => '123456',
-                'admin_provider_enable'=> false,
-                'duckcoverage_test_lister' => null,
             ],
 //*/
 //*
             \DuckAdmin\User\System\UserApp::class => [
                 'controller_url_prefix' => 'fulluser/',             // 访问路径
-                'duckcoverage_test_lister' => null,
-                'is_debug'=>true,
-                'controller_resource_prefix' => 'res/',    // 资源文件前缀
-                //'user_provider' => null,   // 关闭:user_provider 各用户系统不能同时使用
             ],
 //*/
+//*
+            \DuckAdmin\SimpleBlog\System\SimpleBlogApp::class => [
+                'controller_url_prefix' => 'blog/',
+            ],
+//*/
+
         ],
+
+        'duckcoverage_test_lister'=> [TestLister::class ,'GetTestList'],
+        'duckcoverage_web_base_url' => 'http://admin.duckphp-local.com/',
+        'duckcoverage_report_direct ' => false,
+
+        'demoapp_admin_provider' => \DuckAdmin\Admin\System\AdminApp::class,
+        'demoapp_user_provider' => \DuckAdmin\DemoUsers\System\DemoUsersApp::class,
+
+        //'demoapp_cover_doing' => \DuckAdmin\Admin\System\AdminApp::class,
+        //'demoapp_cover_subonly' => \DuckAdmin\Admin\System\AdminApp::class,
+
     ];
-    public function __construct()
-    {
-        parent::__construct();
-    }
     protected function onPrepare(): void
     {
         parent::onPrepare();
+
+        foreach($this->options['app'] as &$app){
+            $app['admin_provider_enable'] = false;
+            $app['user_provider_enable'] = false;
+        }
+        unset($app);
+        $this->options['app'][$this->options['demoapp_admin_provider']]['admin_provider_enable'] = true;
+        $this->options['app'][$this->options['demoapp_user_provider']]['user_provider_enable'] = true;
+        //
+
+
+
         if(class_exists(\DuckCoverage\DuckCoverage::class)){
             $this->options['duckcoverage_path_src'] = realpath(__DIR__ . '/../../') . '/src/Admin/';
             \DuckCoverage\DuckCoverage::Prepare([]);
@@ -87,6 +90,6 @@ class DemoApp extends DuckPhp
     }
     protected function onInited():void
     {
-
+        parent::onInited();
     }
 }
