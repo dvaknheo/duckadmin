@@ -1,7 +1,9 @@
 <?php declare(strict_types=1);
 namespace DuckAdmin\User\System;
 
+use DuckPhp\Core\App;
 use DuckPhp\Foundation\SingletonTrait;
+
 class TestLister
 {
     use SingletonTrait;
@@ -19,6 +21,10 @@ class TestLister
     }
     public static function _GetTestList(): string
     {
+        $flag = App::_()->options['user_provider_enable'] ?? true;
+        if(!$flag){
+            return '';
+        }
         $list_referenct = <<<EOT
 WEB users/Home/index
 WEB users/

@@ -52,6 +52,10 @@ class TestLister
 
     public function _GetTestList()
     {
+        $flag = AdminApp::_()->options['admin_provider_enable'] ?? true;
+        if(!$flag){
+            return '';
+        }
         $id = @file_get_contents(Helper::PathOfRuntime().'DuckCoverage/DuckCoverage.watching.txt');
         @unlink("runtime/DuckCoverage/{$id}.db");
         $dbFile = urlencode("runtime/DuckCoverage/{$id}.db");

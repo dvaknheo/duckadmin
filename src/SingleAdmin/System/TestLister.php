@@ -7,7 +7,6 @@ namespace DuckAdmin\SingleAdmin\System;
 
 use DuckPhp\Core\App;
 use DuckPhp\Foundation\SingletonTrait;
-use DuckPhp\Foundation\Controller\Helper;
 
 //@codeCoverageIgnoreStart
 class TestLister
@@ -19,6 +18,11 @@ class TestLister
     }
     public static function _GetTestOrderList(): string
     {
+        $flag = App::_()->options['admin_provider_enable'] ?? true;
+        if(!$flag){
+            return '';
+        }
+
         $list_referenct = <<<EOT
 
 CALL DuckAdmin\DemoUsers\Business\UserBusiness@canAccess user_id=&class=&method=&url=

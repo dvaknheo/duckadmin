@@ -19,6 +19,11 @@ class TestLister
     }
     public static function _GetTestOrderList(): string
     {
+        $flag = App::_()->options['user_provider_enable'] ?? true;
+        if(!$flag){
+            return '';
+        }
+
         $list_referenct = <<<EOT
 WEB users/Home/index
 WEB users/
