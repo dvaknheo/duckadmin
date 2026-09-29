@@ -17,10 +17,17 @@ class TestLister
     }
     public function _GetTestList()
     {
+        $flag = DemoApp::_()->options['customer_duckcoverage_only_this_child'] ?? null;
         $list = [];
         $list[] ="#PHASE_BEGIN";
         foreach (DemoApp::_()->options['app'] as $app => $options) {
-            $list[] ="#INCLUDE_CHILD $app";
+            if (isset($flag)) {
+                if ($app === $flag) {
+                    $list[] ="#INCLUDE_CHILD $app";
+                }
+            } else {
+                $list[] ="#INCLUDE_CHILD $app";
+            }
         }
         $list[] ="#PHASE_END";
         return implode("\n",$list);

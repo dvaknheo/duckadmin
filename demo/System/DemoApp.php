@@ -66,7 +66,7 @@ class DemoApp extends DuckPhp
 
         //'demoapp_cover_doing' => \DuckAdmin\Admin\System\AdminApp::class,
         //'demoapp_cover_subonly' => \DuckAdmin\Admin\System\AdminApp::class,
-
+        'customer_duckcoverage_only_this_child' =>  \DuckAdmin\Admin\System\AdminApp::class,
     ];
     protected function onPrepare(): void
     {
@@ -79,12 +79,13 @@ class DemoApp extends DuckPhp
         unset($app);
         $this->options['app'][$this->options['demoapp_admin_provider']]['admin_provider_enable'] = true;
         $this->options['app'][$this->options['demoapp_user_provider']]['user_provider_enable'] = true;
-        //
+       
+
 
 
 
         if(class_exists(\DuckCoverage\DuckCoverage::class)){
-            $this->options['duckcoverage_path_src'] = realpath(__DIR__ . '/../../') . '/src/';
+            $this->options['duckcoverage_path_src'] = realpath(__DIR__ . '/../../') . '/src/Admin/';
             \DuckCoverage\DuckCoverage::Prepare([]);
         }
     }
