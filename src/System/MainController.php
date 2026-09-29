@@ -11,14 +11,11 @@ class MainController
     public function index()
     {
         $data = [];
-        //$data['url_blog'] = __url(\DuckAdmin\SimpleBlog\System\SimpleBlogApp::_()->options['controller_url_prefix']) . 'index';
-        $data['url_user'] = __url(\DuckAdmin\User\System\UserApp::_()->options['controller_url_prefix']) . 'index';
-        $data['url_admin'] = __url(\DuckAdmin\Admin\System\AdminApp::_()->options['controller_url_prefix']) . 'index';
-        $data['url_blog'] ='';
+        $data['url_blog'] = __url(\DuckAdmin\SimpleBlog\System\SimpleBlogApp::_()->options['controller_url_prefix']);
+        $data['url_user'] = __url(\DuckAdmin\User\System\UserApp::_()->options['controller_url_prefix']);
+        $data['url_admin'] = __url(\DuckAdmin\Admin\System\AdminApp::_()->options['controller_url_prefix']);
+        $data['url_blog'] =__url(\DuckAdmin\SimpleBlog\System\SimpleBlogApp::_()->options['controller_url_prefix']);
+
         Helper::Show($data,'main');
-
-        //$str = \DuckCoverage\DuckCoverage::_()->genTestListOfAll();
-        //echo $str;
-
     }
 }
