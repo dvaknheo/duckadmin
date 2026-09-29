@@ -30,7 +30,8 @@ class TestLister
             }
         }
         $list[] ="#PHASE_END";
-        return implode("\n",$list);
+        $ret = implode("\n",$list);
+        return $ret;
     }
    
 

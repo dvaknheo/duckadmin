@@ -79,11 +79,6 @@ class DemoApp extends DuckPhp
         unset($app);
         $this->options['app'][$this->options['demoapp_admin_provider']]['admin_provider_enable'] = true;
         $this->options['app'][$this->options['demoapp_user_provider']]['user_provider_enable'] = true;
-       
-
-
-
-
         if(class_exists(\DuckCoverage\DuckCoverage::class)){
             $this->options['duckcoverage_path_src'] = realpath(__DIR__ . '/../../') . '/src/Admin/';
             \DuckCoverage\DuckCoverage::Prepare([]);
