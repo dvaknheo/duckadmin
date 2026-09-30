@@ -22,8 +22,14 @@
     },
     "require": {
         "php": ">=7.4.0",
-        "dvaknheo/duckphp": "^1.4.1",
-        "dvaknheo/duckcoverage": "^1.0.1"
+        "dvaknheo/duckphp": "dev-master as 1.4.1",
+        "dvaknheo/duckcoverage": "dev-master",
+        "illuminate/database": "^11.0",
+        "topthink/think-orm": "^4.0"
+    },
+    "suggest": {
+        "illuminate/database": "for Admin_LaravelModel(^11.0)",
+        "topthink/think-orm": "for Admin_ThinkPHPModel(^4.0)"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.6",
