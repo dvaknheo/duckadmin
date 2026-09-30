@@ -10,31 +10,30 @@ use think\Container;
 class ThinkPHPOrmExt extends ComponentBase
 {
     public $options = [
-        'overrider_callback' => null,
     ];
    
     public function init(array $options, ?object $context = null)
     {
         parent::init($options, $context);
-        
         $this->bootThinkORM();
-        if($this->options['overrider_callback'] && is_callable($this->options['overrider_callback'])) {
-            call_user_func($this->options['overrider_callback']);
-        }
-
         return $this;
     }
     /**
      * 初始化 ThinkPHP ORM
      */
-    protected function bootThinkORM(): void
+    public function bootThinkORM(): void
     {
+        $config = $this->getDatabaseConfig();
+        if (!$config) {
+            return;
+            //throw new \Exception("Database configuration not found.");
+        }
         // 创建容器实例
         $container = new Container();
         
         // 创建 DbManager
         $dbManager = new DbManager($container);
-        $dbManager->setConfig($this->getDatabaseConfig());
+        $dbManager->setConfig($config);
         
         // 将 DbManager 注册到容器
         $container->instance('db', $dbManager);
@@ -50,7 +49,12 @@ class ThinkPHPOrmExt extends ComponentBase
         $config_list = DuckDbManager::_()->getDatabaseConfigList();
         $config = $config_list[0] ?? null;
         $dsn = $config['dsn'] ?? '';
-        [$driver, $file] = explode(':', $dsn);
+        if(!$dsn) {
+            return [];
+        }
+        @list($driver, $file) = explode(':', $dsn);
+        
+        $file = \DuckPhp\Core\App::_()->getProjectPath() .$file;
 
         return [
             'default' => $driver,

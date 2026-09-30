@@ -7,6 +7,7 @@ namespace DuckAdmin\Admin_ThinkPHPModel\System;
 
 use DuckAdmin\Admin\System\AdminApp;
 use DuckAdmin\System\ThinkPHPOrmExt;
+use DuckPhp\Component\GlobalEvent;
 
 class ThinkPHPModelApp extends AdminApp
 {
@@ -18,9 +19,7 @@ class ThinkPHPModelApp extends AdminApp
     public function onInited(): void
     {
         parent::onInited();
-        if (!($this->options['admin_provider_enable']?? false)) {
-            return;
-        }
+        GlobalEvent::_()->on('installing', [self::class, 'onInstalling']);
 
         ThinkPHPOrmExt::_()->init([]);
         \DuckAdmin\Admin\Model\AdminModel::_(new \DuckAdmin\Admin_ThinkPHPModel\Overrided\Model\Adapter\AdminModelAdapter());
@@ -29,4 +28,9 @@ class ThinkPHPModelApp extends AdminApp
         \DuckAdmin\Admin\Model\RoleUserModel::_(new \DuckAdmin\Admin_ThinkPHPModel\Overrided\Model\Adapter\RoleUserModelAdapter());
         \DuckAdmin\Admin\Model\RolePermissionModel::_(new \DuckAdmin\Admin_ThinkPHPModel\Overrided\Model\Adapter\RolePermissionModelAdapter());
     }
+    public static function onInstalling(): void
+    {
+        ThinkPHPOrmExt::_()->bootThinkORM(); 
+    }
+
 }
