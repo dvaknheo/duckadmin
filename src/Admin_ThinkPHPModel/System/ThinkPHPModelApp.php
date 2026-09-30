@@ -6,7 +6,6 @@
 namespace DuckAdmin\Admin_ThinkPHPModel\System;
 
 use DuckAdmin\Admin\System\AdminApp;
-use DuckAdmin\System\ThinkPHPOrmExt;
 use DuckPhp\Component\GlobalEvent;
 
 class ThinkPHPModelApp extends AdminApp

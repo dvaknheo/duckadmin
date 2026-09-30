@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace DuckAdmin\System;
+namespace DuckAdmin\Admin_ThinkPHPModel\System;
 
 use DuckPhp\Component\DbManager as DuckDbManager;
 use DuckPhp\Core\ComponentBase;

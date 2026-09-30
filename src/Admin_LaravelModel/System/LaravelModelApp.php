@@ -2,7 +2,6 @@
 
 namespace DuckAdmin\Admin_LaravelModel\System;
 
-use DuckAdmin\System\LaravelOrmExt;
 use DuckAdmin\Admin\System\AdminApp;
 use DuckPhp\Component\GlobalEvent;
 

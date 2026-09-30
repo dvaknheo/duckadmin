@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace DuckAdmin\System;
+namespace DuckAdmin\Admin_LaravelModel\System;
 
 use DuckPhp\Core\ComponentBase;
 use DuckPhp\Component\DbManager;
