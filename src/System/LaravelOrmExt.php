@@ -3,29 +3,18 @@
 namespace DuckAdmin\System;
 
 use DuckPhp\Core\ComponentBase;
+use DuckPhp\Component\DbManager;
 use Illuminate\Database\Capsule\Manager as Capsule;
 
 class LaravelOrmExt extends ComponentBase
 {
     public $options = [
-        'orm_driver' => null,
-        'overrider_callback' => null,
     ];
     
     public function init(array $options, ?object $context = null)
     {
         parent::init($options, $context);
-        
-        if ('laravel' !== $this->options['orm_driver']) {
-            return $this;
-        }
-        
         $this->bootEloquent();
-        
-        if($this->options['overrider_callback'] && is_callable($this->options['overrider_callback'])) {
-            call_user_func($this->options['overrider_callback']);
-        }
-        
         return $this;
     }
     /**
@@ -44,19 +33,16 @@ class LaravelOrmExt extends ComponentBase
      */
     protected function getDatabaseConfig(): array
     {
+        $config_list = DbManager::_()->getDatabaseConfigList();
+        $config = $config_list[0] ?? null;
+        $dsn = $config['dsn'] ?? '';
+        [$driver, $file] = explode(':', $dsn);
         return [
-            'driver' => 'sqlite',
-            'database' => $this->getDatabasePath(),
+            'driver' => $driver,
+            'database' => $file,
             'prefix' => '',
             'foreign_key_constraints' => true,
         ];
     }
     
-    /**
-     * 获取数据库文件路径，便于 override
-     */
-    protected function getDatabasePath(): string
-    {
-        return __DIR__ . '/../../database/admin.db';
-    }
 }

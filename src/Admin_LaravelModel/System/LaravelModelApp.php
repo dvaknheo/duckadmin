@@ -2,31 +2,27 @@
 
 namespace DuckAdmin\Admin_LaravelModel\System;
 
-use LaravelExp\LaravelModel\Adapter\AdminModelAdapter as LaravelAdminModelAdapter;
-use LaravelExp\LaravelModel\Adapter\PermissionModelAdapter as LaravelPermissionModelAdapter;
-use LaravelExp\LaravelModel\Adapter\RoleModelAdapter as LaravelRoleModelAdapter;
-use LaravelExp\LaravelModel\Adapter\RolePermissionModelAdapter as LaravelRolePermissionModelAdapter;
-use LaravelExp\LaravelModel\Adapter\RoleUserModelAdapter as LaravelRoleUserModelAdapter;
+use DuckAdmin\System\LaravelOrmExt;
+use DuckAdmin\Admin\System\AdminApp;
 
-use DuckAdmin\System\ThinkPhpOrmExt;
-use DuckPhp\DuckPhp;
-
-class LaravelModelApp extends DuckPhp
+class LaravelModelApp extends AdminApp
 {
-    public $options = [
-        'ext' => [
-            'laravel_model' => [
-                'overrider_callback' => null,
-            ],
-        ],
-    ];
-    public static function override()
+    public function __construct()
     {
-        \DuckAdmin\Admin\Model\AdminModel::_(new \LaravelExp\LaravelModel\Adapter\AdminModelAdapter());
-        \DuckAdmin\Admin\Model\RoleModel::_(new \LaravelExp\LaravelModel\Adapter\RoleModelAdapter());
-        \DuckAdmin\Admin\Model\PermissionModel::_(new \LaravelExp\LaravelModel\Adapter\PermissionModelAdapter());
-        \DuckAdmin\Admin\Model\RoleUserModel::_(new \LaravelExp\LaravelModel\Adapter\RoleUserModelAdapter());
-        \DuckAdmin\Admin\Model\RolePermissionModel::_(new \LaravelExp\LaravelModel\Adapter\RolePermissionModelAdapter());
+        parent::__construct();
+        $this->options['name'] = 'Admin_LaravelModel';
     }
-
+    public function onInited(): void
+    {
+        parent::onInited();
+        if (!($this->options['admin_provider_enable']?? false)) {
+            return;
+        }
+        LaravelOrmExt::_()->init([]);
+        \DuckAdmin\Admin\Model\AdminModel::_(new \DuckAdmin\Admin_LaravelModel\Overrided\Model\Adapter\AdminModelAdapter());
+        \DuckAdmin\Admin\Model\RoleModel::_(new \DuckAdmin\Admin_LaravelModel\Overrided\Model\Adapter\RoleModelAdapter());
+        \DuckAdmin\Admin\Model\PermissionModel::_(new \DuckAdmin\Admin_LaravelModel\Overrided\Model\Adapter\PermissionModelAdapter());
+        \DuckAdmin\Admin\Model\RoleUserModel::_(new \DuckAdmin\Admin_LaravelModel\Overrided\Model\Adapter\RoleUserModelAdapter());
+        \DuckAdmin\Admin\Model\RolePermissionModel::_(new \DuckAdmin\Admin_LaravelModel\Overrided\Model\Adapter\RolePermissionModelAdapter());
+    }
 }

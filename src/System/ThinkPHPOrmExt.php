@@ -2,6 +2,7 @@
 
 namespace DuckAdmin\System;
 
+use DuckPhp\Component\DbManager as DuckDbManager;
 use DuckPhp\Core\ComponentBase;
 use think\DbManager;
 use think\Container;
@@ -46,24 +47,21 @@ class ThinkPHPOrmExt extends ComponentBase
      */
     protected function getDatabaseConfig(): array
     {
+        $config_list = DuckDbManager::_()->getDatabaseConfigList();
+        $config = $config_list[0] ?? null;
+        $dsn = $config['dsn'] ?? '';
+        [$driver, $file] = explode(':', $dsn);
+
         return [
-            'default' => 'sqlite',
+            'default' => $driver,
             'connections' => [
-                'sqlite' => [
-                    'type' => 'sqlite',
-                    'database' => $this->getDatabasePath(),
+                $driver => [
+                    'type' => $driver,
+                    'database' => $file,
                     'prefix' => '',
                     'charset' => 'utf8',
                 ],
             ],
         ];
-    }
-    
-    /**
-     * 获取数据库文件路径，便于 override
-     */
-    protected function getDatabasePath(): string
-    {
-        return __DIR__ . '/../../database/admin.db';
     }
 }

@@ -3,31 +3,30 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-namespace DuckAdmin\System;
+namespace DuckAdmin\Admin_ThinkPHPModel\System;
 
-use DuckAdmin\Admin_ThinkPHPModel\Overrided\Model\Adapter\AdminModelAdapter as ThinkPHPAdminModelAdapter;
-use DuckAdmin\Admin_ThinkPHPModel\Overrided\Model\Adapter\PermissionModelAdapter as ThinkPHPPermissionModelAdapter;
-use DuckAdmin\Admin_ThinkPHPModel\Overrided\Model\Adapter\RoleModelAdapter as ThinkPHPRoleModelAdapter;
-use DuckAdmin\Admin_ThinkPHPModel\Overrided\Model\Adapter\RolePermissionModelAdapter as ThinkPHPRolePermissionModelAdapter;
-use DuckAdmin\Admin_ThinkPHPModel\Overrided\Model\Adapter\RoleUserModelAdapter as ThinkPHPRoleUserModelAdapter;
+use DuckAdmin\Admin\System\AdminApp;
+use DuckAdmin\System\ThinkPHPOrmExt;
 
-use DuckPhp\DuckPhp;
-
-class ThinkPHPModelApp extends DuckPhp
+class ThinkPHPModelApp extends AdminApp
 {
-    public $options = [
-        'ext' => [
-            'thinkphp_model' => [
-                'overrider_callback' => null,
-            ],
-        ],
-    ];
-    protected function doOverride()
+    public function __construct()
     {
-        \DuckAdmin\Admin\Model\AdminModel::_(new ThinkPHPAdminModelAdapter());
-        \DuckAdmin\Admin\Model\RoleModel::_(new ThinkPHPRoleModelAdapter());
-        \DuckAdmin\Admin\Model\PermissionModel::_(new ThinkPHPPermissionModelAdapter());
-        \DuckAdmin\Admin\Model\RoleUserModel::_(new ThinkPHPRoleUserModelAdapter());
-        \DuckAdmin\Admin\Model\RolePermissionModel::_(new ThinkPHPRolePermissionModelAdapter());
+        parent::__construct();
+        $this->options['name'] = 'Admin_ThinkPHPModel';
+    }
+    public function onInited(): void
+    {
+        parent::onInited();
+        if (!($this->options['admin_provider_enable']?? false)) {
+            return;
+        }
+
+        ThinkPHPOrmExt::_()->init([]);
+        \DuckAdmin\Admin\Model\AdminModel::_(new \DuckAdmin\Admin_ThinkPHPModel\Overrided\Model\Adapter\AdminModelAdapter());
+        \DuckAdmin\Admin\Model\RoleModel::_(new \DuckAdmin\Admin_ThinkPHPModel\Overrided\Model\Adapter\RoleModelAdapter());
+        \DuckAdmin\Admin\Model\PermissionModel::_(new \DuckAdmin\Admin_ThinkPHPModel\Overrided\Model\Adapter\PermissionModelAdapter());
+        \DuckAdmin\Admin\Model\RoleUserModel::_(new \DuckAdmin\Admin_ThinkPHPModel\Overrided\Model\Adapter\RoleUserModelAdapter());
+        \DuckAdmin\Admin\Model\RolePermissionModel::_(new \DuckAdmin\Admin_ThinkPHPModel\Overrided\Model\Adapter\RolePermissionModelAdapter());
     }
 }

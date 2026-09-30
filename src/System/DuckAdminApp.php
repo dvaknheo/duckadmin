@@ -54,6 +54,19 @@ class DuckAdminApp extends DuckPhp
                 'controller_url_prefix' => 'blog/',
             ],
 //*/
+            \DuckAdmin\Admin_LaravelModel\System\LaravelModelApp::class => [
+                'controller_url_prefix' => 'admin_laravel/',
+
+                //'customer_duckcoverage_short' =>  false,
+                //'customer_duckcoverage_clean' =>  false,
+            ],
+            \DuckAdmin\Admin_ThinkPHPModel\System\ThinkPHPModelApp::class => [
+                'controller_url_prefix' => 'admin_thinkphp/',
+
+                //'customer_duckcoverage_short' =>  false,
+                //'customer_duckcoverage_clean' =>  false,
+            ],
+
 
         ],
 
