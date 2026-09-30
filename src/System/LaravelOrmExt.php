@@ -20,10 +20,15 @@ class LaravelOrmExt extends ComponentBase
     /**
      * 初始化 Eloquent ORM
      */
-    protected function bootEloquent(): void
+    public function bootEloquent(): void
     {
+        $config = $this->getDatabaseConfig();
+        if (!$config) {
+            return;
+            //throw new \Exception("Database configuration not found.");
+        }
         $capsule = new Capsule;
-        $capsule->addConnection($this->getDatabaseConfig());
+        $capsule->addConnection($config);
         $capsule->setAsGlobal();
         $capsule->bootEloquent();
     }
@@ -36,12 +41,18 @@ class LaravelOrmExt extends ComponentBase
         $config_list = DbManager::_()->getDatabaseConfigList();
         $config = $config_list[0] ?? null;
         $dsn = $config['dsn'] ?? '';
-        [$driver, $file] = explode(':', $dsn);
+        if(!$dsn) {
+            return [];
+        }
+        @list($driver, $file) = explode(':', $dsn);
+        
+        $file = \DuckPhp\Core\App::_()->getProjectPath() .$file;
         return [
             'driver' => $driver,
             'database' => $file,
             'prefix' => '',
-            'foreign_key_constraints' => true,
+            //'foreign_key_constraints' => true,
+            'foreign_key_constraints' => false,
         ];
     }
     
