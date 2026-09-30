@@ -75,6 +75,7 @@ class DuckAdminApp extends DuckPhp
         'duckcoverage_report_direct ' => false,
 
         'demoapp_admin_provider' => \DuckAdmin\Admin\System\AdminApp::class,
+        //'demoapp_admin_provider' => \DuckAdmin\Admin_LaravelModel\System\LaravelModelApp::class,
         'demoapp_user_provider' => \DuckAdmin\DemoUsers\System\DemoUsersApp::class,
 
         //'demoapp_cover_doing' => \DuckAdmin\Admin\System\AdminApp::class,

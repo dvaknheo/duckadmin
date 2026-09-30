@@ -33,6 +33,7 @@ class AppBusiness extends Base
         $path = (string)(parse_url($url, PHP_URL_PATH) ?: $url);
         $roleId = RoleUserModel::_()->getUserRoleId($userId);
         // 按URL找权限
+        //TODO 改正；
         $perm = PermissionModel::_()->fetch("SELECT id FROM admin_permissions WHERE url = ? AND deleted_at IS NULL", [$path]);
         if (!$perm) {
             return false;
