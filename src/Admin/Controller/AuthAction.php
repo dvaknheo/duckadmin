@@ -7,6 +7,7 @@
 namespace DuckAdmin\Admin\Controller;
 
 use DuckPhp\Foundation\SingletonTrait;
+use DuckPhp\GlobalAdmin\GlobalAdmin;
 
 use DuckAdmin\Admin\Business\AppBusiness;
 
@@ -24,7 +25,7 @@ class AuthAction
         Helper::FireGlobalEvent(Helper::EVENT_ACTION_ADMIN_LOGINED, $post);
 
         if (Helper::AppOptions('admin_loginout_auto_redirect')??true) {
-            Helper::Show302(Helper::Admin()->urlForHome());
+            Helper::Show302(GlobalAdmin::_()->urlForHome());
         }
     }
     public function logout()
@@ -35,7 +36,7 @@ class AuthAction
         Session::_()->unsetCurrentAdmin();
         Helper::FireGlobalEvent(Helper::EVENT_ACTION_ADMIN_LOGOUTED, $admin_id);
         if (Helper::AppOptions('admin_loginout_auto_redirect')??true) {
-            Helper::Show302(Helper::Admin()->urlForLogin());
+            Helper::Show302(GlobalAdmin::_()->urlForLogin());
         }
     }
 }

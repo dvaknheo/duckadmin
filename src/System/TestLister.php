@@ -20,7 +20,7 @@ class TestLister
     {
         $list = [];
         $list[] ="#PHASE_BEGIN";
-        $list[] ="#INCLUDE_CHILD ";
+        $list[] ="#INCLUDE_CHILD DuckAdmin\\Admin\\System\\TestLister";
         
         $list[] ="#PHASE_END";
         $ret = implode("\n",$list);

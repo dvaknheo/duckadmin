@@ -16,6 +16,7 @@ class DuckAdminApp extends DuckPhp
         'namespace_controller' => 'System',
         'installed' => true,
         'data_file_enable' => true,
+        'duckcoverage_enable' => true,
 
         'app' => [
 //*
@@ -70,8 +71,8 @@ class DuckAdminApp extends DuckPhp
 
         ],
 
-        'duckcoverage_test_lister'=> [TestLister::class ,'GetTestList'],
-        'duckcoverage_web_base_url' => 'http://admin.duckphp-local.com/',
+        'duckcoverage_test_lister'=> [\DuckAdmin\Admin\System\TestLister::class ,'GetTestList'],
+        'duckcoverage_web_base_url' => 'http://admin.duckphp-local.com/admin/',
         'duckcoverage_report_direct ' => false,
 
         'demoapp_admin_provider' => \DuckAdmin\Admin\System\AdminApp::class,
