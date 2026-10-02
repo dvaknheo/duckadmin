@@ -11,10 +11,25 @@ class MainController
     public function index()
     {
         $data = [];
+
+        // 获取管理员状态
+        $data['admin_id'] = Helper::AdminId(false);
+        $data['admin_name'] = Helper::AdminName(false);
+        $data['url_admin_login'] = Helper::Admin()->urlForLogin();
+        $data['url_admin_logout'] = Helper::Admin()->urlForLogout();
+        $data['url_admin_home'] = Helper::Admin()->urlForHome();
+
+        // 获取用户状态
+        $data['user_id'] = Helper::UserId(false);
+        $data['user_name'] = Helper::UserName(false);
+        $data['url_user_login'] = Helper::User()->urlForLogin();
+        $data['url_user_logout'] = Helper::User()->urlForLogout();
+        $data['url_user_register'] = Helper::User()->urlForRegister();
+        $data['url_user_home'] = Helper::User()->urlForHome();
+
+        // 子应用入口
         $data['url_blog'] = __url(\DuckAdmin\SimpleBlog\System\SimpleBlogApp::_()->options['controller_url_prefix']);
-        $data['url_user'] = __url(\DuckAdmin\User\System\UserApp::_()->options['controller_url_prefix']);
         $data['url_admin'] = __url(\DuckAdmin\Admin\System\AdminApp::_()->options['controller_url_prefix']);
-        $data['url_blog'] =__url(\DuckAdmin\SimpleBlog\System\SimpleBlogApp::_()->options['controller_url_prefix']);
 
         Helper::Show($data,'main');
     }
