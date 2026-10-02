@@ -23,21 +23,13 @@
 demo 这个工程 ，演示了如何使用第三方的 duckphp 工程作为 库
 但你不应该把本项目当成 `composer project` 来做二次开发，而是应该当成 `composer library` 引入。
 然后分别使用组件
-
-sqlite 数据库地址是 runtime/database.db。
-
-如果你要重新安装，请运行  `php cli.php install`
-或者
 </pre>
 <pre>
-demo 只是给你提供了如何使用 duckadmin 这个库的方法。
 duckadmin 这个 composer library 里 src/DuckAdmin 是个现成的管理模块。
-你应该像 demo 那样使用他。
 duckuser 则是附带的用户系统
 
 （\DuckAdmin\System\DuckAdminApp::class） 
 <a href="<?=$url_admin?>">管理后台入口在这里</a> 
-这个管理后台，模仿的是 webman admin 的后台，初始用户名是 admin 密码是 123456
 
 （\SimpleBlog\System\SimpleBlogApp::class）
 <a href="<?=$url_blog?>">一个简单的博客系统</a> 这个是接入其他前后台管理系统的一个应用案例。
@@ -47,21 +39,22 @@ duckuser 则是附带的用户系统
 
 </pre>
 选择接入的 管理员系统
-硬编码的管理员系统
-基本管理员系统
 
-选择接入的 用户系统
-简单硬编码的用户系统
-基本用户系统
+<label><input type="radio" name ="admin">硬编码的管理员系统 （\DuckAdmin\SingleAdmin\System\SingleAdminApp::class）</label>
+<label><input type="radio" name ="admin" >基本管理员系统（\DuckAdmin\Admin\System\AdminApp::class）</select></label>
 ThinkPHP ORM 版基本用户系统 (需要 composer require topthink/think-orm)
 Laravel ORM 版基本用户系统 (需要 composer require laravel/framework)
+
+选择接入的 用户系统
+<label><input type="radio" name ="user" >简单硬编码的用户系统 （\DuckAdmin\DemoUsers\System\SingleAdminApp::class）</select></label>
+<label><input type="radio" name ="user" >基本用户系统 （\DuckAdmin\DemoUsers\System\SingleAdminApp::class）</select></label>
 <hr>
-<a href="main.php">另一个简洁版本</a>
-  </div>
-<div class="layui-footer" style ="background-color:#FAFAFA;padding:1em;text-align:center;">
-感谢 <a href="https://www.layui.com/"> LayUI </a> 前端支持，为我这个不懂得好看的能勉强做出来
-感谢 pearadmin  让我可以 copy  idea.
-感谢 webman admin 这个版本的从 webman admin 改出来的
+<div>
+  <div class="layui-container">
 </div>
+
+</div>
+</div>
+  </div>
 	</body>
 </html>
