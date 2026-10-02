@@ -22,9 +22,7 @@ class DuckAdminApp extends DuckPhp
 //*
             \DuckAdmin\Admin\System\AdminApp::class => [
                 'controller_url_prefix' => 'admin/',
-                //'customer_duckcoverage_short' =>  false,
-                //'customer_duckcoverage_clean' =>  false,
-                'duckadmin_admin_provider' => true,
+                'admin_provider_enable' => false,
             ],
 //*/
 //*
@@ -34,56 +32,51 @@ class DuckAdminApp extends DuckPhp
                     't1'=>'123456',
                     't2'=>'123456',
                 ],
-                'duckadmin_user_provider' => true,
+                'user_provider_enable' => false,
             ],
 //*/
 //*
             \DuckAdmin\SingleAdmin\System\SingleAdminApp::class => [
                 'controller_url_prefix' => 'single_admin/',
-                'single_admin_password' => '123456',  //override by duckadmin
-                
-                'duckadmin_admin_provider' => true,
+                'single_admin_password' => '123456',
+                'admin_provider_enable' => false,
             ],
 //*/
 //*
             \DuckAdmin\User\System\UserApp::class => [
-                'controller_url_prefix' => 'user/',             // 访问路径
-                'duckadmin_user_provider' => true,
+                'controller_url_prefix' => 'user/',
+                'user_provider_enable' => false,
             ],
 //*/
 //*
             \DuckAdmin\SimpleBlog\System\SimpleBlogApp::class => [
                 'controller_url_prefix' => 'blog/',
+                'admin_provider_enable' => false,
             ],
 //*/
             \DuckAdmin\Admin_LaravelModel\System\LaravelModelApp::class => [
                 'controller_url_prefix' => 'admin_laravel/',
-                'duckadmin_admin_provider' => true,
+                'admin_provider_enable' => false,
             ],
             \DuckAdmin\Admin_ThinkPHPModel\System\ThinkPHPModelApp::class => [
                 'controller_url_prefix' => 'admin_thinkphp/',
-                'duckadmin_admin_provider' => true,
+                'admin_provider_enable' => false,
             ],
-
-
         ],
 
         'duckcoverage_web_base_url' => 'http://admin.duckphp-local.com/',
         'duckcoverage_test_lister'=> [\DuckAdmin\Admin\System\TestLister::class ,'GetTestList'],
 
-        'duckadmin_admin_provider' => \DuckAdmin\Admin\System\AdminApp::class,
+        'duckadmin_admin_provider' => \DuckAdmin\SingleAdmin\System\SingleAdminApp::class,
         'duckadmin_user_provider' => \DuckAdmin\DemoUsers\System\DemoUsersApp::class,
 
-        //'demoapp_cover_doing' => \DuckAdmin\Admin\System\AdminApp::class,
-        //'demoapp_cover_subonly' => \DuckAdmin\Admin\System\AdminApp::class,
-        //'demoapp_duckcoverage_only_this_child' =>  \DuckAdmin\Admin\System\AdminApp::class,
     ];
     protected function onPrepare(): void
     {
         parent::onPrepare();
         $this->options['duckcoverage_path_src'] = realpath(__DIR__ . '/../../') . '/src/';
         
-        if(class_exists(\DuckCoverage\DuckCoverage::class)){
+        if(class_exists(\DuckCoverage\DuckCoverage::class) && $this->_Setting('duckcoverage_enable')){
             \DuckCoverage\DuckCoverage::Prepare([]);
         }
         
@@ -99,13 +92,8 @@ class DuckAdminApp extends DuckPhp
             $this->options['app'][\DuckAdmin\Admin_LaravelModel\System\LaravelModelApp::class] = false;
         }
         
-        // foreach($this->options['app'] as &$app){
-        //     $app['admin_provider_enable'] = false;
-        //     $app['user_provider_enable'] = false;
-        // }
-        // unset($app);
-        // $this->options['app'][$this->options['demoapp_admin_provider']]['admin_provider_enable'] = true;
-        // $this->options['app'][$this->options['demoapp_user_provider']]['user_provider_enable'] = true;
+        $this->options['app'][$this->options['duckadmin_admin_provider']]['admin_provider_enable'] = true;
+        $this->options['app'][$this->options['duckadmin_user_provider']]['user_provider_enable'] = true;
     }
     protected function onInited():void
     {

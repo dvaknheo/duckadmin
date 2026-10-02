@@ -5,6 +5,8 @@
  */
 
 return [
+    //'duckadmin_enable' => true,
+    //'duckcoverage_enable' => true,
     //'duckphp_is_debug' => true,
     //'duckphp_platform' => 'default',
 /*
