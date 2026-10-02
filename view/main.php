@@ -49,8 +49,38 @@
         <?php endif; ?>
     </div>
 </div>
+<form method="post">
+选择接入的 管理员系统<br >
 
-  <div class="layui-container" style="padding:1em;">
+    <div>
+        <label><input type="radio" name ="admin" value ="DuckAdmin\SingleAdmin\System\SingleAdminApp" 
+            <?php if($admin_app === 'DuckAdmin\SingleAdmin\System\SingleAdminApp'): ?>checked<?php endif; ?>>硬编码的管理员系统 (\DuckAdmin\SingleAdmin\System\SingleAdminApp::class)</label>
+    </div>
+    <div>
+        <label><input type="radio" name ="admin" value ="DuckAdmin\Admin\System\AdminApp" 
+            <?php if($admin_app === 'DuckAdmin\Admin\System\AdminApp'): ?>checked<?php endif; ?>> 基本管理员系统(\DuckAdmin\Admin\System\AdminApp::class)</label>
+    </div>
+    <div>
+        <label><input type="radio" name ="admin" value ="DuckAdmin\Admin_ThinkPHPModel\System\ThinkPHPModelApp" 
+            <?php if($admin_app === 'DuckAdmin\Admin_ThinkPHPModel\System\ThinkPHPModelApp'): ?>checked<?php endif; ?>> ThinkPHP ORM 版基本用户系统 (需要 composer require topthink/think-orm)</label>
+    </div>
+    <div>
+        <label><input type="radio" name ="admin" value ="DuckAdmin\Admin_LaravelModel\System\LaravelModelApp" 
+            <?php if($admin_app === 'DuckAdmin\Admin_LaravelModel\System\LaravelModelApp'): ?>checked<?php endif; ?>> Laravel ORM 版基本用户系统 (需要 composer require laravel/framework)</label>
+    </div>
+选择接入的 用户系统<br >
+<div>
+<label><input type="radio" name ="user" value ="DuckAdmin\DemoUsers\System\DemoUsersApp"
+    <?php if($user_app === 'DuckAdmin\DemoUsers\System\DemoUsersApp'): ?>checked<?php endif; ?>>简单硬编码的用户系统 (\DuckAdmin\DemoUsers\System\SingleAdminApp::class)</label>
+    </div>
+<div>
+<label><input type="radio" name ="user" value ="DuckAdmin\User\System\UserApp"
+    <?php if($user_app === 'DuckAdmin\User\System\UserApp'): ?>checked<?php endif; ?>>基本用户系统 (\DuckAdmin\DemoUsers\System\UserApp::class)</label>
+</div>
+<input type="submit" value="提交">
+</form>
+<a href="<?=$url_blog?>">一个简单的博客系统</a> 接入前后台管理系统的一个应用案例
+
 <!-- 现有内容已隐藏
     <div class="layui-row " style="border-left:1px solid;border-right:1px solid;padding:1em;">
 		<div class="layui-col-md8" >
@@ -61,30 +91,10 @@ demo 这个工程 ，演示了如何使用第三方的 duckphp 工程作为 库
 但你不应该把本项目当成 `composer project` 来做二次开发，而是应该当成 `composer library` 引入。
 然后分别使用组件
 </pre>
-<pre>
-duckadmin 这个 composer library 里 src/DuckAdmin 是个现成的管理模块。
-duckuser 则是附带的用户系统
 
-（\DuckAdmin\System\DuckAdminApp::class）
-<a href="<?=$url_admin?>">管理后台入口在这里</a>
 
-（\SimpleBlog\System\SimpleBlogApp::class）
-<a href="<?=$url_blog?>">一个简单的博客系统</a> 这个是接入其他前后台管理系统的一个应用案例。
 
-（\DuckUser\System\DuckUserApp::class） <a href="<?=$url_user?>">用户基本注册登录页面在这里</a>
-这是个很简陋的用户系统。提供了基本的用户接口。这个用户系统对应的
 
-</pre>
-选择接入的 管理员系统
-
-<label><input type="radio" name ="admin">硬编码的管理员系统 （\DuckAdmin\SingleAdmin\System\SingleAdminApp::class）</label>
-<label><input type="radio" name ="admin" >基本管理员系统（\DuckAdmin\Admin\System\AdminApp::class）</select></label>
-ThinkPHP ORM 版基本用户系统 (需要 composer require topthink/think-orm)
-Laravel ORM 版基本用户系统 (需要 composer require laravel/framework)
-
-选择接入的 用户系统
-<label><input type="radio" name ="user" >简单硬编码的用户系统 （\DuckAdmin\DemoUsers\System\SingleAdminApp::class）</select></label>
-<label><input type="radio" name ="user" >基本用户系统 （\DuckAdmin\DemoUsers\System\SingleAdminApp::class）</select></label>
 <hr>
 <div>
   <div class="layui-container">

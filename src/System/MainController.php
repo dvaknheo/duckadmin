@@ -6,6 +6,8 @@
 namespace DuckAdmin\System;
 
 use DuckPhp\Foundation\Controller\ControllerHelper as Helper;
+use DuckPhp\Component\ExtOptionsLoader;
+
 class MainController
 {
     public function index()
@@ -29,8 +31,25 @@ class MainController
 
         // 子应用入口
         $data['url_blog'] = __url(\DuckAdmin\SimpleBlog\System\SimpleBlogApp::_()->options['controller_url_prefix']);
-        $data['url_admin'] = __url(\DuckAdmin\Admin\System\AdminApp::_()->options['controller_url_prefix']);
 
+        $app_data = Helper::AppOptions('data', []);
+        $data['admin_app'] = $app_data['duckadmin_admin_provider'] ?? '';
+        $data['user_app'] = $app_data['duckadmin_user_provider'] ?? '';
+        if(Helper::IsPost()){
+            $app_data['duckadmin_admin_provider'] = Helper::POST('admin');
+            $app_data['duckadmin_user_provider'] = Helper::POST('user');
+            $this->saveData($app_data);
+        }
         Helper::Show($data,'main');
+    }
+    protected function saveData($data)
+    {
+        if(!in_array($data['duckadmin_admin_provider'], array_keys(DuckAdminApp::_()->options['app']))) {
+            unset($data['duckadmin_admin_provider']);
+        }
+        if(!in_array($data['duckadmin_user_provider'], array_keys(DuckAdminApp::_()->options['app']))) {
+            unset($data['duckadmin_user_provider']);
+        }
+        ExtOptionsLoader::_()->saveExtOptions($data);
     }
 }

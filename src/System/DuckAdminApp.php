@@ -30,7 +30,7 @@ class DuckAdminApp extends DuckPhp
                 'controller_url_prefix' => 'demo_users/',
                 'demo_users'=>[
                     't1'=>'123456',
-                    't2'=>'123456',
+                    't2'=>'654321',
                 ],
                 'user_provider_enable' => false,
             ],
@@ -51,7 +51,6 @@ class DuckAdminApp extends DuckPhp
 //*
             \DuckAdmin\SimpleBlog\System\SimpleBlogApp::class => [
                 'controller_url_prefix' => 'blog/',
-                'admin_provider_enable' => false,
             ],
 //*/
             \DuckAdmin\Admin_LaravelModel\System\LaravelModelApp::class => [
@@ -67,8 +66,10 @@ class DuckAdminApp extends DuckPhp
         'duckcoverage_web_base_url' => 'http://admin.duckphp-local.com/',
         'duckcoverage_test_lister'=> [\DuckAdmin\Admin\System\TestLister::class ,'GetTestList'],
 
-        'duckadmin_admin_provider' => \DuckAdmin\SingleAdmin\System\SingleAdminApp::class,
-        'duckadmin_user_provider' => \DuckAdmin\DemoUsers\System\DemoUsersApp::class,
+        'data' => [
+            'duckadmin_admin_provider' => \DuckAdmin\SingleAdmin\System\SingleAdminApp::class,
+            'duckadmin_user_provider' => \DuckAdmin\DemoUsers\System\DemoUsersApp::class,
+        ],
 
     ];
     protected function onPrepare(): void
@@ -92,11 +93,7 @@ class DuckAdminApp extends DuckPhp
             $this->options['app'][\DuckAdmin\Admin_LaravelModel\System\LaravelModelApp::class] = false;
         }
         
-        $this->options['app'][$this->options['duckadmin_admin_provider']]['admin_provider_enable'] = true;
-        $this->options['app'][$this->options['duckadmin_user_provider']]['user_provider_enable'] = true;
-    }
-    protected function onInited():void
-    {
-        parent::onInited();
+        $this->options['app'][$this->options['data']['duckadmin_admin_provider']]['admin_provider_enable'] = true;
+        $this->options['app'][$this->options['data']['duckadmin_user_provider']]['user_provider_enable'] = true;
     }
 }
