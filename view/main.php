@@ -46,6 +46,16 @@ duckuser 则是附带的用户系统
 这是个很简陋的用户系统。提供了基本的用户接口。这个用户系统对应的
 
 </pre>
+选择接入的 管理员系统
+硬编码的管理员系统
+基本管理员系统
+
+选择接入的 用户系统
+简单硬编码的用户系统
+基本用户系统
+ThinkPHP ORM 版基本用户系统 (需要 composer require topthink/think-orm)
+Laravel ORM 版基本用户系统 (需要 composer require laravel/framework)
+<hr>
 <a href="main.php">另一个简洁版本</a>
   </div>
 <div class="layui-footer" style ="background-color:#FAFAFA;padding:1em;text-align:center;">

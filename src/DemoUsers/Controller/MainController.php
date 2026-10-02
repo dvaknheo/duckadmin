@@ -13,7 +13,7 @@ class MainController
     {
         $data = [];
         if (Helper::UserId(false)) {
-            Helper::Show302(Helper::User()->urlForHome());
+            Helper::Show302(GlobalUser::_()->urlForHome());
             return;
         }
         // POST 处理登录

@@ -20,15 +20,15 @@ class MainController
     public function index()
     {
         $data =[];
-        $data['url_reg'] = Helper::User()->urlForRegister();
-        $data['url_login'] = Helper::User()->urlForLogin();
+        $data['url_reg'] = GlobalUser::_()->urlForRegister();
+        $data['url_login'] = GlobalUser::_()->urlForLogin();
         
         Helper::Show($data, 'main');
     }
     public function register()
     {
         $data = [];
-        $data['url_register'] = Helper::User()->urlForRegister();
+        $data['url_register'] = GlobalUser::_()->urlForRegister();
 
         if (Helper::IsPOST()) {
             try {
@@ -38,7 +38,7 @@ class MainController
                 $data['error'] = $ex->getMessage();
             }
         }
-        $data['csrf_field'] = Helper::_()->csrfField();
+        $data['csrf_field'] = Session::_()->csrfField();
         $data['name'] = __h(Helper::POST('name', ''));
 
         Helper::Show($data, 'register');
@@ -54,10 +54,10 @@ class MainController
                 $data['error'] = $ex->getMessage();
             }
         }
-        $data['url_login'] = Helper::User()->urlForLogin();
-        $data['csrf_field'] = Helper::_()->csrfField();
+        $data['url_login'] = GlobalUser::_()->urlForLogin();
+        $data['csrf_field'] = Session::_()->csrfField();
         $data['name'] = __h(Helper::POST('name', ''));
-        $data['back_url'] =Helper::GET('b','');
+        $data['back_url'] = __url(Helper::REQUEST('back_url', ''));
 
         Helper::Show($data, 'login');
     }

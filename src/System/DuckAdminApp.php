@@ -22,32 +22,33 @@ class DuckAdminApp extends DuckPhp
 //*
             \DuckAdmin\Admin\System\AdminApp::class => [
                 'controller_url_prefix' => 'admin/',
-
                 //'customer_duckcoverage_short' =>  false,
                 //'customer_duckcoverage_clean' =>  false,
+                'duckadmin_admin_provider' => true,
             ],
 //*/
 //*
             \DuckAdmin\DemoUsers\System\DemoUsersApp::class => [
-                'controller_url_prefix' => 'users/',
-
+                'controller_url_prefix' => 'demo_users/',
                 'demo_users'=>[
                     't1'=>'123456',
                     't2'=>'123456',
                 ],
+                'duckadmin_user_provider' => true,
             ],
 //*/
 //*
-
             \DuckAdmin\SingleAdmin\System\SingleAdminApp::class => [
-                'controller_url_prefix' => 'single/',
-
-                'single_admin_password' => '123456',
+                'controller_url_prefix' => 'single_admin/',
+                'single_admin_password' => '123456',  //override by duckadmin
+                
+                'duckadmin_admin_provider' => true,
             ],
 //*/
 //*
             \DuckAdmin\User\System\UserApp::class => [
-                'controller_url_prefix' => 'fulluser/',             // 访问路径
+                'controller_url_prefix' => 'user/',             // 访问路径
+                'duckadmin_user_provider' => true,
             ],
 //*/
 //*
@@ -57,47 +58,54 @@ class DuckAdminApp extends DuckPhp
 //*/
             \DuckAdmin\Admin_LaravelModel\System\LaravelModelApp::class => [
                 'controller_url_prefix' => 'admin_laravel/',
-
-                //'customer_duckcoverage_short' =>  false,
-                //'customer_duckcoverage_clean' =>  false,
+                'duckadmin_admin_provider' => true,
             ],
             \DuckAdmin\Admin_ThinkPHPModel\System\ThinkPHPModelApp::class => [
                 'controller_url_prefix' => 'admin_thinkphp/',
-
-                //'customer_duckcoverage_short' =>  false,
-                //'customer_duckcoverage_clean' =>  false,
+                'duckadmin_admin_provider' => true,
             ],
 
 
         ],
 
+        'duckcoverage_web_base_url' => 'http://admin.duckphp-local.com/',
         'duckcoverage_test_lister'=> [\DuckAdmin\Admin\System\TestLister::class ,'GetTestList'],
-        'duckcoverage_web_base_url' => 'http://admin.duckphp-local.com/admin/',
-        'duckcoverage_report_direct ' => false,
 
-        'demoapp_admin_provider' => \DuckAdmin\Admin\System\AdminApp::class,
-        //'demoapp_admin_provider' => \DuckAdmin\Admin_LaravelModel\System\LaravelModelApp::class,
-        'demoapp_user_provider' => \DuckAdmin\DemoUsers\System\DemoUsersApp::class,
+        'duckadmin_admin_provider' => \DuckAdmin\Admin\System\AdminApp::class,
+        'duckadmin_user_provider' => \DuckAdmin\DemoUsers\System\DemoUsersApp::class,
 
         //'demoapp_cover_doing' => \DuckAdmin\Admin\System\AdminApp::class,
         //'demoapp_cover_subonly' => \DuckAdmin\Admin\System\AdminApp::class,
-        'customer_duckcoverage_only_this_child' =>  \DuckAdmin\Admin\System\AdminApp::class,
+        //'demoapp_duckcoverage_only_this_child' =>  \DuckAdmin\Admin\System\AdminApp::class,
     ];
     protected function onPrepare(): void
     {
         parent::onPrepare();
-
-        foreach($this->options['app'] as &$app){
-            $app['admin_provider_enable'] = false;
-            $app['user_provider_enable'] = false;
-        }
-        unset($app);
-        $this->options['app'][$this->options['demoapp_admin_provider']]['admin_provider_enable'] = true;
-        $this->options['app'][$this->options['demoapp_user_provider']]['user_provider_enable'] = true;
+        $this->options['duckcoverage_path_src'] = realpath(__DIR__ . '/../../') . '/src/';
+        
         if(class_exists(\DuckCoverage\DuckCoverage::class)){
-            $this->options['duckcoverage_path_src'] = realpath(__DIR__ . '/../../') . '/src/Admin/';
             \DuckCoverage\DuckCoverage::Prepare([]);
         }
+        
+    }
+    protected function onInit():void
+    {
+        parent::onInit();
+
+        if(!class_exists(\think\Container::class)){
+            $this->options['app'][\DuckAdmin\Admin_ThinkPHPModel\System\ThinkPHPModelApp::class] = false;
+        }
+        if(!class_exists(\Illuminate\Database\Capsule\Manager::class)){
+            $this->options['app'][\DuckAdmin\Admin_LaravelModel\System\LaravelModelApp::class] = false;
+        }
+        
+        // foreach($this->options['app'] as &$app){
+        //     $app['admin_provider_enable'] = false;
+        //     $app['user_provider_enable'] = false;
+        // }
+        // unset($app);
+        // $this->options['app'][$this->options['demoapp_admin_provider']]['admin_provider_enable'] = true;
+        // $this->options['app'][$this->options['demoapp_user_provider']]['user_provider_enable'] = true;
     }
     protected function onInited():void
     {
