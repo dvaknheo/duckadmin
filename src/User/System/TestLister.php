@@ -40,11 +40,33 @@ EOT;
 #PHASE_BEGIN
 CALL {static}@beginTest
 WEB install driver=sqlite&database%5Bfile%5D={db}&database%5Bhost%5D=127.0.0.1&database%5Bport%5D=&database%5Bdbname%5D=&database%5Busername%5D=&database%5Bpassword%5D=&action=install
-WEB index
+
+COMMENT 注册:表单 + 成功 + 重名 + 两次密码不一致
 WEB register
-WEB register _token=Nos6FHBP3NNTC39H4JAXuOUY6fGFepgPYgiO7S7l&name=t1&password=123456&password_confirm=123456
-WEB register _token=Nos6FHBP3NNTC39H4JAXuOUY6fGFepgPYgiO7S7l&name=t1&password=123456&password_confirm=123456
-WEB login _token=Nos6FHBP3NNTC39H4JAXuOUY6fGFepgPYgiO7S7l&name=t1&password=123456&password_confirm=123456
+WEB register name=t1&password=123456&password_confirm=123456
+WEB register name=t1&password=123456&password_confirm=123456
+WEB register name=t2&password=123456&password_confirm=999999
+
+COMMENT 登录:表单 + 错密码 + 正确
+WEB login
+WEB login name=t1&password=nollllllllllllllllllllog
+WEB login name=t1&password=123456
+WEB index
+
+COMMENT 改密码:表单 + 改掉 + 改回来
+WEB password
+WEB password oldpassword=123456&newpassword=654321&newpassword_confirm=654321
+WEB password oldpassword=654321&newpassword=123456&newpassword_confirm=123456
+WEB logout
+
+COMMENT 用户管理(AdminController 需要管理员登录态;
+COMMENT 由同一组的 Admin 块负责装库与登录,所以这里直接访问)
+WEB Admin/index
+WEB Admin/index all=1
+WEB Admin/delete id=2
+WEB Admin/index all=1
+WEB Admin/undelete id=2
+WEB Admin/index
 
 CALL {static}@endTest
 #PHASE_END
