@@ -75,6 +75,16 @@ class TestLister
         $list[] = "WEB login username=" . self::ADMIN_NAME . "&password=" . self::ADMIN_PASSWORD;
         $list[] = 'WEB index';
 
+        // ========== 登录失败分支 ==========
+        // MainController::login() 自己 catch 后回显错误,所以这些不会变成 500、也不会脏日志;
+        // 覆盖的是 AppBusiness::login() 里的几个 ThrowOn(空值/用户不存在/密码错/账号禁用)
+        $list[] = 'WEB login username=&password=';
+        $list[] = 'WEB login username=ghost_user&password=123456';
+        $list[] = 'WEB login username=' . self::ADMIN_NAME . '&password=wrong_password';
+        $list[] = 'WEB login username=disabled_user&password=123456';
+        // 上面几次失败会把会话换掉,重新登录回超管再继续
+        $list[] = 'WEB login username=' . self::ADMIN_NAME . '&password=' . self::ADMIN_PASSWORD;
+
         // ========== Home 模块 ==========
         $list[] = 'WEB Home/index';
         $list[] = 'WEB Home/profile';
@@ -91,6 +101,7 @@ class TestLister
         $list[] = 'WEB Admin/edit id=1';
         $list[] = 'WEB Admin/update id=1&username=admin&password=&realname=AdminUpdated&email=admin@updated.com&status=1&role_id=1';
         $list[] = 'WEB Admin/save username=deluser&password=123456&realname=DelUser&email=del@test.com&status=1&role_id=2';
+        $list[] = 'WEB Admin/save username=disabled_user&password=123456&realname=Disabled&email=disabled@test.com&status=0&role_id=2';
         $list[] = 'WEB Admin/delete id=999';
 
         // ========== Role 模块 ==========
@@ -118,6 +129,18 @@ class TestLister
         $list[] = 'WEB System/info';
         $list[] = 'WEB System/setting';
         $list[] = 'WEB System/log';
+
+        // ========== 非超管路径 ==========
+        // deluser 是普通角色(role_id=2):登录后访问页面会走 checkUserUrl() 里的非超管分支,
+        // 首页/菜单还会走 menu() 里「按角色取菜单」的分支(超管走的是另一条)
+        $list[] = 'WEB login username=deluser&password=123456';
+        $list[] = 'WEB index';
+        $list[] = 'WEB Home/index';
+        $list[] = 'WEB Home/menu';
+        $list[] = 'WEB Home/permissions';
+        $list[] = 'WEB Role/index';
+        $list[] = 'WEB Admin/index';
+        $list[] = 'WEB System/info';
 
         $list[] = '#PHASE_END';
 
