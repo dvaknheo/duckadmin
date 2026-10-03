@@ -15,6 +15,7 @@ namespace DuckAdmin\SimpleBlog\System;
 
 use DuckPhp\Foundation\SingletonTrait;
 
+//@codeCoverageIgnoreStart
 class TestLister
 {
     use SingletonTrait;
@@ -107,4 +108,4 @@ EOT;
         }
         return str_replace(array_keys($map), array_values($map), $str);
     }
-}
+}//@codeCoverageIgnoreEnd

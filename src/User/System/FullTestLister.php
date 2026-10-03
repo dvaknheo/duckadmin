@@ -9,6 +9,7 @@ use DuckAdmin\User\System\UserApp;
 use DuckAdmin\User\Model\UserModel;
 use DuckAdmin\User\Controller\UserAction;
 
+//@codeCoverageIgnoreStart
 class FullTestLister
 {
     use SingletonTrait;
@@ -105,4 +106,4 @@ EOT;
         return $ret;
     }
     
-}
+}//@codeCoverageIgnoreEnd

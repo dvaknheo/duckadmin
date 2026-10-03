@@ -4,6 +4,7 @@ namespace DuckAdmin\User\System;
 use DuckPhp\Core\App;
 use DuckPhp\Foundation\SingletonTrait;
 
+//@codeCoverageIgnoreStart
 class TestLister
 {
     use SingletonTrait;
@@ -160,3 +161,4 @@ CALL DuckAdmin\User\Model\UserModel@verifyPassword user=&password=
 CALL DuckAdmin\User\Model\UserModel@unloadPassword user=
 CALL DuckAdmin\User\Model\UserModel@updatePassword uid=&password=
 */
+//@codeCoverageIgnoreEnd

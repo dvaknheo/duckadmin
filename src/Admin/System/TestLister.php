@@ -8,6 +8,7 @@ use DuckPhp\Foundation\SingletonTrait;
 /**
  * AdminApp 子应用 DuckCoverage 测试列表
  */
+//@codeCoverageIgnoreStart
 class TestLister
 {
     use SingletonTrait;
@@ -129,4 +130,4 @@ class TestLister
 
         return $str;
     }
-}
+}//@codeCoverageIgnoreEnd

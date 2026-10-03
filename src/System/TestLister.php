@@ -20,6 +20,7 @@ use DuckPhp\Foundation\SingletonTrait;
  *  - 三个 Admin 变体(Admin / Admin_LaravelModel / Admin_ThinkPHPModel)的 lister 是同一个,
  *    只是 phase 不同,所以 `__url()` 会分别解析成 /admin/ 、/admin_laravel/ 、/admin_thinkphp/ 。
  */
+//@codeCoverageIgnoreStart
 class TestLister
 {
     use SingletonTrait;
@@ -42,4 +43,4 @@ class TestLister
 
         return implode("\n", $list);
     }
-}
+}//@codeCoverageIgnoreEnd
