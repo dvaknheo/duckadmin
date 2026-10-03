@@ -232,14 +232,53 @@ DuckAdmin 支持 sqlite /mysql 两种模式的数据库 你可以在选项里切
 菜单和权限。 如何在我的控制器里，加入菜单。 参考 demo 里 用户管理系统 的实现。
 
 
-### 覆盖测试测试
+### 覆盖测试
 
+依赖 xdebug 的 coverage 模式（CLI 与 FPM 都要开）：`xdebug.mode=develop,coverage`。
+开关与站点基址见 `config/DuckPhpSettings.config.php.sample`。
+
+**按提供者分组建档**（同一时刻只能有一个管理员提供者 + 一个用户提供者生效，所以一个提供者一组）：
+
+```bash
+bash bin/cover_groups.sh               # 跑全部组并合并报告
+bash bin/cover_groups.sh e_user f_blog # 只跑指定组
 ```
-cd demo
-php cli.php duckcover --replay --report
-```
-testname 会在 demo/runtime 目录底下生成 test_coverage 生成报告
- 
+
+报告在 `runtime/DuckCoverage/AAAAA.report/`（多组合并）或 `<组名>.report/`（单组）。
+手工等价于 `cover --watch <组名>` → POST 选提供者 → `cover --play` → `cover --report 组名...`；
+**不要用 `cover --go`**，它的行为与手工四步有差异。
+
+#### 行计数有两个口径，以 libcoverage 报告为准
+
+- `runtime/DuckCoverage/*.report/index.html` —— 对外唯一口径。
+- `php bin/coverage_gaps.php src/Admin` —— 按 php-code-coverage 自己的语句分析列出
+  「真正没执行到的行」，用来找漏测点。它说「没有未执行的行」时报告仍可能 <100%，
+  差额来自报告侧的行计数。
+
+**已知的报告侧误报**：方法声明的参数里带默认值（尤其是数组默认值，例如
+`public function log($user_id, string $string, ?string $type = null, array $ext = [])`）时，
+**那一行声明会被报告算成可执行行，但覆盖驱动永远不会把它记为已执行**，该文件因此到不了 100%。
+`src/DemoUsers/Business/UserBusiness.php` 就是例子：驱动数据 29/29 全命中，
+报告固定 29/30 = 96.67%。这类差额不必再补测试。
+
+#### 补覆盖的手段
+
+1. 能用 HTTP 表达的加 `WEB` 步骤。uri 写「应用相对」的（框架会补 `controller_url_prefix`），
+   跨应用才用绝对 uri。
+2. HTTP 表达不了的（纯业务/模型方法、异常分支）用宏，它们会展开成
+   `CALL <phase>!<namespace>\<层>\<类>@<方法> 参数`：
+   - `#BUSINESS <类>@<方法> 参数` → 当前应用的 `Business\<类>`
+   - `#MODEL <类>@<方法> 参数` → `Model\<类>`
+   - `#ACTION <类>@<方法> 参数` → `Controller\<类>`
+   - `#INCLUDE_CALL <调用>` → 直接展开成 `CALL`
+
+   ⚠️ `CALL` 抛异常会中断整场 play：要踩错误分支请用 `WEB`（HTTP 请求不会中断 play），
+   或像 `src/DemoUsers/System/TestLister.php` 的 `moreTest2()` 那样把每步各自 try。
+
+当前进度（6 组、374 个 HTTP 请求、0 条应用错误日志）：Total 68.29% ——
+Admin 69.18%、Admin_LaravelModel 61.85%、Admin_ThinkPHPModel 62.23%、DemoUsers 99.01%、
+SimpleBlog 90.20%、SingleAdmin 100.00%、System 65.15%、User 45.03%。
+
 ### 其他非 DuckPhp 框架代码如何整合 DuckAdmin 的管理后台系统
 
 ### 登录事件管理
