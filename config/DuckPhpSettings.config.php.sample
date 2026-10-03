@@ -4,9 +4,51 @@
  * From this time, you never be alone~
  */
 
+/**
+ * 本文件是「按环境变化」的配置,不要提交真实凭据。
+ * 用法：复制成 config/DuckPhpSettings.config.php 再按环境修改。
+ * 注意：DuckPhpSettings.config.php 属于各环境自维护文件,
+ *       用 sync_to_wsl.sh 同步时已被排除,不会被开发机覆盖。
+ */
 return [
+    // 说明：这个键目前**没有任何代码读取**（全工程搜索无引用），保留仅为兼容旧配置。
     //'duckadmin_enable' => true,
+
+    // 打开覆盖测试(duckcoverage)。打开后：
+    //   - 只有在「watch 窗口」内才会采集（runtime/DuckCoverage/DuckCoverage.watching.txt 存在时），平时没有额外开销
+    //   - 采集期间动态配置文件会切到 runtime/DuckCoverage/<组名>.DuckPhpData.config.json
+    // 前置条件：php.ini 的 xdebug.mode 必须包含 coverage（CLI 与 FPM 都要），
+    //          否则 php-code-coverage 拿不到驱动，采集文件会是空的。
+    //          例：xdebug.mode=develop,coverage 然后重启 php-fpm
     //'duckcoverage_enable' => true,
+
+    // 覆盖测试 cover --play 时，要把测试清单里的相对 uri 请求到哪个站点。
+    //   - 不设置/留空：duckcoverage 自己起一个内置 server（默认 127.0.0.1:8017，见 duckcoverage_server_port）
+    //   - 设置：请求这个基址。因为同一份代码会部署到不同域名，所以按环境填
+    //           （例：WSL 测试机 'http://bak-admin.duckphp-local.com/'，主开发机 'http://admin.duckphp-local.com/'）
+    //   代码里的缺省值见 src/System/DuckAdminApp.php 的 options['duckcoverage_web_base_url']
+    //'duckcoverage_web_base_url' => 'http://bak-admin.duckphp-local.com/',
+
+    // 注意：本文件里的键**只会进入 App 的 setting**，并不会合并成 App 的 options
+    //（见 DuckPhp 的 App::loadSetting()），所以只有显式用 App::_Setting() 读的键才生效。
+    // 本文件里对 duckcoverage 生效的键只有上面两个：duckcoverage_enable、duckcoverage_web_base_url。
+    //
+    // 下面这些是 duckcoverage 的**组件选项**，写在本文件不会生效，
+    // 要写在入口的 $options 里（public/index.php、bin/cli.php 的 $options），
+    // 或写进 src/System/DuckAdminApp.php 的 options：
+    //   duckcoverage_path_src            统计哪些源码；DuckAdminApp 已固定为本项目 src/
+    //   duckcoverage_test_lister         测试清单回调 [类::class,'方法']；缺省用根应用的 src/System/TestLister
+    //   duckcoverage_report_direct       单组报告也写到 duckcoverage_report_default_dir
+    //   duckcoverage_report_default_dir  多组报告目录名（缺省 AAAAA.report）
+    //   duckcoverage_server_port         不设 web_base_url 时内置 server 的端口（缺省 8017）
+
+    // 覆盖测试的常规流程（不能用 cover --go，它的行为与分开执行略有差异）：
+    //   php bin/cli.php cover --watch 组名     # 开采集窗口
+    //   php bin/cli.php cover --play           # 跑测试清单（此时清单里的 uri 才会带上各组的前缀）
+    //   ... 换组名重复上面两步 ...
+    //   php bin/cli.php cover --report 组名1 组名2   # 合并出 HTML 报告
+    //   php bin/cli.php cover --stop           # 关窗口（不关的话每个 web 请求都会继续写采集文件）
+
     //'duckphp_is_debug' => true,
     //'duckphp_platform' => 'default',
 /*
