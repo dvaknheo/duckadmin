@@ -104,7 +104,16 @@ class DuckAdminApp extends DuckPhp
             $this->options['app'][\DuckAdmin\Admin_LaravelModel\System\LaravelModelApp::class] = false;
         }
         
-        $this->options['app'][$this->options['data']['duckadmin_admin_provider']]['admin_provider_enable'] = true;
-        $this->options['app'][$this->options['data']['duckadmin_user_provider']]['user_provider_enable'] = true;
+        // 选中哪个提供者由 data(动态配置文件)决定;它可能是旧的/被写坏的,
+        // 所以这里必须容错:取不到就沿用源码里的默认值,不要因为一个缺失的键让每个请求都 500。
+        // (曾经出现过:data 文件被写进一个没有这两个键的 "" 段,于是连"改成正确值"的 POST 都进不来)
+        $admin_provider = $this->options['data']['duckadmin_admin_provider'] ?? null;
+        if (is_string($admin_provider) && isset($this->options['app'][$admin_provider])) {
+            $this->options['app'][$admin_provider]['admin_provider_enable'] = true;
+        }
+        $user_provider = $this->options['data']['duckadmin_user_provider'] ?? null;
+        if (is_string($user_provider) && isset($this->options['app'][$user_provider])) {
+            $this->options['app'][$user_provider]['user_provider_enable'] = true;
+        }
     }
 }

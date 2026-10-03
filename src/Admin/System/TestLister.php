@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 namespace DuckAdmin\Admin\System;
 
+use DuckPhp\Core\App;
 use DuckPhp\Foundation\Helper;
 use DuckPhp\Foundation\SingletonTrait;
 
@@ -52,7 +53,11 @@ class TestLister
 
     public function _GetTestList()
     {
-        $flag = AdminApp::_()->options['admin_provider_enable'] ?? true;
+        // 用「当前 phase 的 App」(也就是正在取清单的那个子应用)来判断自己是不是被选中的提供者。
+        // 不能用 AdminApp::_():在 Laravel/ThinkPHP 子应用的 phase 里它不存在于该 phase 的容器,
+        // 会被新建出一个 AdminApp 实例、拿到类默认值(true),于是"非当前提供者"的清单也会被跑,
+        // 那些请求实际由别的提供者代跑 —— 自己的适配器反而一行都覆盖不到。
+        $flag = App::_()->options['admin_provider_enable'] ?? true;
         if(!$flag){
             return '';
         }

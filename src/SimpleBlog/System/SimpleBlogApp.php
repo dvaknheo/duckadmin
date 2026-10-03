@@ -28,5 +28,8 @@ class SimpleBlogApp extends DuckPhp
             '~article/(\d+)/?(\d+)?' => 'article?id=$1&page=$2',
         ],
         
+        // DuckCoverage 测试列表(src/SimpleBlog/System/TestLister.php)
+        // 根应用的 src/System/TestLister 会用 #INCLUDE_CHILD 把本应用拼进覆盖测试
+        'duckcoverage_test_lister' => [TestLister::class, 'GetTestList'],
     ];
 }

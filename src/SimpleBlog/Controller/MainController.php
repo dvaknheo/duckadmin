@@ -23,6 +23,13 @@ class MainController
     {
         $user_id = Helper::UserId(false);
         $user_name = Helper::UserName(false);
+        // view/main.php 里要用到这几个链接(原来只有 $user_id/$user_name,
+        // 视图里 $url_login/$url_logout/$url_reg 未定义,首页每次都报 Undefined variable)
+        $url_login  = Helper::User()->urlForLogin(__url(''));
+        $url_logout = Helper::User()->urlForLogout(__url(''));
+        $url_reg    = Helper::User()->urlForRegister(__url(''));
+        $url_admin  = __url('admin/index');
+
         [$total, $articles] = ArticleBusiness::_()->getRecentArticle(Helper::PageNo());
         
         $articles = Helper::_()->recordsetH($articles, ['title']);

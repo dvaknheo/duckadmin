@@ -2,24 +2,17 @@
 /**
  * DuckAdmin SimpleBlog - DuckCoverage 测试列表
  *
- * 修复记录:
- * 1) 原来 namespace 写成了 DuckAdmin\DemoUsers\System(从 DemoUsers 复制过来忘了改),
- *    与 src/DemoUsers/System/TestLister.php 撞类名 —— 一旦被 composer -o 建类映射或反射加载就致命。
- * 2) 命令行前缀从 "#WEB" 改成 "WEB":现在 duckcoverage 的 readCommand() 是按
- *    explain{Ucfirst(cmd)} 分发的,带 # 的 cmd 会变成 explain#web 并打印 Bad Request。
- *    (#PHASE_BEGIN/#PHASE_END/#BUSINESS/#MODEL/#ACTION 仍然带 #,它们由 explainMarco 预处理)
- * 3) 去掉了已不被 duckcoverage 支持的 "#SETWEB ... testControllerHelper"(该方法也不存在)。
- * 4) 补齐原来缺失的 replace_string() / getNextInsertId();方法名统一成本工程的
- *    duckcoverage_test_lister 约定:静态 GetTestList()。
- *
- * 注意:本类目前没有在 SimpleBlogApp 的 options 里登记(duckcoverage_test_lister),
- *      需要跑覆盖率时再挂上。
+ * 注意(踩过的坑):
+ * 1) 本方法在「清单生成时」被调用,那时本应用可能还没安装,
+ *    所以不能在这里访问数据库取 id —— 占位 id 一律写死,每组用全新 DB,install 后 id 从 1 开始。
+ * 2) 本应用自己的路由用「相对 uri」:__url() 会按当前 phase 的 controller_url_prefix 补上 /blog/。
+ *    带上 'blog/' 反而会变成 /blog/blog/...。
+ * 3) 其他应用(管理端登录、用户端注册登录)的路由要用「以 / 开头的绝对 uri」,
+ *    否则会被拼成 /blog/admin/login。
+ * 4) 命令行前缀用当前的 "WEB",带 '#' 的写法是已废弃的旧 DSL。
  */
 namespace DuckAdmin\SimpleBlog\System;
 
-use DuckAdmin\SimpleBlog\Model\ArticleModel;
-use DuckAdmin\SimpleBlog\Model\CommentModel;
-use DuckPhp\Component\DbManager;
 use DuckPhp\Foundation\SingletonTrait;
 
 class TestLister
@@ -33,62 +26,70 @@ class TestLister
 
     public function _GetTestList(): string
     {
-        // 本应用前缀(blog/)
-        $prefix = (string)(SimpleBlogApp::_()->options['controller_url_prefix'] ?? '');
-        // 下列前缀要和首页所选中的“提供者”一致,否则登录态不共享
-        $admin_prefix = 'admin/';
-        $user_prefix  = 'user/';
+        // 管理员前缀要与首页所选中的「管理员提供者」一致,否则登录态不共享
+        $admin_prefix = '/admin/';
+
+        // 用户端注册/登录只在「用户提供者 = UserApp」时才做:
+        // 换成 DemoUsers 时它有自己的预设账号(由 DemoUsers 那一块负责登录),
+        // 这时候再去 /user/register 只会白拿一个失败响应。
+        $user_provider = (string)(\DuckPhp\Core\App::Root()->options['data']['duckadmin_user_provider'] ?? '');
+        $user_steps = ($user_provider === \DuckAdmin\User\System\UserApp::class)
+            ? "WEB /user/register name={username}&password=123456&password_confirm=123456\nWEB /user/login name={username}&password=123456"
+            : "COMMENT 用户提供者不是 UserApp,跳过注册/登录,沿用该提供者已有的登录态";
 
         $list = <<<EOT
 #PHASE_BEGIN
-# 需要管理员登录态,blog/admin/* 由 AdminControllerBase 鉴权
+WEB install driver=sqlite&database%5Bfile%5D={db}&database%5Bhost%5D=127.0.0.1&database%5Bport%5D=&database%5Bdbname%5D=&database%5Busername%5D=&database%5Bpassword%5D=&action=install
 WEB {admin_prefix}login username=admin&password=123456
-# 需要用户登录态,addcomment/delcomment 会取当前用户
-WEB {user_prefix}register name={username}&password=123456&password_confirm=123456
-WEB {user_prefix}login name={username}&password=123456
+{user_steps}
 
-# 前台
-WEB {prefix}
-WEB {prefix}article/{new_article_id}
-WEB {prefix}article/9999999
-WEB {prefix}addcomment article_id={new_article_id}&content=aaaaaaaaa
-# delcomment 是 POST
-WEB {prefix}delcomment id={new_comment_id}
-WEB {prefix}addcomment article_id={new_article_id}&content=bbbbbbbbbb
-WEB {prefix}article/{new_article_id}
+COMMENT 后台:先造数据(每组 DB 全新,id 从 1 开始)
+WEB admin/index
+WEB admin/articles
+WEB admin/article_add
+WEB admin/article_add title=tttttt&content=ccccccccccc
+WEB admin/articles
+WEB admin/article_edit?id=1
+WEB admin/article_edit id=1&title=xxxxxxx&content=zzzzzzzzz
 
-# 后台
-WEB {prefix}admin/index
-WEB {prefix}admin/articles
-WEB {prefix}admin/article_add
-WEB {prefix}admin/article_add title=tttttt&content=ccccccccccc
-WEB {prefix}admin/article_edit?id={new_article_id}
-WEB {prefix}admin/article_edit id={new_article_id}&title=xxxxxxx&content=zzzzzzzzz
-WEB {prefix}admin/article_delete id={new_article_id}
-WEB {prefix}admin/comments
-WEB {prefix}admin/delete_comments id={new_comment_id}
+COMMENT 前台
+WEB
+WEB article/1
+WEB article/9999999
+WEB addcomment article_id=1&content=aaaaaaaaa
+WEB article/1
+COMMENT delcomment 是 POST,按 id 删
+WEB delcomment id=1
+WEB article/1
+WEB addcomment article_id=1&content=bbbbbbbbbb
+
+COMMENT 评论后台
+WEB admin/comments
+WEB admin/delete_comments id=2
+WEB admin/comments
+
+COMMENT 收尾:删除文章
+WEB admin/article_delete id=1
+WEB admin/articles
 #PHASE_END
 EOT;
 
-        $args = [
-            'prefix'         => $prefix,
-            'admin_prefix'   => $admin_prefix,
-            'user_prefix'    => $user_prefix,
-            'username'       => 'user_test1',
-            'new_article_id' => $this->getNextInsertId(ArticleModel::_()->table()),
-            'new_comment_id' => $this->getNextInsertId(CommentModel::_()->table()),
-        ];
-
-        return $this->replace_string($list, $args);
+        return $this->replace_string($list, [
+            'admin_prefix' => $admin_prefix,
+            'user_steps'   => $user_steps,
+            'username'     => 'user_test1',
+            'db'           => urlencode('runtime/DuckCoverage/' . $this->watchingName() . '.db'),
+        ]);
     }
 
     /**
-     * 取某表下一个自增 id(仅用于测试数据占位)
+     * 当前 watch 组名(cover --watch 时写在 runtime/DuckCoverage/DuckCoverage.watching.txt)
+     * 组名决定本组用的 sqlite 文件,清单里的 install 步骤要用同一个文件。
      */
-    protected function getNextInsertId(string $table): int
+    protected function watchingName(): string
     {
-        $row = DbManager::Db()->fetch('SELECT COALESCE(MAX(id), 0) + 1 AS next_id FROM ' . $table);
-        return (int)($row['next_id'] ?? 1);
+        $name = @file_get_contents(\DuckPhp\Foundation\Helper::PathOfRuntime() . 'DuckCoverage/DuckCoverage.watching.txt');
+        return is_string($name) ? trim($name) : '';
     }
 
     /**

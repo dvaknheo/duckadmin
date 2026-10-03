@@ -38,8 +38,7 @@ class TestLister
         $list[] = "#INCLUDE_CHILD DuckAdmin\\SingleAdmin\\System\\SingleAdminApp";
         $list[] = "#INCLUDE_CHILD DuckAdmin\\DemoUsers\\System\\DemoUsersApp";
         $list[] = "#INCLUDE_CHILD DuckAdmin\\User\\System\\UserApp";
-        // SimpleBlog 还没登记 duckcoverage_test_lister,等第二阶段再接
-        // $list[] = "#INCLUDE_CHILD DuckAdmin\\SimpleBlog\\System\\SimpleBlogApp";
+        $list[] = "#INCLUDE_CHILD DuckAdmin\\SimpleBlog\\System\\SimpleBlogApp";
 
         return implode("\n", $list);
     }
