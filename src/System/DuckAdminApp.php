@@ -64,7 +64,9 @@ class DuckAdminApp extends DuckPhp
         ],
 
         'duckcoverage_web_base_url' => 'http://admin.duckphp-local.com/',
-        'duckcoverage_test_lister'=> [\DuckAdmin\Admin\System\TestLister::class ,'GetTestList'],
+        // 根应用的测试列表:它只发 #INCLUDE_CHILD,由子应用各自的 lister 提供具体步骤。
+        // (不要指到某个子应用的 lister:那样 phase 不会切过去,相对 url 也就带不上子应用前缀)
+        'duckcoverage_test_lister'=> [\DuckAdmin\System\TestLister::class, 'GetTestList'],
 
         'data' => [
             'duckadmin_admin_provider' => \DuckAdmin\SingleAdmin\System\SingleAdminApp::class,
@@ -76,7 +78,16 @@ class DuckAdminApp extends DuckPhp
     {
         parent::onPrepare();
         $this->options['duckcoverage_path_src'] = realpath(__DIR__ . '/../../') . '/src/';
-        
+
+        // 覆盖测试(duckcoverage --play)要请求的站点基址。
+        // 同一份代码会部署到不同域名(例如 admin- / bak-admin- / bak-duckadmin-),
+        // 所以允许由环境配置 config/DuckPhpSettings.config.php 里的
+        // 'duckcoverage_web_base_url' 覆盖,缺省沿用本类 options 里的值。
+        $this->options['duckcoverage_web_base_url'] = (string)$this->_Setting(
+            'duckcoverage_web_base_url',
+            $this->options['duckcoverage_web_base_url'] ?? ''
+        );
+
         if(class_exists(\DuckCoverage\DuckCoverage::class) && $this->_Setting('duckcoverage_enable')){
             \DuckCoverage\DuckCoverage::Prepare([]);
         }

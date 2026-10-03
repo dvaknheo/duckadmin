@@ -76,6 +76,9 @@ TAR_EXCLUDES=(
     --exclude='*.log'
     --exclude='.DS_Store'
     --exclude='Thumbs.db'
+    # 环境相关的配置：各环境自己维护，不要被同步覆盖
+    # (WSL 侧要打开 duckcoverage_enable 并设置 duckcoverage_web_base_url)
+    --exclude='config/DuckPhpSettings.config.php'
 )
 if [[ "$WITH_STATE" == "false" ]]; then
     TAR_EXCLUDES+=(--exclude='runtime' --exclude='database' --exclude='*.db')
