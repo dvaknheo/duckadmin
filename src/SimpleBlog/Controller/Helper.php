@@ -6,7 +6,7 @@
 
 namespace DuckAdmin\SimpleBlog\Controller;
 
-use DuckPhp\Controller\ControllerHelper;
+use DuckPhp\Foundation\Controller\ControllerHelper;
 
 class Helper extends ControllerHelper
 {

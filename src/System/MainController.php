@@ -12,6 +12,12 @@ class MainController
 {
     public function index()
     {
+        if(Helper::IsPost()){
+            $app_data['duckadmin_admin_provider'] = Helper::POST('admin');
+            $app_data['duckadmin_user_provider'] = Helper::POST('user');
+            $this->saveData($app_data);
+        }
+
         $data = [];
 
         // 获取管理员状态
@@ -35,11 +41,6 @@ class MainController
         $app_data = Helper::AppOptions('data', []);
         $data['admin_app'] = $app_data['duckadmin_admin_provider'] ?? '';
         $data['user_app'] = $app_data['duckadmin_user_provider'] ?? '';
-        if(Helper::IsPost()){
-            $app_data['duckadmin_admin_provider'] = Helper::POST('admin');
-            $app_data['duckadmin_user_provider'] = Helper::POST('user');
-            $this->saveData($app_data);
-        }
         Helper::Show($data,'main');
     }
     protected function saveData($data)
