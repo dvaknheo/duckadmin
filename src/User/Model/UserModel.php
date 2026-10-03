@@ -6,6 +6,8 @@
 namespace DuckAdmin\User\Model;
 
 use DuckPhp\Foundation\Model\Base;
+// batchGetUsernames() 里用到 Helper::DbForRead(),原来既没 use 也没有同名类,运行到就致命
+use DuckPhp\Foundation\Model\ModelHelper as Helper;
 
 class UserModel extends Base
 {

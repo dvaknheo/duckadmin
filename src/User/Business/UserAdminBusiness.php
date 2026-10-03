@@ -17,7 +17,8 @@ class UserAdminBusiness extends Base
     }
     public function deleteUser($admin_id,$id)
     {
-        Heper::AdminService()->log($admin_id,"{$admin_id}禁用 {$id}，结果", "调整用户");
+        // 原来这里写成了 Heper::(拼写错误),一旦调用就是致命错误
+        Helper::AdminService()->log($admin_id, "{$admin_id}禁用 {$id}，结果", "调整用户");
         $ret = UserAdminModel::_()->deleteUser($id);
         return $ret;
     }

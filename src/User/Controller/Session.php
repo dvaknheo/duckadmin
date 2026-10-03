@@ -6,21 +6,25 @@
 namespace DuckAdmin\User\Controller;
 
 use DuckPhp\Foundation\Controller\SessionTrait;
+use DuckPhp\GlobalUser\UserSessionInterface;
 use DuckPhp\GlobalUser\UserSessionTrait;
 
 /**
  * Session 本质上和 Model 一样不做逻辑运算，不抛异常
  */
-class Session 
+class Session implements UserSessionInterface
 {
     use SessionTrait;
     use UserSessionTrait;
     //@override
 
     ////////////////////////////////////////////////////////////////////////
+    /**
+     * 注意:读写必须用同一个 key,否则每次调用都会重新生成(原来读 'token' 写 '_token')
+     */
     public function csrfToken()
     {
-        $token = $this->get('token');
+        $token = $this->get('_token');
         if (!isset($token)) {
             $token = $this->randomString(40);
             $this->set('_token', $token);

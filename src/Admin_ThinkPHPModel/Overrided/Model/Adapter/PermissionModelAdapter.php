@@ -22,6 +22,12 @@ class PermissionModelAdapter extends BasePermissionModel
         return $perm ? $perm->toArray() : null;
     }
     
+    public function getByUrl(string $url): ?array
+    {
+        $perm = ThinkPermission::whereNull('deleted_at')->where('url', $url)->find();
+        return $perm ? $perm->toArray() : null;
+    }
+    
     public function getPageList(int $page, int $pageSize, string $search = ''): array
     {
         $query = ThinkPermission::whereNull('deleted_at');
@@ -158,15 +164,16 @@ class PermissionModelAdapter extends BasePermissionModel
         if (!$roleId) {
             return [];
         }
-        
-        return ThinkPermission::whereNull('deleted_at')
-            ->whereIn('type', [0, 1])
-            ->whereHas('rolePermissions', function ($q) use ($roleId) {
-                $q->where('role_id', $roleId);
-            })
-            ->field('id, name, url, type, parent_id, weight')
-            ->order('weight', 'asc')
-            ->order('id', 'asc')
+
+        // 注意:think-orm 没有 Eloquent 的 whereHas(),这里用显式 JOIN
+        return ThinkPermission::alias('p')
+            ->join('admin_role_permissions rp', 'p.id = rp.permission_id')
+            ->where('rp.role_id', $roleId)
+            ->whereNull('p.deleted_at')
+            ->whereIn('p.type', [0, 1])
+            ->field('p.id, p.name, p.url, p.type, p.parent_id, p.weight')
+            ->order('p.weight', 'asc')
+            ->order('p.id', 'asc')
             ->select()
             ->toArray();
     }

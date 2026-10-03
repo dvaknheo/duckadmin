@@ -12,20 +12,24 @@ class AdminBusiness implements AdminServiceInterface
 {
     use SingletonTrait;
 
-    public function canAccess($admin_id,  ?string $url = null, ?string $class, ?string $method,): bool
+    /**
+     * 参数顺序与 DuckPhp\GlobalAdmin\AdminServiceInterface::canAccess 一致($url 在第二位)
+     * @param int|string $admin_id
+     */
+    public function canAccess($admin_id, ?string $url = null, ?string $class = null, ?string $method = null): bool
     {
         return true;
     }
 
     /**
-     * Summary of log
+     * 参数名与 DuckPhp\GlobalAdmin\AdminServiceInterface::log($admin_id, string $string, ...) 对齐
+     * (原来第2个参数叫 $str;覆盖率 DSL 按参数名传参,名字不一致会取不到值)
      * @param mixed $admin_id
-     * @param string $str
      * @param mixed $type
-     * @param array $ext
+     * @param array<string, mixed> $ext
      * @return void
      */
-    public function log($admin_id, string $str, ?string $type = null, array $ext = []) //@codeCoverageIgnore
+    public function log($admin_id, string $string, ?string $type = null, array $ext = []) //@codeCoverageIgnore
     {
         return;
     }

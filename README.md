@@ -45,6 +45,21 @@ demo 里
 php cli.php install ## --force 可以强制执行 --help 查看参数
 ```
 
+### Web 安装器重新安装（改数据库配置）
+
+子应用已安装后，直接访问 `<前缀>/install` 会 302 回首页（框架行为，防止误入安装页）。
+需要重装（例如换数据库文件、换管理员/用户提供者）时，显式带上 `force`：
+
+```
+GET  /<前缀>/install?force=1       # 显示安装表单
+POST /<前缀>/install  force=1 ...  # 重装（force 会先执行 {driver}.clean.sql 再建表）
+```
+
+不带 `force` 时行为与框架原版一致。实现见 `src/System/WebInstaller.php`。
+
+管理员 / 用户提供者在根应用首页的单选框中切换（写入 `runtime/DuckPhpData*.config.json`），
+切换后请对对应子应用执行一次上述重装，让它的数据库配置重新初始化。
+
 ## 正常使用模式
 ### 第一种模式：快速 duckphp 工程并应用。
 当你想复制 demo 例子，不想做任何操作，执行以下命令
@@ -143,6 +158,25 @@ php cli.php run
 
 
 ## 二次开发
+
+### 上游升级后的自检（重要）
+
+`DuckPhp` 的上游接口改过签名（例如 `canAccess()` 的参数顺序把 `$url` 挪到第二位），
+而本工程不少类**没有写 `implements`**（靠 App 选项里的 `local_service` / `login_service` /
+`login_session` 绑定成上游服务），PHP 不会替我们检查 —— 这类问题只会在运行到那一行时才爆。
+
+上游更新后请跑这两个脚本：
+
+```
+php bin/audit_signatures.php      # 契约签名审计:本工程实现与上游接口逐参数比对
+php bin/audit_upstream_refs.php   # 上游引用审计:src 里引用的类/方法是否还存在
+```
+
+两者都是以退出码表示结果（0 通过 / 1 有问题），可以直接挂到 CI 或 git hook 上。
+
+- `audit_signatures.php` 里的**角色表**（哪个类承担哪个契约）需要在新加子应用或换绑定时同步维护。
+- 参数类型"放宽"（`?string` 对接口的 `string`）是 LSP 允许的，会报 warn 而不是 fail。
+- 覆盖率 DSL（`CALL Class@method k=v`）是**按参数名传参**的，所以参数名也必须和契约一致。
 
 
 

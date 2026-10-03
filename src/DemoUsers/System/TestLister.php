@@ -7,7 +7,6 @@ namespace DuckAdmin\DemoUsers\System;
 
 use DuckPhp\Foundation\SingletonTrait;
 use DuckPhp\Core\App;
-use DuckPhp\Foundation\Controller\Helper;
 
 //@codeCoverageIgnoreStart
 class TestLister
@@ -28,7 +27,7 @@ class TestLister
 WEB users/Home/index
 WEB users/
 WEB users/logout
-CALL DuckAdmin\DemoUsers\Business\UserBusiness@canAccess user_id=&class=&method=&url=
+CALL DuckAdmin\DemoUsers\Business\UserBusiness@canAccess user_id=&url=&class=&method=
 CALL DuckAdmin\DemoUsers\Business\UserBusiness@log user_id=&string=&type=&ext=
 CALL DuckAdmin\DemoUsers\Business\UserBusiness@batchGetUsernames ids=
 CALL DuckAdmin\DemoUsers\Business\UserBusiness@login post=

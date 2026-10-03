@@ -19,6 +19,17 @@ class PermissionModel extends Base
         return $ret === false ? null : $ret;
     }
 
+    /**
+     * 按 url 精确查询权限,不存在返回 null
+     * url 与库中存储一致:无域名的完整 path(含挂载前缀,如 /admin/Role/index)
+     */
+    public function getByUrl(string $url): ?array
+    {
+        $sql = "SELECT * FROM admin_permissions WHERE url = ? AND deleted_at IS NULL";
+        $ret = $this->fetch($sql, [$url]);
+        return $ret === false ? null : $ret;
+    }
+
     public function getPageList(int $page, int $pageSize, string $search = ''): array
     {
         $where = "deleted_at IS NULL";

@@ -19,8 +19,8 @@ class RoleBusiness extends Base
     public function create(string $name, string $description, int $pid = 0): int
     {
         Helper::ThrowOn(empty($name), '职位名称不能为空');
-        RoleModel::_()->create(['name' => $name, 'description' => $description, 'pid' => $pid]);
-        return (int)RoleModel::_()->lastInsertId();
+        // 用 create() 的返回值取新 id:ORM 适配器走独立连接,lastInsertId() 不可靠
+        return (int)RoleModel::_()->create(['name' => $name, 'description' => $description, 'pid' => $pid]);
     }
 
     public function update(int $id, string $name, string $description, int $pid): bool

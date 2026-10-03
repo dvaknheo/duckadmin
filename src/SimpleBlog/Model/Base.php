@@ -5,11 +5,15 @@
  */
 namespace DuckAdmin\SimpleBlog\Model;
 
+use DuckPhp\Foundation\Model\ModelHelperTrait;
 use DuckPhp\Foundation\Model\ModelTrait;
 
 class Base
 {
     use ModelTrait;
+    // 上游 Base 是 ModelTrait + ModelHelperTrait 两个 trait 都用的;
+    // 这里原来只用了 ModelTrait,导致下面 self::DbForRead() / self::SqlForCountSimply() 没有定义
+    use ModelHelperTrait;
     //public $table_name = null;
 
     public function get($id)

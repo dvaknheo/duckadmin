@@ -21,6 +21,12 @@ class PermissionModelAdapter extends BasePermissionModel
         $perm = Permission::active()->find($id);
         return $perm ? $perm->toArray() : null;
     }
+
+    public function getByUrl(string $url): ?array
+    {
+        $perm = Permission::active()->where('url', $url)->first();
+        return $perm ? $perm->toArray() : null;
+    }
     
     public function getPageList(int $page, int $pageSize, string $search = ''): array
     {

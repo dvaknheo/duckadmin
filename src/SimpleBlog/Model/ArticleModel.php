@@ -5,7 +5,8 @@
  */
 namespace DuckAdmin\SimpleBlog\Model;
 
-use DuckPhp\Foundation\Model\Helper;
+// 上游把 DuckPhp\Foundation\Model\Helper 改名为 ModelHelper(方法同:Db/DbForRead/DbForWrite/SqlForPager/SqlForCountSimply)
+use DuckPhp\Foundation\Model\ModelHelper as Helper;
 
 class ArticleModel extends Base
 {

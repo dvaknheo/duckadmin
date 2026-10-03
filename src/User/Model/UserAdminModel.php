@@ -6,7 +6,8 @@
 namespace DuckAdmin\User\Model;
 
 use DuckPhp\Foundation\Model\Base;
-use DuckPhp\Foundation\Model\Helper;
+// 上游把 DuckPhp\Foundation\Model\Helper 改名为 ModelHelper(方法同:Db/DbForRead/DbForWrite/SqlForPager/SqlForCountSimply)
+use DuckPhp\Foundation\Model\ModelHelper as Helper;
 
 class UserAdminModel extends Base
 {
@@ -16,7 +17,8 @@ class UserAdminModel extends Base
     }
     public function getUserList($where=[], $page = 1, $page_size = 10)
     {
-        $is_all = $where['all']? true:false;
+        // 注意:默认参数是空数组,这里不能直接取 $where['all'](会 Undefined array key)
+        $is_all = !empty($where['all']);
         $sql_where = $is_all ? ' TRUE ' : ' deleted_at IS NULL';
         
         $sql = "SELECT * FROM `'TABLE'` WHERE $sql_where ORDER BY id DESC";

@@ -6,17 +6,17 @@
 namespace DuckAdmin\SimpleBlog\System;
 
 use DuckPhp\DuckPhp;
-use DuckPhp\Ext\RouteHookWebInstaller;
+use DuckAdmin\System\WebInstaller;
 class SimpleBlogApp extends DuckPhp
 {
     public $options = [
         'path' => __DIR__ . '/../',
-        'namespace' => 'SimpleBlog',
+        'namespace' => 'DuckAdmin\\SimpleBlog',
         'name'  => 'SimpleBlog',
         'data_file_enable' => true,
 
         'ext' => [
-            RouteHookWebInstaller::class => [
+            WebInstaller::class => [
                 'web_installer_use_redis' => false,
                 'web_installer_use_database' => true,
                 'web_installer_database_drivers' => ['sqlite' => true],

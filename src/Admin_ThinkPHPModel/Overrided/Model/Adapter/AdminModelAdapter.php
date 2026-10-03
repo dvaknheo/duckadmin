@@ -4,6 +4,7 @@ namespace DuckAdmin\Admin_ThinkPHPModel\Overrided\Model\Adapter;
 
 use DuckAdmin\Admin\Model\AdminModel as BaseAdminModel;
 use DuckAdmin\Admin_ThinkPHPModel\Overrided\Model\Admin as ThinkAdmin;
+use DuckAdmin\Admin_ThinkPHPModel\Overrided\Model\RoleUser as ThinkRoleUser;
 
 class AdminModelAdapter extends BaseAdminModel
 {
@@ -47,9 +48,12 @@ class AdminModelAdapter extends BaseAdminModel
             if (empty($roleIds)) {
                 return ['total' => 0, 'list' => []];
             }
-            $query->whereHas('roleUser', function ($q) use ($roleIds) {
-                $q->whereIn('role_id', $roleIds);
-            });
+            // 注意:think-orm 没有 Eloquent 的 whereHas(),先取该角色下的用户 id 再过滤
+            $userIds = ThinkRoleUser::whereIn('role_id', $roleIds)->column('user_id');
+            if (empty($userIds)) {
+                return ['total' => 0, 'list' => []];
+            }
+            $query->whereIn('id', $userIds);
         }
         
         $total = $query->count();

@@ -5,7 +5,6 @@
  */
 namespace DuckAdmin\SimpleBlog\Business;
 
-use DuckAdmin\SimpleBlog\Model\ActionLogModel;
 use DuckAdmin\SimpleBlog\Model\ArticleModel;
 use DuckAdmin\SimpleBlog\Model\CommentModel;
 
