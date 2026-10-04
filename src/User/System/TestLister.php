@@ -54,20 +54,32 @@ WEB login name=t1&password=nollllllllllllllllllllog
 WEB login name=t1&password=123456
 WEB index
 
-COMMENT 改密码:表单 + 改掉 + 改回来
-WEB password
-WEB password oldpassword=123456&newpassword=654321&newpassword_confirm=654321
-WEB password oldpassword=654321&newpassword=123456&newpassword_confirm=123456
-WEB logout
+COMMENT 登录后的主页与改密码页(HomeController 需要登录态)
+COMMENT 注意:MainController 没有 password action,要用 Home/password
+WEB Home/index
+WEB Home/password
+WEB Home/password oldpassword=123456&newpassword=654321&newpassword_confirm=654321
+WEB Home/password oldpassword=654321&newpassword=123456&newpassword_confirm=123456
+WEB Home/password oldpassword=123456&newpassword=123456&newpassword_confirm=999999
 
-COMMENT 用户管理(AdminController 需要管理员登录态;
-COMMENT 由同一组的 Admin 块负责装库与登录,所以这里直接访问)
+COMMENT 用户管理(必须放在用户登出之前:登出会把整个 session 清掉,
+COMMENT 管理员登录态也会一起没,AdminControllerBase 就会直接 302 出去,
+COMMENT 于是 AdminController 与 view/Admin/* 永远是 0%)
+COMMENT 管理员登录态由同一组的 Admin 块负责建立
 WEB Admin/index
 WEB Admin/index all=1
 WEB Admin/delete id=2
 WEB Admin/index all=1
 WEB Admin/undelete id=2
+WEB Admin/delete id=999
 WEB Admin/index
+
+COMMENT 英文语言包:不带 ?lang=en 时 config/lang-en.php 永远不加载,一直是 0%
+COMMENT HTTP 表达不到的业务/模型层交给 SETWEB 后置钩子(见下面的 moreTest)
+SETWEB _ _ {phase}!{static}@moreTest _
+WEB login?lang=en
+WEB Home/index?lang=en
+WEB logout
 
 CALL {static}@endTest
 #PHASE_END
@@ -91,6 +103,58 @@ EOT;
     public function endTest()
     {
         //我们要删除旧测试数据库文件
+    }
+
+    /**
+     * SETWEB 后置钩子：在每个 web 调用之后触发，用来覆盖 HTTP 表达不到的
+     * 业务层/模型层方法。
+     *
+     * 为什么必须在这里调、而不是用 #BUSINESS/#MODEL 宏展开成 CALL：
+     * 宏展开是 `CALL :DuckUser!DuckAdmin\User\Business\...`，在 CLI 里直接执行，
+     * 那时子应用的 database_list 还没有生效，模型层一取数据库就抛
+     * "setting database_list[0] missing" 并中断整场 play（实测过）。
+     * 钩子是在该子应用的真实请求里跑的，配置已生效 —— 与 DemoUsers 的
+     * TestLister::moreTest2() 同一套路。
+     *
+     * 每步各自 try：任何一个失败都不影响其它步，也不会中断 play；
+     * static 守卫让这一批调用只跑一次（钩子本身会随每个 web 调用触发）。
+     */
+    public function moreTest()
+    {
+        static $done = false;
+        if ($done) {
+            return;
+        }
+        $done = true;
+
+        $calls = [
+            // UserAdminBusiness / UserAdminModel：整文件原来 0%
+            ['\DuckAdmin\User\Business\UserAdminBusiness', 'getUserList', [[], 1, 10]],
+            ['\DuckAdmin\User\Business\UserAdminBusiness', 'getUserList', [['all' => 1], 1, 10]],
+            ['\DuckAdmin\User\Business\UserAdminBusiness', 'deleteUser', [1, 2]],
+            ['\DuckAdmin\User\Business\UserAdminBusiness', 'unDeleteUser', [1, 2]],
+            ['\DuckAdmin\User\Model\UserAdminModel', 'getUserList', [[], 1, 5]],
+            ['\DuckAdmin\User\Model\UserAdminModel', 'getUserList', [['all' => 1], 1, 5]],
+            ['\DuckAdmin\User\Model\UserAdminModel', 'deleteUser', [2]],
+            ['\DuckAdmin\User\Model\UserAdminModel', 'unDeleteUser', [2]],
+            // UserModel / UserBusiness 剩下的分支
+            ['\DuckAdmin\User\Model\UserModel', 'getUserById', [1]],
+            ['\DuckAdmin\User\Model\UserModel', 'getUserByUsername', ['t1']],
+            ['\DuckAdmin\User\Model\UserModel', 'exsits', ['nobody_xyz']],
+            ['\DuckAdmin\User\Model\UserModel', 'addUser', ['t9', '123456']],
+            ['\DuckAdmin\User\Model\UserModel', 'updatePassword', [1, '123456']],
+            ['\DuckAdmin\User\Model\UserModel', 'batchGetUsernames', [[1, 2]]],
+            ['\DuckAdmin\User\Business\UserBusiness', 'batchGetUsernames', [[1, 2]]],
+            ['\DuckAdmin\User\Business\UserBusiness', 'changePassword', [1, '123456', '123456']],
+            ['\DuckAdmin\User\Business\UserBusiness', 'log', [1, 'coverage', 'test']],
+        ];
+        foreach ($calls as [$class, $method, $args]) {
+            try {
+                $class::_()->$method(...$args);
+            } catch (\Throwable $ex) {
+                // 这里就是来踩边界的：失败无所谓，不能让它中断整场 play
+            }
+        }
     }
 
 }
