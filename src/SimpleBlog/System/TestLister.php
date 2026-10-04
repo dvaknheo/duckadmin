@@ -40,6 +40,9 @@ class TestLister
 
         $list = <<<EOT
 #PHASE_BEGIN
+COMMENT 先 GET 一次安装页(用 ?lang=en)覆盖 config/lang-en.php ——
+COMMENT 博客的普通页面文案是硬编码中文、不调 __l(),只有安装页才会加载语言包
+WEB install?lang=en
 WEB install driver=sqlite&database%5Bfile%5D={db}&database%5Bhost%5D=127.0.0.1&database%5Bport%5D=&database%5Bdbname%5D=&database%5Busername%5D=&database%5Bpassword%5D=&action=install
 WEB {admin_prefix}login username=admin&password=123456
 {user_steps}
@@ -56,6 +59,7 @@ WEB admin/article_edit id=1&title=xxxxxxx&content=zzzzzzzzz
 COMMENT 前台
 WEB
 WEB article/1
+WEB article/1?lang=en
 WEB article/9999999
 WEB addcomment article_id=1&content=aaaaaaaaa
 WEB article/1
@@ -72,6 +76,10 @@ WEB admin/comments
 COMMENT 收尾:删除文章
 WEB admin/article_delete id=1
 WEB admin/articles
+
+COMMENT userController(继承 UserControllerBase,需要用户登录态;
+COMMENT 博客里没人访问它,所以一直是 0%)
+WEB user/index
 #PHASE_END
 EOT;
 

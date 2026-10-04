@@ -1,1 +1,0 @@
-<?= $__view_data['header']?? '' ?>
