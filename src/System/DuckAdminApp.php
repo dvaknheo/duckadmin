@@ -149,10 +149,12 @@ class DuckAdminApp extends DuckPhp
     /**
      * 保存首页选中的管理员/用户提供者。
      *
-     * 只接受本应用 app 列表里的合法类名：非法或缺失的一侧**保留原值**；
-     * 两侧都凑不出合法值时不写文件 —— 否则会把一个"没有这两个键的 data 段"
-     * 写进配置，之后首页会因为 No GlobalAdmin/GlobalUser Provider 直接 500，
-     * 而首页正是唯一能改回来的入口(死锁)。
+     * 只接受本应用 app 列表里的合法类名；**不合法或缺失的一侧退回源码默认值**
+     * （options['data']，即 SingleAdminApp / DemoUsersApp），与 onInit() 的兜底一致。
+     *
+     * 这样两侧总会得到一个可用的提供者：既不会像最初那样把"没有这两个键的
+     * data 段"写进配置（首页会 500，而首页正是唯一能改回来的入口），
+     * 也不会残留一个已被改坏的旧值。
      *
      * @param mixed $admin_provider
      * @param mixed $user_provider
@@ -163,18 +165,21 @@ class DuckAdminApp extends DuckPhp
             'duckadmin_admin_provider' => $admin_provider,
             'duckadmin_user_provider' => $user_provider,
         ];
-        $old = (array)($this->options['data'] ?? []);
 
         $data = [];
         foreach ($input as $key => $value) {
             if (is_string($value) && isset($this->options['app'][$value])) {
                 $data[$key] = $value;
-            } elseif (isset($old[$key]) && is_string($old[$key]) && isset($this->options['app'][$old[$key]])) {
-                $data[$key] = $old[$key];
+                continue;
+            }
+            // 不合法/没带：退回源码默认值
+            $default = $this->source_data[$key] ?? null;
+            if (is_string($default) && isset($this->options['app'][$default])) {
+                $data[$key] = $default;
             }
         }
         if (count($data) !== count($input)) {
-            // 两侧都拿不到合法值(表单没带字段等)：不写，避免写坏配置文件
+            // 连源码默认值都不可用（例如对应的子应用被禁用）：不写，避免写坏配置
             return;
         }
 
