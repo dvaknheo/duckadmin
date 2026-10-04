@@ -38,6 +38,7 @@ class MainController
                 $data['error'] = $ex->getMessage();
             }
         }
+        $data['csrf_token'] = Session::_()->csrfToken();
         $data['csrf_field'] = Session::_()->csrfField();
         $data['name'] = __h(Helper::POST('name', ''));
 
@@ -55,6 +56,7 @@ class MainController
             }
         }
         $data['url_login'] = GlobalUser::_()->urlForLogin();
+        $data['csrf_token'] = Session::_()->csrfToken();
         $data['csrf_field'] = Session::_()->csrfField();
         $data['name'] = __h(Helper::POST('name', ''));
         $data['back_url'] = __url(Helper::REQUEST('back_url', ''));

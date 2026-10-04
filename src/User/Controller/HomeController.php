@@ -20,6 +20,8 @@ class HomeController extends UserControllerBase
     {
         $data =[];
         $data['error'] = '';
+        // 视图 view/Home/password.php 需要 $user['username'] 显示当前登录用户
+        $data['user'] = ['username' => (string)Helper::UserName()];
         if (Helper::POST()) {
             try {
                 $uid = Helper::UserId();

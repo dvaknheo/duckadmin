@@ -17,7 +17,7 @@
 <div class="container">
 <a href="<?=__url('register')?>">注册</a>
 <form method="post" action="<?= __h($url_login); ?>">
-    <input type="hidden" name="login_to" value ="<?= __h($url_login_to); ?>" />
+    <input type="hidden" name="login_to" value="<?= __h($back_url ?? ''); ?>" />
     <?= $csrf_field ?>
 <?php if (isset($error)) { ?>
     <div><b>错误： <?= __h($error);?></b></div>
