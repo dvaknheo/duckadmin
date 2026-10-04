@@ -18,6 +18,12 @@ class DuckAdminApp extends DuckPhp
         'data_file_enable' => true,
         'duckcoverage_enable' => true,
 
+        // 语言：url/cookie/浏览器都没给提示时的默认值。子应用的 Lang 通过
+        // lang_follow_root 跟随根应用，所以在这里设一处即可。
+        // 安装页等文案来自各子应用的 config/lang-{语言}-for_webinstaller.php；
+        // 想临时看英文：加 ?lang=en（或让浏览器发 Accept-Language: en）。
+        'lang_default' => 'zh_CN',
+
         'app' => [
 //*
             \DuckAdmin\Admin\System\AdminApp::class => [

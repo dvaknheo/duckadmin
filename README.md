@@ -279,6 +279,27 @@ bash bin/cover_groups.sh e_user f_blog # 只跑指定组
 Admin 69.18%、Admin_LaravelModel 61.85%、Admin_ThinkPHPModel 62.23%、DemoUsers 99.01%、
 SimpleBlog 90.20%、SingleAdmin 100.00%、System 65.15%、User 45.03%。
 
+### 多语言（安装向导等文案）
+
+文案走 DuckPhp 的 Lang 组件，各子应用的语言文件放在自己的 `config/`：
+
+```
+src/Admin/config/lang-zh_CN.php        # Admin（Admin_LaravelModel / Admin_ThinkPHPModel 共用）
+src/Admin/config/lang-en.php
+src/User/config/lang-zh_CN.php         src/User/config/lang-en.php
+src/SimpleBlog/config/lang-zh_CN.php   src/SimpleBlog/config/lang-en.php
+```
+
+- 默认语言是根应用 `DuckAdminApp` 的 `lang_default`（`zh_CN`）；子应用的 Lang
+  通过 `lang_follow_root` 跟随根应用，所以只在根应用设一处。
+- 切换方式：`?lang=en`、`lang` cookie，或浏览器的 `Accept-Language`。
+- **主语言文件优先于 frag**（`Lang` 的注释：the main language file always wins,
+  a frag only fills in the missing keys）——要改安装页文案就改 `lang-*.php`，
+  不要再另建 `lang-*-for_webinstaller.php`，否则改了不生效。
+- key 是扁平的（点号只是名字的一部分）；缺 key 会回落到框架内置英文，不会显示成裸 key。
+- 安装器的 key 是 `webinstaller.*`；Admin 另有自定义字段的
+  `Admin Name` / `Admin Password` / `Admin Password Confirm`。
+
 ### 其他非 DuckPhp 框架代码如何整合 DuckAdmin 的管理后台系统
 
 ### 登录事件管理
