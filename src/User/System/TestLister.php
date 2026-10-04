@@ -37,6 +37,13 @@ CALL DuckAdmin\DemoUsers\Business\UserBusiness@login post=
 
 EOT;
 
+        // 管理员登录行：用绝对 uri（跨应用），账号与 Admin 清单保持同一个来源。
+        // 用户管理页需要管理员登录态，而管理员态可能在用户侧的操作后被清掉，
+        // 所以在那几步之前显式重登一次；否则 AdminControllerBase 会直接 302，
+        // AdminController 与 view/Admin/* 永远是 0%。
+        $admin_login = 'WEB /admin/login username=' . \DuckAdmin\Admin\System\TestLister::ADMIN_NAME
+            . '&password=' . \DuckAdmin\Admin\System\TestLister::ADMIN_PASSWORD;
+
         $list = <<<EOT
 #PHASE_BEGIN
 CALL {static}@beginTest
@@ -66,6 +73,8 @@ COMMENT 用户管理(必须放在用户登出之前:登出会把整个 session �
 COMMENT 管理员登录态也会一起没,AdminControllerBase 就会直接 302 出去,
 COMMENT 于是 AdminController 与 view/Admin/* 永远是 0%)
 COMMENT 管理员登录态由同一组的 Admin 块负责建立
+COMMENT 管理员登录态可能已被用户侧的操作清掉:这里用绝对 uri 重新登录一次
+{$admin_login}
 WEB Admin/index
 WEB Admin/index all=1
 WEB Admin/delete id=2
