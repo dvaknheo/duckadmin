@@ -90,9 +90,39 @@ printf '  %s\n' "${TAR_EXCLUDES[@]}"
 #---------- 3. 同步 ----------
 echo ""
 echo -e "${GREEN}[3/5] 同步文件...${NC}"
-cd "${SOURCE_PATH}"
-tar "${TAR_EXCLUDES[@]}" -cf - . | tar -xf - -C "${TARGET_PATH}"
-echo -e "  ${GREEN}✓${NC} 文件同步完成"
+if command -v rsync >/dev/null 2>&1; then
+    # 用 rsync --delete 做「单向镜像」：源里删掉的文件，目标里也删掉。
+    # 注意：--delete 默认不会删除被 --exclude 排除的文件，
+    # 所以 vendor/ runtime/ database/ 与环境配置都安全。
+    rsync -a --delete "${TAR_EXCLUDES[@]}" "${SOURCE_PATH}/" "${TARGET_PATH}/"
+    echo -e "  ${GREEN}✓${NC} 文件同步完成（rsync 镜像）"
+else
+    cd "${SOURCE_PATH}"
+    tar "${TAR_EXCLUDES[@]}" -cf - . | tar -xf - -C "${TARGET_PATH}"
+
+    # 没有 rsync，就自己补一遍「删除」：目标里存在、源里已不存在的文件要清掉。
+    # 为什么必须删：目标里残留的 php 文件仍在覆盖测试的 path_src 里，
+    # 会被算进覆盖率分母，让报告数字失真。
+    # 下面 find 的排除项必须与上面的 TAR_EXCLUDES 一一对应。
+    FIND_EXCLUDES=(
+        -path './.git' -o -path './.reasonix' -o -path './.vscode' -o -path './vendor'
+        -o -name 'composer.lock' -o -name '*.log' -o -name '.DS_Store' -o -name 'Thumbs.db'
+        -o -path './config/DuckPhpSettings.config.php'
+    )
+    if [[ "$WITH_STATE" == "false" ]]; then
+        FIND_EXCLUDES+=(-o -path './runtime' -o -path './database' -o -name '*.db')
+    else
+        FIND_EXCLUDES+=(-o -name '*.db')
+    fi
+    ( cd "${SOURCE_PATH}" && find . -type f ! \( "${FIND_EXCLUDES[@]}" \) -printf '%P\n' | sort ) > /tmp/.dsh_sync_src
+    ( cd "${TARGET_PATH}" && find . -type f ! \( "${FIND_EXCLUDES[@]}" \) -printf '%P\n' | sort ) > /tmp/.dsh_sync_tgt
+    comm -13 /tmp/.dsh_sync_src /tmp/.dsh_sync_tgt > /tmp/.dsh_sync_del
+    DEL_COUNT=$(grep -c . /tmp/.dsh_sync_del || true)
+    while IFS= read -r rel; do
+        [ -n "$rel" ] && rm -f "${TARGET_PATH}/${rel}"
+    done < /tmp/.dsh_sync_del
+    echo -e "  ${GREEN}✓${NC} 文件同步完成（tar 覆盖 + 清理 ${DEL_COUNT} 个源里已删除的文件）"
+fi
 
 #---------- 4. vendor 检查 ----------
 echo ""
