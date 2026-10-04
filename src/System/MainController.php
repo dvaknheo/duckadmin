@@ -12,9 +12,6 @@ class MainController
     public function index()
     {
         if(Helper::IsPost()){
-            $app_data = [];
-            $app_data['duckadmin_admin_provider'] = Helper::POST('admin');
-            $app_data['duckadmin_user_provider'] = Helper::POST('user');
             DuckAdminApp::_()->saveProviders(Helper::POST('admin'), Helper::POST('user'));
         }
 

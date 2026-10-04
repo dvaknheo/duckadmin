@@ -81,6 +81,14 @@ class DuckAdminApp extends DuckPhp
         ],
 
     ];
+
+    /**
+     * 源码里提供者默认值的快照（在 onPrepare 里存）。
+     * 动态配置文件缺失或被写坏时用它兜底，见 onInit()。
+     * @var array<string, mixed>
+     */
+    protected $source_data = [];
+
     protected function onPrepare(): void
     {
         //@codeCoverageIgnoreStart
@@ -99,6 +107,10 @@ class DuckAdminApp extends DuckPhp
         if(class_exists(\DuckCoverage\DuckCoverage::class) && $this->_Setting('duckcoverage_enable')){
             \DuckCoverage\DuckCoverage::Prepare([]);
         }
+
+        // 快照源码里的提供者默认值：initComponents() 之后 options['data'] 会被
+        // 动态配置文件的内容整体替换，那时就读不到源码默认值了，而 onInit() 要用它兜底。
+        $this->source_data = (array)($this->options['data'] ?? []);
         //@codeCoverageIgnoreEnd
     }
     protected function onInit():void
@@ -112,23 +124,58 @@ class DuckAdminApp extends DuckPhp
             $this->options['app'][\DuckAdmin\Admin_LaravelModel\System\LaravelModelApp::class] = false;
         }
         
-        $admin_provider = $this->options['data']['duckadmin_admin_provider'] ?? '';
-        if (isset($this->options['app'][$admin_provider])) {
-            $this->options['app'][$admin_provider]['admin_provider_enable'] = true;
-        }
-        $user_provider = $this->options['data']['duckadmin_user_provider'] ?? '';
-        if (isset($this->options['app'][$user_provider])) {
-            $this->options['app'][$user_provider]['user_provider_enable'] = true;
+        // 选中哪个提供者由 data(动态配置文件)决定；这份配置可能缺失、也可能被写坏，
+        // 所以取不到合法类名时回退到源码默认值 —— 否则首页会因为
+        // "No GlobalAdmin Provider / No GlobalUser Provider" 直接 500，
+        // 而首页正是唯一能改回来的入口(死锁)。
+        $providers = [
+            'duckadmin_admin_provider' => 'admin_provider_enable',
+            'duckadmin_user_provider' => 'user_provider_enable',
+        ];
+        foreach ($providers as $key => $flag) {
+            $provider = $this->options['data'][$key] ?? null;
+            if (!is_string($provider) || !isset($this->options['app'][$provider])) {
+                $provider = $this->source_data[$key] ?? null;
+            }
+            if (!is_string($provider) || !isset($this->options['app'][$provider])) {
+                continue;
+            }
+            $this->options['app'][$provider][$flag] = true;
+            // 把生效值写回 data，首页表单才能显示"当前选中项"
+            $this->options['data'][$key] = $provider;
         }
     }
+
+    /**
+     * 保存首页选中的管理员/用户提供者。
+     *
+     * 只接受本应用 app 列表里的合法类名：非法或缺失的一侧**保留原值**；
+     * 两侧都凑不出合法值时不写文件 —— 否则会把一个"没有这两个键的 data 段"
+     * 写进配置，之后首页会因为 No GlobalAdmin/GlobalUser Provider 直接 500，
+     * 而首页正是唯一能改回来的入口(死锁)。
+     *
+     * @param mixed $admin_provider
+     * @param mixed $user_provider
+     */
     public function saveProviders($admin_provider, $user_provider)
     {
+        $input = [
+            'duckadmin_admin_provider' => $admin_provider,
+            'duckadmin_user_provider' => $user_provider,
+        ];
+        $old = (array)($this->options['data'] ?? []);
+
         $data = [];
-        if (isset($this->options['app'][$admin_provider])) {
-            $data['duckadmin_admin_provider'] = $admin_provider;
+        foreach ($input as $key => $value) {
+            if (is_string($value) && isset($this->options['app'][$value])) {
+                $data[$key] = $value;
+            } elseif (isset($old[$key]) && is_string($old[$key]) && isset($this->options['app'][$old[$key]])) {
+                $data[$key] = $old[$key];
+            }
         }
-        if (isset($this->options['app'][$user_provider])) {
-            $data['duckadmin_user_provider'] = $user_provider;
+        if (count($data) !== count($input)) {
+            // 两侧都拿不到合法值(表单没带字段等)：不写，避免写坏配置文件
+            return;
         }
 
         ExtOptionsLoader::_()->saveExtOptions($data);
