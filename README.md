@@ -409,49 +409,57 @@ TBD
 
 
 
-## The Demo's file structure
-
-
-```
-├── System
-│   └── DemoApp.php
-├── Test
-│   └── MyTester.php
-├── cli.php
-├── config
-│   ├── DuckPhpApps.config.php
-│   └── DuckPhpSettings.config.php.sample
-├── public
-│   └── index.php
-├── runtime
-│   └── database.db
-└── view
-    ├── DuckAdmin
-    │   └── account
-    │       └── login.php
-    ├── DuckUser
-    │   ├── Home
-    │   │   ├── inc-foot.php
-    │   │   ├── inc-head.php
-    │   │   ├── index.php
-    │   │   └── password.php
-    │   ├── inc-foot.php
-    │   ├── inc-head.php
-    │   ├── login.php
-    │   ├── main.php
-    │   └── register.php
-    └── main.php
+## Repository layout
 
 ```
-As in a typical DuckPhp project, System/DemoApp is the entry file.
+.
+├── public/                  The only entry point
+│   └── index.php            Boots the root application
+├── src/                     Code: one root application + 7 child applications
+│   ├── System/              Root app: DuckAdminApp, main controller, root TestLister, WebInstaller
+│   ├── Admin/               Admin backend (database-backed; the default admin provider)
+│   ├── Admin_LaravelModel/  Same, but the Model layer is overridden with Eloquent
+│   ├── Admin_ThinkPHPModel/ Same, but the Model layer is overridden with ThinkORM
+│   ├── SingleAdmin/         Single-admin provider (no database)
+│   ├── DemoUsers/           Demo user provider (preset accounts, no database)
+│   ├── User/                User app: front-end register/login + user management
+│   └── SimpleBlog/          Sample business app (blog) showing how to build on the baseline
+├── view/                    Views of the root application (home page: pick the providers)
+│   └── main.php
+├── config/                  Per-environment config + root-app sentences
+│   ├── DuckPhpSettings.config.php.sample   Copy to .config.php and edit per environment
+│   ├── lang-zh_CN.php
+│   └── lang-en_US.php
+├── bin/                     Command-line tools
+│   ├── cli.php              Command entry (run / call / cover ... provided by duckphp)
+│   ├── cover_flags.sh       Coverage runs: --flag mode (recommended)
+│   ├── cover_groups.sh      Coverage runs: legacy mode (kept for rollback/comparison)
+│   ├── coverage_gaps.php    Reads report.jsonl and lists lines still worth covering
+│   ├── provider_probe.php   Shows which pair of providers a coverage flag resolves to
+│   └── audit_*.php          Contract-signature / upstream-reference audits
+├── runtime/                 Runtime data: databases, coverage dumps and reports (not in git)
+├── database/                sqlite and other data files
+├── sync_to_wsl.sh           Syncs the code to the WSL test machine (excludes runtime/vendor/env config)
+└── README.md / README.zh_CN.md
+```
 
-We embed the home page into the DemoApp class. That way we save a controller directory
+Every child application has the same one-way layering (`System → Controller → Business → Model`):
 
-Under View are the various overrides of DuckAdmin's views
+```
+src/<app>/
+├── System/        Application entry class + that app's TestLister (coverage test list)
+├── Controller/    Controllers
+├── Business/      Business layer
+├── Model/         Data layer
+├── view/          Views
+└── config/        Language packs and other config for that app
+```
 
-Test is the test coverage
-
-runtime is the database file
+There is exactly one entry point: `public/index.php` boots the root application
+`src/System/DuckAdminApp.php`, which mounts the 7 child applications under their own
+`controller_url_prefix` (`/admin/`, `/user/`, `/blog/`, ...). So "adding a child application"
+means dropping a directory into `src/` and adding one line to the root app's `app` option —
+not creating a new entry point.
 
 
 ## TODO

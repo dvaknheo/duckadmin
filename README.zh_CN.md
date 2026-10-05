@@ -408,49 +408,55 @@ $url_logout = Helper::Admin()->urlForLogout();
 
 
 
-## Demo 的文件结构
-
-
-```
-├── System
-│   └── DemoApp.php
-├── Test
-│   └── MyTester.php
-├── cli.php
-├── config
-│   ├── DuckPhpApps.config.php
-│   └── DuckPhpSettings.config.php.sample
-├── public
-│   └── index.php
-├── runtime
-│   └── database.db
-└── view
-    ├── DuckAdmin
-    │   └── account
-    │       └── login.php
-    ├── DuckUser
-    │   ├── Home
-    │   │   ├── inc-foot.php
-    │   │   ├── inc-head.php
-    │   │   ├── index.php
-    │   │   └── password.php
-    │   ├── inc-foot.php
-    │   ├── inc-head.php
-    │   ├── login.php
-    │   ├── main.php
-    │   └── register.php
-    └── main.php
+## 目录结构
 
 ```
-和典型的 DuckPhp 工程一样 System/DemoApp 是入口文件。
+.
+├── public/                  唯一入口
+│   └── index.php            引导根应用
+├── src/                     代码：一个根应用 + 7 个子应用
+│   ├── System/              根应用：DuckAdminApp、主控制器、根 TestLister、WebInstaller
+│   ├── Admin/               后台（数据库版，默认的管理员提供者）
+│   ├── Admin_LaravelModel/  同上，但 Model 层用 Eloquent 覆盖
+│   ├── Admin_ThinkPHPModel/ 同上，但 Model 层用 ThinkORM 覆盖
+│   ├── SingleAdmin/         单管理员提供者（不用数据库）
+│   ├── DemoUsers/           演示用户提供者（预设账号，不用数据库）
+│   ├── User/                用户应用：前台注册/登录 + 用户管理
+│   └── SimpleBlog/          示例业务应用（博客，演示在基线上加业务）
+├── view/                    根应用的视图（首页：选管理员/用户提供者）
+│   └── main.php
+├── config/                  按环境的配置 + 根应用文案
+│   ├── DuckPhpSettings.config.php.sample   复制成 .config.php 后按环境改
+│   ├── lang-zh_CN.php
+│   └── lang-en_US.php
+├── bin/                     命令行工具
+│   ├── cli.php              命令入口（run / call / cover ... 由 duckphp 提供）
+│   ├── cover_flags.sh       覆盖测试：--flag 模式（推荐）
+│   ├── cover_groups.sh      覆盖测试：旧模式（保留用于回滚/对照）
+│   ├── coverage_gaps.php    读 report.jsonl，列出还值得补的行
+│   ├── provider_probe.php   看某个采集标记解析成哪对提供者
+│   └── audit_*.php          契约签名 / 上游引用审计
+├── runtime/                 运行时数据：数据库、覆盖采集与报告（不进 git）
+├── database/                放 sqlite 等数据文件
+├── sync_to_wsl.sh           同步代码到 WSL 测试机（自动排除 runtime/vendor/环境配置）
+└── README.md / README.zh_CN.md
+```
 
-我们把主页嵌入到 DemoApp 类里。从而少了控制器目录
+每个子应用内部是同一套单向分层（`System → Controller → Business → Model`）：
 
-View 下是各种对 DuckAdmin 的视图的覆盖
+```
+src/<子应用>/
+├── System/        应用入口类 + 该应用的 TestLister（覆盖测试清单）
+├── Controller/    控制器
+├── Business/      业务层
+├── Model/         数据层
+├── view/          视图
+└── config/        该应用的语言包等
+```
 
-Test 是测试覆盖
-
-runtime 是数据库文件
+入口只有一个：`public/index.php` 引导根应用 `src/System/DuckAdminApp.php`，
+它把 7 个子应用按各自的 `controller_url_prefix` 挂在 `/admin/`、`/user/`、`/blog/` 等路径下 ——
+所以"加一个子应用"是往 `src/` 放一个目录、在根应用的 `app` 里挂一行，而不是新开一个入口。
 
 
 ## TODO
