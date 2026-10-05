@@ -14,7 +14,7 @@
 namespace DuckAdmin\SimpleBlog\System;
 
 use DuckPhp\Foundation\SingletonTrait;
-
+use DuckCoverage\DuckCoverage;
 //@codeCoverageIgnoreStart
 class TestLister
 {
@@ -93,18 +93,8 @@ EOT;
             'admin_prefix' => $admin_prefix,
             'user_steps'   => $user_steps,
             'username'     => 'user_test1',
-            'db'           => urlencode('runtime/DuckCoverage/' . $this->watchingName() . '.db'),
+            'db'           => urlencode('runtime/DuckCoverage/' . DuckCoverage::_()->watchingName() . '.db'),
         ]);
-    }
-
-    /**
-     * 当前 watch 组名(cover --watch 时写在 runtime/DuckCoverage/DuckCoverage.watching.txt)
-     * 组名决定本组用的 sqlite 文件,清单里的 install 步骤要用同一个文件。
-     */
-    protected function watchingName(): string
-    {
-        $name = @file_get_contents(\DuckPhp\Foundation\Helper::PathOfRuntime() . 'DuckCoverage/DuckCoverage.watching.txt');
-        return is_string($name) ? trim($name) : '';
     }
 
     /**

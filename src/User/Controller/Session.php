@@ -19,6 +19,21 @@ class Session implements UserSessionInterface
     //@override
 
     ////////////////////////////////////////////////////////////////////////
+    protected function getHash($id)
+    {
+        $hash_id = $this->get('hash',null);
+        $hash_id = $hash_id??mt_rand(1,999999);
+        $_SESSION['hash']=$hash_id;
+        return md5($hash_id.'|'.$id);
+    }
+    protected function checkHash($id, $hash)
+    {
+        $hash_id = $this->get('hash',null);
+        Helper::ControllerThrowOn($hash_id===null,"校[$id, $hash, $new_hash]检失败!");
+        $new_hash = md5($hash_id.'|'.$id);
+        Helper::ControllerThrowOn($new_hash!==$hash,"校 [$id, $hash, $new_hash] 检失败");
+    }
+
     /**
      * 注意:读写必须用同一个 key,否则每次调用都会重新生成(原来读 'token' 写 '_token')
      */
