@@ -258,26 +258,47 @@ DuckAdmin 支持 sqlite /mysql 两种模式的数据库 你可以在选项里切
 **按提供者分组建档**（同一时刻只能有一个管理员提供者 + 一个用户提供者生效，所以一个提供者一组）：
 
 ```bash
-bash bin/cover_groups.sh               # 跑全部组并合并报告
-bash bin/cover_groups.sh e_user f_blog # 只跑指定组
+# 推荐：--flag 模式。提供者靠采集标记（请求头）选，不动磁盘配置，没有竞态
+bash bin/cover_flags.sh                # 跑全部组并合并报告
+bash bin/cover_flags.sh e_user f_blog  # 只跑指定组
+REPORT_ARGS="--jsonl=runtime/DuckCoverage/report.jsonl --jsonl-no-timestamp" \
+    bash bin/cover_flags.sh            # 顺便产出机器可读的 report.jsonl
+
+# 旧模式（保留以便回滚/对照）：每组靠「首页 POST 改写本组配置」来选提供者
+bash bin/cover_groups.sh
 ```
 
-报告在 `runtime/DuckCoverage/AAAAA.report/`（多组合并）或 `<组名>.report/`（单组）。
-手工等价于 `cover --watch <组名>` → POST 选提供者 → `cover --play` → `cover --report 组名...`；
-**不要用 `cover --go`**，它的行为与手工四步有差异。
+报告在 `runtime/DuckCoverage/AAAAA.report/`（多组合并）或 `<组名>.report/`（单组）；
+每份报告旁边都有一份同源的 `report.json`。
 
-#### 行计数有两个口径，以 libcoverage 报告为准
+`--flag` 模式等价于 `cover --watch <组名> --flag=<标记>` → `cover --play --flag=<标记>`
+→ `cover --report 组名...`；标记的取值白名单见 `DuckAdminApp::FLAG_PROVIDERS`
+（`admin` / `laravel` / `think` / `single` / `demo` / `user`，用 `+` 组合）。
+**注意**：应用侧对标记加了锁 —— 只在 `duckcoverage_enable` 为真时生效，
+因为这个标记决定「用哪个管理员/用户提供者」，等于让请求头影响认证。
+**不要用 `cover --go`**，它的行为与手工分步有差异。
 
-- `runtime/DuckCoverage/*.report/index.html` —— 对外唯一口径。
-- `php bin/coverage_gaps.php src/Admin` —— 按 php-code-coverage 自己的语句分析列出
-  「真正没执行到的行」，用来找漏测点。它说「没有未执行的行」时报告仍可能 <100%，
-  差额来自报告侧的行计数。
+#### 行计数只有一个口径，且「签名行」已被上游剔除
 
-**已知的报告侧误报**：方法声明的参数里带默认值（尤其是数组默认值，例如
-`public function log($user_id, string $string, ?string $type = null, array $ext = [])`）时，
-**那一行声明会被报告算成可执行行，但覆盖驱动永远不会把它记为已执行**，该文件因此到不了 100%。
-`src/DemoUsers/Business/UserBusiness.php` 就是例子：驱动数据 29/29 全命中，
-报告固定 29/30 = 96.67%。这类差额不必再补测试。
+- `runtime/DuckCoverage/*.report/index.html` 与同目录的 `report.json`、
+  `--jsonl=` 产出的 `report.jsonl` 是同一份数据（本次上游补丁后三处口径一致）。
+- `php bin/coverage_gaps.php` —— 读 `report.jsonl` 列「还值得补的行」，
+  默认按 `todo`（= `unc - sig`）排序；顺便单列「已达 100%、但剔除了签名行」的文件。
+
+**签名行（曾经的历史问题，现已由上游解决）**：方法声明的参数里带默认值（尤其是数组默认值，
+例如 `public function log($user_id, string $string, ?string $type = null, array $ext = [])`）时，
+那一行声明会被静态分析算成可执行行，但覆盖驱动永远不会把它记为已执行 ——
+`src/DemoUsers/Business/UserBusiness.php` 因此长期固定显示 29/30。
+
+上游现在已经把这类行**从统计口径里剔除**（数据层 `unset`，HTML / `report.json` / `report.jsonl`
+三处一致），所以：
+
+- 该文件现在是 **29/29 = 100%**，`unc` 为空；
+- 被剔除的行在 `sig` 字段里留痕（`report.json` 侧叫 `sig`，`jsonl` 侧也叫 `sig`）；
+- 判断「还有没有可补的」只看 `todo`（或 `unc`）是否为空，**不再需要拿 `sig` 去减**。
+
+> 旧版本的 `report.jsonl` 没有 `todo` 字段时，`bin/coverage_gaps.php` 会自动退化成
+> `unc - sig`，所以工具对两代输出都能用。
 
 #### 补覆盖的手段
 
