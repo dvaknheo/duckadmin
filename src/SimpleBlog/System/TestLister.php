@@ -68,12 +68,18 @@ WEB delcomment id=1
 WEB article/1
 WEB addcomment article_id=1&content=bbbbbbbbbb
 
+COMMENT addcomment / delcomment 的「非 POST 早退」分支(用 GET 撞一下,不会真删改)
+WEB addcomment
+WEB delcomment
+
 COMMENT 评论后台
 WEB admin/comments
 WEB admin/delete_comments id=2
 WEB admin/comments
 
 COMMENT 收尾:删除文章
+COMMENT article_delete 的「非 POST 早退」分支(先 GET 撞一次)
+WEB admin/article_delete
 WEB admin/article_delete id=1
 WEB admin/articles
 
