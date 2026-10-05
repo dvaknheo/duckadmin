@@ -104,13 +104,21 @@ else
     # 为什么必须删：目标里残留的 php 文件仍在覆盖测试的 path_src 里，
     # 会被算进覆盖率分母，让报告数字失真。
     # 下面 find 的排除项必须与上面的 TAR_EXCLUDES 一一对应。
+    # 注意 -path 是**精确匹配**：只写 './runtime' 只能匹配目录自身，
+    # 匹配不到 './runtime/xxx'。必须再加 './runtime/*'，否则这个"补删除"的
+    # 步骤会把 WSL 侧 runtime/ 下的采集数据与报告全删掉（实测踩过：dump 与
+    # report.json/report.jsonl 每同步一次就没了，而 *.log/*.db 因为
+    # 用的是 -name 才幸免）。
     FIND_EXCLUDES=(
-        -path './.git' -o -path './.reasonix' -o -path './.vscode' -o -path './vendor'
+        -path './.git' -o -path './.git/*'
+        -o -path './.reasonix' -o -path './.reasonix/*'
+        -o -path './.vscode' -o -path './.vscode/*'
+        -o -path './vendor' -o -path './vendor/*'
         -o -name 'composer.lock' -o -name '*.log' -o -name '.DS_Store' -o -name 'Thumbs.db'
         -o -path './config/DuckPhpSettings.config.php'
     )
     if [[ "$WITH_STATE" == "false" ]]; then
-        FIND_EXCLUDES+=(-o -path './runtime' -o -path './database' -o -name '*.db')
+        FIND_EXCLUDES+=(-o -path './runtime' -o -path './runtime/*' -o -path './database' -o -path './database/*' -o -name '*.db')
     else
         FIND_EXCLUDES+=(-o -name '*.db')
     fi
