@@ -1,7 +1,10 @@
 # DuckAdmin
-## 安全（部署前必读）
 
-**DuckAdmin 默认不提供服务。** 必须在各环境的 `config/DuckPhpSettings.config.php` 里显式开启：
+**English** | [中文](README.zh_CN.md)
+
+## Security (must read before deployment)
+
+**DuckAdmin serves nothing by default.** You must explicitly turn it on in each environment's `config/DuckPhpSettings.config.php`:
 
 ```php
 return [
@@ -10,36 +13,37 @@ return [
 ];
 ```
 
-- 没有这个键、或写成 `false`：所有网页请求都会被挡下，只显示一个提示页（HTTP **503**），
-  提示你到这里开启。**连安装页也挡**，所以不存在「忘了开就被别人装走」的情况。
-- 默认关是有意的：这是「确认你有意把后台暴露出去」的开关，少一个配置项就少一份风险。
-- 命令行不受影响：`php bin/cli.php`（含覆盖测试的 `cover`）照常可用。
-- 改完若提示页还在，等一两秒再刷新（PHP 的 `opcache.revalidate_freq` 默认 2 秒，
-  该配置文件会被缓存），必要时重启 php-fpm。
+- Without this key, or with it set to `false`: every web request is blocked and only a notice page is shown (HTTP **503**),
+  telling you to enable it here. **Even the install page is blocked**, so there is no "I forgot to turn it on and someone else installed it" scenario.
+- Being off by default is deliberate: this is the switch that says "I mean to expose the admin backend", and one less config item is one less risk.
+- The command line is unaffected: `php bin/cli.php` (including the `cover` coverage testing) works as usual.
+- If the notice page is still there after your change, wait a second or two and refresh (PHP's `opcache.revalidate_freq` defaults to 2 seconds,
+  and this config file gets cached); restart php-fpm if necessary.
 
-## 简介
+## Introduction
 
-你一定会见过很多后台系统，都是在基线工程之上做二次开发。但是，这不符合`DuckPhp`的思维。
+You have surely seen many admin systems that are built by doing secondary development on top of a baseline project. But that does not match the thinking of `DuckPhp`.
 
-`DuckAdmin` 是个使用 `DuckPhp` 框架的库，你的工程使用`DuckPhp` 的功能，不需要魔改。
+`DuckAdmin` is a library that uses the `DuckPhp` framework; your project uses `DuckPhp`'s features, no hacky rewriting needed.
 
-`DuckAdmin` 是二次开发的基线库，注意，是基线库，而不是基线工程。
+`DuckAdmin` is a baseline library for secondary development — note, a baseline *library*, not a baseline *project*.
 
-`DuckAdmin` 只做了公司员工结构的基本代码，通用业务。你可以在这之上添加更多符合公司业务的功能。 甚至还带有 覆盖测试的库。
+`DuckAdmin` only provides the basic code for a company's employee structure and generic business logic. You can add more features that fit your company's business on top of it. It even comes with a coverage testing library.
 
-## DuckAdmin 要解决什么问题
-1. 现在的管理后台，二次开发，都是在别家管理后台上改代码，但是 DuckAdmin 独树一帜的是基线库，不是基线工程
-2. 静态资源 和代码分离 ，可部署在不同机器
-3. 这个composer 库里，不仅仅包括 DuckAdmin 还包括了 DuckUser， DuckUserManager ,SimpleBlog 四个独立工程，以及一个独立演示的 DuckAdminDemo 工程。
-  1. DuckUser 是个用户基线库，你也可以类似 DuckAdmin 那样在外面修改它 
-  2. DuckUserManger 则是 用户管理系统
-  3. SimpleBlog SimpleBlog 演示了用以上管理系统，用户系统的博客系统。
-  4. 甚至还包括了覆盖测试的库。  DuckCoverage ，用于做覆盖测试
+## What problems does DuckAdmin solve
+1. Today's admin backends are customized by changing code in someone else's admin backend, but what makes DuckAdmin stand out is that it is a baseline library, not a baseline project
+2. Static resources and code are separated, so they can be deployed on different machines
+3. This composer library includes not only DuckAdmin but also four independent projects — DuckUser, DuckUserManager, SimpleBlog — plus a standalone demo project, DuckAdminDemo.
+  1. DuckUser is a user baseline library, and you can modify it from the outside in the same way as DuckAdmin
+  2. DuckUserManger is the user management system
+  3. SimpleBlog SimpleBlog demonstrates a blog system built on the management system and user system above.
+  4. It even includes a coverage testing library. DuckCoverage, for doing coverage testing
 
-## 演示 demo
-扩展需求：  sqlite
+## Demo
 
-`DuckAdmin` 支持 mysql，只需改配置，后面再演示
+Extra requirement: sqlite
+
+`DuckAdmin` supports mysql too; you only need to change the config, as demonstrated later
 
 ```
 composer require dvaknheo/duckadmin
@@ -47,46 +51,46 @@ cd ./vendor/dvaknheo/duckadmin/demo
 php cli.php run
 ```
 
-访问 `http://127.0.0.1:8080/` 打开 Demo
+Visit `http://127.0.0.1:8080/` to open the Demo
 
-### 重新安装
+### Reinstalling
 
-demo 里
+In the demo
 
-你的数据会保存在 `vendor/dvaknheo/duckadmin/demo/runtime/database.db`
+Your data is saved in `vendor/dvaknheo/duckadmin/demo/runtime/database.db`
 
-动态配置文件保存在 `vendor/dvaknheo/duckadmin/demo/config/DuckPhpApps.config.php`
+The dynamic config file is saved in `vendor/dvaknheo/duckadmin/demo/config/DuckPhpApps.config.php`
 
-删除这两个，可重新执行下列安装程序。
-
-```
-php cli.php install ## --force 可以强制执行 --help 查看参数
-```
-
-### Web 安装器重新安装（改数据库配置）
-
-子应用已安装后，直接访问 `<前缀>/install` 会 302 回首页（框架行为，防止误入安装页）。
-需要重装（例如换数据库文件、换管理员/用户提供者）时，显式带上 `force`：
+Delete these two, and you can run the installer below again.
 
 ```
-GET  /<前缀>/install?force=1       # 显示安装表单
-POST /<前缀>/install  force=1 ...  # 重装（force 会先执行 {driver}.clean.sql 再建表）
+php cli.php install ## --force forces it --help shows the parameters
 ```
 
-不带 `force` 时行为与框架原版一致。实现见 `src/System/WebInstaller.php`。
+### Reinstalling via the Web installer (changing the database config)
 
-管理员 / 用户提供者在根应用首页的单选框中切换（写入 `runtime/DuckPhpData*.config.json`），
-切换后请对对应子应用执行一次上述重装，让它的数据库配置重新初始化。
+Once the sub-application is installed, visiting `<prefix>/install` directly will 302 back to the home page (framework behavior, to stop accidental visits to the install page).
+When you need to reinstall (for example to switch the database file or the admin/user provider), explicitly pass `force`:
 
-## 正常使用模式
-### 第一种模式：快速 duckphp 工程并应用。
-当你想复制 demo 例子，不想做任何操作，执行以下命令
+```
+GET  /<prefix>/install?force=1       # show the install form
+POST /<prefix>/install  force=1 ...  # reinstall (force runs {driver}.clean.sql first, then creates the tables)
+```
+
+Without `force` the behavior is the same as the framework's original. See `src/System/WebInstaller.php` for the implementation.
+
+Admin / user providers are switched with the radio buttons on the root application's home page (written to `runtime/DuckPhpData*.config.json`);
+after switching, run the reinstall above once for the corresponding sub-application, so its database config is initialized again.
+
+## Normal usage modes
+### Mode one: a quick duckphp project plus application.
+When you want to copy the demo example and do nothing else, run the following commands
 
 ```
 composer require dvaknheo/duckadmin
 composer exec duckphp new
 php cli.php require DuckAdmin/System/DuckAdminApp
-# 一路回车
+# press Enter all the way
 #php cli.php require DuckUser/System/DuckUserApp
 #php cli.php require SimpleBlog/System/SimpleBlogApp
 #php cli.php require DuckUserMangager/System/DuckUserMangagerApp
@@ -94,27 +98,29 @@ php cli.php require DuckAdmin/System/DuckAdminApp
 php cli.php run
 
 ```
-访问 http://127.0.0.1:8080/duck-admin/ 打开管理后台。
+Visit http://127.0.0.1:8080/duck-admin/ to open the admin backend.
 
 
-### 第二种模式：独立工程嵌入
+### Mode two: embedding into a standalone project
 
-当你要给个没有后台系统的  php-fpm 工程里使用。 demo 里的 `另一个简洁版本` 指向的 `main.php` 演示的这种情况
+Take this route when you want to use it in an existing php-fpm project that has no admin backend.
+A complete runnable example is in the section "How code from other non-DuckPhp frameworks integrates DuckAdmin's admin backend system" below
+(it used to live in `public/main.php`, and that file has been deleted).
 
  `composer require dvaknheo/duckadmin`
 
-核心功能代码如下
+The core feature code is as follows
 ```
 <?php
-//我们演示在其他框架系统中嵌入 duckadmin
+//We demonstrate embedding duckadmin in another framework system
 $options=[
-    'path' => __DIR__.'/../', // 指定路径
-    'skip_404' => true,      // 跳过内部 404处理。
+    'path' => __DIR__.'/../', // specify the path
+    'skip_404' => true,      // skip the internal 404 handling.
     'app' => [
-        DuckAdminApp::class => [      // 后台管理系统
-            'controller_url_prefix' => 'app/admin/',    // 访问路径
-            'installed' => '2024-06-10T22:12:01+08:00', // 安装标志
-            'database_list' =>  //指定数据库
+        DuckAdminApp::class => [      // the admin backend system
+            'controller_url_prefix' => 'app/admin/',    // the access path
+            'installed' => '2024-06-10T22:12:01+08:00', // the installed flag
+            'database_list' =>  //specify the database
             [
                 'dsn' => 'sqlite:demodb.db',
                 'username' => '',
@@ -126,274 +132,331 @@ $options=[
 
 $flag = DuckPhp::RunQuickly($options);
 if ($flag) {
-    return; // 后台管理系统完毕
+    return; // the admin backend system is done
 }
 
 //////////////////////////
 
 // you code here.
-$url_admin = __url('app/admin/index'); // 后台地址，和设置的 controller_url_prefix 一样
+$url_admin = __url('app/admin/index'); // the admin address, the same as the controller_url_prefix you set
 
-$admin_id = Helper::AdminId(false);     // 管理员ID
-$admin_name = $admin_id ? Helper::AdminName() : ''; // 管理员名字
+$admin_id = Helper::AdminId(false);     // the admin ID
+$admin_name = $admin_id ? Helper::AdminName() : ''; // the admin name
 $url_logout = Helper::Admin()->urlForLogout();
 
 ```
-可以看出，多了 skip_404 选项。 当返回404 的时候，自行处理其他业务
-这里得到的 admin_id 就是登录后获得的id.
+As you can see, there is an extra skip_404 option. When a 404 is returned, handle your other business yourself
+The admin_id you get here is the id you get after logging in.
 
 
-### 第三种模式，手动修改 duckphp工程嵌入
+### Mode three: manually modifying a duckphp project to embed it
 
-零代码虽然舒服，但不是最后解决方案
+Zero code is comfortable, but it is not the final solution
 
-当你熟悉了 duckphp 工程结构之后。
+Once you are familiar with the duckphp project structure.
 
-在你的duckphp工程里修改你的 System/App.php 相关 配置
+Modify the relevant config of your System/App.php in your duckphp project
 
 ```php
     public $options = [
         //...
 
         'app' => [
-                \DuckAdmin\System\DuckAdminApp::class => [      // 后台管理系统
-                    'controller_url_prefix' => 'app/admin/',    // 访问路径
-                    // 'database_driver' =>'mysql',  // 如果你想改为 mysql 驱动
-                    //... 其他配置
+                \DuckAdmin\System\DuckAdminApp::class => [      // the admin backend system
+                    'controller_url_prefix' => 'app/admin/',    // the access path
+                    // 'database_driver' =>'mysql',  // if you want to switch to the mysql driver
+                    //... other config
                     
                 ],
             ],
         ];
 ```
 
-运行
+Run
 ```
 php cli.php run
 ```
-访问 http://127.0.0.1:8080/app/admin/index 打开管理后台。
+Visit http://127.0.0.1:8080/app/admin/index to open the admin backend.
 
-这里只是 DuckAdmin 后台，不包括demo里的用户系统，用户管理，而博客例子
+This is only the DuckAdmin backend; it does not include the user system, user management or blog example from the demo
 
 
-## 二次开发
+## Secondary development
 
-### 上游升级后的自检（重要）
+### Self-checks after an upstream upgrade (important)
 
-`DuckPhp` 的上游接口改过签名（例如 `canAccess()` 的参数顺序把 `$url` 挪到第二位），
-而本工程不少类**没有写 `implements`**（靠 App 选项里的 `local_service` / `login_service` /
-`login_session` 绑定成上游服务），PHP 不会替我们检查 —— 这类问题只会在运行到那一行时才爆。
+`DuckPhp`'s upstream interface changed signatures (for example `canAccess()` now takes `$url` as the second parameter),
+and quite a few classes in this project **do not write `implements`** (they rely on the `local_service` / `login_service` /
+`login_session` bindings in the App options to become upstream services), so PHP will not check it for us — such problems only blow up when execution reaches that line.
 
-上游更新后请跑这两个脚本：
+After an upstream update, run these two scripts:
 
 ```
-php bin/audit_signatures.php      # 契约签名审计:本工程实现与上游接口逐参数比对
-php bin/audit_upstream_refs.php   # 上游引用审计:src 里引用的类/方法是否还存在
+php bin/audit_signatures.php      # contract signature audit: compare this project's implementations with the upstream interfaces parameter by parameter
+php bin/audit_upstream_refs.php   # upstream reference audit: do the classes/methods referenced in src still exist
 ```
 
-两者都是以退出码表示结果（0 通过 / 1 有问题），可以直接挂到 CI 或 git hook 上。
+Both report their result through the exit code (0 pass / 1 problem), so you can hang them directly on CI or a git hook.
 
-- `audit_signatures.php` 里的**角色表**（哪个类承担哪个契约）需要在新加子应用或换绑定时同步维护。
-- 参数类型"放宽"（`?string` 对接口的 `string`）是 LSP 允许的，会报 warn 而不是 fail。
-- 覆盖率 DSL（`CALL Class@method k=v`）是**按参数名传参**的，所以参数名也必须和契约一致。
-
-
-
-### 前置知识
-
-一些 duckphp 框架的基础知识不再这里重复
-
-### 调整选项
-
-DuckAdmin 支持 sqlite /mysql 两种模式的数据库 你可以在选项里切换 `database_driver`
-
-希望几个版本之后 我们可以在安装程序里切换（目前只能手动切换
-
-### 静态资源
-
-原生时代，我们直接解压文件在web目录就行。
-
-但是我们要做动态和静态资源分离。减缓服务器压力。
-
-所以我们有了`controller_resource_prefix` 选项。
-
-那资源文件在哪里呢？  `src/DuckAdmin/res` 目录之下。
-
-你可以设置这个选项为完整的 http 路径，而不使用默认的
-
-也可以设置成 / 开始的绝对路径。 默认是 'res/'， 安装程序会把他们复制到相应目录。
-
-资源文件安装要点
-
-因为扯到安装 ，我们设置 `controller_resource_prefix` ，克隆文件的必要性
-
-### 接管视图
-
-`demo/view/DuckAdmin` 目录 就是demo工程调整后的视图
-
-### 使用 API
-
-在你的工程里
-
-使用 `DuckPhp\Foundation\Helper::Admin()` 获得 Admin 对象，
-`AdminId($check_login)` , `AdminName($check_login)`  则是获取当前Id, 管理员名称
-具体看 DuckPhp的文档， `DuckPhp\GlobalAdmin\GlobalAdmin` 的类介绍。
-
-使用 `DuckPhp\Foundation\Helper::User()` 获得 User 通用对象，
-具体看 DuckPhp的文档， `DuckPhp\GlobalUser\GlobalUser` 的类介绍。
-
-### 修改现有实现
-
-在 duckphp 框架的基础知识，不再阐述。
-
-### 高级
-
-菜单和权限。 如何在我的控制器里，加入菜单。 参考 demo 里 用户管理系统 的实现。
+- The **role table** in `audit_signatures.php` (which class takes on which contract) needs to be maintained in sync when you add a sub-application or change a binding.
+- "Loosening" a parameter type (`?string` against the interface's `string`) is allowed by LSP and reports a warn rather than a fail.
+- The coverage DSL (`CALL Class@method k=v`) passes parameters **by parameter name**, so parameter names must match the contract too.
 
 
-### 覆盖测试
 
-依赖 xdebug 的 coverage 模式（CLI 与 FPM 都要开）：`xdebug.mode=develop,coverage`。
-开关与站点基址见 `config/DuckPhpSettings.config.php.sample`。
+### Prerequisites
 
-**按提供者分组建档**（同一时刻只能有一个管理员提供者 + 一个用户提供者生效，所以一个提供者一组）：
+Some basic knowledge of the duckphp framework is not repeated here
+
+### Adjusting options
+
+DuckAdmin supports two database modes, sqlite / mysql; you can switch `database_driver` in the options
+
+In a few versions we hope to be able to switch it in the installer (for now it can only be switched manually
+
+### Static resources
+
+In the native era, we just unzipped the files into the web directory.
+
+But we want to separate dynamic and static resources. To ease the load on the server.
+
+So we have the `controller_resource_prefix` option.
+
+So where are the resource files? Under the `src/DuckAdmin/res` directory.
+
+You can set this option to a full http path, instead of using the default
+
+You can also set it to an absolute path starting with /. The default is 'res/', and the installer will copy them to the corresponding directory.
+
+Key points for installing the resource files
+
+Because it involves installation, we set `controller_resource_prefix`, the necessity of cloning the files
+
+### Taking over views
+
+The `demo/view/DuckAdmin` directory is the demo project's adjusted views
+
+### Using the API
+
+In your project
+
+Use `DuckPhp\Foundation\Helper::Admin()` to get the Admin object,
+`AdminId($check_login)` , `AdminName($check_login)` get the current Id and the admin name
+See the DuckPhp documentation for details, the class introduction of `DuckPhp\GlobalAdmin\GlobalAdmin`.
+
+Use `DuckPhp\Foundation\Helper::User()` to get the generic User object,
+See the DuckPhp documentation for details, the class introduction of `DuckPhp\GlobalUser\GlobalUser`.
+
+### Modifying the existing implementation
+
+Basic knowledge of the duckphp framework is not explained again.
+
+### Advanced
+
+Menus and permissions. How to add a menu in my controller. See the implementation of the user management system in the demo.
+
+
+### Coverage testing
+
+Depends on xdebug's coverage mode (must be on for both CLI and FPM): `xdebug.mode=develop,coverage`.
+The switch and the site base address are in `config/DuckPhpSettings.config.php.sample`.
+
+**Archiving by provider group** (only one admin provider + one user provider can be in effect at a time, so one provider is one group):
 
 ```bash
-# 推荐：--flag 模式。提供者靠采集标记（请求头）选，不动磁盘配置，没有竞态
-bash bin/cover_flags.sh                # 跑全部组并合并报告
-bash bin/cover_flags.sh e_user f_blog  # 只跑指定组
+# Recommended: --flag mode. The provider is chosen by a collection flag (request header), no disk config is touched, no race conditions
+bash bin/cover_flags.sh                # run all groups and merge the reports
+bash bin/cover_flags.sh e_user f_blog  # run only the specified groups
 REPORT_ARGS="--jsonl=runtime/DuckCoverage/report.jsonl --jsonl-no-timestamp" \
-    bash bin/cover_flags.sh            # 顺便产出机器可读的 report.jsonl
+    bash bin/cover_flags.sh            # also produce a machine-readable report.jsonl
 
-# 旧模式（保留以便回滚/对照）：每组靠「首页 POST 改写本组配置」来选提供者
+# Old mode (kept for rollback/comparison): each group chooses its provider by "POSTing to the home page to rewrite this group's config"
 bash bin/cover_groups.sh
 ```
 
-报告在 `runtime/DuckCoverage/AAAAA.report/`（多组合并）或 `<组名>.report/`（单组）；
-每份报告旁边都有一份同源的 `report.json`。
+The reports are in `runtime/DuckCoverage/AAAAA.report/` (multiple groups merged) or `<group name>.report/` (single group);
+next to each report there is a `report.json` from the same source.
 
-`--flag` 模式等价于 `cover --watch <组名> --flag=<标记>` → `cover --play --flag=<标记>`
-→ `cover --report 组名...`；标记的取值白名单见 `DuckAdminApp::FLAG_PROVIDERS`
-（`admin` / `laravel` / `think` / `single` / `demo` / `user`，用 `+` 组合）。
-**注意**：应用侧对标记加了锁 —— 只在 `duckcoverage_enable` 为真时生效，
-因为这个标记决定「用哪个管理员/用户提供者」，等于让请求头影响认证。
-**不要用 `cover --go`**，它的行为与手工分步有差异。
+`--flag` mode is equivalent to `cover --watch <group name> --flag=<flag>` → `cover --play --flag=<flag>`
+→ `cover --report group...`; the whitelist of flag values is in `DuckAdminApp::FLAG_PROVIDERS`
+(`admin` / `laravel` / `think` / `single` / `demo` / `user`, combined with `+`).
+**Note**: the application side locks the flag — it only takes effect when `duckcoverage_enable` is true,
+because this flag decides "which admin/user provider is used", which amounts to letting a request header influence authentication.
+**Do not use `cover --go`**, its behavior differs from doing the steps manually.
 
-#### 行计数只有一个口径，且「签名行」已被上游剔除
+#### There is only one way to count lines, and "signature lines" have been removed upstream
 
-- `runtime/DuckCoverage/*.report/index.html` 与同目录的 `report.json`、
-  `--jsonl=` 产出的 `report.jsonl` 是同一份数据（本次上游补丁后三处口径一致）。
-- `php bin/coverage_gaps.php` —— 读 `report.jsonl` 列「还值得补的行」，
-  默认按 `todo`（= `unc - sig`）排序；顺便单列「已达 100%、但剔除了签名行」的文件。
+- `runtime/DuckCoverage/*.report/index.html`, the `report.json` in the same directory, and
+  the `report.jsonl` produced by `--jsonl=` are the same data (after this upstream patch all three agree).
+- `php bin/coverage_gaps.php` — reads `report.jsonl` and lists "lines still worth covering",
+  sorted by `todo` (= `unc - sig`) by default; it also lists separately the files that are "already at 100%, but had signature lines removed".
 
-**签名行（曾经的历史问题，现已由上游解决）**：方法声明的参数里带默认值（尤其是数组默认值，
-例如 `public function log($user_id, string $string, ?string $type = null, array $ext = [])`）时，
-那一行声明会被静态分析算成可执行行，但覆盖驱动永远不会把它记为已执行 ——
-`src/DemoUsers/Business/UserBusiness.php` 因此长期固定显示 29/30。
+**Signature lines (a historical problem, now solved upstream)**: when a method declaration's parameters have default values (especially
+array defaults, for example `public function log($user_id, string $string, ?string $type = null, array $ext = [])`),
+that declaration line is counted as an executable line by static analysis, but the coverage driver will never record it as executed —
+`src/DemoUsers/Business/UserBusiness.php` therefore long showed a fixed 29/30.
 
-上游现在已经把这类行**从统计口径里剔除**（数据层 `unset`，HTML / `report.json` / `report.jsonl`
-三处一致），所以：
+Upstream has now **removed such lines from the counting** (an `unset` in the data layer, consistent across
+HTML / `report.json` / `report.jsonl`), so:
 
-- 该文件现在是 **29/29 = 100%**，`unc` 为空；
-- 被剔除的行在 `sig` 字段里留痕（`report.json` 侧叫 `sig`，`jsonl` 侧也叫 `sig`）；
-- 判断「还有没有可补的」只看 `todo`（或 `unc`）是否为空，**不再需要拿 `sig` 去减**。
+- that file is now **29/29 = 100%**, and `unc` is empty;
+- the removed lines leave a trace in the `sig` field (`sig` on the `report.json` side, also `sig` on the `jsonl` side);
+- to decide "is there anything left to cover", just look at whether `todo` (or `unc`) is empty, **no need to subtract `sig` any more**.
 
-> 旧版本的 `report.jsonl` 没有 `todo` 字段时，`bin/coverage_gaps.php` 会自动退化成
-> `unc - sig`，所以工具对两代输出都能用。
+> When an older `report.jsonl` has no `todo` field, `bin/coverage_gaps.php` automatically degrades to
+> `unc - sig`, so the tool works with both generations of output.
 
-#### 补覆盖的手段
+#### Ways to add coverage
 
-1. 能用 HTTP 表达的加 `WEB` 步骤。uri 写「应用相对」的（框架会补 `controller_url_prefix`），
-   跨应用才用绝对 uri。
-2. HTTP 表达不了的（纯业务/模型方法、异常分支）用宏，它们会展开成
-   `CALL <phase>!<namespace>\<层>\<类>@<方法> 参数`：
-   - `#BUSINESS <类>@<方法> 参数` → 当前应用的 `Business\<类>`
-   - `#MODEL <类>@<方法> 参数` → `Model\<类>`
-   - `#ACTION <类>@<方法> 参数` → `Controller\<类>`
-   - `#INCLUDE_CALL <调用>` → 直接展开成 `CALL`
+1. Add `WEB` steps for anything expressible over HTTP. Write uris "relative to the application" (the framework adds `controller_url_prefix`),
+   and use absolute uris only across applications.
+2. For things HTTP cannot express (pure business/model methods, exception branches) use macros, which expand into
+   `CALL <phase>!<namespace>\<layer>\<class>@<method> parameters`:
+   - `#BUSINESS <class>@<method> parameters` → `Business\<class>` of the current application
+   - `#MODEL <class>@<method> parameters` → `Model\<class>`
+   - `#ACTION <class>@<method> parameters` → `Controller\<class>`
+   - `#INCLUDE_CALL <call>` → expands directly into `CALL`
 
-   ⚠️ `CALL` 抛异常会中断整场 play：要踩错误分支请用 `WEB`（HTTP 请求不会中断 play），
-   或像 `src/DemoUsers/System/TestLister.php` 的 `moreTest2()` 那样把每步各自 try。
+   ⚠️ A `CALL` that throws an exception aborts the whole play: to hit error branches use `WEB` (an HTTP request will not abort the play),
+   or wrap each step in its own try like `moreTest2()` in `src/DemoUsers/System/TestLister.php`.
 
-当前进度（6 组、374 个 HTTP 请求、0 条应用错误日志）：Total 68.29% ——
-Admin 69.18%、Admin_LaravelModel 61.85%、Admin_ThinkPHPModel 62.23%、DemoUsers 99.01%、
-SimpleBlog 90.20%、SingleAdmin 100.00%、System 65.15%、User 45.03%。
+Current progress (6 groups, 374 HTTP requests, 0 application error logs): Total 68.29% ——
+Admin 69.18%, Admin_LaravelModel 61.85%, Admin_ThinkPHPModel 62.23%, DemoUsers 99.01%,
+SimpleBlog 90.20%, SingleAdmin 100.00%, System 65.15%, User 45.03%.
 
-### 多语言（安装向导等文案）
+### Multilingual (installer wizard and other texts)
 
-文案走 DuckPhp 的 Lang 组件，各子应用的语言文件放在自己的 `config/`：
+The texts go through DuckPhp's Lang component, and each sub-application's language files live in its own `config/`:
 
 ```
-src/Admin/config/lang-zh_CN.php        # Admin（Admin_LaravelModel / Admin_ThinkPHPModel 共用）
+src/Admin/config/lang-zh_CN.php        # Admin (shared by Admin_LaravelModel / Admin_ThinkPHPModel)
 src/Admin/config/lang-en.php
 src/User/config/lang-zh_CN.php         src/User/config/lang-en.php
 src/SimpleBlog/config/lang-zh_CN.php   src/SimpleBlog/config/lang-en.php
 ```
 
-- 默认语言是根应用 `DuckAdminApp` 的 `lang_default`（`zh_CN`）；子应用的 Lang
-  通过 `lang_follow_root` 跟随根应用，所以只在根应用设一处。
-- 切换方式：`?lang=en`、`lang` cookie，或浏览器的 `Accept-Language`。
-- **主语言文件优先于 frag**（`Lang` 的注释：the main language file always wins,
-  a frag only fills in the missing keys）——要改安装页文案就改 `lang-*.php`，
-  不要再另建 `lang-*-for_webinstaller.php`，否则改了不生效。
-- key 是扁平的（点号只是名字的一部分）；缺 key 会回落到框架内置英文，不会显示成裸 key。
-- 安装器的 key 是 `webinstaller.*`；Admin 另有自定义字段的
-  `Admin Name` / `Admin Password` / `Admin Password Confirm`。
+- The default language is the root application `DuckAdminApp`'s `lang_default` (`zh_CN`); sub-applications' Lang
+  follows the root application through `lang_follow_root`, so you only set it in one place, the root application.
+- How to switch: `?lang=en`, the `lang` cookie, or the browser's `Accept-Language`.
+- **The main language file wins over frag** (`Lang`'s comment: the main language file always wins,
+  a frag only fills in the missing keys) — to change the install page texts, change `lang-*.php`,
+  do not create a separate `lang-*-for_webinstaller.php`, or your change will not take effect.
+- Keys are flat (a dot is just part of the name); a missing key falls back to the framework's built-in English and is not shown as a bare key.
+- The installer's keys are `webinstaller.*`; Admin additionally has the custom fields
+  `Admin Name` / `Admin Password` / `Admin Password Confirm`.
 
-### 其他非 DuckPhp 框架代码如何整合 DuckAdmin 的管理后台系统
+### How code from other non-DuckPhp frameworks integrates DuckAdmin's admin backend system
 
-### 登录事件管理
-暂缺
+DuckAdmin is a **library** and can be embedded into any framework (Laravel / ThinkPHP / an in-house framework all work): call
+`RunQuickly()` once; it returns `true` to mean this request has been fully handled by the admin backend, so just `return` and hand
+control back; if it returns `false`, keep running your own code.
+
+(This code used to be `public/main.php` as a runnable demonstration; that file has been deleted, and the example is kept here.)
+
+```php
+<?php
+use DuckPhp\DuckPhp;
+use DuckAdmin\System\DuckAdminApp;
+use DuckPhp\Foundation\Helper;
+
+$options = [
+    'path'     => __DIR__ . '/../',   // DuckAdmin's root directory
+    'skip_404' => true,               // routes not caught are handed back to your own framework
+    'app' => [
+        DuckAdminApp::class => [
+            'controller_url_prefix' => 'app/admin/',          // the backend's access path
+            'installed'   => '2024-06-10T22:12:01+08:00',     // the installed flag
+            'database_list' => [
+                'dsn'      => 'sqlite:demodb.db',
+                'username' => '',
+                'password' => '',
+            ],
+        ],
+    ],
+];
+
+$flag = DuckPhp::RunQuickly($options);
+if ($flag) {
+    return;   // the admin backend is done, this request ends here
+}
+
+//////////////////////////
+// your own code starts here
+
+$url_admin  = __url('app/admin/index');   // the admin address (corresponding to controller_url_prefix above)
+$admin_id   = Helper::AdminId(false);     // the admin ID; false when not logged in
+$admin_name = $admin_id ? Helper::AdminName() : '';
+$url_logout = Helper::Admin()->urlForLogout();
+
+// ... render your own page, the variables above can be used directly in the view
+```
+
+A few notes:
+
+- **autoload**: when installed as a library, what you `require` is your project's `vendor/autoload.php`.
+  The original `main.php` also had a fallback that "searches up four levels if not found"; with a normal composer install you do not need it.
+- **`path`**: points at DuckAdmin's root directory — it uses that to find `config/`, `view/`, `runtime/`.
+- **`skip_404 => true`**: routes the backend did not catch are given back to you, so it does not take over the whole site's 404s.
+- **`installed` + `database_list`**: make the library's application run "as if it were installed"; in a real project fill in your own
+  database, or you can keep only `controller_url_prefix` and let it go through the Web installer once (see "Demo" above).
+- **Login state**: `Helper::AdminId()` / `AdminName()` / `Helper::Admin()->urlForLogout()`
+  are for your pages; for view overrides and language overrides see the "Taking over views" and "Multilingual" sections above.
+- **Security gate**: when embedded in another framework it is still bound by `duckadmin_enable` — if it is not on, only the notice page is output
+  (see the "Security" section at the beginning).
+
+### Login event management
+TBD
 
 
 
-## Demo 的文件结构
+## The Demo's file structure
 
 
 ```
 ├── System
-│   └── DemoApp.php
+│   └── DemoApp.php
 ├── Test
-│   └── MyTester.php
+│   └── MyTester.php
 ├── cli.php
 ├── config
-│   ├── DuckPhpApps.config.php
-│   └── DuckPhpSettings.config.php.sample
+│   ├── DuckPhpApps.config.php
+│   └── DuckPhpSettings.config.php.sample
 ├── public
-│   └── index.php
+│   └── index.php
 ├── runtime
-│   └── database.db
+│   └── database.db
 └── view
     ├── DuckAdmin
-    │   └── account
-    │       └── login.php
+    │   └── account
+    │       └── login.php
     ├── DuckUser
-    │   ├── Home
-    │   │   ├── inc-foot.php
-    │   │   ├── inc-head.php
-    │   │   ├── index.php
-    │   │   └── password.php
-    │   ├── inc-foot.php
-    │   ├── inc-head.php
-    │   ├── login.php
-    │   ├── main.php
-    │   └── register.php
+    │   ├── Home
+    │   │   ├── inc-foot.php
+    │   │   ├── inc-head.php
+    │   │   ├── index.php
+    │   │   └── password.php
+    │   ├── inc-foot.php
+    │   ├── inc-head.php
+    │   ├── login.php
+    │   ├── main.php
+    │   └── register.php
     └── main.php
 
 ```
-和典型的 DuckPhp 工程一样 System/DemoApp 是入口文件。
+As in a typical DuckPhp project, System/DemoApp is the entry file.
 
-我们把主页嵌入到 DemoApp 类里。从而少了控制器目录
+We embed the home page into the DemoApp class. That way we save a controller directory
 
-View 下是各种对 DuckAdmin 的视图的覆盖
+Under View are the various overrides of DuckAdmin's views
 
-Test 是测试覆盖
+Test is the test coverage
 
-runtime 是数据库文件
+runtime is the database file
 
 
 ## TODO
 
 
-缺乏 validor 验证系统 本来用 thinkphp 的应该可以，可惜太过复杂，后面版本又专一
+Missing a validor validation system; using thinkphp's should have worked, but it is too complex, and later versions became more specialized
 
-缺乏 表单生成器， 这其实不重要。
+Missing a form generator. This is actually not important.
