@@ -11,8 +11,14 @@
  *       用 sync_to_wsl.sh 同步时已被排除,不会被开发机覆盖。
  */
 return [
-    // 说明：这个键目前**没有任何代码读取**（全工程搜索无引用），保留仅为兼容旧配置。
-    //'duckadmin_enable' => true,
+    // ===== 安全门禁（必须显式开启，否则整个后台不提供服务）=====
+    // 不开（或本文件里没有这个键）时，所有网页请求都会被挡下，只显示一个提示页（HTTP 503），
+    // 提示你到这里把它改成 true。
+    // 默认关是有意的：这是「确认你有意把后台暴露出去」的开关，少一个配置项就少一份风险。
+    // 命令行不受影响：php bin/cli.php 的 cover / call 等命令照常可用。
+    // 提示：开启后若发现提示页还在，等一两秒再刷新（PHP 的 opcache.revalidate_freq
+    //       默认 2 秒，本文件会被缓存），必要时重启 php-fpm。
+    'duckadmin_enable' => true,
 
     // 打开覆盖测试(duckcoverage)。打开后：
     //   - 只有在「watch 窗口」内才会采集（runtime/DuckCoverage/DuckCoverage.watching.txt 存在时），平时没有额外开销

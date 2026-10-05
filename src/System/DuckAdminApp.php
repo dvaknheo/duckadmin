@@ -93,6 +93,11 @@ class DuckAdminApp extends DuckPhp
     {
         //@codeCoverageIgnoreStart
         parent::onPrepare();
+
+        // 安全门禁：设置里没开 duckadmin_enable 就只输出提示页并结束，不进入任何路由。
+        // 必须放在 parent::onPrepare() 之后 —— App::onPrepare() 里才 loadSetting()，
+        // 放前面的话 _Setting() 读到的是空设置，会把「已开启」也挡掉。
+        $this->checkEnabled();
         $this->options['duckcoverage_path_src'] = realpath(__DIR__ . '/../../') . '/src/';
 
         // 覆盖测试(duckcoverage --play)要请求的站点基址。
@@ -147,9 +152,57 @@ class DuckAdminApp extends DuckPhp
     }
 
     /**
+     * 安全门禁：必须在配置里显式开启 duckadmin_enable 才提供服务。
+     *
+     * 为什么缺省是「关」：这是「确认你有意把后台暴露出去」的开关，
+     * 取不到就当没开，少一个配置项就少一份风险。
+     * 命令行不受影响（bin/cli.php 的 cover / call 等命令照常可用）。
+     */
+    protected function checkEnabled(): void
+    {
+        if ($this->_Setting('duckadmin_enable', false)) {
+            return;
+        }
+        if ($this->isCli()) {
+            return;
+        }
+        $this->showDisabledNotice();
+    }
+
+    /**
+     * 停用提示页：直接输出并结束，不进入任何路由。
+     * 注意此时组件还没初始化，所以不要用 __h()/__url() 之类的框架助手。
+     */
+    protected function showDisabledNotice(): void
+    {
+        $file = 'config/DuckPhpSettings.config.php';
+        if (!headers_sent()) {
+            http_response_code(503);
+            header('Content-Type: text/html; charset=utf-8');
+        }
+        $e = htmlspecialchars($file, ENT_QUOTES);
+        echo '<!doctype html><html><head><meta charset="utf-8">'
+            . '<title>DuckAdmin 未启用</title></head><body>'
+            . '<h1>DuckAdmin 未启用</h1>'
+            . '<p><strong>出于安全考虑，DuckAdmin 默认不提供服务。</strong>'
+            . '必须在本机配置 <code>' . $e . '</code> 里显式开启：</p>'
+            . '<pre>return [' . "\n"
+            . '    // ... 其它配置 ...' . "\n"
+            . "    'duckadmin_enable' => true,\n"
+            . '];</pre>'
+            . '<p>开启后本页自动消失；不需要这个后台就保持关闭。</p>'
+            . '<hr>'
+            . '<p><strong>DuckAdmin is disabled.</strong> For security it serves nothing '
+            . 'until you explicitly enable it: set <code>\'duckadmin_enable\' =&gt; true</code> '
+            . 'in <code>' . $e . '</code>.</p>'
+            . '</body></html>';
+        exit;
+    }
+
+    /**
      * 保存首页选中的管理员/用户提供者。
      *
-     * 只接受本应用 app 列表里的合法类名；**不合法或缺失的一侧退回源码默认值**
+     * 只接受本应用 app 列表里的合法类名；不合法或缺失的一侧退回源码默认值
      * （options['data']，即 SingleAdminApp / DemoUsersApp），与 onInit() 的兜底一致。
      *
      * 这样两侧总会得到一个可用的提供者：既不会像最初那样把"没有这两个键的
