@@ -4,7 +4,7 @@
  *
  * Keys are flat: the dots are just part of the name, Lang does no path lookup.
  *
- * Reached with ?lang=en, the lang cookie or Accept-Language: en; when no hint is
+ * Reached with ?lang=en-US, the lang cookie or Accept-Language: en-US; when no hint is
  * given the root application's lang_default (zh_CN) applies. Missing keys fall
  * back to the framework's built-in English sentences.
  *
@@ -13,7 +13,7 @@
  * Admin_ThinkPHPModel, which extend AdminApp and therefore use src/Admin/.
  *
  * Note: the main language file wins over any frag, so this file (not a
- * lang-en-for_webinstaller.php) is the place to edit the installer wording.
+ * a frag) is the place to edit the installer wording.
  */
 return [
     'webinstaller.h1'                     => 'DuckPhp Web Installer',

@@ -90,11 +90,11 @@ WEB Admin/delete?id=2&hash=deadbeefdeadbeefdeadbeefdeadbeef
 WEB Admin/index?all=1
 WEB Admin/index
 
-COMMENT 英文语言包:不带 ?lang=en 时 config/lang-en.php 永远不加载,一直是 0%
+COMMENT 英文语言包:不带 ?lang=en-US 时 config/lang-en_US.php 永远不加载,一直是 0%
 COMMENT HTTP 表达不到的业务/模型层交给 SETWEB 后置钩子(见下面的 moreTest)
 SETWEB _ _ {phase}!{static}@moreTest _
-WEB login?lang=en
-WEB Home/index?lang=en
+WEB login?lang=en-US
+WEB Home/index?lang=en-US
 WEB logout
 
 CALL {static}@endTest

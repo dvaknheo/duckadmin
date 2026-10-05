@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 /**
- * DuckAdmin\Admin - 中文句子（与 lang-en.php 同一套 key）。
+ * DuckAdmin\Admin - 中文句子（与 lang-en_US.php 同一套 key）。
  *
  * key 是扁平的：点号只是名字的一部分，Lang 不做路径查找。
  *
- * 语言默认 zh_CN（根应用的 lang_default），也可用 ?lang=en、lang cookie
+ * 语言默认 zh_CN（根应用的 lang_default），也可用 ?lang=en-US、lang cookie
  * 或 Accept-Language 切换。本文件缺的 key 会回落到框架内置英文。
  *
  * 文件里的 webinstaller.* 是安装向导的 key（见 view/install.php 与

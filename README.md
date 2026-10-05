@@ -330,14 +330,15 @@ The texts go through DuckPhp's Lang component, and each sub-application's langua
 
 ```
 src/Admin/config/lang-zh_CN.php        # Admin (shared by Admin_LaravelModel / Admin_ThinkPHPModel)
-src/Admin/config/lang-en.php
-src/User/config/lang-zh_CN.php         src/User/config/lang-en.php
-src/SimpleBlog/config/lang-zh_CN.php   src/SimpleBlog/config/lang-en.php
+src/Admin/config/lang-en_US.php
+src/User/config/lang-zh_CN.php         src/User/config/lang-en_US.php
+src/SimpleBlog/config/lang-zh_CN.php   src/SimpleBlog/config/lang-en_US.php
 ```
 
 - The default language is the root application `DuckAdminApp`'s `lang_default` (`zh_CN`); sub-applications' Lang
   follows the root application through `lang_follow_root`, so you only set it in one place, the root application.
-- How to switch: `?lang=en`, the `lang` cookie, or the browser's `Accept-Language`.
+- How to switch: `?lang=en-US`, the `lang` cookie, or the browser's `Accept-Language`.
+  - **The file-name shape matters**: browsers send `en-US` (hyphen); the framework normalises it to `en_US` and then looks for `lang-en_US.php`. There is **no** "strip the region and retry" fallback — `en-GB` will not hit `en_US`, and a bare `en` only matches `lang-en.php`.
 - **The main language file wins over frag** (`Lang`'s comment: the main language file always wins,
   a frag only fills in the missing keys) — to change the install page texts, change `lang-*.php`,
   do not create a separate `lang-*-for_webinstaller.php`, or your change will not take effect.

@@ -70,6 +70,9 @@ class TestLister
         // ========== 初始化阶段（必须）==========
         $list[] = '#PHASE_BEGIN';
         $list[] = 'WEB install';
+        // 先 GET 一次安装页(英文),覆盖 Admin 的 config/lang-en_US.php;
+        // 文件名必须是 en_US 形状:头里的 en-US 会被 Lang 规范化成 en_US
+        $list[] = "WEB install?lang=en-US";
         $list[] = "WEB install driver=sqlite&database[file]={$dbFile}&admin_name=" . self::ADMIN_NAME . "&admin_password=" . self::ADMIN_PASSWORD . "&admin_password_confirm=" . self::ADMIN_PASSWORD;
         $list[] = 'WEB login';
         $list[] = "WEB login username=" . self::ADMIN_NAME . "&password=" . self::ADMIN_PASSWORD;

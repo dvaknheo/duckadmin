@@ -329,14 +329,15 @@ SimpleBlog 90.20%、SingleAdmin 100.00%、System 65.15%、User 45.03%。
 
 ```
 src/Admin/config/lang-zh_CN.php        # Admin（Admin_LaravelModel / Admin_ThinkPHPModel 共用）
-src/Admin/config/lang-en.php
-src/User/config/lang-zh_CN.php         src/User/config/lang-en.php
-src/SimpleBlog/config/lang-zh_CN.php   src/SimpleBlog/config/lang-en.php
+src/Admin/config/lang-en_US.php
+src/User/config/lang-zh_CN.php         src/User/config/lang-en_US.php
+src/SimpleBlog/config/lang-zh_CN.php   src/SimpleBlog/config/lang-en_US.php
 ```
 
 - 默认语言是根应用 `DuckAdminApp` 的 `lang_default`（`zh_CN`）；子应用的 Lang
   通过 `lang_follow_root` 跟随根应用，所以只在根应用设一处。
-- 切换方式：`?lang=en`、`lang` cookie，或浏览器的 `Accept-Language`。
+- 切换方式：`?lang=en-US`、`lang` cookie，或浏览器的 `Accept-Language`。
+  - **文件名形状有讲究**：浏览器发的是 `en-US`（连字符），框架会规范化成 `en_US` 后再找 `lang-en_US.php`；而且**没有**"去掉地区再试一次"的回落 —— `en-GB` 不会命中 `en_US`，裸 `en` 也只认 `lang-en.php`。
 - **主语言文件优先于 frag**（`Lang` 的注释：the main language file always wins,
   a frag only fills in the missing keys）——要改安装页文案就改 `lang-*.php`，
   不要再另建 `lang-*-for_webinstaller.php`，否则改了不生效。
