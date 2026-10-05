@@ -165,6 +165,7 @@ EOT;
             // "cannot be called statically"。
             ['\DuckAdmin\User\Controller\Helper', 'csrfToken', []],
             ['\DuckAdmin\User\Controller\Helper', 'csrfField', []],
+            ['\DuckAdmin\User\Controller\Helper', 'checkCsrf', []],
         ];
         foreach ($calls as [$class, $method, $args]) {
             try {

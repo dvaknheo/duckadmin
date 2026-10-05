@@ -142,6 +142,11 @@ class TestLister
         $list[] = 'WEB Admin/index';
         $list[] = 'WEB System/info';
 
+        // 登出:原来整份清单没有 logout，MainController::logout() 与
+        // AuthAction::logout() 一直是「从未执行」。放在最后是安全的——
+        // 此时会话里是 deluser，后面各块都会自己重新登录管理员。
+        $list[] = 'WEB logout';
+
         $list[] = '#PHASE_END';
 
         $str = implode("\n", $list);
