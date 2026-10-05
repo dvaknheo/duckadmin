@@ -98,5 +98,7 @@ php bin/cli.php cover --stop >/dev/null 2>&1
 
 if [ "$DO_REPORT" = "1" ] && [ ${#DONE[@]} -gt 0 ]; then
     echo "---- 合并报告: ${DONE[*]}"
-    php bin/cli.php cover --report "${DONE[@]}" 2>&1 | tail -3
+    # REPORT_ARGS 用来透传 cover --report 的新开关，例如：
+    #   REPORT_ARGS="--jsonl=runtime/DuckCoverage/report.jsonl --jsonl-no-timestamp" bash bin/cover_groups.sh
+    php bin/cli.php cover --report "${DONE[@]}" ${REPORT_ARGS:-} 2>&1 | tail -3
 fi
