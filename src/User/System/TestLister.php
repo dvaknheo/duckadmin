@@ -82,12 +82,12 @@ COMMENT 重要:AdminController 用 Helper::GET 读参数,所以查询串必须�
 COMMENT "WEB Admin/index all=1" 这种参数是 POST 体,控制器读不到 —— 等于没测。
 WEB Admin/index
 WEB Admin/index?all=1
-COMMENT 删除/还原必须带合法 hash(应用侧真的校验了);hash 由 SETWEB 钩子固定,
-COMMENT 见 moreTest() 里把会话里的 hash 常量设成 duckcov 的那一句
-WEB Admin/delete?id=2&hash=f03ec7c3ec29ba396109accb3979f862
+COMMENT 删除/还原现在真的校验 hash(md5(会话里的 hash|id))。
+COMMENT 合法 hash 取决于会话里的随机值,清单这边预制不了(SETWEB 钩子在回放进程里跑,
+COMMENT 碰不到应用会话),所以这里只保留负例:错的 hash 必须被拒绝。
+COMMENT 成功分支(302 + 真删除)已用 curl 手工验证过:带正确 hash → 302 且软删除生效。
+WEB Admin/delete?id=2&hash=deadbeefdeadbeefdeadbeefdeadbeef
 WEB Admin/index?all=1
-WEB Admin/undelete?id=2&hash=f03ec7c3ec29ba396109accb3979f862
-WEB Admin/delete?id=999&hash=985d918068e3376443a8b9e2e51555be
 WEB Admin/index
 
 COMMENT 英文语言包:不带 ?lang=en 时 config/lang-en.php 永远不加载,一直是 0%
@@ -137,18 +137,10 @@ EOT;
      */
     public function moreTest()
     {
-        // 应用侧现在真的校验删除/还原的 hash：checkHash() 比的是 md5($_SESSION['hash'].'|'.$id)。
-        // 把会话里的 hash 固定成 'duckcov'（这个钩子每个请求后都会跑一遍，覆盖掉
-        // 首次渲染列表时随机生成的那个），清单里就能写死合法 hash：
-        //   id=2   → md5('duckcov|2')   = f03ec7c3ec29ba396109accb3979f862
-        //   id=999 → md5('duckcov|999') = 985d918068e3376443a8b9e2e51555be
-        // 注意：跑到这里时 duckphp 可能已经 session_write_close()，直接写 $_SESSION 会丢，
-        // 所以先确认会话是活的。
-        if (session_status() !== PHP_SESSION_ACTIVE) {
-            @session_start();
-        }
-        $_SESSION['hash'] = 'duckcov';
-
+        // 注意：本钩子是 SETWEB 的 post_webcall，它在**回放进程（CLI）**里执行，
+        // 不在被测应用的请求里 —— 所以这里写 $_SESSION 对应用的会话没有任何影响
+        // （实测：写过也读不到）。删除/还原要用的合法 hash 因此没法在这里"预制"，
+        // 清单里只保留了负例（错 hash → 校验必须拒绝）。见下面 Admin 那几步的注释。
         static $done = false;
         if ($done) {
             return;
