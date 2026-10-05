@@ -93,7 +93,10 @@ EOT;
             'admin_prefix' => $admin_prefix,
             'user_steps'   => $user_steps,
             'username'     => 'user_test1',
-            'db'           => urlencode('runtime/DuckCoverage/' . DuckCoverage::_()->watchingName() . '.db'),
+            // 上游公开的方法是 watchingGetName()（不是 watchingName()）；
+            // 写错名字会让整份清单生成直接抛 "Call to undefined method"，
+            // 结果是所有组都回放 0 个请求（实测踩过）。
+            'db'           => urlencode('runtime/DuckCoverage/' . DuckCoverage::_()->watchingGetName() . '.db'),
         ]);
     }
 

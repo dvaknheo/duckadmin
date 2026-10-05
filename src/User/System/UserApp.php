@@ -24,7 +24,9 @@ class UserApp extends DuckPhp
                 'web_installer_use_redis' => false,
                 'web_installer_use_database' => true,
                 'web_installer_database_drivers' => ['sqlite' => true],
-                'web_installer_view' => 'install',
+                // 不再指定应用自己的安装页（view/install.php 已删），
+                // 用框架内置的安装视图，安装完成页也因此与其它子应用一致。
+                // 'web_installer_view' => 'install',
 
             ],
             GlobalUser::class => [
