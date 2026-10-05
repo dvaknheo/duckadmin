@@ -83,14 +83,16 @@ while (($line = fgets($handle)) !== false) {
 }
 fclose($handle);
 
+// 注意：同一个信息在两份输出里名字不同 —— report.json 顶层叫 dumps_merged，
+// report.jsonl 的 meta 里叫 dumps。两个都认。
+$dumps = $meta['dumps_merged'] ?? $meta['dumps'] ?? null;
+
 if (!$files) {
     $merged = $total['records']['file'] ?? 0;
     fwrite(STDERR, "报告里没有任何 file 记录");
-    fwrite(STDERR, $merged === 0 ? "（dumps_merged=" . ($meta['dumps_merged'] ?? '?') . "，很可能这次没采到数据）\n" : "\n");
+    fwrite(STDERR, $merged === 0 ? "（dumps=" . ($dumps ?? '?') . "，很可能这次没采到数据）\n" : "\n");
     exit(1);
 }
-
-$dumps = $meta['dumps_merged'] ?? null;
 $rows = [];
 $ceil = [];
 foreach ($files as $path => $rec) {
