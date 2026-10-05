@@ -92,6 +92,22 @@ class DuckAdminApp extends DuckPhp
     protected function onPrepare(): void
     {
         //@codeCoverageIgnoreStart
+
+        // 让"改了就立刻生效"：opcache 默认 revalidate_freq=2 秒，开发机上这个窗口会
+        // 让人以为改了没生效（实测：改 config/DuckPhpSettings.config.php 后 2 秒内仍是
+        // 旧值，第 3 秒才生效，我因此误判过一次安全门禁没生效）。
+        // 必须放在 parent::onPrepare() **之前** —— 设置文件正是它里面 loadSetting() 读进来的。
+        // 代价：每请求多一次 stat（窗口设 0）+ 重编译那个很小的配置文件；CLI 侧本来
+        // 不受影响（opcache.enable_cli=Off）。想保留 opcache 原生行为，删掉这段即可。
+        if (function_exists('opcache_invalidate')) {
+            ini_set('opcache.revalidate_freq', '0');
+            $setting_file = (string)($this->options['setting_file'] ?? 'config/DuckPhpSettings.config.php');
+            $setting_full = (strpos($setting_file, '/') === 0)
+                ? $setting_file
+                : realpath($this->options['path']) . '/' . $setting_file;
+            @opcache_invalidate($setting_full, true);
+        }
+
         parent::onPrepare();
 
         // 安全门禁：设置里没开 duckadmin_enable 就只输出提示页并结束，不进入任何路由。
