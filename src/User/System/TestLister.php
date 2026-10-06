@@ -102,7 +102,7 @@ CALL {static}@endTest
 
 EOT;
         $file = UserApp::_()->getRuntimePath() .'DuckCoverage/DuckCoverage.watching.txt';
-        $watch_name = file_get_contents($file);
+        $watch_name = \DuckAdmin\System\CoverageGroup::name();   // 组名统一走解析器,不猜文件
         $db = "runtime/DuckCoverage/{$watch_name}.db";
 
         $list = str_replace('{db}', $db, $list);

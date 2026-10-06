@@ -62,9 +62,9 @@ class TestLister
         if(!$flag){
             return '';
         }
-        $id = @file_get_contents(Helper::PathOfRuntime().'DuckCoverage/DuckCoverage.watching.txt');
+        $id = \DuckAdmin\System\CoverageGroup::name();   // 组名统一走解析器,不猜文件
         @unlink("runtime/DuckCoverage/{$id}.db");
-        $dbFile = urlencode("runtime/DuckCoverage/{$id}.db");
+        $dbFile = \DuckAdmin\System\CoverageGroup::dbFile();
         $list = [];
 
         // ========== 初始化阶段（必须）==========

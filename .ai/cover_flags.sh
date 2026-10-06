@@ -70,6 +70,7 @@ SKIPPED=()
 for row in "${RUN[@]}"; do
     IFS='|' read -r name flag ap up <<< "$row"
     echo "---- $name (flag=$flag → admin=$ap user=$up)"
+    export DUCKADMIN_COVERAGE_GROUP="$name"   # 让 lister 知道本组名,别去猜 watching 文件
     php bin/cli.php cover --watch "$name" --flag="$flag" >/dev/null 2>&1
 
     # watch 必须真的生效，否则本组采集会落到上一组的目录里
