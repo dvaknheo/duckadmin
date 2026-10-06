@@ -41,10 +41,11 @@ GROUPS_ALL=(
     "d_single|single+demo|DuckAdmin\\SingleAdmin\\System\\SingleAdminApp|DuckAdmin\\DemoUsers\\System\\DemoUsersApp"
     "e_user|admin+user|DuckAdmin\\Admin\\System\\AdminApp|DuckAdmin\\User\\System\\UserApp"
     "f_blog|admin+user|DuckAdmin\\Admin\\System\\AdminApp|DuckAdmin\\User\\System\\UserApp"
-    # 下面两组是「同一个应用换提供者组合」再跑一遍,用来覆盖只在别的组合下才会走到的分支。
-    # 清单里的跨应用绝对路由(管理端登录等)现在会跟着标记推导前缀,所以在这些组里也打得通。
-    "g_blog_single|single+demo|DuckAdmin\\SingleAdmin\\System\\SingleAdminApp|DuckAdmin\\DemoUsers\\System\\DemoUsersApp"
-    "h_user_single|single+user|DuckAdmin\\SingleAdmin\\System\\SingleAdminApp|DuckAdmin\\User\\System\\UserApp"
+    # 换提供者组合再跑一遍同一个应用,覆盖只在别的组合下才会走到的分支:
+    # 根 lister 是「每组都 INCLUDE_CHILD 全部子应用」,所以不需要为此单独建组 ——
+    # d_single(single+demo)本身就跑到了「博客 + SingleAdmin 管理端 + DemoUsers 用户端」;
+    # 而 single+user 这个组合此前不存在,必须有它,User 的管理端那条链才会被覆盖。
+    "g_user_single|single+user|DuckAdmin\\SingleAdmin\\System\\SingleAdminApp|DuckAdmin\\User\\System\\UserApp"
 )
 
 DO_REPORT=1
