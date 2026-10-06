@@ -20,6 +20,7 @@ namespace DuckAdmin\System;
 
 use DuckPhp\Core\App;
 
+//@codeCoverageIgnoreStart
 final class CoverageGroup
 {
     /** 当前采集组名 */
@@ -113,4 +114,4 @@ final class CoverageGroup
     {
         return static::prefixOf(static::userProvider());
     }
-}
+}//@codeCoverageIgnoreEnd

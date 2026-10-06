@@ -180,3 +180,29 @@ if ($warning || $dumps === 0) {
     echo "    百分比全是 0 不代表真的没覆盖。\n";
 }
 echo "候选文件（<= {$opt['max']} 行）：" . count($shown) . " 个。\n";
+
+// 别让 --max 把"好看的小数字"变成误导：永远报出缺口更大、因而没被列出来的文件。
+// （踩过：--max=4 时 AdminController 的 7 行缺口被静默过滤，被读成"已覆盖"。）
+$bigger = array_values(array_filter($rows, function ($r) use ($opt) {
+    return count($r[2]) > $opt['max'];
+}));
+if ($bigger) {
+    $bigLines = 0;
+    $maxRow = null;
+    foreach ($bigger as $r) {
+        $n = count($r[2]);
+        $bigLines += $n;
+        if ($maxRow === null || $n > count($maxRow[2])) {
+            $maxRow = $r;
+        }
+    }
+    printf(
+        "⚠️  另有 %d 个文件缺口超过 %d 行（合计 %d 行）没列出来，最大的是 %s（%d 行）—— 用 --max=%d 或 --top 看。\n",
+        count($bigger),
+        $opt['max'],
+        $bigLines,
+        $maxRow[0],
+        count($maxRow[2]),
+        count($maxRow[2])
+    );
+}
