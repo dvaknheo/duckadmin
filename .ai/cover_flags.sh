@@ -41,6 +41,10 @@ GROUPS_ALL=(
     "d_single|single+demo|DuckAdmin\\SingleAdmin\\System\\SingleAdminApp|DuckAdmin\\DemoUsers\\System\\DemoUsersApp"
     "e_user|admin+user|DuckAdmin\\Admin\\System\\AdminApp|DuckAdmin\\User\\System\\UserApp"
     "f_blog|admin+user|DuckAdmin\\Admin\\System\\AdminApp|DuckAdmin\\User\\System\\UserApp"
+    # 下面两组是「同一个应用换提供者组合」再跑一遍,用来覆盖只在别的组合下才会走到的分支。
+    # 清单里的跨应用绝对路由(管理端登录等)现在会跟着标记推导前缀,所以在这些组里也打得通。
+    "g_blog_single|single+demo|DuckAdmin\\SingleAdmin\\System\\SingleAdminApp|DuckAdmin\\DemoUsers\\System\\DemoUsersApp"
+    "h_user_single|single+user|DuckAdmin\\SingleAdmin\\System\\SingleAdminApp|DuckAdmin\\User\\System\\UserApp"
 )
 
 DO_REPORT=1
@@ -71,6 +75,7 @@ for row in "${RUN[@]}"; do
     IFS='|' read -r name flag ap up <<< "$row"
     echo "---- $name (flag=$flag → admin=$ap user=$up)"
     export DUCKADMIN_COVERAGE_GROUP="$name"   # 让 lister 知道本组名,别去猜 watching 文件
+    export DUCKADMIN_COVERAGE_FLAG="$flag"    # 让 lister 知道本次提供者,别写死 /admin/ 前缀
     php bin/cli.php cover --watch "$name" --flag="$flag" >/dev/null 2>&1
 
     # watch 必须真的生效，否则本组采集会落到上一组的目录里

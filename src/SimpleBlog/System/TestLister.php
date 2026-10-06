@@ -27,13 +27,15 @@ class TestLister
 
     public function _GetTestList(): string
     {
-        // 管理员前缀要与首页所选中的「管理员提供者」一致,否则登录态不共享
-        $admin_prefix = '/admin/';
+        // 管理员前缀必须与本次实际生效的「管理员提供者」一致,否则登录态不共享、
+        // 甚至打到没挂载的路径上(例如 single+demo 组里没有 /admin/)。
+        // 之前的写法是把 /admin/ 写死,于是本应用只能在 admin 提供者下测。
+        $admin_prefix = \DuckAdmin\System\CoverageGroup::adminPrefix();
 
         // 用户端注册/登录只在「用户提供者 = UserApp」时才做:
         // 换成 DemoUsers 时它有自己的预设账号(由 DemoUsers 那一块负责登录),
         // 这时候再去 /user/register 只会白拿一个失败响应。
-        $user_provider = (string)(\DuckPhp\Core\App::Root()->options['data']['duckadmin_user_provider'] ?? '');
+        $user_provider = \DuckAdmin\System\CoverageGroup::userProvider();
         $user_steps = ($user_provider === \DuckAdmin\User\System\UserApp::class)
             ? "WEB /user/register name={username}&password=123456&password_confirm=123456\nWEB /user/login name={username}&password=123456"
             : "COMMENT 用户提供者不是 UserApp,跳过注册/登录,沿用该提供者已有的登录态";

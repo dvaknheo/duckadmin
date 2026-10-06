@@ -38,10 +38,12 @@ CALL DuckAdmin\DemoUsers\Business\UserBusiness@login post=
 EOT;
 
         // 管理员登录行：用绝对 uri（跨应用），账号与 Admin 清单保持同一个来源。
-        // 用户管理页需要管理员登录态，而管理员态可能在用户侧的操作后被清掉，
-        // 所以在那几步之前显式重登一次；否则 AdminControllerBase 会直接 302，
+        // 前缀必须跟着本次实际生效的管理员提供者走 —— 写死 /admin/ 的话，在 single+xxx 组里
+        // 会打到没挂载的路径（404），用户管理页的管理员态就永远建不起来，
         // AdminController 与 view/Admin/* 永远是 0%。
-        $admin_login = 'WEB /admin/login username=' . \DuckAdmin\Admin\System\TestLister::ADMIN_NAME
+        // 用户管理页需要管理员登录态，而管理员态可能在用户侧的操作后被清掉，
+        // 所以在那几步之前显式重登一次；否则 AdminControllerBase 会直接 302。
+        $admin_login = 'WEB ' . \DuckAdmin\System\CoverageGroup::adminPrefix() . 'login username=' . \DuckAdmin\Admin\System\TestLister::ADMIN_NAME
             . '&password=' . \DuckAdmin\Admin\System\TestLister::ADMIN_PASSWORD;
 
         $list = <<<EOT
