@@ -12,16 +12,11 @@ class TestLister
     {
         return static::_()->_GetTestList();
     }
-    public static function GetShortTestOrderList(): string
+    public static function GetTestListForLogin(): string
     {
-        // 历史名字：等价于 short（只建立登录态）
-        return static::_()->_ShortTestList();
+        return static::_()->_GetTestListForLogin();
     }
-    public static function GetShortTestList(): string
-    {
-        return static::_()->_ShortTestList();
-    }
-    public function _ShortTestList(): string
+    public function _GetTestListForLogin(): string
     {
         // 「只建立登录态」：不安装、不登出，所以可以被别的应用反复 embed。
         // 全部相对 uri —— 当前 phase 就是 UserApp,__url() 自动补成 /user/。
@@ -34,11 +29,11 @@ WEB login name=t1&password=123456
 EOT;
         return $list;
     }
-    public static function GetLogoutTestList(): string
+    public static function GetTestListForLogout(): string
     {
-        return static::_()->_LogoutTestList();
+        return static::_()->_GetTestListForLogout();
     }
-    public function _LogoutTestList(): string
+    public function _GetTestListForLogout(): string
     {
         $list = <<<EOT
 #PHASE_BEGIN
@@ -54,11 +49,18 @@ EOT;
             return '';
         }
         // 被别的应用 embed 时,按调用方塞的一次性参数决定给哪种清单
-        switch (\DuckAdmin\System\CoverageGroup::takeListerCommand()) {
-            case 'short':
-                return static::_()->_ShortTestList();
+        // 本应用（管理员/用户系统之一）的清单类别：被别的应用嵌入时，按调用方塞的一次性参数决定。
+        // 参数放在**根应用**上，读到就清，避免影响同一次 play 里后续的清单生成。
+        $root = \DuckPhp\Core\App::Root();
+        $cmd = (string)($root->options['duckcoverage_test_lister_parameter'] ?? '');
+        if ($cmd !== '') {
+            unset($root->options['duckcoverage_test_lister_parameter']);
+        }
+        switch ($cmd) {
+            case 'login':
+                return static::_()->_GetTestListForLogin();
             case 'logout':
-                return static::_()->_LogoutTestList();
+                return static::_()->_GetTestListForLogout();
         }
         $list_referenct = <<<EOT
 WEB users/Home/index
@@ -71,10 +73,9 @@ CALL DuckAdmin\DemoUsers\Business\UserBusiness@login post=
 
 EOT;
 
-        // 管理员登录：由根应用顶层预取对方的「只登录」清单,这里纯文本内联即可
-        // (子应用的 lister 里切 phase 无效,#INCLUDE_CHILD 又会递归爆栈)。
-        $admin_app = \DuckAdmin\System\CoverageGroup::adminProvider();
-        $admin_login = \DuckAdmin\System\CoverageGroup::shortInline($admin_app, \DuckPhp\Core\App::Phase());
+        // 问“当前正在服务的”管理员系统要登录清单（通用取法,不需要知道它是谁）。
+        // 用户管理页需要管理员登录态,而管理员态可能在用户侧操作后被清掉,所以这里重登一次。
+        $admin_login = \DuckAdmin\System\TestListerHelper::sideList('admin', 'login');
 
         $list = <<<EOT
 #PHASE_BEGIN

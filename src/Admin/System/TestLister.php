@@ -26,12 +26,12 @@ class TestLister
     {
         @unlink(Helper::PathOfRuntime() . self::TEST_DB);
     }
-    public static function ShortTestList()
+    public static function GetTestListForLogin()
     {
-        return static::_()->_ShortTestList();
+        return static::_()->_GetTestListForLogin();
     }
 
-    public function _ShortTestList()
+    public function _GetTestListForLogin()
     {
         // 「只建立登录态」：不安装、不登出，因此可以被别的应用反复 embed。
         // 全部用相对 uri —— 当前 phase 就是正在取清单的那个管理员应用:
@@ -47,11 +47,11 @@ WEB login username={$admin_name}&password={$admin_password}
 EOT;
         return $list;
     }
-    public static function LogoutTestList()
+    public static function GetTestListForLogout()
     {
-        return static::_()->_LogoutTestList();
+        return static::_()->_GetTestListForLogout();
     }
-    public function _LogoutTestList()
+    public function _GetTestListForLogout()
     {
         $list = <<<EOT
 #PHASE_BEGIN
@@ -78,11 +78,18 @@ EOT;
         // 被别的应用 embed 进来时，按调用方塞的一次性参数决定给哪种清单：
         //   short  = 只建立登录态（不安装、不登出，可重复嵌入）
         //   logout = 只登出
-        switch (\DuckAdmin\System\CoverageGroup::takeListerCommand()) {
-            case 'short':
-                return static::_()->_ShortTestList();
+        // 本应用（管理员/用户系统之一）的清单类别：被别的应用嵌入时，按调用方塞的一次性参数决定。
+        // 参数放在**根应用**上，读到就清，避免影响同一次 play 里后续的清单生成。
+        $root = \DuckPhp\Core\App::Root();
+        $cmd = (string)($root->options['duckcoverage_test_lister_parameter'] ?? '');
+        if ($cmd !== '') {
+            unset($root->options['duckcoverage_test_lister_parameter']);
+        }
+        switch ($cmd) {
+            case 'login':
+                return static::_()->_GetTestListForLogin();
             case 'logout':
-                return static::_()->_LogoutTestList();
+                return static::_()->_GetTestListForLogout();
         }
         $id = \DuckAdmin\System\CoverageGroup::name();   // 组名统一走解析器,不猜文件
         @unlink("runtime/DuckCoverage/{$id}.db");

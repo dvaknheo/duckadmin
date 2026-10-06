@@ -23,11 +23,18 @@ class TestLister
             return '';
         }
         // 被别的应用 embed 时,按调用方塞的一次性参数决定给哪种清单
-        switch (\DuckAdmin\System\CoverageGroup::takeListerCommand()) {
-            case 'short':
-                return static::_()->_ShortTestList();
+        // 本应用（管理员/用户系统之一）的清单类别：被别的应用嵌入时，按调用方塞的一次性参数决定。
+        // 参数放在**根应用**上，读到就清，避免影响同一次 play 里后续的清单生成。
+        $root = \DuckPhp\Core\App::Root();
+        $cmd = (string)($root->options['duckcoverage_test_lister_parameter'] ?? '');
+        if ($cmd !== '') {
+            unset($root->options['duckcoverage_test_lister_parameter']);
+        }
+        switch ($cmd) {
+            case 'login':
+                return static::_()->_GetTestListForLogin();
             case 'logout':
-                return static::_()->_LogoutTestList();
+                return static::_()->_GetTestListForLogout();
         }
 
         $list_referenct = <<<EOT
@@ -59,11 +66,11 @@ EOT;
         $list = str_replace('{phase}', App::Phase(), $list);
         return $list;
     }
-    public static function ShortTestList(): string
+    public static function GetTestListForLogin(): string
     {
-        return static::_()->_ShortTestList();
+        return static::_()->_GetTestListForLogin();
     }
-    public function _ShortTestList(): string
+    public function _GetTestListForLogin(): string
     {
         // 「只建立登录态」：DemoUsers 是预设账号,登录一行就够;
         // 不安装、不登出 —— 于是可以被别的应用反复 embed。
@@ -76,11 +83,11 @@ WEB index username=t1&password=123456
 EOT;
         return $list;
     }
-    public static function LogoutTestList(): string
+    public static function GetTestListForLogout(): string
     {
-        return static::_()->_LogoutTestList();
+        return static::_()->_GetTestListForLogout();
     }
-    public function _LogoutTestList(): string
+    public function _GetTestListForLogout(): string
     {
         $list = <<<EOT
 #PHASE_BEGIN

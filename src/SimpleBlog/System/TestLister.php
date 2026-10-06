@@ -27,14 +27,10 @@ class TestLister
 
     public function _GetTestList(): string
     {
-        // 管理端 / 用户端各自的「只登录」清单：由根应用顶层预取(CoverageGroup::primeShortLists)，
-        // 这里只做纯文本内联 —— 子应用的 lister 里切 phase 是无效的,而且 #INCLUDE_CHILD
-        // 是递归展开、没有环检测,菱形引用会爆栈。
-        $admin_app = \DuckAdmin\System\CoverageGroup::adminProvider();
-        $user_app  = \DuckAdmin\System\CoverageGroup::userProvider();
-        $here = \DuckPhp\Core\App::Phase();
-        $admin_short = \DuckAdmin\System\CoverageGroup::shortInline($admin_app, $here);
-        $user_short  = \DuckAdmin\System\CoverageGroup::shortInline($user_app, $here);
+        // 问“当前正在服务的”管理员/用户系统要它们的登录清单（通用取法,见 TestListerHelper）。
+        // 谁在服务由根应用按 --flag 决定；这里既不需要类名,也不需要前缀或 phase 名。
+        $admin_short = \DuckAdmin\System\TestListerHelper::sideList('admin', 'login');
+        $user_short  = \DuckAdmin\System\TestListerHelper::sideList('user', 'login');
 
         $list = <<<EOT
 #PHASE_BEGIN

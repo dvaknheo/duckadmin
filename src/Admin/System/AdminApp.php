@@ -69,7 +69,7 @@ class AdminApp extends DuckPhp
     {
         parent::onInited();
         // if($this->options['short_duckcoverage']){
-        //     $this->options['duckcoverage_test_lister'] =[TestLister::class, 'ShortTestList'];
+        // 清单类别由调用方往根应用塞 duckcoverage_test_lister_parameter 决定,见 TestListerHelper
         // }
     }
 }
