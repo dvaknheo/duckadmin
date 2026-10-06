@@ -320,9 +320,21 @@ HTML / `report.json` / `report.jsonl`), so:
    ⚠️ A `CALL` that throws an exception aborts the whole play: to hit error branches use `WEB` (an HTTP request will not abort the play),
    or wrap each step in its own try like `moreTest2()` in `src/DemoUsers/System/TestLister.php`.
 
-Current progress (6 groups, 374 HTTP requests, 0 application error logs): Total 68.29% ——
-Admin 69.18%, Admin_LaravelModel 61.85%, Admin_ThinkPHPModel 62.23%, DemoUsers 99.01%,
-SimpleBlog 90.20%, SingleAdmin 100.00%, System 65.15%, User 45.03%.
+Current progress (6 groups, 532 HTTP requests, 0 application error logs): Total 77.92%
+(lines 2819/3618, functions 249/380 = 65.53%) —
+Admin 77.88%, Admin_LaravelModel 63.38%, Admin_ThinkPHPModel 63.78%, DemoUsers 100.00%,
+SimpleBlog 98.33%, SingleAdmin 100.00%, System 30.20%, User 90.77%.
+
+How to read these percentages (all three movements have a reason — do not misread them):
+- User 45.03% → 90.77%: the User application got its own test list;
+- SimpleBlog 90.20% → 98.33%: fixed the real culprit — when the group name could not be resolved the
+  lists built `runtime/DuckCoverage/.db`, so "install" went into one database while "register/login"
+  went into another and the whole user side looked uncovered (see `src/System/CoverageGroup.php`);
+- System 65.15% → 30.20%: this module is only 3 files; `DuckAdminApp.php` gained the `--flag`
+  provider-switching logic and `CoverageGroup.php` only runs on the CLI side (the web collector never
+  sees it), so the numerator barely moved while the denominator grew — this is not a code regression.
+
+Commands: `bash .ai/cover_flags.sh` (run every group and merge the reports), `php .ai/coverage_gaps.php` (list the lines still worth covering).
 
 ### Multilingual (installer wizard and other texts)
 

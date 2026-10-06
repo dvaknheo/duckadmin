@@ -319,9 +319,20 @@ bash .ai/cover_groups.sh
    ⚠️ `CALL` 抛异常会中断整场 play：要踩错误分支请用 `WEB`（HTTP 请求不会中断 play），
    或像 `src/DemoUsers/System/TestLister.php` 的 `moreTest2()` 那样把每步各自 try。
 
-当前进度（6 组、374 个 HTTP 请求、0 条应用错误日志）：Total 68.29% ——
-Admin 69.18%、Admin_LaravelModel 61.85%、Admin_ThinkPHPModel 62.23%、DemoUsers 99.01%、
-SimpleBlog 90.20%、SingleAdmin 100.00%、System 65.15%、User 45.03%。
+当前进度（6 组、532 个 HTTP 请求、0 条应用错误日志）：Total 77.92%
+（行 2819/3618，函数 249/380 = 65.53%）——
+Admin 77.88%、Admin_LaravelModel 63.38%、Admin_ThinkPHPModel 63.78%、DemoUsers 100.00%、
+SimpleBlog 98.33%、SingleAdmin 100.00%、System 30.20%、User 90.77%。
+
+百分比怎么读（三个模块的数字变化都有原因，别误读）：
+- User 45.03% → 90.77%：补了 User 应用自己的测试清单；
+- SimpleBlog 90.20% → 98.33%：修掉「组名解析不到时拼出 `runtime/DuckCoverage/.db`」这个真凶
+  —— 那时"安装"进一个库、"注册/登录"进另一个库，用户侧整片看起来没覆盖（见 `src/System/CoverageGroup.php`）；
+- System 65.15% → 30.20%：这个模块只有 3 个文件，其中 `DuckAdminApp.php` 新增了 `--flag`
+  提供者切换逻辑、`CoverageGroup.php` 又只跑在 CLI 侧（Web 采集看不到），分子几乎没动而分母变大，
+  所以百分比掉了 —— 不代表代码变差。
+
+命令：`bash .ai/cover_flags.sh`（跑全部组并合并报告）、`php .ai/coverage_gaps.php`（列还值得补的行）。
 
 ### 多语言（安装向导等文案）
 
