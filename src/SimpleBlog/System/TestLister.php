@@ -83,8 +83,10 @@ WEB admin/article_delete
 WEB admin/article_delete id=1
 WEB admin/articles
 
-COMMENT userController(继承 UserControllerBase,需要用户登录态;
-COMMENT 博客里没人访问它,所以一直是 0%)
+COMMENT userController(继承 UserControllerBase,需要用户登录态)
+COMMENT 注意:登录态要"紧挨着"用 —— 原来这一步孤零零放在整段最后,中间夹了十几个 admin
+COMMENT 步骤后 session 已不在,所以一直是 0%;这里先补一次登录再访问
+WEB /user/login name={username}&password=123456
 WEB user/index
 #PHASE_END
 EOT;
