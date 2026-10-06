@@ -22,6 +22,13 @@ class TestLister
         if(!$flag){
             return '';
         }
+        // 被别的应用 embed 时,按调用方塞的一次性参数决定给哪种清单
+        switch (\DuckAdmin\System\CoverageGroup::takeListerCommand()) {
+            case 'short':
+                return static::_()->_ShortTestList();
+            case 'logout':
+                return static::_()->_LogoutTestList();
+        }
 
         $list_referenct = <<<EOT
 WEB users/Home/index
@@ -50,6 +57,36 @@ WEB logout
 EOT;
         $list = str_replace('{static}', static::class, $list);
         $list = str_replace('{phase}', App::Phase(), $list);
+        return $list;
+    }
+    public static function ShortTestList(): string
+    {
+        return static::_()->_ShortTestList();
+    }
+    public function _ShortTestList(): string
+    {
+        // 「只建立登录态」：DemoUsers 是预设账号,登录一行就够;
+        // 不安装、不登出 —— 于是可以被别的应用反复 embed。
+        // 相对 uri —— 当前 phase 就是 DemoUsersApp,__url() 自动补成 /demo_users/。
+        $list = <<<EOT
+#PHASE_BEGIN
+WEB index
+WEB index username=t1&password=123456
+#PHASE_END
+EOT;
+        return $list;
+    }
+    public static function LogoutTestList(): string
+    {
+        return static::_()->_LogoutTestList();
+    }
+    public function _LogoutTestList(): string
+    {
+        $list = <<<EOT
+#PHASE_BEGIN
+WEB logout
+#PHASE_END
+EOT;
         return $list;
     }
 

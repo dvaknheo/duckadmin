@@ -22,6 +22,13 @@ class TestLister
         if(!$flag){
             return '';
         }
+        // 被别的应用 embed 时,按调用方塞的一次性参数决定给哪种清单
+        switch (\DuckAdmin\System\CoverageGroup::takeListerCommand()) {
+            case 'short':
+                return static::_()->_ShortTestList();
+            case 'logout':
+                return static::_()->_LogoutTestList();
+        }
 
         $list_referenct = <<<EOT
 
@@ -55,6 +62,33 @@ EOT;
         $list = str_replace('#BUSINESS ', 'CALL '. App::Phase().'!'.App::_()->options['namespace']."\\Business\\",$list);
 
         return $list;
+    }
+    public static function ShortTestList(): string
+    {
+        return static::_()->_ShortTestList();
+    }
+    public function _ShortTestList(): string
+    {
+        // 「只建立登录态」：SingleAdmin 是配置式单管理员、页面恒定已登录,
+        // 所以这里走一次登录表单即可(顺带覆盖 IndexController 的登录分支),不需要登出。
+        // 相对 uri：当前 phase 就是 SingleAdminApp,自动补成 /single_admin/。
+        $password = (string)(App::_()->options['single_admin_password'] ?? '123456');
+        $list = <<<EOT
+#PHASE_BEGIN
+WEB index
+WEB index password={$password}
+#PHASE_END
+EOT;
+        return $list;
+    }
+    public static function LogoutTestList(): string
+    {
+        return static::_()->_LogoutTestList();
+    }
+    public function _LogoutTestList(): string
+    {
+        // 单管理员没有"登出"这一步,写明原因而不是返回空清单,便于排查
+        return "#PHASE_BEGIN\nCOMMENT SingleAdmin 是配置式单管理员,没有登出这一步\n#PHASE_END";
     }
     public function checkUser()
     {

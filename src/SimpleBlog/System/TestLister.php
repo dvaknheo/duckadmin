@@ -27,18 +27,14 @@ class TestLister
 
     public function _GetTestList(): string
     {
-        // 管理员前缀必须与本次实际生效的「管理员提供者」一致,否则登录态不共享、
-        // 甚至打到没挂载的路径上(例如 single+demo 组里没有 /admin/)。
-        // 之前的写法是把 /admin/ 写死,于是本应用只能在 admin 提供者下测。
-        $admin_prefix = \DuckAdmin\System\CoverageGroup::adminPrefix();
-
-        // 用户端注册/登录只在「用户提供者 = UserApp」时才做:
-        // 换成 DemoUsers 时它有自己的预设账号(由 DemoUsers 那一块负责登录),
-        // 这时候再去 /user/register 只会白拿一个失败响应。
-        $user_provider = \DuckAdmin\System\CoverageGroup::userProvider();
-        $user_steps = ($user_provider === \DuckAdmin\User\System\UserApp::class)
-            ? "WEB /user/register name={username}&password=123456&password_confirm=123456\nWEB /user/login name={username}&password=123456"
-            : "COMMENT 用户提供者不是 UserApp,跳过注册/登录,沿用该提供者已有的登录态";
+        // 管理端 / 用户端各自的「只登录」清单：由根应用顶层预取(CoverageGroup::primeShortLists)，
+        // 这里只做纯文本内联 —— 子应用的 lister 里切 phase 是无效的,而且 #INCLUDE_CHILD
+        // 是递归展开、没有环检测,菱形引用会爆栈。
+        $admin_app = \DuckAdmin\System\CoverageGroup::adminProvider();
+        $user_app  = \DuckAdmin\System\CoverageGroup::userProvider();
+        $here = \DuckPhp\Core\App::Phase();
+        $admin_short = \DuckAdmin\System\CoverageGroup::shortInline($admin_app, $here);
+        $user_short  = \DuckAdmin\System\CoverageGroup::shortInline($user_app, $here);
 
         $list = <<<EOT
 #PHASE_BEGIN
@@ -46,8 +42,8 @@ COMMENT 先 GET 一次安装页(用 ?lang=en-US)覆盖 config/lang-en_US.php —
 COMMENT 博客的普通页面文案是硬编码中文、不调 __l(),只有安装页才会加载语言包
 WEB install?lang=en-US
 WEB install driver=sqlite&database%5Bfile%5D={db}&database%5Bhost%5D=127.0.0.1&database%5Bport%5D=&database%5Bdbname%5D=&database%5Busername%5D=&database%5Bpassword%5D=&action=install
-WEB {admin_prefix}login username=admin&password=123456
-{user_steps}
+{$admin_short}
+{$user_short}
 
 COMMENT 后台:先造数据(每组 DB 全新,id 从 1 开始)
 WEB admin/index
@@ -86,21 +82,18 @@ WEB admin/article_delete id=1
 WEB admin/articles
 
 COMMENT userController(继承 UserControllerBase,需要用户登录态)
-COMMENT 注意:登录态要"紧挨着"用 —— 原来这一步孤零零放在整段最后,中间夹了十几个 admin
-COMMENT 步骤后 session 已不在,所以一直是 0%;这里先补一次登录再访问
-WEB /user/login name={username}&password=123456
+COMMENT 登录态要"紧挨着"用:中间夹了十几个 admin 步骤后 session 会不在,
+COMMENT 所以这里再内联一次「用户提供者的只登录清单」(幂等,代价 1~2 个请求)
+{$user_short}
 WEB user/index
 #PHASE_END
 EOT;
 
         return $this->replace_string($list, [
-            'admin_prefix' => $admin_prefix,
-            'user_steps'   => $user_steps,
-            'username'     => 'user_test1',
             // 上游公开的方法是 watchingGetName()（不是 watchingName()）；
             // 写错名字会让整份清单生成直接抛 "Call to undefined method"，
             // 结果是所有组都回放 0 个请求（实测踩过）。
-            'db'           => \DuckAdmin\System\CoverageGroup::dbFile(),
+            'db' => \DuckAdmin\System\CoverageGroup::dbFile(),
         ]);
     }
 

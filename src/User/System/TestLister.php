@@ -14,17 +14,51 @@ class TestLister
     }
     public static function GetShortTestOrderList(): string
     {
-        return static::_()->_GetShortTestOrderList();
+        // 历史名字：等价于 short（只建立登录态）
+        return static::_()->_ShortTestList();
     }
-    public static function _GetShortTestOrderList(): string
+    public static function GetShortTestList(): string
     {
-        return '';
+        return static::_()->_ShortTestList();
+    }
+    public function _ShortTestList(): string
+    {
+        // 「只建立登录态」：不安装、不登出，所以可以被别的应用反复 embed。
+        // 全部相对 uri —— 当前 phase 就是 UserApp,__url() 自动补成 /user/。
+        // register 的幂等性：已存在时会失败(不脏日志),随后的 login 依然成功。
+        $list = <<<EOT
+#PHASE_BEGIN
+WEB register name=t1&password=123456&password_confirm=123456
+WEB login name=t1&password=123456
+#PHASE_END
+EOT;
+        return $list;
+    }
+    public static function GetLogoutTestList(): string
+    {
+        return static::_()->_LogoutTestList();
+    }
+    public function _LogoutTestList(): string
+    {
+        $list = <<<EOT
+#PHASE_BEGIN
+WEB logout
+#PHASE_END
+EOT;
+        return $list;
     }
     public static function _GetTestList(): string
     {
         $flag = App::_()->options['user_provider_enable'] ?? true;
         if(!$flag){
             return '';
+        }
+        // 被别的应用 embed 时,按调用方塞的一次性参数决定给哪种清单
+        switch (\DuckAdmin\System\CoverageGroup::takeListerCommand()) {
+            case 'short':
+                return static::_()->_ShortTestList();
+            case 'logout':
+                return static::_()->_LogoutTestList();
         }
         $list_referenct = <<<EOT
 WEB users/Home/index
@@ -37,14 +71,10 @@ CALL DuckAdmin\DemoUsers\Business\UserBusiness@login post=
 
 EOT;
 
-        // 管理员登录行：用绝对 uri（跨应用），账号与 Admin 清单保持同一个来源。
-        // 前缀必须跟着本次实际生效的管理员提供者走 —— 写死 /admin/ 的话，在 single+xxx 组里
-        // 会打到没挂载的路径（404），用户管理页的管理员态就永远建不起来，
-        // AdminController 与 view/Admin/* 永远是 0%。
-        // 用户管理页需要管理员登录态，而管理员态可能在用户侧的操作后被清掉，
-        // 所以在那几步之前显式重登一次；否则 AdminControllerBase 会直接 302。
-        $admin_login = 'WEB ' . \DuckAdmin\System\CoverageGroup::adminPrefix() . 'login username=' . \DuckAdmin\Admin\System\TestLister::ADMIN_NAME
-            . '&password=' . \DuckAdmin\Admin\System\TestLister::ADMIN_PASSWORD;
+        // 管理员登录：由根应用顶层预取对方的「只登录」清单,这里纯文本内联即可
+        // (子应用的 lister 里切 phase 无效,#INCLUDE_CHILD 又会递归爆栈)。
+        $admin_app = \DuckAdmin\System\CoverageGroup::adminProvider();
+        $admin_login = \DuckAdmin\System\CoverageGroup::shortInline($admin_app, \DuckPhp\Core\App::Phase());
 
         $list = <<<EOT
 #PHASE_BEGIN

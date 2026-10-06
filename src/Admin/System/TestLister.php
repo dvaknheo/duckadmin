@@ -33,19 +33,32 @@ class TestLister
 
     public function _ShortTestList()
     {
-        $list = [];
-        $list[] = '#PHASE_BEGIN';
-        // 更多测试代码
-        $list[] = '#PHASE_END';
-
-        $str = implode("\n", $list);
-        $args = [
-            'static' => static::class,
-        ];
-        $str = str_replace(array_map(fn($k) => '{' . $k . '}', array_keys($args)), array_values($args), $str);
-
-        return $str;
-
+        // 「只建立登录态」：不安装、不登出，因此可以被别的应用反复 embed。
+        // 全部用相对 uri —— 当前 phase 就是正在取清单的那个管理员应用:
+        // Admin / Admin_LaravelModel / Admin_ThinkPHPModel 共用这一份 lister,
+        // phase 不同,__url() 会自动补成 /admin/ 或 /admin_laravel/ …（不用再算前缀）。
+        $admin_name = self::ADMIN_NAME;
+        $admin_password = self::ADMIN_PASSWORD;
+        $list = <<<EOT
+#PHASE_BEGIN
+WEB login
+WEB login username={$admin_name}&password={$admin_password}
+#PHASE_END
+EOT;
+        return $list;
+    }
+    public static function LogoutTestList()
+    {
+        return static::_()->_LogoutTestList();
+    }
+    public function _LogoutTestList()
+    {
+        $list = <<<EOT
+#PHASE_BEGIN
+WEB logout
+#PHASE_END
+EOT;
+        return $list;
     }
     public static function GetTestList()
     {
@@ -61,6 +74,15 @@ class TestLister
         $flag = App::_()->options['admin_provider_enable'] ?? true;
         if(!$flag){
             return '';
+        }
+        // 被别的应用 embed 进来时，按调用方塞的一次性参数决定给哪种清单：
+        //   short  = 只建立登录态（不安装、不登出，可重复嵌入）
+        //   logout = 只登出
+        switch (\DuckAdmin\System\CoverageGroup::takeListerCommand()) {
+            case 'short':
+                return static::_()->_ShortTestList();
+            case 'logout':
+                return static::_()->_LogoutTestList();
         }
         $id = \DuckAdmin\System\CoverageGroup::name();   // 组名统一走解析器,不猜文件
         @unlink("runtime/DuckCoverage/{$id}.db");

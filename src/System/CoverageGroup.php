@@ -114,4 +114,79 @@ final class CoverageGroup
     {
         return static::prefixOf(static::userProvider());
     }
+
+    /**
+     * 一次性取出并**清掉**「本次要哪种清单」的参数。
+     *
+     * 约定（调用方设置、被调用方消费）：
+     *   - 调用方在把某个应用 embed 进来之前，往**那个应用**的 options 里塞
+     *     ['duckcoverage_test_lister_parameter' => 'short'|'logout']；
+     *   - 该应用的清单入口读到就清除，并改返回 short（只建立登录态）或 logout 清单。
+     * 之所以是一次性：duckcoverage 在取每个子清单前会 toThisChild()，
+     * 此时 App::_() 就是那个子应用，读到的正是塞给它的 options；读完即清，
+     * 免得同一次 play 里后续再次包含该应用时被误当成 short。
+     */
+    public static function takeListerCommand(): string
+    {
+        $key = 'duckcoverage_test_lister_parameter';
+        $app = App::_();
+        $cmd = trim((string)($app->options[$key] ?? ''));
+        if ($cmd !== '') {
+            $app->options[$key] = '';
+        }
+        return $cmd;
+    }
+
+    /** 调用方用：让某个应用的清单「只做登录准备」(short) 或「登出」(logout) */
+    public static function wantListOf(string $appClass, string $command = 'short'): void
+    {
+        $appClass::_()->options['duckcoverage_test_lister_parameter'] = $command;
+    }
+
+    /** @var array<string,array{phase:string,body:string}> 顶层预取到的「只登录」清单 */
+    protected static $short_cache = [];
+
+    /**
+     * ★ 顶层预取：把「管理员/用户提供者」的只登录清单各取一份缓存起来。
+     *
+     * 必须由**根应用**的 lister 在最顶层调用 —— 只有那里 App::_() 还是根，
+     * toThisChild() 才真的把 phase 切到子应用；在子应用自己的 lister 里再切是无效的
+     * （组件被绑在它自己的 phase 上，实测报 "Using $this when not in object context"）。
+     */
+    public static function primeShortLists(): void
+    {
+        foreach ([static::adminProvider(), static::userProvider()] as $appClass) {
+            if ($appClass === '' || isset(static::$short_cache[$appClass])) {
+                continue;
+            }
+            $here = App::Phase();
+            App::_()->toThisChild($appClass);
+            $there = App::Phase();
+
+            // 在该应用自己的 phase 里塞一次性参数,再用它自己声明的 lister 回调取清单
+            // （App 类本身没有 GetTestList,那是各应用 lister 类的方法）。
+            App::_()->options['duckcoverage_test_lister_parameter'] = 'short';
+            $callback = App::_()->options['duckcoverage_test_lister'] ?? null;
+            $body = $callback ? trim((string)($callback)()) : '';
+            App::Phase($here);
+
+            $body = trim(str_replace(['#PHASE_BEGIN', '#PHASE_END'], '', $body));
+            static::$short_cache[$appClass] = ['phase' => $there, 'body' => $body];
+        }
+    }
+
+    /**
+     * 把某个应用的「只登录」清单**内联**进当前清单：显式包上 PHASE 切换行（打完再切回 $here）。
+     *
+     * 纯文本拼接 —— 不切 phase、不再调用别的 lister，所以可以在任何应用、任何位置反复内联；
+     * 也正因为 PHASE 行是显式的，对方的相对 uri 才会落到它自己的前缀上。
+     */
+    public static function shortInline(string $appClass, string $here): string
+    {
+        $item = static::$short_cache[$appClass] ?? null;
+        if ($item === null || $item['body'] === '') {
+            return "COMMENT {$appClass} 没有可用的短清单(primeShortLists() 未取到,或它不是本次的提供者)";
+        }
+        return "PHASE {$item['phase']}\n{$item['body']}\nPHASE {$here}";
+    }
 }//@codeCoverageIgnoreEnd
