@@ -7,9 +7,9 @@
 #       所以「一个提供者一组」，最后用 cover --report 把所有组合并成一份报告。
 #
 # 用法（在项目根目录执行）:
-#   bash bin/cover_groups.sh                 # 跑全部组并出报告
-#   bash bin/cover_groups.sh e_user f_blog   # 只跑指定组
-#   bash bin/cover_groups.sh --report-only   # 不出报告，只跑组
+#   bash .ai/cover_groups.sh                 # 跑全部组并出报告
+#   bash .ai/cover_groups.sh e_user f_blog   # 只跑指定组
+#   bash .ai/cover_groups.sh --report-only   # 不出报告，只跑组
 #
 # 前置条件（见 config/DuckPhpSettings.config.php.sample）：
 #   - duckcoverage_enable = true
@@ -99,6 +99,6 @@ php bin/cli.php cover --stop >/dev/null 2>&1
 if [ "$DO_REPORT" = "1" ] && [ ${#DONE[@]} -gt 0 ]; then
     echo "---- 合并报告: ${DONE[*]}"
     # REPORT_ARGS 用来透传 cover --report 的新开关，例如：
-    #   REPORT_ARGS="--jsonl=runtime/DuckCoverage/report.jsonl --jsonl-no-timestamp" bash bin/cover_groups.sh
+    #   REPORT_ARGS="--jsonl=runtime/DuckCoverage/report.jsonl --jsonl-no-timestamp" bash .ai/cover_groups.sh
     php bin/cli.php cover --report "${DONE[@]}" ${REPORT_ARGS:-} 2>&1 | tail -3
 fi

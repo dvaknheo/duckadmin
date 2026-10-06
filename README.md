@@ -192,8 +192,8 @@ and quite a few classes in this project **do not write `implements`** (they rely
 After an upstream update, run these two scripts:
 
 ```
-php bin/audit_signatures.php      # contract signature audit: compare this project's implementations with the upstream interfaces parameter by parameter
-php bin/audit_upstream_refs.php   # upstream reference audit: do the classes/methods referenced in src still exist
+php .ai/audit_signatures.php      # contract signature audit: compare this project's implementations with the upstream interfaces parameter by parameter
+php .ai/audit_upstream_refs.php   # upstream reference audit: do the classes/methods referenced in src still exist
 ```
 
 Both report their result through the exit code (0 pass / 1 problem), so you can hang them directly on CI or a git hook.
@@ -265,13 +265,13 @@ The switch and the site base address are in `config/DuckPhpSettings.config.php.s
 
 ```bash
 # Recommended: --flag mode. The provider is chosen by a collection flag (request header), no disk config is touched, no race conditions
-bash bin/cover_flags.sh                # run all groups and merge the reports
-bash bin/cover_flags.sh e_user f_blog  # run only the specified groups
+bash .ai/cover_flags.sh                # run all groups and merge the reports
+bash .ai/cover_flags.sh e_user f_blog  # run only the specified groups
 REPORT_ARGS="--jsonl=runtime/DuckCoverage/report.jsonl --jsonl-no-timestamp" \
-    bash bin/cover_flags.sh            # also produce a machine-readable report.jsonl
+    bash .ai/cover_flags.sh            # also produce a machine-readable report.jsonl
 
 # Old mode (kept for rollback/comparison): each group chooses its provider by "POSTing to the home page to rewrite this group's config"
-bash bin/cover_groups.sh
+bash .ai/cover_groups.sh
 ```
 
 The reports are in `runtime/DuckCoverage/AAAAA.report/` (multiple groups merged) or `<group name>.report/` (single group);
@@ -288,7 +288,7 @@ because this flag decides "which admin/user provider is used", which amounts to 
 
 - `runtime/DuckCoverage/*.report/index.html`, the `report.json` in the same directory, and
   the `report.jsonl` produced by `--jsonl=` are the same data (after this upstream patch all three agree).
-- `php bin/coverage_gaps.php` — reads `report.jsonl` and lists "lines still worth covering",
+- `php .ai/coverage_gaps.php` — reads `report.jsonl` and lists "lines still worth covering",
   sorted by `todo` (= `unc - sig`) by default; it also lists separately the files that are "already at 100%, but had signature lines removed".
 
 **Signature lines (a historical problem, now solved upstream)**: when a method declaration's parameters have default values (especially
@@ -303,7 +303,7 @@ HTML / `report.json` / `report.jsonl`), so:
 - the removed lines leave a trace in the `sig` field (`sig` on the `report.json` side, also `sig` on the `jsonl` side);
 - to decide "is there anything left to cover", just look at whether `todo` (or `unc`) is empty, **no need to subtract `sig` any more**.
 
-> When an older `report.jsonl` has no `todo` field, `bin/coverage_gaps.php` automatically degrades to
+> When an older `report.jsonl` has no `todo` field, `.ai/coverage_gaps.php` automatically degrades to
 > `unc - sig`, so the tool works with both generations of output.
 
 #### Ways to add coverage
@@ -431,13 +431,15 @@ TBD
 │   ├── DuckPhpSettings.config.php.sample   Copy to .config.php and edit per environment
 │   ├── lang-zh_CN.php
 │   └── lang-en_US.php
-├── bin/                     Command-line tools
-│   ├── cli.php              Command entry (run / call / cover ... provided by duckphp)
+├── bin/                     Command-line entry (only one)
+│   └── cli.php              Command entry (run / call / cover ... provided by duckphp)
+├── .ai/                     Scripts used by AI tooling (not part of the app runtime)
 │   ├── cover_flags.sh       Coverage runs: --flag mode (recommended)
 │   ├── cover_groups.sh      Coverage runs: legacy mode (kept for rollback/comparison)
 │   ├── coverage_gaps.php    Reads report.jsonl and lists lines still worth covering
 │   ├── provider_probe.php   Shows which pair of providers a coverage flag resolves to
-│   └── audit_*.php          Contract-signature / upstream-reference audits
+│   ├── audit_signatures.php Contract-signature audit (parameter-by-parameter vs upstream)
+│   └── audit_upstream_refs.php Upstream-reference audit (do referenced classes/methods still exist)
 ├── runtime/                 Runtime data: databases, coverage dumps and reports (not in git)
 ├── database/                sqlite and other data files
 ├── sync_to_wsl.sh           Syncs the code to the WSL test machine (excludes runtime/vendor/env config)

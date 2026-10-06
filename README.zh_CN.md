@@ -191,8 +191,8 @@ php cli.php run
 上游更新后请跑这两个脚本：
 
 ```
-php bin/audit_signatures.php      # 契约签名审计:本工程实现与上游接口逐参数比对
-php bin/audit_upstream_refs.php   # 上游引用审计:src 里引用的类/方法是否还存在
+php .ai/audit_signatures.php      # 契约签名审计:本工程实现与上游接口逐参数比对
+php .ai/audit_upstream_refs.php   # 上游引用审计:src 里引用的类/方法是否还存在
 ```
 
 两者都是以退出码表示结果（0 通过 / 1 有问题），可以直接挂到 CI 或 git hook 上。
@@ -264,13 +264,13 @@ DuckAdmin 支持 sqlite /mysql 两种模式的数据库 你可以在选项里切
 
 ```bash
 # 推荐：--flag 模式。提供者靠采集标记（请求头）选，不动磁盘配置，没有竞态
-bash bin/cover_flags.sh                # 跑全部组并合并报告
-bash bin/cover_flags.sh e_user f_blog  # 只跑指定组
+bash .ai/cover_flags.sh                # 跑全部组并合并报告
+bash .ai/cover_flags.sh e_user f_blog  # 只跑指定组
 REPORT_ARGS="--jsonl=runtime/DuckCoverage/report.jsonl --jsonl-no-timestamp" \
-    bash bin/cover_flags.sh            # 顺便产出机器可读的 report.jsonl
+    bash .ai/cover_flags.sh            # 顺便产出机器可读的 report.jsonl
 
 # 旧模式（保留以便回滚/对照）：每组靠「首页 POST 改写本组配置」来选提供者
-bash bin/cover_groups.sh
+bash .ai/cover_groups.sh
 ```
 
 报告在 `runtime/DuckCoverage/AAAAA.report/`（多组合并）或 `<组名>.report/`（单组）；
@@ -287,7 +287,7 @@ bash bin/cover_groups.sh
 
 - `runtime/DuckCoverage/*.report/index.html` 与同目录的 `report.json`、
   `--jsonl=` 产出的 `report.jsonl` 是同一份数据（本次上游补丁后三处口径一致）。
-- `php bin/coverage_gaps.php` —— 读 `report.jsonl` 列「还值得补的行」，
+- `php .ai/coverage_gaps.php` —— 读 `report.jsonl` 列「还值得补的行」，
   默认按 `todo`（= `unc - sig`）排序；顺便单列「已达 100%、但剔除了签名行」的文件。
 
 **签名行（曾经的历史问题，现已由上游解决）**：方法声明的参数里带默认值（尤其是数组默认值，
@@ -302,7 +302,7 @@ bash bin/cover_groups.sh
 - 被剔除的行在 `sig` 字段里留痕（`report.json` 侧叫 `sig`，`jsonl` 侧也叫 `sig`）；
 - 判断「还有没有可补的」只看 `todo`（或 `unc`）是否为空，**不再需要拿 `sig` 去减**。
 
-> 旧版本的 `report.jsonl` 没有 `todo` 字段时，`bin/coverage_gaps.php` 会自动退化成
+> 旧版本的 `report.jsonl` 没有 `todo` 字段时，`.ai/coverage_gaps.php` 会自动退化成
 > `unc - sig`，所以工具对两代输出都能用。
 
 #### 补覆盖的手段
@@ -430,13 +430,15 @@ $url_logout = Helper::Admin()->urlForLogout();
 │   ├── DuckPhpSettings.config.php.sample   复制成 .config.php 后按环境改
 │   ├── lang-zh_CN.php
 │   └── lang-en_US.php
-├── bin/                     命令行工具
-│   ├── cli.php              命令入口（run / call / cover ... 由 duckphp 提供）
+├── bin/                     命令行入口（只有一个）
+│   └── cli.php              命令入口（run / call / cover ... 由 duckphp 提供）
+├── .ai/                     AI 用的脚本（不参与应用运行）
 │   ├── cover_flags.sh       覆盖测试：--flag 模式（推荐）
 │   ├── cover_groups.sh      覆盖测试：旧模式（保留用于回滚/对照）
 │   ├── coverage_gaps.php    读 report.jsonl，列出还值得补的行
 │   ├── provider_probe.php   看某个采集标记解析成哪对提供者
-│   └── audit_*.php          契约签名 / 上游引用审计
+│   ├── audit_signatures.php 契约签名审计（上游接口逐参数比对）
+│   └── audit_upstream_refs.php 上游引用审计（src 引用的类/方法是否还在）
 ├── runtime/                 运行时数据：数据库、覆盖采集与报告（不进 git）
 ├── database/                放 sqlite 等数据文件
 ├── sync_to_wsl.sh           同步代码到 WSL 测试机（自动排除 runtime/vendor/环境配置）

@@ -12,13 +12,13 @@
  * 兼容：老版本没有 todo 字段时退化成 unc - sig。
  *
  * 用法：
- *   php bin/coverage_gaps.php                  默认读 runtime/DuckCoverage/report.jsonl，列缺口 <=3 行的文件
- *   php bin/coverage_gaps.php --max=10         缺口 <=10 行
- *   php bin/coverage_gaps.php --top            按缺口从多到少排（找收益最大的）
- *   php bin/coverage_gaps.php --app=User       只看某个子应用（path 的第一段）
- *   php bin/coverage_gaps.php --file=src/User/view/install.php
- *   php bin/coverage_gaps.php --jsonl=PATH     指定 jsonl 路径
- *   php bin/coverage_gaps.php --with-sig       不扣签名行（看原始 unc；老版本才有意义）
+ *   php .ai/coverage_gaps.php                  默认读 runtime/DuckCoverage/report.jsonl，列缺口 <=3 行的文件
+ *   php .ai/coverage_gaps.php --max=10         缺口 <=10 行
+ *   php .ai/coverage_gaps.php --top            按缺口从多到少排（找收益最大的）
+ *   php .ai/coverage_gaps.php --app=User       只看某个子应用（path 的第一段）
+ *   php .ai/coverage_gaps.php --file=src/User/view/install.php
+ *   php .ai/coverage_gaps.php --jsonl=PATH     指定 jsonl 路径
+ *   php .ai/coverage_gaps.php --with-sig       不扣签名行（看原始 unc；老版本才有意义）
  *
  * 注意：report.jsonl 由 `php bin/cli.php cover --report <组...> --jsonl=...` 产出；
  * 每份报告目录里也会自动有一份同源的 report.json（那边字段叫 todo_lines）。

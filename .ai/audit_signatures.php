@@ -5,7 +5,7 @@
  * 用途:上游 duckphp 调整接口方法签名(例如 canAccess 的参数顺序把 $url 挪到第二位)后,
  *      用来一次性检查本工程所有"隐式实现"是否与上游契约一致。
  *
- * 用法: php bin/audit_signatures.php
+ * 用法: php .ai/audit_signatures.php
  * 退出码: 0 = 全部一致; 1 = 发现漂移
  *
  * 说明:

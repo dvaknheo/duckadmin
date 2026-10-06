@@ -7,9 +7,9 @@
  * 「提供者写进本组配置了吗」的原因。现在由应用自己回答这个问题最可靠。
  *
  * 用法（标记走环境变量，避免被命令行解析当成子命令）：
- *   DUCKCOVERAGE_FLAG=single+demo php bin/provider_probe.php
- *   DUCKCOVERAGE_FLAG=laravel+demo php bin/provider_probe.php
- *   php bin/provider_probe.php                       # 不带标记，看默认解析结果
+ *   DUCKCOVERAGE_FLAG=single+demo php .ai/provider_probe.php
+ *   DUCKCOVERAGE_FLAG=laravel+demo php .ai/provider_probe.php
+ *   php .ai/provider_probe.php                       # 不带标记，看默认解析结果
  *
  * 输出（一行）：
  *   admin=SingleAdminApp  user=DemoUsersApp

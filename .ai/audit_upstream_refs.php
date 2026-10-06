@@ -7,7 +7,7 @@
  *      \DuckPhp\DuckPhp::Global())之后,src/ 里可能留下"引用已不存在的东西"——
  *      这类问题不会在 php -l 阶段暴露,只在运行到那一行时才致命。
  *
- * 用法: php bin/audit_upstream_refs.php
+ * 用法: php .ai/audit_upstream_refs.php
  * 退出码: 0 = 未发现问题; 1 = 有问题
  *
  * 做法:逐个 php 文件解析 use 导入与 ::method() / ::_()->method() 调用,

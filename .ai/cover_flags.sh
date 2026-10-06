@@ -2,7 +2,7 @@
 #==============================================================================
 # DuckAdmin 覆盖测试（--flag 模式）：按「提供者」分组的采集
 #
-# 与 bin/cover_groups.sh 的区别：
+# 与 .ai/cover_groups.sh 的区别：
 #   旧：每组都要「改写本组的 DuckPhpData 配置文件（首页 POST）→ 校验写入是否成功」，
 #       再回放。配置文件是磁盘状态，天然有竞态，校验失败就跳过整组。
 #   新：提供者不再靠配置文件，而是靠采集标记 —— duckcoverage 的 --flag 会把它
@@ -14,11 +14,11 @@
 #   所以请求头不会影响认证。
 #
 # 用法（在项目根目录执行）:
-#   bash bin/cover_flags.sh                 # 跑全部组并出报告
-#   bash bin/cover_flags.sh e_user f_blog   # 只跑指定组
-#   bash bin/cover_flags.sh --report-only   # 只跑组，不出报告
+#   bash .ai/cover_flags.sh                 # 跑全部组并出报告
+#   bash .ai/cover_flags.sh e_user f_blog   # 只跑指定组
+#   bash .ai/cover_flags.sh --report-only   # 只跑组，不出报告
 #   REPORT_ARGS="--jsonl=runtime/DuckCoverage/report.jsonl --jsonl-no-timestamp" \
-#       bash bin/cover_flags.sh             # 顺便产出 report.jsonl
+#       bash .ai/cover_flags.sh             # 顺便产出 report.jsonl
 #
 # 前置条件（见 config/DuckPhpSettings.config.php.sample）：
 #   - duckcoverage_enable = true
@@ -83,7 +83,7 @@ for row in "${RUN[@]}"; do
     # 标记是否真的生效：让应用自己回答「按这个标记解析出的提供者是谁」。
     # 不依赖首页 HTML 的写法（表单里并没有 selected 标记，靠文本匹配会误判）。
     # 注意 CLI 会先打印 duckcoverage 的提示和命令列表，所以只取 admin=/user= 那行。
-    got_prov=$(DUCKCOVERAGE_FLAG="$flag" php bin/provider_probe.php 2>/dev/null | grep -E '^(admin|user)=' | head -1)
+    got_prov=$(DUCKCOVERAGE_FLAG="$flag" php .ai/provider_probe.php 2>/dev/null | grep -E '^(admin|user)=' | head -1)
     want_admin="admin=${ap##*\\}"
     want_user="user=${up##*\\}"
     if ! printf '%s' "$got_prov" | grep -qF "$want_admin" || ! printf '%s' "$got_prov" | grep -qF "$want_user"; then
