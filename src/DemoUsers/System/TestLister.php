@@ -12,11 +12,15 @@ use DuckPhp\Core\App;
 class TestLister
 {
     use SingletonTrait;
-    public static function GetTestOrderList(): string
+    public static function GetTestList(): string
     {
-        return static::_()->_GetTestOrderList();
+        $out = static::_()->_GetTestListFromCategory();
+        // 统一在这里展开 phase 行：调用方（别的应用）会先切到**我们的** phase 再调我们，
+        // 于是 #PHASE_BEGIN/#PHASE_END 会展开成"我们 → 调用方"的正确 PHASE 行；
+        // 展开后已无 # 行，duckcoverage 之后再展开一次也是空操作。
+        return $out === '' ? '' : \DuckCoverage\TestListerHelper::_()->explainMarco($out);
     }
-    public static function _GetTestOrderList(): string
+    public function _GetTestListFromCategory(): string
     {
         $flag = App::_()->options['user_provider_enable'] ?? true;
         if(!$flag){
@@ -25,7 +29,7 @@ class TestLister
         // 被别的应用 embed 时,按调用方塞的一次性参数决定给哪种清单
         // 本应用（管理员/用户系统之一）的清单类别：被别的应用嵌入时，按调用方塞的一次性参数决定。
         // 参数放在**根应用**上，读到就清，避免影响同一次 play 里后续的清单生成。
-        $root = \DuckPhp\Core\App::Root();
+        $root = App::_();   // 参数就放在"正在被问的那个应用"身上
         $cmd = (string)($root->options['duckcoverage_test_lister_parameter'] ?? '');
         if ($cmd !== '') {
             unset($root->options['duckcoverage_test_lister_parameter']);

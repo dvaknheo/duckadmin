@@ -38,6 +38,6 @@ class DemoUsersApp extends DuckPhp
         'demo_users' => [
         ],
 
-        'duckcoverage_test_lister' => [TestLister::class ,'GetTestOrderList'],
+        'duckcoverage_test_lister' => [TestLister::class ,'GetTestList'],
     ];
 }

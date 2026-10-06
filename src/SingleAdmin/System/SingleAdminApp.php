@@ -36,7 +36,7 @@ class SingleAdminApp extends DuckPhp
         ],
 
         'admin_provider_enable' => true,
-        'duckcoverage_test_lister' => [TestLister::class ,'GetTestOrderList'],
+        'duckcoverage_test_lister' => [TestLister::class ,'GetTestList'],
         'single_admin_password' => '',
     ];
     //@override

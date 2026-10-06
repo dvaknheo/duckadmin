@@ -13,8 +13,10 @@
  */
 namespace DuckAdmin\SimpleBlog\System;
 
+use DuckPhp\Core\App;
 use DuckPhp\Foundation\SingletonTrait;
-use DuckCoverage\DuckCoverage;
+use DuckPhp\GlobalAdmin\Admin;
+use DuckPhp\GlobalUser\User;
 //@codeCoverageIgnoreStart
 class TestLister
 {
@@ -24,13 +26,10 @@ class TestLister
     {
         return static::_()->_GetTestList();
     }
-
     public function _GetTestList(): string
     {
-        // 问“当前正在服务的”管理员/用户系统要它们的登录清单（通用取法,见 TestListerHelper）。
-        // 谁在服务由根应用按 --flag 决定；这里既不需要类名,也不需要前缀或 phase 名。
-        $admin_short = \DuckAdmin\System\TestListerHelper::sideList('admin', 'login');
-        $user_short  = \DuckAdmin\System\TestListerHelper::sideList('user', 'login');
+        $admin_short = \DuckAdmin\System\TestListerHelper::adminLogin();
+        $user_short  = \DuckAdmin\System\TestListerHelper::userLogin();
 
         $list = <<<EOT
 #PHASE_BEGIN
@@ -38,7 +37,9 @@ COMMENT 先 GET 一次安装页(用 ?lang=en-US)覆盖 config/lang-en_US.php —
 COMMENT 博客的普通页面文案是硬编码中文、不调 __l(),只有安装页才会加载语言包
 WEB install?lang=en-US
 WEB install driver=sqlite&database%5Bfile%5D={db}&database%5Bhost%5D=127.0.0.1&database%5Bport%5D=&database%5Bdbname%5D=&database%5Busername%5D=&database%5Bpassword%5D=&action=install
+COMMENT Admin login
 {$admin_short}
+COMMENT User login
 {$user_short}
 
 COMMENT 后台:先造数据(每组 DB 全新,id 从 1 开始)

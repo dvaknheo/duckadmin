@@ -10,7 +10,11 @@ class TestLister
     use SingletonTrait;
     public static function GetTestList(): string
     {
-        return static::_()->_GetTestList();
+        $out = static::_()->_GetTestListFromCategory();
+        // 统一在这里展开 phase 行：调用方（别的应用）会先切到**我们的** phase 再调我们，
+        // 于是 #PHASE_BEGIN/#PHASE_END 会展开成"我们 → 调用方"的正确 PHASE 行；
+        // 展开后已无 # 行，duckcoverage 之后再展开一次也是空操作。
+        return $out === '' ? '' : \DuckCoverage\TestListerHelper::_()->explainMarco($out);
     }
     public static function GetTestListForLogin(): string
     {
@@ -42,7 +46,7 @@ WEB logout
 EOT;
         return $list;
     }
-    public static function _GetTestList(): string
+    public static function _GetTestListFromCategory(): string
     {
         $flag = App::_()->options['user_provider_enable'] ?? true;
         if(!$flag){
@@ -51,7 +55,7 @@ EOT;
         // 被别的应用 embed 时,按调用方塞的一次性参数决定给哪种清单
         // 本应用（管理员/用户系统之一）的清单类别：被别的应用嵌入时，按调用方塞的一次性参数决定。
         // 参数放在**根应用**上，读到就清，避免影响同一次 play 里后续的清单生成。
-        $root = \DuckPhp\Core\App::Root();
+        $root = App::_();   // 参数就放在"正在被问的那个应用"身上
         $cmd = (string)($root->options['duckcoverage_test_lister_parameter'] ?? '');
         if ($cmd !== '') {
             unset($root->options['duckcoverage_test_lister_parameter']);
@@ -75,7 +79,7 @@ EOT;
 
         // 问“当前正在服务的”管理员系统要登录清单（通用取法,不需要知道它是谁）。
         // 用户管理页需要管理员登录态,而管理员态可能在用户侧操作后被清掉,所以这里重登一次。
-        $admin_login = \DuckAdmin\System\TestListerHelper::sideList('admin', 'login');
+        $admin_login = \DuckAdmin\System\TestListerHelper::adminLogin();
 
         $list = <<<EOT
 #PHASE_BEGIN

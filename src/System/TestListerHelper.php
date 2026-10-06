@@ -29,38 +29,34 @@ final class TestListerHelper
      * @param string $side    'admin' 或 'user'
      * @param string $variant ''（全量） | 'login' | 'logout'
      */
-    public static function sideList(string $side, string $variant = ''): string
+    public static function listOf($service, string $variant = ''): string
     {
-        $service = ($side === 'admin')
-            ? \DuckPhp\GlobalAdmin\Admin::_()
-            : \DuckPhp\GlobalUser\User::_();
         $phase = (string)$service->phase();
 
-        $last = App::Phase();
-        App::Phase($phase);                     // 切到那套系统自己的 phase
+        $last = App::Phase($phase);   // Phase($new) 返回旧 phase,直接拿来还原                     // 切到那套系统自己的 phase
         if ($variant !== '') {
-            App::Root()->options['duckcoverage_test_lister_parameter'] = $variant;
+            App::_()->options['duckcoverage_test_lister_parameter'] = $variant;
         }
         $lister = App::_()->options['duckcoverage_test_lister'] ?? null;
         $body = $lister ? (string)($lister)() : '';
         // 必须在**对方 phase** 里展开：#PHASE_BEGIN → PHASE <对方>，#PHASE_END → PHASE <调用方>
         $out = \DuckCoverage\TestListerHelper::_()->explainMarco($body);
-        unset(App::Root()->options['duckcoverage_test_lister_parameter']);   // 兜底再清一次
+        unset(App::_()->options['duckcoverage_test_lister_parameter']);   // 兜底再清一次
         App::Phase($last);
 
-        return "COMMENT {$side} system @ {$phase}\n" . $out;
+        return $out;
     }
 
     /** 管理员系统的登录清单（常用简写） */
     public static function adminLogin(): string
     {
-        return static::sideList('admin', 'login');
+        return static::listOf(\DuckPhp\GlobalAdmin\Admin::_(), 'login');
     }
 
     /** 用户系统的登录清单（常用简写） */
     public static function userLogin(): string
     {
-        return static::sideList('user', 'login');
+        return static::listOf(\DuckPhp\GlobalUser\User::_(), 'login');
     }
 }
 //@codeCoverageIgnoreEnd

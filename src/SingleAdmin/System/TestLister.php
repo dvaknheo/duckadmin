@@ -1,52 +1,47 @@
-<?php declare(strict_types=1);
-/**
- * DuckAdmin DemoUsers - 预设用户系统
- * 不使用数据库、不使用安装系统;登录限定 demo_users 数组中的用户
- */
+<?php
+
+declare(strict_types=1);
+
 namespace DuckAdmin\SingleAdmin\System;
 
 use DuckPhp\Core\App;
 use DuckPhp\Foundation\SingletonTrait;
+use DuckCoverage\DuckCoverage;
+use DuckCoverage\TestListerHelper;
+
 
 //@codeCoverageIgnoreStart
 class TestLister
 {
     use SingletonTrait;
-    public static function GetTestOrderList(): string
+    public static function GetTestList(): string
     {
-        return static::_()->_GetTestOrderList();
+        $out = static::_()->_GetTestListFromCategory();
+        // 统一在这里展开 phase 行：调用方（别的应用）会先切到**我们的** phase 再调我们，
+        // 于是 #PHASE_BEGIN/#PHASE_END 会展开成"我们 → 调用方"的正确 PHASE 行；
+        // 展开后已无 # 行，duckcoverage 之后再展开一次也是空操作。
+        return $out === '' ? '' : \DuckCoverage\TestListerHelper::_()->explainMarco($out);
     }
-    public static function _GetTestOrderList(): string
+    public function _GetTestListFromCategory(): string
     {
         $flag = App::_()->options['admin_provider_enable'] ?? true;
-        if(!$flag){
+        if (!$flag) {
             return '';
         }
-        // 被别的应用 embed 时,按调用方塞的一次性参数决定给哪种清单
-        // 本应用（管理员/用户系统之一）的清单类别：被别的应用嵌入时，按调用方塞的一次性参数决定。
-        // 参数放在**根应用**上，读到就清，避免影响同一次 play 里后续的清单生成。
-        $root = \DuckPhp\Core\App::Root();
-        $cmd = (string)($root->options['duckcoverage_test_lister_parameter'] ?? '');
-        if ($cmd !== '') {
-            unset($root->options['duckcoverage_test_lister_parameter']);
-        }
+
+        $cmd = App::_()->options['duckcoverage_test_lister_parameter'] ?? '';
+        unset(App::_()->options['duckcoverage_test_lister_parameter']);
         switch ($cmd) {
             case 'login':
                 return static::_()->_GetTestListForLogin();
             case 'logout':
                 return static::_()->_GetTestListForLogout();
+            default:
+                return static::_()->_GetTestListFull();
         }
-
-        $list_referenct = <<<EOT
-
-CALL DuckAdmin\DemoUsers\Business\UserBusiness@canAccess user_id=&url=&class=&method=
-CALL DuckAdmin\DemoUsers\Business\UserBusiness@log user_id=&string=abc&type=&ext=
-CALL DuckAdmin\DemoUsers\Business\UserBusiness@batchGetUsernames ids=
-CALL DuckAdmin\DemoUsers\Business\UserBusiness@login post=
-
-
-EOT;
-
+    }
+    public function _GetTestListFull(): string
+    {
         $list = <<<EOT
 #PHASE_BEGIN
 WEB index
@@ -61,12 +56,11 @@ WEB logout
 #BUSINESS AdminBusiness@isSuper admin_id=1
 
 #PHASE_END
-
 EOT;
 
         $list = str_replace('{static}', static::class, $list);
         $list = str_replace('{phase}', App::Phase(), $list);
-        $list = str_replace('#BUSINESS ', 'CALL '. App::Phase().'!'.App::_()->options['namespace']."\\Business\\",$list);
+        $list = str_replace('#BUSINESS ', 'CALL ' . App::Phase() . '!' . App::_()->options['namespace'] . "\\Business\\", $list);
 
         return $list;
     }
@@ -76,9 +70,6 @@ EOT;
     }
     public function _GetTestListForLogin(): string
     {
-        // 「只建立登录态」：SingleAdmin 是配置式单管理员、页面恒定已登录,
-        // 所以这里走一次登录表单即可(顺带覆盖 IndexController 的登录分支),不需要登出。
-        // 相对 uri：当前 phase 就是 SingleAdminApp,自动补成 /single_admin/。
         $password = (string)(App::_()->options['single_admin_password'] ?? '123456');
         $list = <<<EOT
 #PHASE_BEGIN
@@ -94,13 +85,6 @@ EOT;
     }
     public function _GetTestListForLogout(): string
     {
-        // 单管理员没有"登出"这一步,写明原因而不是返回空清单,便于排查
-        return "#PHASE_BEGIN\nCOMMENT SingleAdmin 是配置式单管理员,没有登出这一步\n#PHASE_END";
+        return "COMMENT SingleAdmin 是配置式单管理员,没有登出这一步\n";
     }
-    public function checkUser()
-    {
-        //Helper::User()->data();
-        return;
-    }
-
 }//@codeCoverageIgnoreEnd

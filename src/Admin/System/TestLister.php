@@ -62,10 +62,14 @@ EOT;
     }
     public static function GetTestList()
     {
-        return static::_()->_GetTestList();
+        $out = static::_()->_GetTestListFromCategory();
+        // 统一在这里展开 phase 行：调用方（别的应用）会先切到**我们的** phase 再调我们，
+        // 于是 #PHASE_BEGIN/#PHASE_END 会展开成"我们 → 调用方"的正确 PHASE 行；
+        // 展开后已无 # 行，duckcoverage 之后再展开一次也是空操作。
+        return $out === '' ? '' : \DuckCoverage\TestListerHelper::_()->explainMarco($out);
     }
 
-    public function _GetTestList()
+    public function _GetTestListFromCategory()
     {
         // 用「当前 phase 的 App」(也就是正在取清单的那个子应用)来判断自己是不是被选中的提供者。
         // 不能用 AdminApp::_():在 Laravel/ThinkPHP 子应用的 phase 里它不存在于该 phase 的容器,
@@ -80,7 +84,7 @@ EOT;
         //   logout = 只登出
         // 本应用（管理员/用户系统之一）的清单类别：被别的应用嵌入时，按调用方塞的一次性参数决定。
         // 参数放在**根应用**上，读到就清，避免影响同一次 play 里后续的清单生成。
-        $root = \DuckPhp\Core\App::Root();
+        $root = App::_();   // 参数就放在"正在被问的那个应用"身上
         $cmd = (string)($root->options['duckcoverage_test_lister_parameter'] ?? '');
         if ($cmd !== '') {
             unset($root->options['duckcoverage_test_lister_parameter']);
