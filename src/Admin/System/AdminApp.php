@@ -6,7 +6,7 @@
 namespace DuckAdmin\Admin\System;
 
 use DuckPhp\DuckPhp;
-use DuckAdmin\System\WebInstaller;
+use DuckPhp\Ext\RouteHookWebInstaller;
 use DuckPhp\GlobalAdmin\GlobalAdmin;
 
 use DuckAdmin\Admin\Controller\AppAction;
@@ -23,13 +23,12 @@ class AdminApp extends DuckPhp
         'data_file_enable' => true,
         'installed' => false,
         'error_404' => '_sys/error_404',
-        'error_500' => '_sys/error_500',
 
         'cmd' => [
             TestCommandAction::class => true,
         ],
         'ext' => [
-            WebInstaller::class => [
+            RouteHookWebInstaller::class => [
                 'web_installer_use_database' => true,
                 'web_installer_use_redis' => false,
                 'web_installer_database_drivers' => ['sqlite' => true],

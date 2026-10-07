@@ -6,7 +6,7 @@
 namespace DuckAdmin\User\System;
 
 use DuckPhp\DuckPhp;
-use DuckAdmin\System\WebInstaller;
+use DuckPhp\Ext\RouteHookWebInstaller;
 use DuckPhp\GlobalUser\GlobalUser;
 use DuckAdmin\User\Controller\UserAction;
 
@@ -20,7 +20,7 @@ class UserApp extends DuckPhp
         'data_file_enable' => true,
 
         'ext' => [
-            WebInstaller::class => [
+            RouteHookWebInstaller::class => [
                 'web_installer_use_redis' => false,
                 'web_installer_use_database' => true,
                 'web_installer_database_drivers' => ['sqlite' => true],
