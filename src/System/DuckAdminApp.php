@@ -75,6 +75,11 @@ class DuckAdminApp extends DuckPhp
         // (不要指到某个子应用的 lister:那样 phase 不会切过去,相对 url 也就带不上子应用前缀)
         'duckcoverage_test_lister'=> [\DuckAdmin\System\TestLister::class, 'GetTestList'],
 
+        // 子应用不再各留一份 error_500。视图名写成**绝对路径**时框架会直接用它：
+        // View::getViewFile() → App::getOverrideableFile() 开头就 isAbsPath($file) 原样返回，
+        // 所以这里指到根应用的那一份，所有子应用（继承根选项）统一渲染它。
+        'error_500' => __DIR__ . '/../../view/_sys/error_500.php',
+
         'data' => [
             'duckadmin_admin_provider' => \DuckAdmin\SingleAdmin\System\SingleAdminApp::class,
             'duckadmin_user_provider' => \DuckAdmin\DemoUsers\System\DemoUsersApp::class,

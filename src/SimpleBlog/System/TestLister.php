@@ -28,8 +28,8 @@ class TestLister
     }
     public function _GetTestList(): string
     {
-        $admin_short = \DuckAdmin\System\TestListerHelper::adminLogin();
-        $user_short  = \DuckAdmin\System\TestListerHelper::userLogin();
+        $admin_short = \DuckCoverage\TestListerHelper::TestListByAdminLogin();
+        $user_short  = \DuckCoverage\TestListerHelper::TestListByUserLogin();
 
         $list = <<<EOT
 #PHASE_BEGIN

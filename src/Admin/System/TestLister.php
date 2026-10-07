@@ -150,9 +150,22 @@ EOT;
         $list[] = 'WEB Role/delete id=999';
 
         // ========== Permission 模块 ==========
+        // 权限树来自 MenuBusiness::getTree('all')（= admin_permissions 表），先扫一次路由保证有数据。
+        // 坑：k=v 形式是 **POST body**，而本页的 id / saved / error 全从 **query** 读
+        // （控制器是 Helper::GET('id')，视图里的职位切换链接也是 ?id=），参数必须写进 uri，
+        // 否则 $role 恒为空、只渲染"请先选择职位"那几行（实测 29/100）。
+        $list[] = 'WEB System/menu_scan';
+        $list[] = 'WEB System/menu_scan show=1';
         $list[] = 'WEB Permission/index';
-        $list[] = 'WEB Permission/index id=1';
-        $list[] = 'WEB Permission/index id=2';
+        $list[] = 'WEB Permission/index?id=1';
+        $list[] = 'WEB Permission/index?id=2';
+        // 超管职位提交 → Business 层拒绝 → 302 带 error=，覆盖 error 分支
+        $list[] = 'WEB Permission/index?id=1 permission_ids[]=1';
+        // 普通职位提交：uri 带 id（POST 也带 query），body 带勾选 → 302 带 saved=1
+        $list[] = 'WEB Permission/index?id=2 permission_ids[]=1&permission_ids[]=2';
+        $list[] = 'WEB Permission/index?id=2&saved=1';
+        $list[] = 'WEB Permission/index?id=2&error=%E6%B5%8B%E8%AF%95';
+        $list[] = 'WEB Permission/index?id=2';
 
         // ========== System 模块 ==========
         $list[] = 'WEB System/menu';

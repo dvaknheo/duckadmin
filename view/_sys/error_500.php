@@ -1,3 +1,12 @@
+<?php
+/**
+ * 根应用的 500 视图 —— 各子应用**不再各留一份** error_500，
+ * 没有自己的 error_500 时由框架回落到这里（本应用 path 指向仓库根，view/ 就是根视图目录）。
+ *
+ * @var \Throwable $ex
+ */
+$title = '500 - 服务器错误';
+?>
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
