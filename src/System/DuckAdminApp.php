@@ -15,15 +15,12 @@ class DuckAdminApp extends DuckPhp
         'path' => __DIR__.'/../../',
         'namespace' => 'DuckAdmin',
         'namespace_controller' => 'System',
+        'error_500' => '_sys/error_500.php',
+
         'installed' => true,
         'data_file_enable' => true,
-        'duckcoverage_enable' => true,
 
-        // 语言：url/cookie/浏览器都没给提示时的默认值。子应用的 Lang 通过
-        // lang_follow_root 跟随根应用，所以在这里设一处即可。
-        // 安装页等文案来自各子应用的 config/lang-{语言}.php（语言名要写成 en_US 这种形状）；
-        // 想临时看英文：加 ?lang=en-US（或让浏览器发 Accept-Language: en-US）。
-        'lang_default' => 'zh_CN',
+        'lang_default' => 'en-US',
 
         'app' => [
 //*
@@ -71,46 +68,20 @@ class DuckAdminApp extends DuckPhp
         ],
 
         'duckcoverage_web_base_url' => 'http://admin.duckphp-local.com/',
-        // 根应用的测试列表:它只发 #INCLUDE_CHILD,由子应用各自的 lister 提供具体步骤。
-        // (不要指到某个子应用的 lister:那样 phase 不会切过去,相对 url 也就带不上子应用前缀)
         'duckcoverage_test_lister'=> [\DuckAdmin\System\TestLister::class, 'GetTestList'],
-
-        // 子应用不再各留一份 error_500。视图名写成**绝对路径**时框架会直接用它：
-        // View::getViewFile() → App::getOverrideableFile() 开头就 isAbsPath($file) 原样返回，
-        // 所以这里指到根应用的那一份，所有子应用（继承根选项）统一渲染它。
-        'error_500' => __DIR__ . '/../../view/_sys/error_500.php',
 
         'data' => [
             'duckadmin_admin_provider' => \DuckAdmin\SingleAdmin\System\SingleAdminApp::class,
             'duckadmin_user_provider' => \DuckAdmin\DemoUsers\System\DemoUsersApp::class,
         ],
-
     ];
-
-    /**
-     * 源码里提供者默认值的快照（在 onPrepare 里存）。
-     * 动态配置文件缺失或被写坏时用它兜底，见 onInit()。
-     * @var array<string, mixed>
-     */
-    protected $source_data = [];
 
     protected function onPrepare(): void
     {
         //@codeCoverageIgnoreStart
-
-        // 让"改了就立刻生效"：opcache 默认 revalidate_freq=2 秒，开发机上这个窗口会
-        // 让人以为改了没生效（实测：改 config/DuckPhpSettings.config.php 后 2 秒内仍是
-        // 旧值，第 3 秒才生效，我因此误判过一次安全门禁没生效）。
-        // 必须放在 parent::onPrepare() **之前** —— 设置文件正是它里面 loadSetting() 读进来的。
-        // 代价：每请求多一次 stat（窗口设 0）+ 重编译那个很小的配置文件；CLI 侧本来
-        // 不受影响（opcache.enable_cli=Off）。想保留 opcache 原生行为，删掉这段即可。
         if (function_exists('opcache_invalidate')) {
-            ini_set('opcache.revalidate_freq', '0');
-            $setting_file = (string)($this->options['setting_file'] ?? 'config/DuckPhpSettings.config.php');
-            $setting_full = (strpos($setting_file, '/') === 0)
-                ? $setting_file
-                : realpath($this->options['path']) . '/' . $setting_file;
-            @opcache_invalidate($setting_full, true);
+            $setting_file = $this->getProjectPath() . $this->options['setting_file'];
+            @opcache_invalidate($setting_file, true);
         }
 
         parent::onPrepare();
@@ -120,11 +91,6 @@ class DuckAdminApp extends DuckPhp
         // 放前面的话 _Setting() 读到的是空设置，会把「已开启」也挡掉。
         $this->checkEnabled();
         $this->options['duckcoverage_path_src'] = realpath(__DIR__ . '/../../') . '/src/';
-
-        // 覆盖测试(duckcoverage --play)要请求的站点基址。
-        // 同一份代码会部署到不同域名(例如 admin- / bak-admin- / bak-duckadmin-),
-        // 所以允许由环境配置 config/DuckPhpSettings.config.php 里的
-        // 'duckcoverage_web_base_url' 覆盖,缺省沿用本类 options 里的值。
         $this->options['duckcoverage_web_base_url'] = (string)$this->_Setting(
             'duckcoverage_web_base_url',
             $this->options['duckcoverage_web_base_url'] ?? ''
@@ -134,9 +100,7 @@ class DuckAdminApp extends DuckPhp
             \DuckCoverage\DuckCoverage::Prepare([]);
         }
 
-        // 快照源码里的提供者默认值：initComponents() 之后 options['data'] 会被
-        // 动态配置文件的内容整体替换，那时就读不到源码默认值了，而 onInit() 要用它兜底。
-        $this->source_data = (array)($this->options['data'] ?? []);
+
         //@codeCoverageIgnoreEnd
     }
     protected function onInit():void
@@ -150,45 +114,18 @@ class DuckAdminApp extends DuckPhp
             $this->options['app'][\DuckAdmin\Admin_LaravelModel\System\LaravelModelApp::class] = false;
         }
         
-        // 选中哪个提供者由 data(动态配置文件)决定；这份配置可能缺失、也可能被写坏，
-        // 所以取不到合法类名时回退到源码默认值 —— 否则首页会因为
-        // "No GlobalAdmin Provider / No GlobalUser Provider" 直接 500，
-        // 而首页正是唯一能改回来的入口(死锁)。
-        $providers = [
-            'duckadmin_admin_provider' => 'admin_provider_enable',
-            'duckadmin_user_provider' => 'user_provider_enable',
-        ];
-        foreach ($providers as $key => $flag) {
-            $provider = $this->options['data'][$key] ?? null;
-            if (!is_string($provider) || !isset($this->options['app'][$provider])) {
-                $provider = $this->source_data[$key] ?? null;
-            }
-            if (!is_string($provider) || !isset($this->options['app'][$provider])) {
-                continue;
-            }
-            $this->options['app'][$provider][$flag] = true;
-            // 把生效值写回 data，首页表单才能显示"当前选中项"
-            $this->options['data'][$key] = $provider;
-        }
+        $admin_provider = $this->options['data']['duckadmin_admin_provider'] ?? \DuckAdmin\SingleAdmin\System\SingleAdminApp::class;
+        $user_provider = $this->options['data']['duckadmin_user_provider'] ?? \DuckAdmin\DemoUsers\System\DemoUsersApp::class;
+        $this->options['app'][$admin_provider]['admin_provider_enable'] = true;
+        $this->options['app'][$user_provider]['user_provider_enable'] = true;
 
         // 覆盖测试时允许用采集标记再覆盖一次（逻辑在 CoverageGroup，与采集工具放在一起）
         \DuckAdmin\System\CoverageGroup::applyProviderFlag();
     }
 
-
-    /**
-     * 安全门禁：必须在配置里显式开启 duckadmin_enable 才提供服务。
-     *
-     * 为什么缺省是「关」：这是「确认你有意把后台暴露出去」的开关，
-     * 取不到就当没开，少一个配置项就少一份风险。
-     * 命令行不受影响（bin/cli.php 的 cover / call 等命令照常可用）。
-     */
     protected function checkEnabled(): void
     {
         if ($this->_Setting('duckadmin_enable', false)) {
-            return;
-        }
-        if ($this->isCli()) {
             return;
         }
         $this->showDisabledNotice();
@@ -227,38 +164,19 @@ class DuckAdminApp extends DuckPhp
     /**
      * 保存首页选中的管理员/用户提供者。
      *
-     * 只接受本应用 app 列表里的合法类名；不合法或缺失的一侧退回源码默认值
-     * （options['data']，即 SingleAdminApp / DemoUsersApp），与 onInit() 的兜底一致。
-     *
-     * 这样两侧总会得到一个可用的提供者：既不会像最初那样把"没有这两个键的
-     * data 段"写进配置（首页会 500，而首页正是唯一能改回来的入口），
-     * 也不会残留一个已被改坏的旧值。
-     *
      * @param mixed $admin_provider
      * @param mixed $user_provider
      */
     public function saveProviders($admin_provider, $user_provider)
     {
-        $input = [
-            'duckadmin_admin_provider' => $admin_provider,
-            'duckadmin_user_provider' => $user_provider,
-        ];
-
         $data = [];
-        foreach ($input as $key => $value) {
-            if (is_string($value) && isset($this->options['app'][$value])) {
-                $data[$key] = $value;
-                continue;
-            }
-            // 不合法/没带：退回源码默认值
-            $default = $this->source_data[$key] ?? null;
-            if (is_string($default) && isset($this->options['app'][$default])) {
-                $data[$key] = $default;
-            }
+        $data['duckadmin_admin_provider'] = \DuckAdmin\SingleAdmin\System\SingleAdminApp::class;
+        if (isset($this->options['app'][$admin_provider])){
+            $data['duckadmin_admin_provider'] = $admin_provider;
         }
-        if (count($data) !== count($input)) {
-            // 连源码默认值都不可用（例如对应的子应用被禁用）：不写，避免写坏配置
-            return;
+        $data['duckadmin_user_provider'] = \DuckAdmin\DemoUsers\System\DemoUsersApp::class;
+        if (isset($this->options['app'][$user_provider])){
+            $data['duckadmin_user_provider'] = $user_provider;
         }
 
         ExtOptionsLoader::_()->saveExtOptions($data);
