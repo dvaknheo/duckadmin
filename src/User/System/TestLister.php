@@ -79,7 +79,7 @@ EOT;
 
         // 问“当前正在服务的”管理员系统要登录清单（通用取法,不需要知道它是谁）。
         // 用户管理页需要管理员登录态,而管理员态可能在用户侧操作后被清掉,所以这里重登一次。
-        //$admin_login = \DuckAdmin\System\TestListerHelper::adminLogin();
+        $admin_login = \DuckAdmin\System\TestListerHelper::adminLogin();
 
         $list = <<<EOT
 #PHASE_BEGIN
