@@ -71,28 +71,120 @@ final class CoverageGroup
         return trim((string)(getenv('DUCKADMIN_COVERAGE_FLAG') ?: ''));
     }
 
-    /** 标记里的短名 → 应用类。与 DuckAdminApp::FLAG_PROVIDERS 保持一致 */
-    private const PROVIDERS = [
-        'admin'   => \DuckAdmin\Admin\System\AdminApp::class,
-        'laravel' => \DuckAdmin\Admin_LaravelModel\System\LaravelModelApp::class,
-        'think'   => \DuckAdmin\Admin_ThinkPHPModel\System\ThinkPHPModelApp::class,
-        'single'  => \DuckAdmin\SingleAdmin\System\SingleAdminApp::class,
-        'demo'    => \DuckAdmin\DemoUsers\System\DemoUsersApp::class,
-        'user'    => \DuckAdmin\User\System\UserApp::class,
+    /**
+     * 覆盖测试用的「采集标记」→ 提供者白名单。值 = [类名, 'admin'|'user']。
+     * 标记只可能在这里面选，而且必须真的在 options['app'] 里，所以不可能指到白名单之外。
+     */
+    public const FLAG_PROVIDERS = [
+        'admin'   => [\DuckAdmin\Admin\System\AdminApp::class, 'admin'],
+        'laravel' => [\DuckAdmin\Admin_LaravelModel\System\LaravelModelApp::class, 'admin'],
+        'think'   => [\DuckAdmin\Admin_ThinkPHPModel\System\ThinkPHPModelApp::class, 'admin'],
+        'single'  => [\DuckAdmin\SingleAdmin\System\SingleAdminApp::class, 'admin'],
+        'demo'    => [\DuckAdmin\DemoUsers\System\DemoUsersApp::class, 'user'],
+        'user'    => [\DuckAdmin\User\System\UserApp::class, 'user'],
     ];
+
+    /**
+     * 覆盖测试专用：按采集标记（`--flag=` / 请求头 X-DuckCoverage-Flag）选提供者。
+     *
+     * ★ 锁：**只有本机 settings 里 duckcoverage_enable 为真时才生效**。
+     *   原因：这个标记走的是 HTTP 请求头，而它决定「用哪个管理员/用户提供者」——
+     *   等于让一个请求头影响认证。生产环境 settings 里没有这个键（或为 false），
+     *   于是这个分支根本不会进。这个开关和 DuckAdminApp::onPrepare() 里
+     *   「是否安装采集器」是同一个，口径一致。
+     *
+     * 取值来自 FLAG_PROVIDERS 白名单，且必须真的在 options['app'] 里（且未被禁用）。
+     * 多个值用 `+` 或 `,` 分隔，例如：`--flag=laravel+demo`、`--flag=single,user`。
+     * 只给一侧也可以；另一侧沿用 data 里已经解析好的提供者。
+     *
+     * 本类整文件 @codeCoverageIgnore：这段逻辑只在采集时（settings 开着 + 带标记）才走得到，
+     * 属测试工具；放在这里也让根应用少一批"永远不会被真实请求跑到"的未覆盖行。
+     */
+    public static function applyProviderFlag(): void
+    {
+        $root = App::Root();
+        if (empty($root->_Setting('duckcoverage_enable'))) {
+            return;
+        }
+        if (!class_exists(\DuckCoverage\DuckCoverage::class)) {
+            return;
+        }
+        $flag = (string)\DuckCoverage\DuckCoverage::_()->getFlag();
+        if ($flag === '' && isset($_SERVER['argv']) && is_array($_SERVER['argv'])) {
+            // CLI 侧兜底：duckcoverage 的 doCommand() 解析 --flag 发生在应用 init
+            // （也就是调用本方法的位置）**之后**，所以在 CLI 进程里 getFlag() 这时
+            // 还是空的 —— 而测试清单正是在 CLI 里生成的（清单靠 *_provider_enable
+            // 守卫），不兜这一下就会出现"请求头对了、清单却还是默认提供者"的错位。
+            // web 请求没有 argv，永远是走头那条路。
+            foreach ($_SERVER['argv'] as $i => $arg) {
+                $arg = (string)$arg;
+                if (strpos($arg, '--flag=') === 0) {
+                    $flag = substr($arg, 7);
+                    break;
+                }
+                if ($arg === '--flag' && isset($_SERVER['argv'][$i + 1])) {
+                    $flag = (string)$_SERVER['argv'][$i + 1];
+                    break;
+                }
+            }
+        }
+        if ($flag === '') {
+            return;
+        }
+
+        $picked = [];
+        foreach (preg_split('/[+,]/', $flag) as $key) {
+            $key = strtolower(trim((string)$key));
+            if ($key === '' || !isset(static::FLAG_PROVIDERS[$key])) {
+                continue;
+            }
+            [$class, $side] = static::FLAG_PROVIDERS[$key];
+            if (is_array($root->options['app'][$class] ?? null)) {
+                $picked[$side] = $class;
+            }
+        }
+        if (!$picked) {
+            return;
+        }
+
+        // 先把白名单里所有提供者的 enable 关掉：同一时刻只能有一个管理员 + 一个用户。
+        // 只动数组项 —— 被禁用的子应用是 false，不能往上写键。
+        foreach (static::FLAG_PROVIDERS as $item) {
+            [$class, $side] = $item;
+            if (is_array($root->options['app'][$class] ?? null)) {
+                $root->options['app'][$class][$side === 'admin' ? 'admin_provider_enable' : 'user_provider_enable'] = false;
+            }
+        }
+
+        // 两侧各自生效的提供者：标记指定优先，否则沿用刚刚从 data 解析出来的
+        $effective = [
+            'admin' => $picked['admin'] ?? ($root->options['data']['duckadmin_admin_provider'] ?? null),
+            'user'  => $picked['user'] ?? ($root->options['data']['duckadmin_user_provider'] ?? null),
+        ];
+        foreach ($effective as $side => $class) {
+            if (!is_string($class) || !is_array($root->options['app'][$class] ?? null)) {
+                continue;
+            }
+            $enable_key = $side === 'admin' ? 'admin_provider_enable' : 'user_provider_enable';
+            $data_key = $side === 'admin' ? 'duckadmin_admin_provider' : 'duckadmin_user_provider';
+            $root->options['app'][$class][$enable_key] = true;
+            $root->options['data'][$data_key] = $class;
+        }
+    }
+
 
     /** 本次实际生效的管理员提供者类名（先看采集标记,标记没有就回落到根应用配置） */
     public static function adminProvider(): string
     {
         $parts = explode('+', static::flag());
-        return static::PROVIDERS[$parts[0] ?? ''] ?? (string)(App::Root()->options['data']['duckadmin_admin_provider'] ?? '');
+        return static::FLAG_PROVIDERS[$parts[0] ?? ''][0] ?? (string)(App::Root()->options['data']['duckadmin_admin_provider'] ?? '');
     }
 
     /** 本次实际生效的用户提供者类名 */
     public static function userProvider(): string
     {
         $parts = explode('+', static::flag());
-        return static::PROVIDERS[$parts[1] ?? ''] ?? (string)(App::Root()->options['data']['duckadmin_user_provider'] ?? '');
+        return static::FLAG_PROVIDERS[$parts[1] ?? ''][0] ?? (string)(App::Root()->options['data']['duckadmin_user_provider'] ?? '');
     }
 
     /** 某个提供者应用的 controller_url_prefix（规范成带前导斜杠,如 /admin/、/single_admin/） */
