@@ -19,22 +19,19 @@ class Session implements UserSessionInterface
     //@override
 
     ////////////////////////////////////////////////////////////////////////
-    // getHash()/checkHash() 由 AdminController 调用（跨类调用），必须是 public。
-    // 原来是 protected + 控制器里的同名副本（副本带 `return;` 早退），
-    // 副本删掉、方法移到这里之后就暴露成跨类调用 protected 的致命错误了。
     public function getHash($id)
     {
         $hash_id = $this->get('hash',null);
-        $hash_id = $hash_id??mt_rand(1,999999);
-        $_SESSION['hash']=$hash_id;
+        $hash_id = $hash_id ?? mt_rand(1,999999);
+        $this->set('hash', $hash_id);
         return md5($hash_id.'|'.$id);
     }
     public function checkHash($id, $hash)
     {
         $hash_id = $this->get('hash',null);
-        Helper::ControllerThrowOn($hash_id===null,"校[$id, $hash]检失败!");
+        Helper::ThrowOn($hash_id===null,"校[$id, $hash]检失败!");
         $new_hash = md5($hash_id.'|'.$id);
-        Helper::ControllerThrowOn($new_hash!==$hash,"校 [$id, $hash, $new_hash] 检失败");
+        Helper::ThrowOn($new_hash!==$hash,"校 [$id, $hash, $new_hash] 检失败");
     }
 
     /**

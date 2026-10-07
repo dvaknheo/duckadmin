@@ -15,23 +15,6 @@ class UserModel extends Base
     {
         $this->table_name = "Users";
     }
-    public function init(): void
-    {
-        $this->initSchema();
-    }
-    protected function initSchema(): void
-    {
-        $this->execute("CREATE TABLE IF NOT EXISTS `Users` (
-            \"id\" INTEGER,
-            \"username\" TEXT UNIQUE,
-            \"password\" TEXT,
-            \"created_at\" TEXT,
-            \"updated_at\" TEXT,
-            \"deleted_at\" TEXT,
-            PRIMARY KEY(\"id\" AUTOINCREMENT)
-        )");
-    }
-    
     public function exsits($name)
     {
         $sql = "select count(*) as c from `'TABLE'` where username=?";

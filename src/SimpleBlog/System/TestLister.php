@@ -85,28 +85,8 @@ COMMENT 所以这里再内联一次「用户提供者的只登录清单」(幂�
 WEB user/index
 #PHASE_END
 EOT;
-
-        return $this->replace_string($list, [
-            // 上游公开的方法是 watchingGetName()（不是 watchingName()）；
-            // 写错名字会让整份清单生成直接抛 "Call to undefined method"，
-            // 结果是所有组都回放 0 个请求（实测踩过）。
-            'db' => \DuckAdmin\System\CoverageGroup::dbFile(),
-        ]);
+        $list = str_replace('{db}', \DuckAdmin\System\CoverageGroup::dbFile(), $list);
+        return $list;
     }
 
-    /**
-     * 把 {key} 占位符替换成对应值
-     * @param array<string, mixed> $args
-     */
-    protected function replace_string(string $str, array $args): string
-    {
-        if (empty($args)) {
-            return $str;
-        }
-        $map = [];
-        foreach ($args as $k => $v) {
-            $map['{' . $k . '}'] = (string)$v;
-        }
-        return str_replace(array_keys($map), array_values($map), $str);
-    }
 }//@codeCoverageIgnoreEnd

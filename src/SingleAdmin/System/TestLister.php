@@ -17,10 +17,7 @@ class TestLister
     public static function GetTestList(): string
     {
         $out = static::_()->_GetTestListFromCategory();
-        // 统一在这里展开 phase 行：调用方（别的应用）会先切到**我们的** phase 再调我们，
-        // 于是 #PHASE_BEGIN/#PHASE_END 会展开成"我们 → 调用方"的正确 PHASE 行；
-        // 展开后已无 # 行，duckcoverage 之后再展开一次也是空操作。
-        return $out === '' ? '' : \DuckCoverage\TestListerHelper::_()->explainMarco($out);
+        return $out = \DuckCoverage\TestListerHelper::_()->explainMarco($out);
     }
     public function _GetTestListFromCategory(): string
     {
@@ -85,6 +82,11 @@ EOT;
     }
     public function _GetTestListForLogout(): string
     {
-        return "COMMENT SingleAdmin 是配置式单管理员,没有登出这一步\n";
+            $list = <<<EOT
+#PHASE_BEGIN
+WEB logout
+#PHASE_END
+EOT;
+        return $list;
     }
 }//@codeCoverageIgnoreEnd
