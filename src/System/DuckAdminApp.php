@@ -83,13 +83,7 @@ class DuckAdminApp extends DuckPhp
             $setting_file = $this->getProjectPath() . $this->options['setting_file'];
             @opcache_invalidate($setting_file, true);
         }
-
         parent::onPrepare();
-
-        // 安全门禁：设置里没开 duckadmin_enable 就只输出提示页并结束，不进入任何路由。
-        // 必须放在 parent::onPrepare() 之后 —— App::onPrepare() 里才 loadSetting()，
-        // 放前面的话 _Setting() 读到的是空设置，会把「已开启」也挡掉。
-        $this->checkEnabled();
         $this->options['duckcoverage_path_src'] = realpath(__DIR__ . '/../../') . '/src/';
         $this->options['duckcoverage_web_base_url'] = (string)$this->_Setting(
             'duckcoverage_web_base_url',
@@ -99,14 +93,11 @@ class DuckAdminApp extends DuckPhp
         if(class_exists(\DuckCoverage\DuckCoverage::class) && $this->_Setting('duckcoverage_enable')){
             \DuckCoverage\DuckCoverage::Prepare([]);
         }
-
-
         //@codeCoverageIgnoreEnd
     }
     protected function onInit():void
     {
         parent::onInit();
-
         if(!class_exists(\think\Container::class)){
             $this->options['app'][\DuckAdmin\Admin_ThinkPHPModel\System\ThinkPHPModelApp::class] = false;
         }
@@ -114,13 +105,11 @@ class DuckAdminApp extends DuckPhp
             $this->options['app'][\DuckAdmin\Admin_LaravelModel\System\LaravelModelApp::class] = false;
         }
         
-        $admin_provider = $this->options['data']['duckadmin_admin_provider'] ?? \DuckAdmin\SingleAdmin\System\SingleAdminApp::class;
-        $user_provider = $this->options['data']['duckadmin_user_provider'] ?? \DuckAdmin\DemoUsers\System\DemoUsersApp::class;
-        $this->options['app'][$admin_provider]['admin_provider_enable'] = true;
-        $this->options['app'][$user_provider]['user_provider_enable'] = true;
-
+        $this->loadProviders();
         // 覆盖测试时允许用采集标记再覆盖一次（逻辑在 CoverageGroup，与采集工具放在一起）
         \DuckAdmin\System\CoverageGroup::applyProviderFlag();
+        
+        $this->checkEnabled();
     }
 
     protected function checkEnabled(): void
@@ -160,7 +149,13 @@ class DuckAdminApp extends DuckPhp
             . '</body></html>';
         exit;
     }
-
+    protected function loadProviders(): void
+    {
+        $admin_provider = $this->options['data']['duckadmin_admin_provider'] ?? \DuckAdmin\SingleAdmin\System\SingleAdminApp::class;
+        $user_provider = $this->options['data']['duckadmin_user_provider'] ?? \DuckAdmin\DemoUsers\System\DemoUsersApp::class;
+        $this->options['app'][$admin_provider]['admin_provider_enable'] = true;
+        $this->options['app'][$user_provider]['user_provider_enable'] = true;
+    }
     /**
      * 保存首页选中的管理员/用户提供者。
      *

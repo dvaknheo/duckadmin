@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 namespace DuckAdmin\User\System;
 
+use DuckAdmin\System\CoverageGroup;
 use DuckPhp\Core\App;
 use DuckPhp\Foundation\SingletonTrait;
 
@@ -11,10 +12,6 @@ class TestLister
     public static function GetTestList(): string
     {
         $out = static::_()->_GetTestListFromCategory();
-        // 统一在这里展开 phase 行：调用方（别的应用）会先切到**我们的** phase 再调我们，
-        // 于是 #PHASE_BEGIN/#PHASE_END 会展开成"我们 → 调用方"的正确 PHASE 行；
-        // 展开后已无 # 行，duckcoverage 之后再展开一次也是空操作。
-        return $out === '' ? '' : \DuckCoverage\TestListerHelper::_()->explainMarco($out);
     }
     public static function GetTestListForLogin(): string
     {
@@ -26,11 +23,16 @@ class TestLister
         // 全部相对 uri —— 当前 phase 就是 UserApp,__url() 自动补成 /user/。
         // register 的幂等性：已存在时会失败(不脏日志),随后的 login 依然成功。
         $list = <<<EOT
-#PHASE_BEGIN
+PHASE {phase}
 WEB register name=t1&password=123456&password_confirm=123456
 WEB login name=t1&password=123456
-#PHASE_END
+
 EOT;
+        $replacements = [
+            '{phase}' => App::Phase(),
+        ];
+        $list = str_replace(array_keys($replacements), array_values($replacements), $list);
+
         return $list;
     }
     public static function GetTestListForLogout(): string
@@ -40,10 +42,14 @@ EOT;
     public function _GetTestListForLogout(): string
     {
         $list = <<<EOT
-#PHASE_BEGIN
+PHASE {phase}
 WEB logout
-#PHASE_END
+
 EOT;
+        $replacements = [
+            '{phase}' => App::Phase(),
+        ];
+        $list = str_replace(array_keys($replacements), array_values($replacements), $list);
         return $list;
     }
     public static function _GetTestListFromCategory(): string
@@ -52,34 +58,14 @@ EOT;
         if(!$flag){
             return '';
         }
-        // 被别的应用 embed 时,按调用方塞的一次性参数决定给哪种清单
-        // 本应用（管理员/用户系统之一）的清单类别：被别的应用嵌入时，按调用方塞的一次性参数决定。
-        // 参数放在**根应用**上，读到就清，避免影响同一次 play 里后续的清单生成。
-        $root = App::_();   // 参数就放在"正在被问的那个应用"身上
-        $cmd = (string)($root->options['duckcoverage_test_lister_parameter'] ?? '');
-        if ($cmd !== '') {
-            unset($root->options['duckcoverage_test_lister_parameter']);
-        }
+        $cmd = (string)(App::_()->options['duckcoverage_test_lister_parameter'] ?? '');
+        unset(App::_()->options['duckcoverage_test_lister_parameter']);
         switch ($cmd) {
             case 'login':
                 return static::_()->_GetTestListForLogin();
             case 'logout':
                 return static::_()->_GetTestListForLogout();
         }
-        $list_referenct = <<<EOT
-WEB users/Home/index
-WEB users/
-WEB users/logout
-UserBusiness UserBusiness@canAccess user_id=&class=&method=&url=
-CALL DuckAdmin\DemoUsers\Business\UserBusiness@log user_id=&string=&type=&ext=
-CALL DuckAdmin\DemoUsers\Business\UserBusiness@batchGetUsernames ids=
-CALL DuckAdmin\DemoUsers\Business\UserBusiness@login post=
-
-EOT;
-
-        // 问“当前正在服务的”管理员系统要登录清单（通用取法,不需要知道它是谁）。
-        // 用户管理页需要管理员登录态,而管理员态可能在用户侧操作后被清掉,所以这里重登一次。
-        $admin_login = \DuckCoverage\TestListerHelper::TestListByAdminLogin();
 
         $list = <<<EOT
 #PHASE_BEGIN
@@ -109,26 +95,14 @@ WEB Home/password oldpassword=123456&newpassword=654321&newpassword_confirm=6543
 WEB Home/password oldpassword=654321&newpassword=123456&newpassword_confirm=123456
 WEB Home/password oldpassword=123456&newpassword=123456&newpassword_confirm=999999
 
-COMMENT 用户管理(必须放在用户登出之前:登出会把整个 session 清掉,
-COMMENT 管理员登录态也会一起没,AdminControllerBase 就会直接 302 出去,
-COMMENT 于是 AdminController 与 view/Admin/* 永远是 0%)
-COMMENT 管理员登录态由同一组的 Admin 块负责建立
-COMMENT 管理员登录态可能已被用户侧的操作清掉:这里用绝对 uri 重新登录一次
-{$admin_login}
-COMMENT 重要:AdminController 用 Helper::GET 读参数,所以查询串必须写在 uri 上。
-COMMENT "WEB Admin/index all=1" 这种参数是 POST 体,控制器读不到 —— 等于没测。
+#ADMIN_LOGIN
+PHASE {phase}
 WEB Admin/index
 WEB Admin/index?all=1
-COMMENT 删除/还原现在真的校验 hash(md5(会话里的 hash|id))。
-COMMENT 合法 hash 取决于会话里的随机值,清单这边预制不了(SETWEB 钩子在回放进程里跑,
-COMMENT 碰不到应用会话),所以这里只保留负例:错的 hash 必须被拒绝。
-COMMENT 成功分支(302 + 真删除)已用 curl 手工验证过:带正确 hash → 302 且软删除生效。
 WEB Admin/delete?id=2&hash=deadbeefdeadbeefdeadbeefdeadbeef
 WEB Admin/index?all=1
 WEB Admin/index
 
-COMMENT 英文语言包:不带 ?lang=en-US 时 config/lang-en_US.php 永远不加载,一直是 0%
-COMMENT HTTP 表达不到的业务/模型层交给 SETWEB 后置钩子(见下面的 moreTest)
 SETWEB _ _ {phase}!{static}@moreTest _
 WEB login?lang=en-US
 WEB Home/index?lang=en-US
@@ -138,19 +112,17 @@ CALL {static}@endTest
 #PHASE_END
 
 EOT;
-        $file = UserApp::_()->getRuntimePath() .'DuckCoverage/DuckCoverage.watching.txt';
-        $watch_name = \DuckAdmin\System\CoverageGroup::name();   // 组名统一走解析器,不猜文件
-        $db = "runtime/DuckCoverage/{$watch_name}.db";
-
-        $list = str_replace('{db}', $db, $list);
-        $list = str_replace('{static}', static::class, $list);
-        $list = str_replace('{phase}', UserApp::Phase(), $list);
-
+        $replacements = [
+            '{static}' => static::class,
+            '{db}' => CoverageGroup::dbFile(),
+            '{phase}' => App::Phase(),
+        ];
+        $list = str_replace(array_keys($replacements), array_values($replacements), $list);
         return $list;
     }
     public function beginTest()
     {
-        
+
         //我们要删除旧测试数据库文件
     }
     public function endTest()
@@ -216,77 +188,11 @@ EOT;
             try {
                 $class::_()->$method(...$args);
             } catch (\Throwable $ex) {
-                // 这里就是来踩边界的：失败无所谓，不能让它中断整场 play
+                //TODO DuckCoverage->logException($ex);
             }
         }
     }
 
 }
-/*
-// 首先，我们要搞安装系统
-我们从注册登录 安装开始
 
-$list = <<<EOT
-COMMENT tests for x
-WEB index
-WEB register
-WEB register name={username}&password=123456&password_confirm=123456
-WEB register name={username}&ssssssssssssssssssssssamename=1
-WEB Home/index?_r=1
-WEB logout
-WEB index
-WEB login
-WEB login name={username}&password=nolllllllllllllllllllogin
-WEB login name={username}&password=123456
-WEB Home/index?_r=2
-WEB Home/password
-WEB Home/password oldpassword=123456&newpassword=654321&newpassword_confirm=654321
-WEB Home/password oldpassword=654321&newpassword=123456&newpassword_confirm=123456
-WEB Home/password oldpassword=654321&newpassword=123456&newpassword_confirm=123456
-EOT;
-$list = <<<EOT
-PHASE {phase}
-WEB register
-EOT;
-
-
-RUN DuckUser:version
-RUN DuckUser:help
-RUN DuckUser:run
-RUN DuckUser:fetch
-RUN DuckUser:call
-RUN DuckUser:routes
-RUN DuckUser:debug
-WEB user/Admin/index
-WEB user/Admin/delete
-WEB user/Admin/undelete
-WEB user/Home/index
-WEB user/Home/password
-WEB user/
-WEB user/register
-WEB user/login
-WEB user/logout
-CALL DuckAdmin\User\Business\UserAdminBusiness@getUserList conditions=&page=1&page_size=10
-CALL DuckAdmin\User\Business\UserAdminBusiness@deleteUser admin_id=&id=
-CALL DuckAdmin\User\Business\UserAdminBusiness@unDeleteUser admin_id=&id=
-CALL DuckAdmin\User\Business\UserBusiness@log user_id=&string=&type=
-CALL DuckAdmin\User\Business\UserBusiness@checkAccess id=&class=&method=&url=
-CALL DuckAdmin\User\Business\UserBusiness@register form=
-CALL DuckAdmin\User\Business\UserBusiness@login form=
-CALL DuckAdmin\User\Business\UserBusiness@changePassword uid=&password=&new_password=
-CALL DuckAdmin\User\Business\UserBusiness@batchGetUsernames ids=
-CALL DuckAdmin\User\Business\UserBusiness@getUserList
-CALL DuckAdmin\User\Model\UserAdminModel@getUserList where=&page=1&page_size=10
-CALL DuckAdmin\User\Model\UserAdminModel@deleteUser id=
-CALL DuckAdmin\User\Model\UserAdminModel@unDeleteUser id=
-CALL DuckAdmin\User\Model\UserModel@init
-CALL DuckAdmin\User\Model\UserModel@exsits name=
-CALL DuckAdmin\User\Model\UserModel@addUser username=&password=
-CALL DuckAdmin\User\Model\UserModel@getUserById id=
-CALL DuckAdmin\User\Model\UserModel@getUserByUsername username=
-CALL DuckAdmin\User\Model\UserModel@batchGetUsernames user_ids=
-CALL DuckAdmin\User\Model\UserModel@verifyPassword user=&password=
-CALL DuckAdmin\User\Model\UserModel@unloadPassword user=
-CALL DuckAdmin\User\Model\UserModel@updatePassword uid=&password=
-*/
 //@codeCoverageIgnoreEnd

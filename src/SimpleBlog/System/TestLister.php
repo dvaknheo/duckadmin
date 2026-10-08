@@ -1,22 +1,13 @@
 <?php declare(strict_types=1);
 /**
  * DuckAdmin SimpleBlog - DuckCoverage 测试列表
- *
- * 注意(踩过的坑):
- * 1) 本方法在「清单生成时」被调用,那时本应用可能还没安装,
- *    所以不能在这里访问数据库取 id —— 占位 id 一律写死,每组用全新 DB,install 后 id 从 1 开始。
- * 2) 本应用自己的路由用「相对 uri」:__url() 会按当前 phase 的 controller_url_prefix 补上 /blog/。
- *    带上 'blog/' 反而会变成 /blog/blog/...。
- * 3) 其他应用(管理端登录、用户端注册登录)的路由要用「以 / 开头的绝对 uri」,
- *    否则会被拼成 /blog/admin/login。
- * 4) 命令行前缀用当前的 "WEB",带 '#' 的写法是已废弃的旧 DSL。
  */
 namespace DuckAdmin\SimpleBlog\System;
 
+use DuckAdmin\System\CoverageGroup;
 use DuckPhp\Core\App;
 use DuckPhp\Foundation\SingletonTrait;
-use DuckPhp\GlobalAdmin\Admin;
-use DuckPhp\GlobalUser\User;
+
 //@codeCoverageIgnoreStart
 class TestLister
 {
@@ -28,19 +19,16 @@ class TestLister
     }
     public function _GetTestList(): string
     {
-        $admin_short = \DuckCoverage\TestListerHelper::TestListByAdminLogin();
-        $user_short  = \DuckCoverage\TestListerHelper::TestListByUserLogin();
 
         $list = <<<EOT
 #PHASE_BEGIN
-COMMENT 先 GET 一次安装页(用 ?lang=en-US)覆盖 config/lang-en_US.php ——
-COMMENT 博客的普通页面文案是硬编码中文、不调 __l(),只有安装页才会加载语言包
-WEB install?lang=en-US
+WEB install
 WEB install driver=sqlite&database%5Bfile%5D={db}&database%5Bhost%5D=127.0.0.1&database%5Bport%5D=&database%5Bdbname%5D=&database%5Busername%5D=&database%5Bpassword%5D=&action=install
+
 COMMENT Admin login
-{$admin_short}
+#ADMIN_LOGIN
+PHASE {phase}
 COMMENT User login
-{$user_short}
 
 COMMENT 后台:先造数据(每组 DB 全新,id 从 1 开始)
 WEB admin/index
@@ -78,14 +66,13 @@ WEB admin/article_delete
 WEB admin/article_delete id=1
 WEB admin/articles
 
-COMMENT userController(继承 UserControllerBase,需要用户登录态)
-COMMENT 登录态要"紧挨着"用:中间夹了十几个 admin 步骤后 session 会不在,
-COMMENT 所以这里再内联一次「用户提供者的只登录清单」(幂等,代价 1~2 个请求)
-{$user_short}
+#USER_LOGIN
+PHASE {phase}
 WEB user/index
 #PHASE_END
 EOT;
-        $list = str_replace('{db}', \DuckAdmin\System\CoverageGroup::dbFile(), $list);
+        $list = str_replace('{phase}', App::Phase(), $list);
+        $list = str_replace('{db}', CoverageGroup::dbFile(), $list);
         return $list;
     }
 
