@@ -18,7 +18,7 @@ set -e
 # 配置
 SOURCE_PATH="/mnt/e/ProjectGoat/DuckAdmin"   # Windows 源目录
 TARGET_PATH="/DATA/ext4/duckadmin"           # WSL 目标目录
-DOMAIN="bak-duckadmin.duckphp-local.com"
+DOMAIN="bak-admin.duckphp-local.com"
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
