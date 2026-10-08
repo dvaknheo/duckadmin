@@ -72,14 +72,12 @@ php cli.php install ## --force forces it --help shows the parameters
 ### Reinstalling via the Web installer (changing the database config)
 
 Once the sub-application is installed, visiting `<prefix>/install` directly will 302 back to the home page (framework behavior, to stop accidental visits to the install page).
-When you need to reinstall (for example to switch the database file or the admin/user provider), explicitly pass `force`:
+There is **no** `force=1` escape hatch any more: `DuckAdmin\System\WebInstaller` was removed and the
+framework's own installer class is used, so the only way back is to make the application "not installed" again.
 
-```
-GET  /<prefix>/install?force=1       # show the install form
-POST /<prefix>/install  force=1 ...  # reinstall (force runs {driver}.clean.sql first, then creates the tables)
-```
-
-Without `force` the behavior is the same as the framework's original. See `src/System/WebInstaller.php` for the implementation.
+To reinstall (for example to switch the database file or the admin/user provider): delete that application's data
+config (`runtime/DuckPhpData*.config.json`) and its database file, then visit `<prefix>/install` again. (In the demo
+the CLI installer `php cli.php install --force` also works.)
 
 Admin / user providers are switched with the radio buttons on the root application's home page (written to `runtime/DuckPhpData*.config.json`);
 after switching, run the reinstall above once for the corresponding sub-application, so its database config is initialized again.
@@ -290,6 +288,35 @@ matches nothing, falls back to the full list (all seven applications in one play
 `applyProviderFlag()`; the flag no longer influences authentication, it only selects which list to play.
 **Do not use `cover --go`**, its behavior differs from doing the steps manually.
 
+#### Testing one child application on its own
+
+`--flag` takes an **application's `controller_url_prefix`** (without the trailing slash), and
+`System\TestLister` then plays only that application's child list:
+
+```bash
+bash .ai/cover_one.sh blog          # only SimpleBlog (group name defaults to one_blog)
+bash .ai/cover_one.sh user e_solo   # only User, with a custom group name
+```
+
+Equivalent to the steps by hand:
+
+```bash
+php bin/cli.php cover --watch <group> --flag=<prefix>
+php bin/cli.php cover --play  --flag=<prefix>
+php bin/cli.php cover --stop
+php bin/cli.php cover --report <group>
+```
+
+The prefixes are `admin` / `admin_laravel` / `admin_thinkphp` / `single_admin` / `demo_users` / `user` / `blog`.
+The play log shows what actually ran: every `#INCLUDE_CHILD` expands into a `COMMENT APP <class>` line,
+so a single-application run has exactly one.
+
+Two things bite: do not put a trailing slash on the flag (`--flag=blog/` matches nothing and silently
+falls back to the full list), and only the `user` / `blog` flags write the provider config for you
+(`toDefaultAdmin()` = SingleAdmin, `toDefaultUser()` = DemoUsers) — the three `admin*` flags do not, so
+switch the admin provider to that application in the home page form first; otherwise `Admin::_()` points
+at another system and the numbers mislead you.
+
 #### There is only one way to count lines, and "signature lines" have been removed upstream
 
 - `runtime/DuckCoverage/*.report/index.html`, the `report.json` in the same directory, and
@@ -326,6 +353,11 @@ HTML / `report.json` / `report.jsonl`), so:
    ⚠️ A `CALL` that throws an exception aborts the whole play: to hit error branches use `WEB` (an HTTP request will not abort the play),
    or wrap each step in its own try like `moreTest2()` in `src/DemoUsers/System/TestLister.php`.
 
+> **These numbers are stale.** They were measured before the test-list refactor (seven applications,
+> `PHASE` lines written by the listers themselves, `--flag` = an application prefix), and the group table in
+> `.ai/cover_flags.sh` still carries the old short-name flags — a full run today therefore plays the full list
+> for every group. Re-measure before quoting them.
+
 Current progress (6 groups, 532 HTTP requests, 0 application error logs): Total 77.92%
 (lines 2819/3618, functions 249/380 = 65.53%) —
 Admin 77.88%, Admin_LaravelModel 63.38%, Admin_ThinkPHPModel 63.78%, DemoUsers 100.00%,
@@ -354,7 +386,7 @@ src/User/config/lang-zh_CN.php         src/User/config/lang-en_US.php
 src/SimpleBlog/config/lang-zh_CN.php   src/SimpleBlog/config/lang-en_US.php
 ```
 
-- The default language is the root application `DuckAdminApp`'s `lang_default` (`zh_CN`); sub-applications' Lang
+- The default language is the root application `DuckAdminApp`'s `lang_default` (`en-US`); sub-applications' Lang
   follows the root application through `lang_follow_root`, so you only set it in one place, the root application.
 - How to switch: `?lang=en-US`, the `lang` cookie, or the browser's `Accept-Language`.
   - **The file-name shape matters**: browsers send `en-US` (hyphen); the framework normalises it to `en_US` and then looks for `lang-en_US.php`. There is **no** "strip the region and retry" fallback — `en-GB` will not hit `en_US`, and a bare `en` only matches `lang-en.php`.
@@ -455,6 +487,7 @@ TBD
 ├── .ai/                     Scripts used by AI tooling (not part of the app runtime)
 │   ├── cover_flags.sh       Coverage runs: --flag mode (recommended)
 │   ├── cover_groups.sh      Coverage runs: legacy mode (kept for rollback/comparison)
+│   ├── cover_one.sh         Coverage runs: a single child application (flag = its url prefix)
 │   ├── coverage_gaps.php    Reads report.jsonl and lists lines still worth covering
 │   ├── provider_probe.php   Shows which pair of providers a coverage flag resolves to
 │   ├── audit_signatures.php Contract-signature audit (parameter-by-parameter vs upstream)

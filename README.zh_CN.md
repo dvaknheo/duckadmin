@@ -70,14 +70,12 @@ php cli.php install ## --force 可以强制执行 --help 查看参数
 ### Web 安装器重新安装（改数据库配置）
 
 子应用已安装后，直接访问 `<前缀>/install` 会 302 回首页（框架行为，防止误入安装页）。
-需要重装（例如换数据库文件、换管理员/用户提供者）时，显式带上 `force`：
+现在**没有** `?force=1` 这个后门了：`DuckAdmin\System\WebInstaller` 已删除，改用框架自己的安装器类，
+所以唯一的办法是让该应用重新变成"未安装"。
 
-```
-GET  /<前缀>/install?force=1       # 显示安装表单
-POST /<前缀>/install  force=1 ...  # 重装（force 会先执行 {driver}.clean.sql 再建表）
-```
-
-不带 `force` 时行为与框架原版一致。实现见 `src/System/WebInstaller.php`。
+要重装（例如换数据库文件、换管理员/用户提供者）：删掉该应用的数据配置
+（`runtime/DuckPhpData*.config.json`）与它的数据库文件，再访问一次 `<前缀>/install`。
+（demo 里还可以用命令行安装器 `php cli.php install --force`。）
 
 管理员 / 用户提供者在根应用首页的单选框中切换（写入 `runtime/DuckPhpData*.config.json`），
 切换后请对对应子应用执行一次上述重装，让它的数据库配置重新初始化。
@@ -287,6 +285,34 @@ bash .ai/cover_groups.sh
 标记不再影响认证，只决定回放哪份清单。
 **不要用 `cover --go`**，它的行为与手工分步有差异。
 
+#### 单独测一个子应用
+
+`--flag` 传**某个子应用的 `controller_url_prefix`**（去掉结尾斜杠），`System\TestLister` 就只回放
+这个应用的子清单：
+
+```bash
+bash .ai/cover_one.sh blog          # 只测 SimpleBlog（组名默认 one_blog）
+bash .ai/cover_one.sh user e_solo   # 只测 User，组名自定义
+```
+
+等价于手工几步：
+
+```bash
+php bin/cli.php cover --watch <组名> --flag=<前缀>
+php bin/cli.php cover --play  --flag=<前缀>
+php bin/cli.php cover --stop
+php bin/cli.php cover --report <组名>
+```
+
+可用前缀：`admin` / `admin_laravel` / `admin_thinkphp` / `single_admin` / `demo_users` / `user` / `blog`。
+回放日志能看到实际跑了什么 —— 每条 `#INCLUDE_CHILD` 会展开成一行 `COMMENT APP <类名>`，
+单应用跑就只有一行。
+
+两个坑：flag **不要带结尾斜杠**（`--flag=blog/` 匹配不上，会静默跑成全量清单）；
+只有 `user` / `blog` 两个 flag 会顺手把提供者配置写成默认值（`toDefaultAdmin()` = SingleAdmin、
+`toDefaultUser()` = DemoUsers），三个 `admin*` **不会** —— 单测它们之前先在后台首页把管理员提供者
+切到它自己，否则 `Admin::_()` 指向别的系统，数字会误导你。
+
 #### 行计数只有一个口径，且「签名行」已被上游剔除
 
 - `runtime/DuckCoverage/*.report/index.html` 与同目录的 `report.json`、
@@ -323,6 +349,10 @@ bash .ai/cover_groups.sh
    ⚠️ `CALL` 抛异常会中断整场 play：要踩错误分支请用 `WEB`（HTTP 请求不会中断 play），
    或像 `src/DemoUsers/System/TestLister.php` 的 `moreTest2()` 那样把每步各自 try。
 
+> **这些数字已过期。** 它们是测试清单重构之前测的（那时是七个应用、`PHASE` 行由 lister 自己写、
+> `--flag` = 应用前缀），而 `.ai/cover_flags.sh` 的组表里还留着旧的短名标记 —— 现在跑全量，每组都会
+> 回放成全量清单。引用之前请先重新测一遍。
+
 当前进度（6 组、532 个 HTTP 请求、0 条应用错误日志）：Total 77.92%
 （行 2819/3618，函数 249/380 = 65.53%）——
 Admin 77.88%、Admin_LaravelModel 63.38%、Admin_ThinkPHPModel 63.78%、DemoUsers 100.00%、
@@ -350,7 +380,7 @@ src/User/config/lang-zh_CN.php         src/User/config/lang-en_US.php
 src/SimpleBlog/config/lang-zh_CN.php   src/SimpleBlog/config/lang-en_US.php
 ```
 
-- 默认语言是根应用 `DuckAdminApp` 的 `lang_default`（`zh_CN`）；子应用的 Lang
+- 默认语言是根应用 `DuckAdminApp` 的 `lang_default`（`en-US`）；子应用的 Lang
   通过 `lang_follow_root` 跟随根应用，所以只在根应用设一处。
 - 切换方式：`?lang=en-US`、`lang` cookie，或浏览器的 `Accept-Language`。
   - **文件名形状有讲究**：浏览器发的是 `en-US`（连字符），框架会规范化成 `en_US` 后再找 `lang-en_US.php`；而且**没有**"去掉地区再试一次"的回落 —— `en-GB` 不会命中 `en_US`，裸 `en` 也只认 `lang-en.php`。
@@ -451,6 +481,7 @@ $url_logout = Helper::Admin()->urlForLogout();
 ├── .ai/                     AI 用的脚本（不参与应用运行）
 │   ├── cover_flags.sh       覆盖测试：--flag 模式（推荐）
 │   ├── cover_groups.sh      覆盖测试：旧模式（保留用于回滚/对照）
+│   ├── cover_one.sh         覆盖测试：单独测一个子应用（flag = 它的 url 前缀）
 │   ├── coverage_gaps.php    读 report.jsonl，列出还值得补的行
 │   ├── provider_probe.php   看某个采集标记解析成哪对提供者
 │   ├── audit_signatures.php 契约签名审计（上游接口逐参数比对）
