@@ -5,20 +5,44 @@
  */
 namespace DuckAdmin\System;
 
+use DuckCoverage\DuckCoverage;
 use DuckPhp\Core\App;
 use DuckPhp\Foundation\SingletonTrait;
+
 
 //@codeCoverageIgnoreStart
 class TestLister
 {
     use SingletonTrait;
-
     public static function GetTestList()
     {
         return static::_()->_GetTestList();
     }
     public function _GetTestList()
     {
+        $static = static::class;
+        $flag = DuckCoverage::_()->getFlag();
+        foreach (App::_()->options['app'] as $class => $options) {
+            $name = $options['controller_url_prefix'] ?? '';
+            $name = rtrim($name, '/');
+            if ($name === $flag) {
+                $list = "PHASE \n";
+                if($class == \DuckAdmin\User\System\UserApp::class){
+                    $list .= "{$static}@toDefaultAdmin\n";
+                } else if($class == \DuckAdmin\SimpleBlog\System\SimpleBlogApp::class) {
+                    $list .= "{$static}@toDefaultAdmin\n";
+                    $list .= "{$static}@toDefaultUser\n";
+                    $list .= "#INCLUDE_CHILD {$class}\n";
+                }
+                $list .= "#INCLUDE_CHILD {$class}\n";
+                return $list;
+            }
+        }
+        return $this->_GetTestListFull();
+    }
+    public function _GetTestListFull()
+    {
+
         $list = <<<EOT
 #INCLUDE_CHILD DuckAdmin\\SingleAdmin\\System\\SingleAdminApp
 PHASE 
@@ -45,12 +69,12 @@ EOT;
     {
         $app = App::_();
         $admin_provider = \DuckAdmin\SingleAdmin\System\SingleAdminApp::class;
-        $app->saveProviders($admin_provider, $user_provider);
+        $app->saveProviders($admin_provider, null);
     }
     public function toDefaultUser()
     {
         $app = App::_();
         $user_provider = \DuckAdmin\DemoUsers\System\DemoUsersApp::class;
-        $app->saveProviders($admin_provider, $user_provider);
+        $app->saveProviders(null, $user_provider);
     }
 }//@codeCoverageIgnoreEnd

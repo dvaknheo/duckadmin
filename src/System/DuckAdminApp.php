@@ -107,7 +107,7 @@ class DuckAdminApp extends DuckPhp
         
         $this->loadProviders();
         // 覆盖测试时允许用采集标记再覆盖一次（逻辑在 CoverageGroup，与采集工具放在一起）
-        \DuckAdmin\System\CoverageGroup::applyProviderFlag();
+        //\DuckAdmin\System\CoverageGroup::applyProviderFlag();
         
         $this->checkEnabled();
     }
