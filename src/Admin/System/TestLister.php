@@ -88,8 +88,8 @@ WEB login username=" . self::ADMIN_NAME . "&password=" . self::ADMIN_PASSWORD;
 WEB index
 
 COMMENT ========== 登录失败分支 ==========
-COMMENT MainController::login() 自己 catch 后回显错误,所以这些不会变成 500、也不会脏日志;
-COMMENT 覆盖的是 AppBusiness::login() 里的几个 ThrowOn(空值/用户不存在/密码错/账号禁用)
+COMMENT MainController->login() 自己 catch 后回显错误,所以这些不会变成 500、也不会脏日志;
+COMMENT 覆盖的是 AppBusiness->login() 里的几个 ThrowOn(空值/用户不存在/密码错/账号禁用)
 WEB login username=&password=';
 WEB login username=ghost_user&password=123456
 WEB login username=' . self::ADMIN_NAME . '&password=wrong_password

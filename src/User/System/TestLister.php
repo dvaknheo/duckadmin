@@ -11,17 +11,18 @@ class TestLister
     use SingletonTrait;
     public static function GetTestList(): string
     {
-        $out = static::_()->_GetTestListFromCategory();
+        return static::_()->_GetTestList();
     }
     public static function GetTestListForLogin(): string
     {
         return static::_()->_GetTestListForLogin();
     }
+    public static function GetTestListForLogout(): string
+    {
+        return static::_()->_GetTestListForLogout();
+    }
     public function _GetTestListForLogin(): string
     {
-        // 「只建立登录态」：不安装、不登出，所以可以被别的应用反复 embed。
-        // 全部相对 uri —— 当前 phase 就是 UserApp,__url() 自动补成 /user/。
-        // register 的幂等性：已存在时会失败(不脏日志),随后的 login 依然成功。
         $list = <<<EOT
 PHASE {phase}
 WEB register name=t1&password=123456&password_confirm=123456
@@ -34,10 +35,6 @@ EOT;
         $list = str_replace(array_keys($replacements), array_values($replacements), $list);
 
         return $list;
-    }
-    public static function GetTestListForLogout(): string
-    {
-        return static::_()->_GetTestListForLogout();
     }
     public function _GetTestListForLogout(): string
     {
@@ -52,21 +49,21 @@ EOT;
         $list = str_replace(array_keys($replacements), array_values($replacements), $list);
         return $list;
     }
-    public static function _GetTestListFromCategory(): string
+    public function _GetTestList(): string
     {
-        $flag = App::_()->options['user_provider_enable'] ?? true;
-        if(!$flag){
-            return '';
-        }
         $cmd = (string)(App::_()->options['duckcoverage_test_lister_parameter'] ?? '');
         unset(App::_()->options['duckcoverage_test_lister_parameter']);
         switch ($cmd) {
             case 'login':
-                return static::_()->_GetTestListForLogin();
+                return $this->_GetTestListForLogin();
             case 'logout':
-                return static::_()->_GetTestListForLogout();
+                return $this->_GetTestListForLogout();
+            default:
+                return $this->_GetTestListFull();
         }
-
+    }
+    public function _GetTestListFull(): string
+    {
         $list = <<<EOT
 #PHASE_BEGIN
 CALL {static}@beginTest
@@ -122,7 +119,6 @@ EOT;
     }
     public function beginTest()
     {
-
         //我们要删除旧测试数据库文件
     }
     public function endTest()
@@ -194,5 +190,4 @@ EOT;
     }
 
 }
-
 //@codeCoverageIgnoreEnd
