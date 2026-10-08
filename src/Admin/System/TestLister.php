@@ -47,22 +47,22 @@ PHASE {$phase}
 WEB install
 WEB install driver=sqlite&database[file]={$dbFile}&admin_name=admin&admin_password=123456&admin_password_confirm=123456
 WEB login
-WEB login username=" . self::ADMIN_NAME . "&password=" . self::ADMIN_PASSWORD;
+WEB login username=admin&password=123456
 WEB index
 
 COMMENT ========== 登录失败分支 ==========
 COMMENT MainController->login() 自己 catch 后回显错误,所以这些不会变成 500、也不会脏日志;
 COMMENT 覆盖的是 AppBusiness->login() 里的几个 ThrowOn(空值/用户不存在/密码错/账号禁用)
-WEB login username=&password=';
+WEB login username=&password=
 WEB login username=ghost_user&password=123456
-WEB login username=' . self::ADMIN_NAME . '&password=wrong_password
+WEB login username=admin&password=wrong_password
 WEB login username=disabled_user&password=123456
 COMMENT 上面几次失败会把会话换掉,重新登录回超管再继续
-WEB login username=' . self::ADMIN_NAME . '&password=' . self::ADMIN_PASSWORD;
+WEB login username=admin&password=123456
 COMMENT ========== Home 模块 ==========
 WEB Home/index
 WEB Home/profile
-WEB Home/profile realname=Admin&email=admin@test.com&password=';
+WEB Home/profile realname=Admin&email=admin@test.com&password=
 WEB Home/profile password=123456
 WEB Home/permissions
 WEB Home/menu
