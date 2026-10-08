@@ -4,7 +4,7 @@
  */
 namespace DuckAdmin\SimpleBlog\System;
 
-use DuckAdmin\System\CoverageGroup;
+use DuckAdmin\System\DuckAdminApp;
 use DuckPhp\Core\App;
 use DuckPhp\Foundation\SingletonTrait;
 
@@ -19,15 +19,17 @@ class TestLister
     }
     public function _GetTestList(): string
     {
+        $phase = App::Phase();
+        $dbfile = DuckAdminApp::_()->getTestDbFile('simpleblog');
 
         $list = <<<EOT
-#PHASE_BEGIN
+PHASE {$phase}
 WEB install
-WEB install driver=sqlite&database%5Bfile%5D={db}&database%5Bhost%5D=127.0.0.1&database%5Bport%5D=&database%5Bdbname%5D=&database%5Busername%5D=&database%5Bpassword%5D=&action=install
+WEB install driver=sqlite&database%5Bfile%5D={$dbfile}&database%5Bhost%5D=127.0.0.1&database%5Bport%5D=&database%5Bdbname%5D=&database%5Busername%5D=&database%5Bpassword%5D=&action=install
 
 COMMENT Admin login
 #ADMIN_LOGIN
-PHASE {phase}
+PHASE {$phase}
 COMMENT User login
 
 COMMENT 后台:先造数据(每组 DB 全新,id 从 1 开始)
@@ -67,12 +69,10 @@ WEB admin/article_delete id=1
 WEB admin/articles
 
 #USER_LOGIN
-PHASE {phase}
+PHASE {$phase}
 WEB user/index
-#PHASE_END
+
 EOT;
-        $list = str_replace('{phase}', App::Phase(), $list);
-        $list = str_replace('{db}', CoverageGroup::dbFile(), $list);
         return $list;
     }
 

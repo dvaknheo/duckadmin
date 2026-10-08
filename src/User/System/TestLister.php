@@ -1,13 +1,17 @@
 <?php declare(strict_types=1);
 namespace DuckAdmin\User\System;
 
-use DuckAdmin\System\CoverageGroup;
-use DuckAdmin\System\TestListWithAuthBase;
+use DuckCoverage\TestListWithAuthBase;
+use DuckAdmin\System\DuckAdminApp;
 use DuckPhp\Core\App;
 
 //@codeCoverageIgnoreStart
 class TestLister extends TestListWithAuthBase
 {
+    public function _GetTestListForClean(): string
+    {
+        return '';
+    }
     public function _GetTestListForLogin(): string
     {
         $phase = App::Phase();
@@ -29,17 +33,20 @@ WEB logout
 EOT;
         return $list;
     }
+        
     public function _GetTestListFull(): string
     {
         $phase = App::Phase();
         $static = static::class;
+        $dbfile = DuckAdminApp::_()->getTestDbFile('user');
+
         $list = <<<EOT
 PHASE {$phase}
 CALL {$static}@beginTest
 COMMENT 先 GET 一次安装页,渲染「表单分支」;再 POST 安装,渲染「完成页分支」。
 COMMENT 只做 POST 的话 view/install.php 的表单分支永远覆盖不到(实测 31%)
 WEB install
-WEB install driver=sqlite&database%5Bfile%5D={db}&database%5Bhost%5D=127.0.0.1&database%5Bport%5D=&database%5Bdbname%5D=&database%5Busername%5D=&database%5Bpassword%5D=&action=install
+WEB install driver=sqlite&database%5Bfile%5D={$dbfile}&database%5Bhost%5D=127.0.0.1&database%5Bport%5D=&database%5Bdbname%5D=&database%5Busername%5D=&database%5Bpassword%5D=&action=install
 
 COMMENT 注册:表单 + 成功 + 重名 + 两次密码不一致
 WEB register
@@ -74,15 +81,9 @@ WEB login?lang=en-US
 WEB Home/index?lang=en-US
 WEB logout
 
-CALL {static}@endTest
+CALL {$static}@endTest
 
 EOT;
-        $args = [
-            '{static}' => static::class,
-            '{db}' => CoverageGroup::dbFile(),
-            '{phase}' => App::Phase(),
-        ];
-        $list = str_replace(array_keys($args), array_values($args), $list);
         return $list;
     }
     public function beginTest()

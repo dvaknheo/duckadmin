@@ -104,11 +104,7 @@ class DuckAdminApp extends DuckPhp
         if(!class_exists(\Illuminate\Database\Capsule\Manager::class)){
             $this->options['app'][\DuckAdmin\Admin_LaravelModel\System\LaravelModelApp::class] = false;
         }
-        
         $this->loadProviders();
-        // 覆盖测试时允许用采集标记再覆盖一次（逻辑在 CoverageGroup，与采集工具放在一起）
-        //\DuckAdmin\System\CoverageGroup::applyProviderFlag();
-        
         $this->checkEnabled();
     }
 
@@ -176,5 +172,12 @@ class DuckAdminApp extends DuckPhp
 
         ExtOptionsLoader::_()->saveExtOptions($data);
     }
-
+    public function getTestDbFile(string $name)
+    {
+        $flag = \DuckCoverage\DuckCoverage::_()->getFlag();
+        $dbfile = 'runtime/DuckCoverage/' . \DuckCoverage\DuckCoverage::_()->watchingGetName();
+        $dbfile .= $flag ? '-' . $flag : '';
+        $dbfile .= $name ? '-' . $name . '.db' : '.db';
+        return $dbfile;
+    }
 }

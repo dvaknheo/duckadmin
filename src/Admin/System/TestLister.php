@@ -1,7 +1,8 @@
 <?php declare(strict_types=1);
 namespace DuckAdmin\Admin\System;
 
-use DuckAdmin\System\TestListWithAuthBase;
+use DuckAdmin\System\DuckAdminApp;
+use DuckCoverage\TestListWithAuthBase;
 use DuckPhp\Core\App;
 /**
  * AdminApp 子应用 DuckCoverage 测试列表
@@ -9,10 +10,14 @@ use DuckPhp\Core\App;
 //@codeCoverageIgnoreStart
 class TestLister extends TestListWithAuthBase
 {
+    public function _GetTestListForClean(): string
+    {
+        return '';
+    }
     public function _GetTestListForLogin(): string
     {
         $phase = App::Phase();
-        $dbFile = \DuckAdmin\System\CoverageGroup::dbFile();
+        $dbFile = DuckAdminApp::_()->getTestDbFile('admin');
 
         $list = <<<EOT
 PHASE {$phase}
@@ -34,7 +39,7 @@ EOT;
     public function _GetTestListFull(): string
     {
         $phase = App::Phase();
-        $dbFile = \DuckAdmin\System\CoverageGroup::dbFile();
+        $dbFile = DuckAdminApp::_()->getTestDbFile('admin');
         //$static = static::class;
 
         $list = <<<EOT

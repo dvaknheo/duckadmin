@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DuckAdmin\SingleAdmin\System;
 
-use DuckAdmin\System\TestListWithAuthBase;
+use DuckCoverage\TestListWithAuthBase;
 use DuckPhp\Core\App;
 
 //@codeCoverageIgnoreStart

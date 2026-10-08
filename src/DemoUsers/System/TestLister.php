@@ -5,7 +5,7 @@
  */
 namespace DuckAdmin\DemoUsers\System;
 
-use DuckAdmin\System\TestListWithAuthBase;
+use DuckCoverage\TestListWithAuthBase;
 use DuckPhp\Core\App;
 
 //@codeCoverageIgnoreStart
