@@ -67,9 +67,6 @@ class AdminApp extends DuckPhp
     protected function onInited(): void
     {
         parent::onInited();
-        // if($this->options['short_duckcoverage']){
-        // 清单类别由调用方往根应用塞 duckcoverage_test_lister_parameter 决定,见 TestListerHelper
-        // }
     }
 }
 

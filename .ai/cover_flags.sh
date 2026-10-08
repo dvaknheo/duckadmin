@@ -5,13 +5,12 @@
 # 与 .ai/cover_groups.sh 的区别：
 #   旧：每组都要「改写本组的 DuckPhpData 配置文件（首页 POST）→ 校验写入是否成功」，
 #       再回放。配置文件是磁盘状态，天然有竞态，校验失败就跳过整组。
-#   新：提供者不再靠配置文件，而是靠采集标记 —— duckcoverage 的 --flag 会把它
-#       放进每个回放请求的请求头（X-DuckCoverage-Flag），应用侧读同一个值来决定
-#       用哪个管理员/用户提供者。于是每组只差一个命令行参数，磁盘状态不用动。
+#   新：--flag 的取值就是某个子应用的 controller_url_prefix（去掉结尾斜杠），
+#       根 lister（System\TestLister）拿它匹配 options['app'][*]['controller_url_prefix']，
+#       只回放那个应用的子清单。要换「谁配谁」，由清单里的 {static}@toDefaultAdmin /
+#       {static}@toDefaultUser 写动态提供者配置（saveProviders()）—— 也就是后台首页表单那条路径。
 #
-# 安全前提（应用侧已加锁，见 DuckAdminApp::applyProviderFlag()）：
-#   标记只在 settings 里 duckcoverage_enable 为真时才生效；生产环境没有这个键，
-#   所以请求头不会影响认证。
+# 安全前提：标记不再影响认证 —— 它只决定回放哪份清单；提供者切换走的是应用自己的配置保存路径。
 #
 # 用法（在项目根目录执行）:
 #   bash .ai/cover_flags.sh                 # 跑全部组并出报告
@@ -32,8 +31,11 @@ cd "$(dirname "$0")/.." || exit 1
 [ -f bin/cli.php ] || { echo "请在项目根目录执行（找不到 bin/cli.php）"; exit 1; }
 
 # 组名|采集标记|管理员提供者(用于校验)|用户提供者(用于校验)
-# 标记里的短名 → 类名的对照在应用侧 DuckAdminApp::FLAG_PROVIDERS；
+# 标记取值 = 应用前缀，对照表在供应商的 System\TestLister（前缀见 DuckAdminApp 的 app 段）；
 # 这里把类名再写一遍，是为了回放前能自己校验「标记真的生效了」。
+#
+# TODO(待定): 下面各行的「采集标记」还是旧的短名组合（admin+demo …），与新语义
+#   （标记 = 应用前缀，如 admin / single_admin / blog）不一致，组表需要重写。
 GROUPS_ALL=(
     "a_admin|admin+demo|DuckAdmin\\Admin\\System\\AdminApp|DuckAdmin\\DemoUsers\\System\\DemoUsersApp"
     "b_laravel|laravel+demo|DuckAdmin\\Admin_LaravelModel\\System\\LaravelModelApp|DuckAdmin\\DemoUsers\\System\\DemoUsersApp"

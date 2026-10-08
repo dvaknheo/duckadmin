@@ -42,7 +42,7 @@ class TestLister
     }
     public function _GetTestListFull()
     {
-
+        $static = static::class;
         $list = <<<EOT
 #INCLUDE_CHILD DuckAdmin\\SingleAdmin\\System\\SingleAdminApp
 PHASE 
@@ -54,11 +54,11 @@ PHASE
 PHASE 
 #INCLUDE_CHILD DuckAdmin\\Admin_ThinkPHPModel\\System\\ThinkPHPModelApp
 PHASE 
-{static}@toDefaultAdmin
+{$static}@toDefaultAdmin
 #INCLUDE_CHILD DuckAdmin\\User\\System\\UserApp
 PHASE 
-{static}@toDefaultAdmin
-{static}@toDefaultUser
+{$static}@toDefaultAdmin
+{$static}@toDefaultUser
 #INCLUDE_CHILD DuckAdmin\\SimpleBlog\\System\\SimpleBlogApp
 PHASE 
 

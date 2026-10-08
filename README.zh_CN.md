@@ -16,7 +16,8 @@ return [
 - 没有这个键、或写成 `false`：所有网页请求都会被挡下，只显示一个提示页（HTTP **503**），
   提示你到这里开启。**连安装页也挡**，所以不存在「忘了开就被别人装走」的情况。
 - 默认关是有意的：这是「确认你有意把后台暴露出去」的开关，少一个配置项就少一份风险。
-- 命令行不受影响：`php bin/cli.php`（含覆盖测试的 `cover`）照常可用。
+- 命令行**不再例外**：`checkEnabled()` 以前对 CLI 提前返回，现在不再区分，所以开关关着时
+  `php bin/cli.php`（含覆盖测试的 `cover`）同样会停在这个提示页。跑命令行前先把它打开。
 - 改完若提示页还在，等一两秒再刷新（PHP 的 `opcache.revalidate_freq` 默认 2 秒，
   该配置文件会被缓存），必要时重启 php-fpm。
 
@@ -276,11 +277,14 @@ bash .ai/cover_groups.sh
 报告在 `runtime/DuckCoverage/AAAAA.report/`（多组合并）或 `<组名>.report/`（单组）；
 每份报告旁边都有一份同源的 `report.json`。
 
-`--flag` 模式等价于 `cover --watch <组名> --flag=<标记>` → `cover --play --flag=<标记>`
-→ `cover --report 组名...`；标记的取值白名单见 `DuckAdminApp::FLAG_PROVIDERS`
-（`admin` / `laravel` / `think` / `single` / `demo` / `user`，用 `+` 组合）。
-**注意**：应用侧对标记加了锁 —— 只在 `duckcoverage_enable` 为真时生效，
-因为这个标记决定「用哪个管理员/用户提供者」，等于让请求头影响认证。
+`--flag` 模式等价于 `cover --watch <组名> --flag=<标记>` → `cover --play --flag=<标记>` → `cover --report 组名...`。
+标记的取值是**某个应用的 `controller_url_prefix`**（去掉结尾斜杠）：
+`admin` / `admin_laravel` / `admin_thinkphp` / `single_admin` / `demo_users` / `user` / `blog`。
+`System\TestLister` 拿它去匹配 `options['app'][*]['controller_url_prefix']`，只回放该应用的子清单；
+碰到 `user` / `blog` 会先调 `toDefaultAdmin()` / `toDefaultUser()` —— 它们写动态提供者配置（`saveProviders()`），
+也就是后台首页表单用的同一条路径。没有标记、或标记匹配不上，就回落到全量清单（七个应用一场回放）。
+**注意**：旧的「标记只在 `duckcoverage_enable` 为真时生效」那把锁已随 `applyProviderFlag()` 一起删除；
+标记不再影响认证，只决定回放哪份清单。
 **不要用 `cover --go`**，它的行为与手工分步有差异。
 
 #### 行计数只有一个口径，且「签名行」已被上游剔除
@@ -327,9 +331,10 @@ SimpleBlog 98.33%、SingleAdmin 100.00%、System 30.20%、User 90.77%。
 百分比怎么读（三个模块的数字变化都有原因，别误读）：
 - User 45.03% → 90.77%：补了 User 应用自己的测试清单；
 - SimpleBlog 90.20% → 98.33%：修掉「组名解析不到时拼出 `runtime/DuckCoverage/.db`」这个真凶
-  —— 那时"安装"进一个库、"注册/登录"进另一个库，用户侧整片看起来没覆盖（见 `src/System/CoverageGroup.php`）；
+  —— 那时"安装"进一个库、"注册/登录"进另一个库，用户侧整片看起来没覆盖。（那个解析类 `src/System/CoverageGroup.php` 后来已删除：
+    上游现在会守住组名，库名也挪进了 `DuckAdminApp::getTestDbFile()`。）
 - System 65.15% → 30.20%：这个模块只有 3 个文件，其中 `DuckAdminApp.php` 新增了 `--flag`
-  提供者切换逻辑、`CoverageGroup.php` 又只跑在 CLI 侧（Web 采集看不到），分子几乎没动而分母变大，
+  提供者切换逻辑、只服务采集的辅助文件又只跑在 CLI 侧（Web 采集看不到），分子几乎没动而分母变大，
   所以百分比掉了 —— 不代表代码变差。
 
 命令：`bash .ai/cover_flags.sh`（跑全部组并合并报告）、`php .ai/coverage_gaps.php`（列还值得补的行）。

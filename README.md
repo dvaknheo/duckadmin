@@ -16,7 +16,9 @@ return [
 - Without this key, or with it set to `false`: every web request is blocked and only a notice page is shown (HTTP **503**),
   telling you to enable it here. **Even the install page is blocked**, so there is no "I forgot to turn it on and someone else installed it" scenario.
 - Being off by default is deliberate: this is the switch that says "I mean to expose the admin backend", and one less config item is one less risk.
-- The command line is unaffected: `php bin/cli.php` (including the `cover` coverage testing) works as usual.
+- The command line is **not** exempt any more: `checkEnabled()` used to return early for CLI, and no longer does,
+  so with the switch off `php bin/cli.php` (including `cover`) stops at the same notice page. Turn the switch on
+  in the settings before running CLI commands.
 - If the notice page is still there after your change, wait a second or two and refresh (PHP's `opcache.revalidate_freq` defaults to 2 seconds,
   and this config file gets cached); restart php-fpm if necessary.
 
@@ -277,11 +279,15 @@ bash .ai/cover_groups.sh
 The reports are in `runtime/DuckCoverage/AAAAA.report/` (multiple groups merged) or `<group name>.report/` (single group);
 next to each report there is a `report.json` from the same source.
 
-`--flag` mode is equivalent to `cover --watch <group name> --flag=<flag>` → `cover --play --flag=<flag>`
-→ `cover --report group...`; the whitelist of flag values is in `DuckAdminApp::FLAG_PROVIDERS`
-(`admin` / `laravel` / `think` / `single` / `demo` / `user`, combined with `+`).
-**Note**: the application side locks the flag — it only takes effect when `duckcoverage_enable` is true,
-because this flag decides "which admin/user provider is used", which amounts to letting a request header influence authentication.
+`--flag` mode is `cover --watch <group name> --flag=<flag>` → `cover --play --flag=<flag>` → `cover --report group...`.
+The flag value is an **application's `controller_url_prefix`** without the trailing slash:
+`admin` / `admin_laravel` / `admin_thinkphp` / `single_admin` / `demo_users` / `user` / `blog`.
+`System\TestLister` matches the flag against `options['app'][*]['controller_url_prefix']` and plays exactly that
+application's child list; for `user` / `blog` it first calls `toDefaultAdmin()` / `toDefaultUser()`, which write the
+dynamic provider config (`saveProviders()`) — the same path the admin homepage form uses. No flag, or a flag that
+matches nothing, falls back to the full list (all seven applications in one play).
+**Note**: the old "the flag only takes effect when `duckcoverage_enable` is true" lock disappeared together with
+`applyProviderFlag()`; the flag no longer influences authentication, it only selects which list to play.
 **Do not use `cover --go`**, its behavior differs from doing the steps manually.
 
 #### There is only one way to count lines, and "signature lines" have been removed upstream
@@ -329,9 +335,10 @@ How to read these percentages (all three movements have a reason — do not misr
 - User 45.03% → 90.77%: the User application got its own test list;
 - SimpleBlog 90.20% → 98.33%: fixed the real culprit — when the group name could not be resolved the
   lists built `runtime/DuckCoverage/.db`, so "install" went into one database while "register/login"
-  went into another and the whole user side looked uncovered (see `src/System/CoverageGroup.php`);
+  went into another and the whole user side looked uncovered (that resolver, `src/System/CoverageGroup.php`, has since been deleted:
+    upstream now guards the group name, and the DB name moved into `DuckAdminApp::getTestDbFile()`);
 - System 65.15% → 30.20%: this module is only 3 files; `DuckAdminApp.php` gained the `--flag`
-  provider-switching logic and `CoverageGroup.php` only runs on the CLI side (the web collector never
+  provider-switching logic and the coverage-only helper only runs on the CLI side (the web collector never
   sees it), so the numerator barely moved while the denominator grew — this is not a code regression.
 
 Commands: `bash .ai/cover_flags.sh` (run every group and merge the reports), `php .ai/coverage_gaps.php` (list the lines still worth covering).
