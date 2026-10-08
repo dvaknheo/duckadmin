@@ -1,88 +1,46 @@
 <?php declare(strict_types=1);
 namespace DuckAdmin\Admin\System;
 
+use DuckAdmin\System\TestListWithAuthBase;
 use DuckPhp\Core\App;
-use DuckPhp\Foundation\Helper;
-use DuckPhp\Foundation\SingletonTrait;
-
 /**
  * AdminApp 子应用 DuckCoverage 测试列表
  */
 //@codeCoverageIgnoreStart
-class TestLister
+class TestLister extends TestListWithAuthBase
 {
-    use SingletonTrait;
-    
-    public static function BeforeTest()
+    public function _GetTestListForLogin(): string
     {
-        static::_()->_BeforeTest();
-    }
-
-    public function _BeforeTest()
-    {
-        //@unlink(Helper::PathOfRuntime() . self::TEST_DB);
-    }
-    public static function GetTestListForLogin()
-    {
-        return static::_()->_GetTestListForLogin();
-    }
-
-    public function _GetTestListForLogin()
-    {
-        $admin_name = self::ADMIN_NAME;
-        $admin_password = self::ADMIN_PASSWORD;
-        $list = <<<EOT
-#PHASE_BEGIN
-WEB login
-WEB login username={$admin_name}&password={$admin_password}
-#PHASE_END
-EOT;
-        return $list;
-    }
-    public static function GetTestListForLogout()
-    {
-        return static::_()->_GetTestListForLogout();
-    }
-    public function _GetTestListForLogout()
-    {
-        $list = <<<EOT
-#PHASE_BEGIN
-WEB logout
-#PHASE_END
-EOT;
-        return $list;
-    }
-    public static function GetTestList()
-    {
-        $out = static::_()->_GetTestListFromCategory();
-        // 统一在这里展开 phase 行：调用方（别的应用）会先切到**我们的** phase 再调我们，
-        // 于是 #PHASE_BEGIN/#PHASE_END 会展开成"我们 → 调用方"的正确 PHASE 行；
-        // 展开后已无 # 行，duckcoverage 之后再展开一次也是空操作。
-        return $out === '' ? '' : \DuckCoverage\TestListerHelper::_()->explainMarco($out);
-    }
-
-    public function _GetTestListFromCategory()
-    {
-        $flag = App::_()->options['admin_provider_enable'] ?? true;
-        if(!$flag){
-            return '';
-        }
-        $cmd = (string)(App::_()->options['duckcoverage_test_lister_parameter'] ?? '');
-        if ($cmd !== '') {
-            unset(App::_()->options['duckcoverage_test_lister_parameter']);
-        }
-        switch ($cmd) {
-            case 'login':
-                return static::_()->_GetTestListForLogin();
-            case 'logout':
-                return static::_()->_GetTestListForLogout();
-        }
-
+        $phase = App::Phase();
         $dbFile = \DuckAdmin\System\CoverageGroup::dbFile();
-$list = <<<EOT
-#PHASE_BEGIN
+
+        $list = <<<EOT
+PHASE {$phase}
+WEB install driver=sqlite&database[file]={$dbFile}&admin_name=admin&admin_password=123456&admin_password_confirm=123456
+WEB login username=admin&password=123456
+
+EOT;
+        return $list;
+    }
+    public function _GetTestListForLogout(): string
+    {
+        $phase = App::Phase();
+        $list = <<<EOT
+PHASE {$phase}
+WEB logout
+EOT;
+        return $list;
+    }
+    public function _GetTestListFull(): string
+    {
+        $phase = App::Phase();
+        $dbFile = \DuckAdmin\System\CoverageGroup::dbFile();
+        //$static = static::class;
+
+        $list = <<<EOT
+PHASE {$phase}
 WEB install
-WEB install driver=sqlite&database[file]={db}&admin_name=admin&admin_password=123456&admin_password_confirm=123456
+WEB install driver=sqlite&database[file]={$dbFile}&admin_name=admin&admin_password=123456&admin_password_confirm=123456
 WEB login
 WEB login username=" . self::ADMIN_NAME . "&password=" . self::ADMIN_PASSWORD;
 WEB index
@@ -153,15 +111,8 @@ WEB Role/index
 WEB Admin/index
 WEB System/info
 WEB logout
-#PHASE_END
 
 EOT;
-
-        $args = [
-            'static' => static::class,
-        ];
-        $str = str_replace(array_map(fn($k) => '{' . $k . '}', array_keys($args)), array_values($args), $str);
-
-        return $str;
+        return $list;
     }
 }//@codeCoverageIgnoreEnd

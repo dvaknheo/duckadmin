@@ -2,71 +2,40 @@
 namespace DuckAdmin\User\System;
 
 use DuckAdmin\System\CoverageGroup;
+use DuckAdmin\System\TestListWithAuthBase;
 use DuckPhp\Core\App;
-use DuckPhp\Foundation\SingletonTrait;
 
 //@codeCoverageIgnoreStart
-class TestLister
+class TestLister extends TestListWithAuthBase
 {
-    use SingletonTrait;
-    public static function GetTestList(): string
-    {
-        return static::_()->_GetTestList();
-    }
-    public static function GetTestListForLogin(): string
-    {
-        return static::_()->_GetTestListForLogin();
-    }
-    public static function GetTestListForLogout(): string
-    {
-        return static::_()->_GetTestListForLogout();
-    }
     public function _GetTestListForLogin(): string
     {
+        $phase = App::Phase();
         $list = <<<EOT
-PHASE {phase}
+PHASE {$phase}
 WEB register name=t1&password=123456&password_confirm=123456
 WEB login name=t1&password=123456
 
 EOT;
-        $replacements = [
-            '{phase}' => App::Phase(),
-        ];
-        $list = str_replace(array_keys($replacements), array_values($replacements), $list);
-
         return $list;
     }
     public function _GetTestListForLogout(): string
     {
+        $phase = App::Phase();
         $list = <<<EOT
-PHASE {phase}
+PHASE {$phase}
 WEB logout
 
 EOT;
-        $replacements = [
-            '{phase}' => App::Phase(),
-        ];
-        $list = str_replace(array_keys($replacements), array_values($replacements), $list);
         return $list;
-    }
-    public function _GetTestList(): string
-    {
-        $cmd = (string)(App::_()->options['duckcoverage_test_lister_parameter'] ?? '');
-        unset(App::_()->options['duckcoverage_test_lister_parameter']);
-        switch ($cmd) {
-            case 'login':
-                return $this->_GetTestListForLogin();
-            case 'logout':
-                return $this->_GetTestListForLogout();
-            default:
-                return $this->_GetTestListFull();
-        }
     }
     public function _GetTestListFull(): string
     {
+        $phase = App::Phase();
+        $static = static::class;
         $list = <<<EOT
-#PHASE_BEGIN
-CALL {static}@beginTest
+PHASE {$phase}
+CALL {$static}@beginTest
 COMMENT 先 GET 一次安装页,渲染「表单分支」;再 POST 安装,渲染「完成页分支」。
 COMMENT 只做 POST 的话 view/install.php 的表单分支永远覆盖不到(实测 31%)
 WEB install
@@ -93,28 +62,27 @@ WEB Home/password oldpassword=654321&newpassword=123456&newpassword_confirm=1234
 WEB Home/password oldpassword=123456&newpassword=123456&newpassword_confirm=999999
 
 #ADMIN_LOGIN
-PHASE {phase}
+PHASE {$phase}
 WEB Admin/index
 WEB Admin/index?all=1
 WEB Admin/delete?id=2&hash=deadbeefdeadbeefdeadbeefdeadbeef
 WEB Admin/index?all=1
 WEB Admin/index
 
-SETWEB _ _ {phase}!{static}@moreTest _
+SETWEB _ _ {$phase}!{$static}@moreTest _
 WEB login?lang=en-US
 WEB Home/index?lang=en-US
 WEB logout
 
 CALL {static}@endTest
-#PHASE_END
 
 EOT;
-        $replacements = [
+        $args = [
             '{static}' => static::class,
             '{db}' => CoverageGroup::dbFile(),
             '{phase}' => App::Phase(),
         ];
-        $list = str_replace(array_keys($replacements), array_values($replacements), $list);
+        $list = str_replace(array_keys($args), array_values($args), $list);
         return $list;
     }
     public function beginTest()
