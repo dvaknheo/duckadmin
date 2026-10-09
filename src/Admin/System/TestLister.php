@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 namespace DuckAdmin\Admin\System;
 
-use DuckAdmin\System\DuckAdminApp;
+use DuckAdmin\System\TestListHelper;
 use DuckCoverage\TestListWithAuthBase;
 use DuckPhp\Core\App;
 /**
@@ -10,14 +10,33 @@ use DuckPhp\Core\App;
 //@codeCoverageIgnoreStart
 class TestLister extends TestListWithAuthBase
 {
+    public function cleanInstall()
+    {
+        return TestListHelper::_()->cleanInstall();
+    }
+    protected function getDbName()
+    {
+        $name = get_class(App::_());
+        $name = basename($name);
+        $name .='db';
+        return $name;
+    }
     public function _GetTestListForClean(): string
     {
-        return '';
+        $phase = App::Phase();
+        $static = static::class;
+        $list = <<<EOT
+PHASE {$phase}
+{$static}@cleanInstall
+
+EOT;
+        return $list;
     }
+
     public function _GetTestListForLogin(): string
     {
         $phase = App::Phase();
-        $dbFile = DuckAdminApp::_()->getTestDbFile('admin');
+        $dbFile = TestListHelper::_()->getTestDbFile($this->getDbName());
 
         $list = <<<EOT
 PHASE {$phase}
@@ -39,7 +58,7 @@ EOT;
     public function _GetTestListFull(): string
     {
         $phase = App::Phase();
-        $dbFile = DuckAdminApp::_()->getTestDbFile('admin');
+        $dbFile = TestListHelper::_()->getTestDbFile($this->getDbName());
         //$static = static::class;
 
         $list = <<<EOT

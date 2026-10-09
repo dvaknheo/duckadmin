@@ -28,10 +28,10 @@ class TestLister
             if ($name === $flag) {
                 $list = "PHASE \n";
                 if($class == \DuckAdmin\User\System\UserApp::class){
-                    $list .= "{$static}@toDefaultAdmin\n";
+                    $list .= "CALL {$static}@toDefaultAdmin\n";
                 } else if($class == \DuckAdmin\SimpleBlog\System\SimpleBlogApp::class) {
-                    $list .= "{$static}@toDefaultAdmin\n";
-                    $list .= "{$static}@toDefaultUser\n";
+                    $list .= "CALL {$static}@toDefaultAdmin\n";
+                    $list .= "CALL {$static}@toDefaultUser\n";
                     $list .= "#INCLUDE_CHILD {$class}\n";
                 }
                 $list .= "#INCLUDE_CHILD {$class}\n";
@@ -54,11 +54,11 @@ PHASE
 PHASE 
 #INCLUDE_CHILD DuckAdmin\\Admin_ThinkPHPModel\\System\\ThinkPHPModelApp
 PHASE 
-{$static}@toDefaultAdmin
+CALL {$static}@toDefaultAdmin
 #INCLUDE_CHILD DuckAdmin\\User\\System\\UserApp
 PHASE 
-{$static}@toDefaultAdmin
-{$static}@toDefaultUser
+CALL {$static}@toDefaultAdmin
+CALL {$static}@toDefaultUser
 #INCLUDE_CHILD DuckAdmin\\SimpleBlog\\System\\SimpleBlogApp
 PHASE 
 
@@ -69,12 +69,14 @@ EOT;
     {
         $app = App::_();
         $admin_provider = \DuckAdmin\SingleAdmin\System\SingleAdminApp::class;
+        //Admin::_(\DuckAdmin\SingleAdmin\System\SingleAdminApp::_());
         $app->saveProviders($admin_provider, null);
     }
     public function toDefaultUser()
     {
         $app = App::_();
         $user_provider = \DuckAdmin\DemoUsers\System\DemoUsersApp::class;
+        //User::_(\DuckAdmin\SingleAdmin\System\DemoUsersApp::_());
         $app->saveProviders(null, $user_provider);
     }
 }//@codeCoverageIgnoreEnd

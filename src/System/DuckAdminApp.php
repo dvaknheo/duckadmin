@@ -172,12 +172,4 @@ class DuckAdminApp extends DuckPhp
 
         ExtOptionsLoader::_()->saveExtOptions($data);
     }
-    public function getTestDbFile(string $name)
-    {
-        $flag = \DuckCoverage\DuckCoverage::_()->getFlag();
-        $dbfile = 'runtime/DuckCoverage/' . \DuckCoverage\DuckCoverage::_()->watchingGetName();
-        $dbfile .= $flag ? '-' . $flag : '';
-        $dbfile .= $name ? '-' . $name . '.db' : '.db';
-        return $dbfile;
-    }
 }

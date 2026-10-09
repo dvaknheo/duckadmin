@@ -4,7 +4,7 @@
  */
 namespace DuckAdmin\SimpleBlog\System;
 
-use DuckAdmin\System\DuckAdminApp;
+use DuckAdmin\System\TestListHelper;
 use DuckPhp\Core\App;
 use DuckPhp\Foundation\SingletonTrait;
 
@@ -12,7 +12,10 @@ use DuckPhp\Foundation\SingletonTrait;
 class TestLister
 {
     use SingletonTrait;
-
+    public function cleanInstall()
+    {
+        return TestListHelper::_()->cleanInstall();
+    }
     public static function GetTestList(): string
     {
         return static::_()->_GetTestList();
@@ -20,7 +23,7 @@ class TestLister
     public function _GetTestList(): string
     {
         $phase = App::Phase();
-        $dbfile = DuckAdminApp::_()->getTestDbFile('simpleblog');
+        $dbfile = TestListHelper::_()->getTestDbFile('simpleblog');
 
         $list = <<<EOT
 PHASE {$phase}
