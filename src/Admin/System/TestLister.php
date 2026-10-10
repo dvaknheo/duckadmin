@@ -16,9 +16,9 @@ class TestLister extends TestListWithAuthBase
     }
     protected function getDbName()
     {
-        $name = get_class(App::_());
-        $name = basename($name);
-        $name .='db';
+        $class = get_class(App::_());
+        $a = explode('\\', $class);
+        $name = array_pop($a);
         return $name;
     }
     public function _GetTestListForClean(): string
