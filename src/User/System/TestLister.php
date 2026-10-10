@@ -101,8 +101,6 @@ WEB logout
 CALL {$static}@loadDb
 #BUSINESS UserAdminBusiness@getUserList
 
-CALL {$static}@endTest
-
 EOT;
         return $list;
     }
