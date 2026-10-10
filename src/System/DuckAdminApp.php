@@ -69,7 +69,15 @@ class DuckAdminApp extends DuckPhp
 
         'duckcoverage_web_base_url' => 'http://admin.duckphp-local.com/',
         'duckcoverage_test_lister'=> [\DuckAdmin\System\TestLister::class, 'GetTestList'],
-
+        'duckcoverage_exclude' =>[
+            'Admin/config',
+            'Admin/view',
+            'SimpleBlog/config',
+            'SimpleBlog/view',
+            'System',
+            'User/config',
+            'User/view',
+        ],
         'data' => [
             'duckadmin_admin_provider' => \DuckAdmin\SingleAdmin\System\SingleAdminApp::class,
             'duckadmin_user_provider' => \DuckAdmin\DemoUsers\System\DemoUsersApp::class,
