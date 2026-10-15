@@ -3,6 +3,7 @@
 namespace DuckAdmin\Admin_LaravelModel\System;
 
 use DuckAdmin\Admin\System\AdminApp;
+use DuckAdmin\Ext\LaravelOrmExt;
 use DuckPhp\Component\GlobalEvent;
 
 class LaravelModelApp extends AdminApp
@@ -11,12 +12,12 @@ class LaravelModelApp extends AdminApp
     {
         parent::__construct();
         $this->options['name'] = 'Admin_LaravelModel';
+        $this->options['ext'][LaravelOrmExt::class] = true;
     }
     public function onInit(): void
     {
         parent::onInit();
         GlobalEvent::_()->on('installing', [self::class, 'onInstalling']);
-        LaravelOrmExt::_()->init([]);
         \DuckAdmin\Admin\Model\AdminModel::_(new \DuckAdmin\Admin_LaravelModel\Overrided\Model\Adapter\AdminModelAdapter());
         \DuckAdmin\Admin\Model\RoleModel::_(new \DuckAdmin\Admin_LaravelModel\Overrided\Model\Adapter\RoleModelAdapter());
         \DuckAdmin\Admin\Model\PermissionModel::_(new \DuckAdmin\Admin_LaravelModel\Overrided\Model\Adapter\PermissionModelAdapter());

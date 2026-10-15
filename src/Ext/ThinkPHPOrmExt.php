@@ -1,45 +1,53 @@
 <?php declare(strict_types=1);
 
-namespace DuckAdmin\Admin_LaravelModel\System;
+namespace DuckAdmin\Ext;
 
+use DuckPhp\Component\DbManager as DuckDbManager;
 use DuckPhp\Core\ComponentBase;
-use DuckPhp\Component\DbManager;
-use Illuminate\Database\Capsule\Manager as Capsule;
+use think\DbManager;
+use think\Container;
 
-class LaravelOrmExt extends ComponentBase
+class ThinkPHPOrmExt extends ComponentBase
 {
     public $options = [
     ];
-    
+   
     public function init(array $options, ?object $context = null)
     {
         parent::init($options, $context);
-        $this->bootEloquent();
+        $this->bootThinkORM();
         return $this;
     }
     /**
-     * 初始化 Eloquent ORM
+     * 初始化 ThinkPHP ORM
      */
-    public function bootEloquent(): void
+    public function bootThinkORM(): void
     {
         $config = $this->getDatabaseConfig();
         if (!$config) {
             return;
             //throw new \Exception("Database configuration not found.");
         }
-        $capsule = new Capsule;
-        $capsule->addConnection($config);
-        $capsule->setAsGlobal();
-        $capsule->bootEloquent();
+        // 创建容器实例
+        $container = new Container();
+        
+        // 创建 DbManager
+        $dbManager = new DbManager($container);
+        $dbManager->setConfig($config);
+        
+        // 将 DbManager 注册到容器
+        $container->instance('db', $dbManager);
+        
+        // 设置全局容器（让 think\facade\Db 可用）
+        Container::setInstance($container);
     }
-    
     /**
      * 获取数据库配置，便于 override
      * 支持 sqlite(相对/绝对路径) 与 mysql/pgsql 等 DSN
      */
     protected function getDatabaseConfig(): array
     {
-        $config_list = DbManager::_()->getDatabaseConfigList();
+        $config_list = DuckDbManager::_()->getDatabaseConfigList();
         $config = $config_list[0] ?? null;
         if (!$config) {
             return [];
@@ -52,38 +60,34 @@ class LaravelOrmExt extends ComponentBase
         $driver = $parts[0];
         $rest = $parts[1] ?? '';
 
-        $ret = [
+        $conn = [
+            'type' => $driver,
             'prefix' => '',
-            //'foreign_key_constraints' => true,
-            'foreign_key_constraints' => false,
+            'charset' => 'utf8',
         ];
 
         if ($driver === 'sqlite' || $driver === 'duckdb') {
-            $ret['driver'] = 'sqlite';
-            $ret['database'] = $this->resolveSqliteFile($rest);
-            return $ret;
+            $conn['database'] = $this->resolveSqliteFile($rest);
+        } else {
+            $params = $this->parseDsnParams($rest);
+            $conn['database'] = (string)($params['dbname'] ?? '');
+            $conn['hostname'] = (string)($params['host'] ?? '127.0.0.1');
+            if (!empty($params['port'])) {
+                $conn['hostport'] = (string)$params['port'];
+            }
+            if (!empty($params['charset'])) {
+                $conn['charset'] = (string)$params['charset'];
+            }
+            $conn['username'] = (string)($config['username'] ?? '');
+            $conn['password'] = (string)($config['password'] ?? '');
         }
 
-        // mysql / pgsql 等:解析 dsn 参数
-        $params = $this->parseDsnParams($rest);
-        $ret['driver'] = ($driver === 'postgresql') ? 'pgsql' : $driver;
-        $ret['database'] = (string)($params['dbname'] ?? '');
-        if (isset($params['host']) && $params['host'] !== '') {
-            $ret['host'] = $params['host'];
-        }
-        if (!empty($params['port'])) {
-            $ret['port'] = (int)$params['port'];
-        }
-        if (!empty($params['charset'])) {
-            $ret['charset'] = $params['charset'];
-        }
-        if ((string)($config['username'] ?? '') !== '') {
-            $ret['username'] = (string)$config['username'];
-        }
-        if ((string)($config['password'] ?? '') !== '') {
-            $ret['password'] = (string)$config['password'];
-        }
-        return $ret;
+        return [
+            'default' => $driver,
+            'connections' => [
+                $driver => $conn,
+            ],
+        ];
     }
 
     /**
@@ -120,5 +124,4 @@ class LaravelOrmExt extends ComponentBase
         }
         return $ret;
     }
-    
 }

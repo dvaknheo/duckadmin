@@ -1,53 +1,45 @@
 <?php declare(strict_types=1);
 
-namespace DuckAdmin\Admin_ThinkPHPModel\System;
+use DuckAdmin\Ext;
 
-use DuckPhp\Component\DbManager as DuckDbManager;
 use DuckPhp\Core\ComponentBase;
-use think\DbManager;
-use think\Container;
+use DuckPhp\Component\DbManager;
+use Illuminate\Database\Capsule\Manager as Capsule;
 
-class ThinkPHPOrmExt extends ComponentBase
+class LaravelOrmExt extends ComponentBase
 {
     public $options = [
     ];
-   
+    
     public function init(array $options, ?object $context = null)
     {
         parent::init($options, $context);
-        $this->bootThinkORM();
+        $this->bootEloquent();
         return $this;
     }
     /**
-     * 初始化 ThinkPHP ORM
+     * 初始化 Eloquent ORM
      */
-    public function bootThinkORM(): void
+    public function bootEloquent(): void
     {
         $config = $this->getDatabaseConfig();
         if (!$config) {
             return;
             //throw new \Exception("Database configuration not found.");
         }
-        // 创建容器实例
-        $container = new Container();
-        
-        // 创建 DbManager
-        $dbManager = new DbManager($container);
-        $dbManager->setConfig($config);
-        
-        // 将 DbManager 注册到容器
-        $container->instance('db', $dbManager);
-        
-        // 设置全局容器（让 think\facade\Db 可用）
-        Container::setInstance($container);
+        $capsule = new Capsule;
+        $capsule->addConnection($config);
+        $capsule->setAsGlobal();
+        $capsule->bootEloquent();
     }
+    
     /**
      * 获取数据库配置，便于 override
      * 支持 sqlite(相对/绝对路径) 与 mysql/pgsql 等 DSN
      */
     protected function getDatabaseConfig(): array
     {
-        $config_list = DuckDbManager::_()->getDatabaseConfigList();
+        $config_list = DbManager::_()->getDatabaseConfigList();
         $config = $config_list[0] ?? null;
         if (!$config) {
             return [];
@@ -60,34 +52,38 @@ class ThinkPHPOrmExt extends ComponentBase
         $driver = $parts[0];
         $rest = $parts[1] ?? '';
 
-        $conn = [
-            'type' => $driver,
+        $ret = [
             'prefix' => '',
-            'charset' => 'utf8',
+            //'foreign_key_constraints' => true,
+            'foreign_key_constraints' => false,
         ];
 
         if ($driver === 'sqlite' || $driver === 'duckdb') {
-            $conn['database'] = $this->resolveSqliteFile($rest);
-        } else {
-            $params = $this->parseDsnParams($rest);
-            $conn['database'] = (string)($params['dbname'] ?? '');
-            $conn['hostname'] = (string)($params['host'] ?? '127.0.0.1');
-            if (!empty($params['port'])) {
-                $conn['hostport'] = (string)$params['port'];
-            }
-            if (!empty($params['charset'])) {
-                $conn['charset'] = (string)$params['charset'];
-            }
-            $conn['username'] = (string)($config['username'] ?? '');
-            $conn['password'] = (string)($config['password'] ?? '');
+            $ret['driver'] = 'sqlite';
+            $ret['database'] = $this->resolveSqliteFile($rest);
+            return $ret;
         }
 
-        return [
-            'default' => $driver,
-            'connections' => [
-                $driver => $conn,
-            ],
-        ];
+        // mysql / pgsql 等:解析 dsn 参数
+        $params = $this->parseDsnParams($rest);
+        $ret['driver'] = ($driver === 'postgresql') ? 'pgsql' : $driver;
+        $ret['database'] = (string)($params['dbname'] ?? '');
+        if (isset($params['host']) && $params['host'] !== '') {
+            $ret['host'] = $params['host'];
+        }
+        if (!empty($params['port'])) {
+            $ret['port'] = (int)$params['port'];
+        }
+        if (!empty($params['charset'])) {
+            $ret['charset'] = $params['charset'];
+        }
+        if ((string)($config['username'] ?? '') !== '') {
+            $ret['username'] = (string)$config['username'];
+        }
+        if ((string)($config['password'] ?? '') !== '') {
+            $ret['password'] = (string)$config['password'];
+        }
+        return $ret;
     }
 
     /**
@@ -124,4 +120,5 @@ class ThinkPHPOrmExt extends ComponentBase
         }
         return $ret;
     }
+    
 }
