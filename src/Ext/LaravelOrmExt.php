@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-use DuckAdmin\Ext;
+namespace DuckAdmin\Ext;
 
 use DuckPhp\Core\ComponentBase;
 use DuckPhp\Component\DbManager;
