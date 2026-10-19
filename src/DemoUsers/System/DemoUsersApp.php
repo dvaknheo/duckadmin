@@ -14,7 +14,6 @@ class DemoUsersApp extends DuckPhp
 {
     //@override
     public $options = [
-        'is_debug' =>true,
         'path' => __DIR__ . '/../',
         'namespace' => "DuckAdmin\\DemoUsers",
         'name' => 'DemoUsers',

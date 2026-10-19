@@ -46,6 +46,7 @@ class AdminBusiness implements AdminServiceInterface
         $password = (string)($post['password']??'');
         $old_password = Helper::AppOptions('single_admin_password', '');
 
+        Helper::ThrowOn(empty($password), "系统尚未开放");
         Helper::ThrowOn($password !== $old_password, "密码错误");
 
         $admin = [

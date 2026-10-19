@@ -11,10 +11,12 @@ use DuckPhp\Component\ExtOptionsLoader;
 class DuckAdminApp extends DuckPhp
 {
     public $options = [
-        'is_debug' => true,
         'path' => __DIR__.'/../../',
         'namespace' => 'DuckAdmin',
         'namespace_controller' => 'System',
+        'setting' =>[
+            'duckadmin_demo' => true,
+        ],
         'error_500' => '_sys/error_500.php',
 
         'installed' => true,
