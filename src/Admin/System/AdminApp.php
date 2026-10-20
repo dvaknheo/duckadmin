@@ -46,8 +46,6 @@ class AdminApp extends DuckPhp
                 'globaladmin_url_home' => 'Home/index',
                 'globaladmin_url_login' => 'login',
                 'globaladmin_url_logout' => 'logout',
-                'globaladmin_view_file_header' => '_sys/header',
-                'globaladmin_view_file_footer' => '_sys/footer',
                 'globaladmin_local_service' => [AppAction::class,'localService'],
                 'globaladmin_login_service' => [AppAction::class,'localService'],
                 'globaladmin_login_session' => [AppAction::class,'session'],

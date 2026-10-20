@@ -21,8 +21,8 @@
     },
     "require": {
         "php": ">=7.4.0",
-        "dvaknheo/duckphp": "dev-master as 1.4.1",
-        "dvaknheo/duckcoverage": "dev-master",
+        "dvaknheo/duckphp": "^1.4.1",
+        "dvaknheo/duckcoverage": "^1.0.2",
         "illuminate/database": "^11.0",
         "topthink/think-orm": "^4.0"
     },
