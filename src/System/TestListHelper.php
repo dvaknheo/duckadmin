@@ -21,30 +21,45 @@ class TestListHelper
         $dbfile .= $name ? '-' . $name . '.db' : '.db';
         return $dbfile;
     }
+    /**
+     * 应用运行数据文件 —— 框架 ExtOptionsLoader 用的就是它（getRuntimePath() + data_file_json_file），
+     * 内容按 phase 分键（根应用是 ""，子应用是 ":DuckUser" 这类）。
+     *
+     * 坑：不要读 duckcoverage_data_file_json_file —— 那是采集器自己的数据文件，
+     * 里面只有 ""（根 phase）一格，按子应用 phase 取必然 Undefined array key。
+     */
+    protected function dataFile(): string
+    {
+        $name = (string)(App::_()->options['data_file_json_file'] ?? 'DuckPhpData.config.json');
+        return App::_()->getRuntimePath() . $name;
+    }
     public function cleanInstall()
     {
-        $json_file = App::_()->getRuntimePath() . DuckCoverage::_()->options['duckcoverage_data_file_json_file'];
-        if(is_file($json_file)){
-            $data = json_decode(file_get_contents($json_file), true);
-            $dsn = $data[App::Phase()]['database_list'][0]['dsn'] ?? null;
-            unset($data[App::Phase()]);
-            $string = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK);
-            file_put_contents($json_file, $string);
-            if($dsn){
-                @list($driver,$dbfile) = explode(":",$dsn);
-                @unlink($dbfile);
-
-            }
-            clearstatcache();
-            echo "install cleaned\n";
+        $json_file = $this->dataFile();
+        if (!is_file($json_file)) {
+            return;
         }
-        
+        $all = json_decode((string)file_get_contents($json_file), true);
+        $all = is_array($all) ? $all : [];
+        $phase = App::_()->getThisPhaseName();
+        $dsn = $all[$phase]['database_list'][0]['dsn'] ?? null;
+        unset($all[$phase]);
+        file_put_contents($json_file, json_encode($all, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK));
+        if ($dsn) {
+            @list($driver, $dbfile) = explode(':', $dsn);
+            @unlink($dbfile);
+        }
+        clearstatcache();
+        echo "install cleaned\n";
     }
     public function loadDb()
     {
-        $json_file = App::_()->getRuntimePath() . DuckCoverage::_()->options['duckcoverage_data_file_json_file'];
-        $data = json_decode(file_get_contents($json_file), true);
-        $data = $data[App::Phase()];
-        DbManager::_()->init($data);
+        $json_file = $this->dataFile();
+        $all = is_file($json_file) ? json_decode((string)file_get_contents($json_file), true) : [];
+        $all = is_array($all) ? $all : [];
+        $data = (array)($all[App::_()->getThisPhaseName()] ?? []);
+        if ($data) {
+            DbManager::_()->init($data);
+        }
     }
 }
