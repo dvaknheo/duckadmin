@@ -32,7 +32,6 @@ class TestLister
                 } else if($class == \DuckAdmin\SimpleBlog\System\SimpleBlogApp::class) {
                     $list .= "CALL {$static}@toDefaultAdmin\n";
                     $list .= "CALL {$static}@toDefaultUser\n";
-                    $list .= "#INCLUDE_CHILD {$class}\n";
                 }
                 $list .= "#INCLUDE_CHILD {$class}\n";
                 return $list;
